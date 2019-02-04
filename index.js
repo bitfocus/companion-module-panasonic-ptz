@@ -3,9 +3,9 @@ var debug;
 var log;
 
 var IRIS = [];
-	for (var i = 0; i < 100; ++i) {
-		IRIS.push({ id: ('0' + i.toString(10)).substr(-2,2), label: 'Iris ' + i });
-	}
+for (var i = 0; i < 100; ++i) {
+	IRIS.push({ id: ('0' + i.toString(10)).substr(-2,2), label: 'Iris ' + i });
+}
 
 var FILTER = [
 	{ id: '0', label: 'Through' },
@@ -32,7 +32,6 @@ var SHUTTER = [
 	{ id: 'D', label: '1/24' },
 	{ id: 'E', label: '1/25' },
 	{ id: 'F', label: '1/30' }
-
 ];
 
 var PRESET = [];
@@ -76,8 +75,7 @@ var PSSPEED = [
 	{ id: 325, label: 'Speed 04' },
 	{ id: 300, label: 'Speed 03' },
 	{ id: 275, label: 'Speed 02' },
-	{ id: 250, label: 'Speed 01 (Slow)' },
-	{ id: 000, label: 'Max Speed' }
+	{ id: 250, label: 'Speed 01 (Slow)' }
 ];
 
 var SPEED = [
@@ -121,16 +119,16 @@ var SPEED = [
 	{ id: 12, label: 'Speed 12' },
 	{ id: 11, label: 'Speed 11' },
 	{ id: 10, label: 'Speed 10' },
-	{ id: 9, label: 'Speed 09' },
-	{ id: 8, label: 'Speed 08' },
-	{ id: 7, label: 'Speed 07' },
-	{ id: 6, label: 'Speed 06' },
-	{ id: 5, label: 'Speed 05' },
-	{ id: 4, label: 'Speed 04' },
-	{ id: 3, label: 'Speed 03' },
-	{ id: 2, label: 'Speed 02' },
-	{ id: 1, label: 'Speed 01 (Slow)' },
-	{ id: 0, label: 'Stop' }
+	{ id: 9,  label: 'Speed 09' },
+	{ id: 8,  label: 'Speed 08' },
+	{ id: 7,  label: 'Speed 07' },
+	{ id: 6,  label: 'Speed 06' },
+	{ id: 5,  label: 'Speed 05' },
+	{ id: 4,  label: 'Speed 04' },
+	{ id: 3,  label: 'Speed 03' },
+	{ id: 2,  label: 'Speed 02' },
+	{ id: 1,  label: 'Speed 01 (Slow)' },
+	{ id: 0,  label: 'Stop' }
 ];
 
 var GAIN = [
@@ -184,7 +182,6 @@ var GAIN = [
 	{ id: '37', label: '47dB' },
 	{ id: '38', label: '48dB' },
 	{ id: '80', label: 'Auto' }
-
 ];
 
 
@@ -210,7 +207,7 @@ instance.prototype.init = function() {
 	self.zSpeedIndex = 25;
 	self.fSpeed = 25;
 	self.fSpeedIndex = 25;
-	self.gainVal = '08h';
+	self.gainVal = '08';
 	self.gainIndex = 0;
 	self.irisVal = 50;
 	self.irisIndex = 50;
@@ -218,7 +215,7 @@ instance.prototype.init = function() {
 	self.filterIndex = 0;
 	self.shutVal = 0;
 	self.shutIndex = 0
-	self.pedestalVal = 150
+	self.pedestalVal = '096'
 	self.pedestalIndex = 150
 	self.status(self.STATUS_UNKNOWN);
 	self.actions(); // export actions
@@ -848,7 +845,7 @@ instance.prototype.init_presets = function () {
 		},
 	];
 
-var save;
+	var save;
 	for (save = 0; save < 100; save++) {
 		presets.push({
 			category: 'Save Preset',
@@ -871,7 +868,7 @@ var save;
 		});
 	}
 
-var recall;
+	var recall;
 	for (recall = 0; recall < 100; recall++) {
 		presets.push({
 			category: 'Recall Preset',
@@ -1155,7 +1152,6 @@ instance.prototype.action = function(action) {
 
 		case 'ptSpeedS':
 			self.ptSpeed = opt.speed;
-
 			var idx = -1;
 			for (var i = 0; i < SPEED.length; ++i) {
 				if (SPEED[i].id == self.ptSpeed) {
@@ -1167,7 +1163,6 @@ instance.prototype.action = function(action) {
 				self.ptSpeedIndex = idx;
 			}
 			self.setVariable('ptSpeedVar', self.ptSpeed);
-
 			break;
 
 		case 'ptSpeedD':

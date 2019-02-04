@@ -1,27 +1,29 @@
 {
-"name": "panasonic-ptz",
-"version": "1.0.0",
-"api_version": "1.0.0",
-"keywords": [
-	"ptz",
-	"Camera"
-],"manufacturer": "Panasonic",
-"product": [
-	"AW-HE120",
-	"AW-HE130",
-	"AW-HE40",
-	"AW-HE50",
-	"AW-HE60",
-	"AW-HE65",
-	"AW-HE70",
-	"AW-UE70",
-	"AW-SFU01"
-],"shortname": "Panasonic-PTZ",
-"description": "Companion module for Panasonic PTZ Cameras",
-"main": "index.js",
-"scripts": {
-	"test": "echo \"Error: no test specified\" && exit 1"
-},
-"author": "Per Røine <per.roine@gmail.com>",
-"license": "MIT"
+	"name": "panasonic-ptz",
+	"version": "1.0.0",
+	"api_version": "1.0.0",
+	"keywords": [
+		"ptz",
+		"Camera"
+	],
+	"manufacturer": "Panasonic",
+	"product": [
+		"AW-HE120",
+		"AW-HE130",
+		"AW-HE40",
+		"AW-HE50",
+		"AW-HE60",
+		"AW-HE65",
+		"AW-HE70",
+		"AW-UE70",
+		"AW-SFU01"
+	],
+	"shortname": "Panasonic-PTZ",
+	"description": "Companion module for Panasonic PTZ Cameras",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Per Røine <per.roine@gmail.com>",
+	"license": "MIT"
 }
