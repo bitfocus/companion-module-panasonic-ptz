@@ -828,6 +828,38 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
+			category: 'Power',
+			label: 'Power Off',
+			bank: {
+				style: 'text',
+				text: 'Power\\nOff',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'powerOff',
+				}
+			]
+		},
+		{
+			category: 'Power',
+			label: 'Power On',
+			bank: {
+				style: 'text',
+				text: 'Power\\nOn',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'powerOn',
+				}
+			]
+		},
+		{
 			category: 'Recall Preset',
 			label: 'Set Recall Speed',
 			bank: {
@@ -917,6 +949,8 @@ instance.prototype.actions = function(system) {
 		'downRight':      { label: 'Down Right' },
 		'stop':           { label: 'P/T Stop' },
 		'home':           { label: 'P/T Home' },
+		'powerOff':       { label: 'Power Off' },
+		'powerOn':        { label: 'Power On' },
 		'ptSpeedS':       {
 			label: 'P/T Speed',
 			options: [
@@ -1147,6 +1181,16 @@ instance.prototype.action = function(action) {
 
 		case 'home':
 			cmd = 'APC7FFF7FFF';
+			self.sendPTZ(cmd);
+			break;
+
+		case 'powerOff':
+			cmd = 'O0';
+			self.sendPTZ(cmd);
+			break;
+
+		case 'powerOn':
+			cmd = 'O1';
 			self.sendPTZ(cmd);
 			break;
 
