@@ -828,6 +828,38 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
+			category: 'Power',
+			label: 'Power Off',
+			bank: {
+				style: 'text',
+				text: 'Power\\nOff',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'powerOff',
+				}
+			]
+		},
+		{
+			category: 'Power',
+			label: 'Power On',
+			bank: {
+				style: 'text',
+				text: 'Power\\nOn',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'powerOn',
+				}
+			]
+		},
+		{
 			category: 'Recall Preset',
 			label: 'Set Recall Speed',
 			bank: {
@@ -917,6 +949,8 @@ instance.prototype.actions = function(system) {
 		'downRight':      { label: 'Down Right' },
 		'stop':           { label: 'P/T Stop' },
 		'home':           { label: 'P/T Home' },
+		'powerOff':       { label: 'Power Off' },
+		'powerOn':        { label: 'Power On' },
 		'ptSpeedS':       {
 			label: 'P/T Speed',
 			options: [
@@ -1062,7 +1096,7 @@ instance.prototype.sendPTZ = function(str) {
 							self.log('Error from PTZ: ' + result);
 							return;
 							}
-						console.log("Result from REST: ", result);
+						//console.log("Result from REST: ", result);
 						});
 			}
 	debug('PTZ Command =',str)
@@ -1077,7 +1111,7 @@ instance.prototype.sendCam = function(str) {
 							self.log('Error from PTZ: ' + result);
 							return;
 							}
-						console.log("Result from REST: ", result);
+						//console.log("Result from REST: ", result);
 						});
 			}
 	debug('CAM Command =',str)
@@ -1087,12 +1121,15 @@ instance.prototype.sendCam = function(str) {
 instance.prototype.action = function(action) {
 	var self = this;
 	var opt = action.options;
-	var cmd = ''
+	var cmd = '';
+	var n;
+	var string;
+
 	switch (action.action) {
 
 		case 'left':
 			n = parseInt(50 - self.ptSpeed);
-			var string = '' + (n < 10 ? "0"+n : n)
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'PTS'+ string +'50';
 			self.sendPTZ(cmd);
 			break;
@@ -1109,14 +1146,14 @@ instance.prototype.action = function(action) {
 
 		case 'down':
 			n = parseInt(50 - self.ptSpeed);
-			var string = '' + (n < 10 ? "0"+n : n)
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'PTS50' + string;
 			self.sendPTZ(cmd);
 			break;
 
 		case 'upLeft':
 			n = parseInt(50 - self.ptSpeed);
-			var string = '' + (n < 10 ? "0"+n : n)
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'PTS'+ string + parseInt(50 + self.ptSpeed);
 			self.sendPTZ(cmd);
 			break;
@@ -1128,14 +1165,14 @@ instance.prototype.action = function(action) {
 
 		case 'downLeft':
 			n = parseInt(50 - self.ptSpeed);
-			var string = '' + (n < 10 ? "0"+n : n)
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'PTS' + string + string;
 			self.sendPTZ(cmd);
 			break;
 
 		case 'downRight':
 			n = parseInt(50 - self.ptSpeed);
-			var string = '' + (n < 10 ? "0"+n : n)
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'PTS' + parseInt(50 + self.ptSpeed) + string;
 			self.sendPTZ(cmd);
 			break;
@@ -1147,6 +1184,16 @@ instance.prototype.action = function(action) {
 
 		case 'home':
 			cmd = 'APC7FFF7FFF';
+			self.sendPTZ(cmd);
+			break;
+
+		case 'powerOff':
+			cmd = 'O0';
+			self.sendPTZ(cmd);
+			break;
+
+		case 'powerOn':
+			cmd = 'O1';
 			self.sendPTZ(cmd);
 			break;
 
@@ -1189,7 +1236,7 @@ instance.prototype.action = function(action) {
 
 		case 'zoomO':
 			n = parseInt(50 - self.zSpeed);
-			var string = '' + (n < 10 ? "0"+n : n)
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'Z' + string;
 			self.sendPTZ(cmd);
 			break;
@@ -1227,8 +1274,8 @@ instance.prototype.action = function(action) {
 			break;
 
 		case 'focusN':
-			cmd = n = parseInt(50 - self.fSpeed);
-			var string = '' + (n < 10 ? "0"+n : n)
+			n = parseInt(50 - self.fSpeed);
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'F' + string;
 			self.sendPTZ(cmd);
 			break;
@@ -1312,7 +1359,7 @@ instance.prototype.action = function(action) {
 			}
 			self.gainVal = GAIN[self.gainIndex].id
 
-			var cmd = 'OGU:' + self.gainVal.toUpperCase();
+			cmd = 'OGU:' + self.gainVal.toUpperCase();
 			self.sendCam(cmd);
 			break;
 
@@ -1325,13 +1372,13 @@ instance.prototype.action = function(action) {
 			}
 			self.gainVal = GAIN[self.gainIndex].id
 
-			var cmd = 'OGU:' + self.gainVal.toUpperCase();
+			cmd = 'OGU:' + self.gainVal.toUpperCase();
 			self.sendCam(cmd);
 			break;
 
 
 		case 'gainS':
-			var cmd = 'OGU:' + opt.val;
+			cmd = 'OGU:' + opt.val;
 			self.sendCam(cmd);
 			break;
 
@@ -1344,7 +1391,7 @@ instance.prototype.action = function(action) {
 			}
 			self.shutVal = SHUTTER[self.shutIndex].id
 
-			var cmd = 'OSH:' + self.shutVal.toUpperCase();
+			cmd = 'OSH:' + self.shutVal.toUpperCase();
 			self.sendCam(cmd);
 			break;
 
@@ -1357,13 +1404,12 @@ instance.prototype.action = function(action) {
 			}
 			self.shutVal = SHUTTER[self.shutIndex].id
 
-			var cmd = 'OSH:' + self.shutVal.toUpperCase();
+			cmd = 'OSH:' + self.shutVal.toUpperCase();
 			self.sendCam(cmd);
 			break;
 
-
 		case 'shutS':
-			var cmd = 'OSH:' + opt.val.toUpperCase();
+			cmd = 'OSH:' + opt.val.toUpperCase();
 			self.sendCam(cmd);
 			break;
 
@@ -1376,7 +1422,7 @@ instance.prototype.action = function(action) {
 			}
 			self.filterVal = FILTER[self.filterIndex].id
 
-			var cmd = 'OFT:' + self.filterVal;
+			cmd = 'OFT:' + self.filterVal;
 			self.sendCam(cmd);
 			debug(self.filterVal);
 			break;
@@ -1390,14 +1436,14 @@ instance.prototype.action = function(action) {
 			}
 			self.filterVal = FILTER[self.filterIndex].id
 
-			var cmd = 'OFT:' + self.filterVal;
+			cmd = 'OFT:' + self.filterVal;
 			self.sendCam(cmd);
 			debug(self.filterVal);
 			break;
 
 
 		case 'filterS':
-			var cmd = 'OFT:' + opt.val;
+			cmd = 'OFT:' + opt.val;
 			self.sendCam(cmd);
 			break;
 
@@ -1410,7 +1456,7 @@ instance.prototype.action = function(action) {
 			}
 			self.pedestalVal = PEDESTAL[self.pedestalIndex].id
 
-			var cmd = 'OTP:' + self.pedestalVal.toUpperCase();
+			cmd = 'OTP:' + self.pedestalVal.toUpperCase();
 			self.sendCam(cmd);
 			break;
 
@@ -1423,13 +1469,13 @@ instance.prototype.action = function(action) {
 			}
 			self.pedestalVal = PEDESTAL[self.pedestalIndex].id
 
-			var cmd = 'OTP:' + self.pedestalVal.toUpperCase();
+			cmd = 'OTP:' + self.pedestalVal.toUpperCase();
 			self.sendCam(cmd);
 			break;
 
 
 		case 'pedS':
-			var cmd = 'OTP:' + opt.val.toUpperCase();
+			cmd = 'OTP:' + opt.val.toUpperCase();
 			self.sendCam(cmd);
 			break;
 

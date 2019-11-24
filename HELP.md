@@ -20,6 +20,10 @@ Zoom In, Zoom Out, Zoom Speed Up, Zoom Speed Down, Focus Far, Focus Near, Focus 
 
 Set Iris, Iris Open, Iris Close, Set Gain, Gain Up, Gain Down, Set Shutter, Shutter Up, Shutter Down, Set Filter, Filter Up, Filter Down, Set Pedestal, Pedestal Up, Pedestal Down
 
+*Power*
+
+Power Off, Power On
+
 *Save presets*
 
 Save Preset 1-100
