@@ -828,7 +828,7 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
-			category: 'Power',
+			category: 'Power/Tally',
 			label: 'Power Off',
 			bank: {
 				style: 'text',
@@ -844,7 +844,7 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
-			category: 'Power',
+			category: 'Power/Tally',
 			label: 'Power On',
 			bank: {
 				style: 'text',
@@ -856,6 +856,38 @@ instance.prototype.init_presets = function () {
 			actions: [
 				{
 					action: 'powerOn',
+				}
+			]
+		},
+		{
+			category: 'Power/Tally',
+			label: 'Tally Off',
+			bank: {
+				style: 'text',
+				text: 'Tally\\nOff',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'tallyOff',
+				}
+			]
+		},
+		{
+			category: 'Power/Tally',
+			label: 'Tally On',
+			bank: {
+				style: 'text',
+				text: 'Tally\\nOn',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'tallyOn',
 				}
 			]
 		},
@@ -964,6 +996,8 @@ instance.prototype.actions = function(system) {
 		},
 		'ptSpeedU':       { label: 'P/T Speed Up'},
 		'ptSpeedD':       { label: 'P/T Speed Down'},
+		'tallyOff':       { label: 'Tally Off' },
+		'tallyOn':        { label: 'Tally On' },
 		'zoomI':          { label: 'Zoom In' },
 		'zoomO':          { label: 'Zoom Out' },
 		'zoomS':          { label: 'Zoom Stop' },
@@ -1232,6 +1266,16 @@ instance.prototype.action = function(action) {
 			}
 			self.ptSpeed = SPEED[self.ptSpeedIndex].id
 			self.setVariable('ptSpeedVar', self.ptSpeed);
+			break;
+
+		case 'tallyOff':
+			cmd = 'DA0';
+			self.sendPTZ(cmd);
+			break;
+
+		case 'tallyOn':
+			cmd = 'DA1';
+			self.sendPTZ(cmd);
 			break;
 
 		case 'zoomO':
