@@ -196,6 +196,35 @@ function instance(system, id, config) {
 
 
 
+instance.prototype.tallyOnListener = function (label, variable, value) {
+	const self = this;
+	const { tallyOnVariable, tallyOnValue } = self.config;
+
+	if (`${label}:${variable}` !== tallyOnVariable) {
+		return;
+	}
+
+	debug('variable changed... updating tally', { label, variable, value });
+	system.emit('action_run', {
+		action: (value === tallyOnValue ? 'tallyOn' : 'tallyOff'),
+		instance: self.id
+	});
+}
+
+instance.prototype.setupEventListeners = function () {
+	const self = this;
+
+	if (self.config.tallyOnVariable) {
+		if (!self.activeTallyOnListener) {
+			self.activeTallyOnListener = self.tallyOnListener.bind(self);
+			self.system.on('variable_changed', self.activeTallyOnListener);
+		}
+	} else if (self.activeTallyOnListener) {
+		self.system.removeListener('variable_changed', self.activeTallyOnListener);
+		self.activeTallyOnListener = undefined;
+	}
+}
+
 instance.prototype.init = function() {
 	var self = this;
 
@@ -221,12 +250,14 @@ instance.prototype.init = function() {
 	self.actions(); // export actions
 	self.init_presets();
 	self.init_variables();
+	self.setupEventListeners();
 }
 
 instance.prototype.updateConfig = function(config) {
 	var self = this;
 	self.config = config;
 	self.status(self.STATUS_UNKNOWN);
+	self.setupEventListeners();
 };
 
 // Return config fields for web config
@@ -247,6 +278,27 @@ instance.prototype.config_fields = function () {
 			label: 'Camera IP',
 			width: 6,
 			regex: self.REGEX_IP
+		},
+		{
+			type: 'text',
+			id: 'tallyOnInfo',
+			width: 12,
+			label: 'Tally On',
+			value: 'Set camera tally ON when the instance variable equals the value'
+		},
+		{
+			type: 'textinput',
+			id: 'tallyOnVariable',
+			label: 'Tally On Variable',
+			width: 6,
+			tooltip: 'The instance label and variable name.  For example, atem:pgm1_input'
+		},
+		{
+			type: 'textinput',
+			id: 'tallyOnValue',
+			label: 'Tally On Value',
+			width: 6,
+			tooltip: 'When the variable equals this value, the camera tally light will be turned on'
 		}
 	]
 };
