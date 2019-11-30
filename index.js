@@ -204,10 +204,12 @@ instance.prototype.tallyOnListener = function (label, variable, value) {
 		return;
 	}
 
-	debug('variable changed... updating tally', { label, variable, value });
-	system.emit('action_run', {
-		action: (value === tallyOnValue ? 'tallyOn' : 'tallyOff'),
-		instance: self.id
+	system.emit('variable_parse', tallyOnValue, (parsedValue) => {
+		debug('variable changed... updating tally', { label, variable, value, parsedValue });
+		system.emit('action_run', {
+			action: (value === parsedValue ? 'tallyOn' : 'tallyOff'),
+			instance: self.id
+		});
 	});
 }
 
