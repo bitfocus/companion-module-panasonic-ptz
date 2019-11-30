@@ -266,6 +266,18 @@ instance.prototype.updateConfig = function(config) {
 instance.prototype.config_fields = function () {
 	var self = this;
 
+  const dynamicVariableChoices = [];
+  system.emit('variable_get_definitions', (definitions) =>
+		Object.entries(definitions).forEach(([instanceLabel, variables]) =>
+			variables.forEach((variable) =>
+				dynamicVariableChoices.push({
+				  id: `${instanceLabel}:${variable.name}`,
+					label: `${instanceLabel}:${variable.name}`
+				})
+			)
+		)
+  );
+
 	return [
 		{
 			type: 'text',
@@ -289,11 +301,13 @@ instance.prototype.config_fields = function () {
 			value: 'Set camera tally ON when the instance variable equals the value'
 		},
 		{
-			type: 'textinput',
+			type: 'dropdown',
 			id: 'tallyOnVariable',
 			label: 'Tally On Variable',
 			width: 6,
-			tooltip: 'The instance label and variable name.  For example, atem:pgm1_input'
+			tooltip: 'The instance label and variable name',
+			choices: dynamicVariableChoices,
+			minChoicesForSearch: 5
 		},
 		{
 			type: 'textinput',
