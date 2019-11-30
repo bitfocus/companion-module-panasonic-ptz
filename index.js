@@ -306,6 +306,10 @@ instance.prototype.config_fields = function () {
 // When module gets deleted
 instance.prototype.destroy = function() {
 	var self = this;
+	if (self.activeTallyOnListener) {
+		self.system.removeListener('variable_changed', self.activeTallyOnListener);
+		self.activeTallyOnListener = undefined;
+	}
 }
 
 instance.prototype.init_presets = function () {
