@@ -204,9 +204,9 @@ instance.prototype.tallyOnListener = function (label, variable, value) {
 		return;
 	}
 
-	system.emit('variable_parse', tallyOnValue, (parsedValue) => {
+	self.system.emit('variable_parse', tallyOnValue, (parsedValue) => {
 		debug('variable changed... updating tally', { label, variable, value, parsedValue });
-		system.emit('action_run', {
+		self.system.emit('action_run', {
 			action: (value === parsedValue ? 'tallyOn' : 'tallyOff'),
 			instance: self.id
 		});
@@ -267,7 +267,7 @@ instance.prototype.config_fields = function () {
 	var self = this;
 
 	const dynamicVariableChoices = [];
-	system.emit('variable_get_definitions', (definitions) =>
+	self.system.emit('variable_get_definitions', (definitions) =>
 		Object.entries(definitions).forEach(([instanceLabel, variables]) =>
 			variables.forEach((variable) =>
 				dynamicVariableChoices.push({
