@@ -266,17 +266,17 @@ instance.prototype.updateConfig = function(config) {
 instance.prototype.config_fields = function () {
 	var self = this;
 
-  const dynamicVariableChoices = [];
-  system.emit('variable_get_definitions', (definitions) =>
+	const dynamicVariableChoices = [];
+	system.emit('variable_get_definitions', (definitions) =>
 		Object.entries(definitions).forEach(([instanceLabel, variables]) =>
 			variables.forEach((variable) =>
 				dynamicVariableChoices.push({
-				  id: `${instanceLabel}:${variable.name}`,
+					id: `${instanceLabel}:${variable.name}`,
 					label: `${instanceLabel}:${variable.name}`
 				})
 			)
 		)
-  );
+	);
 
 	return [
 		{
