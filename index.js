@@ -321,7 +321,7 @@ instance.prototype.config_fields = function () {
 			id: 'tallyOnValue',
 			label: 'Tally On Value',
 			width: 5,
-			tooltip: 'When the variable equals this value, the camera tally light will be turned on'
+			tooltip: 'When the variable equals this value, the camera tally light will be turned on.  Also supports dynamic variable references.  For example, $(atem:short_1)'
 		}
 	]
 };
