@@ -198,9 +198,9 @@ function instance(system, id, config) {
 
 instance.prototype.tallyOnListener = function (label, variable, value) {
 	const self = this;
-	const { tallyOnVariable, tallyOnValue } = self.config;
+	const { tallyOnEnabled, tallyOnVariable, tallyOnValue } = self.config;
 
-	if (`${label}:${variable}` !== tallyOnVariable) {
+	if (!tallyOnEnabled || `${label}:${variable}` !== tallyOnVariable) {
 		return;
 	}
 
@@ -216,14 +216,14 @@ instance.prototype.tallyOnListener = function (label, variable, value) {
 instance.prototype.setupEventListeners = function () {
 	const self = this;
 
-	if (self.config.tallyOnVariable) {
+	if (self.config.tallyOnEnabled && self.config.tallyOnVariable) {
 		if (!self.activeTallyOnListener) {
 			self.activeTallyOnListener = self.tallyOnListener.bind(self);
 			self.system.on('variable_changed', self.activeTallyOnListener);
 		}
 	} else if (self.activeTallyOnListener) {
 		self.system.removeListener('variable_changed', self.activeTallyOnListener);
-		self.activeTallyOnListener = undefined;
+		delete self.activeTallyOnListener;
 	}
 }
 
@@ -301,6 +301,13 @@ instance.prototype.config_fields = function () {
 			value: 'Set camera tally ON when the instance variable equals the value'
 		},
 		{
+			type: 'checkbox',
+			id: 'tallyOnEnabled',
+			width: 1,
+			label: 'Enable',
+			default: true
+		},
+		{
 			type: 'dropdown',
 			id: 'tallyOnVariable',
 			label: 'Tally On Variable',
@@ -313,7 +320,7 @@ instance.prototype.config_fields = function () {
 			type: 'textinput',
 			id: 'tallyOnValue',
 			label: 'Tally On Value',
-			width: 6,
+			width: 5,
 			tooltip: 'When the variable equals this value, the camera tally light will be turned on'
 		}
 	]
@@ -324,7 +331,7 @@ instance.prototype.destroy = function() {
 	var self = this;
 	if (self.activeTallyOnListener) {
 		self.system.removeListener('variable_changed', self.activeTallyOnListener);
-		self.activeTallyOnListener = undefined;
+		delete self.activeTallyOnListener;
 	}
 }
 
