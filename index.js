@@ -196,6 +196,37 @@ function instance(system, id, config) {
 
 
 
+instance.prototype.tallyOnListener = function (label, variable, value) {
+	const self = this;
+	const { tallyOnEnabled, tallyOnVariable, tallyOnValue } = self.config;
+
+	if (!tallyOnEnabled || `${label}:${variable}` !== tallyOnVariable) {
+		return;
+	}
+
+	self.system.emit('variable_parse', tallyOnValue, (parsedValue) => {
+		debug('variable changed... updating tally', { label, variable, value, parsedValue });
+		self.system.emit('action_run', {
+			action: (value === parsedValue ? 'tallyOn' : 'tallyOff'),
+			instance: self.id
+		});
+	});
+}
+
+instance.prototype.setupEventListeners = function () {
+	const self = this;
+
+	if (self.config.tallyOnEnabled && self.config.tallyOnVariable) {
+		if (!self.activeTallyOnListener) {
+			self.activeTallyOnListener = self.tallyOnListener.bind(self);
+			self.system.on('variable_changed', self.activeTallyOnListener);
+		}
+	} else if (self.activeTallyOnListener) {
+		self.system.removeListener('variable_changed', self.activeTallyOnListener);
+		delete self.activeTallyOnListener;
+	}
+}
+
 instance.prototype.init = function() {
 	var self = this;
 
@@ -221,17 +252,31 @@ instance.prototype.init = function() {
 	self.actions(); // export actions
 	self.init_presets();
 	self.init_variables();
+	self.setupEventListeners();
 }
 
 instance.prototype.updateConfig = function(config) {
 	var self = this;
 	self.config = config;
 	self.status(self.STATUS_UNKNOWN);
+	self.setupEventListeners();
 };
 
 // Return config fields for web config
 instance.prototype.config_fields = function () {
 	var self = this;
+
+	const dynamicVariableChoices = [];
+	self.system.emit('variable_get_definitions', (definitions) =>
+		Object.entries(definitions).forEach(([instanceLabel, variables]) =>
+			variables.forEach((variable) =>
+				dynamicVariableChoices.push({
+					id: `${instanceLabel}:${variable.name}`,
+					label: `${instanceLabel}:${variable.name}`
+				})
+			)
+		)
+	);
 
 	return [
 		{
@@ -247,6 +292,36 @@ instance.prototype.config_fields = function () {
 			label: 'Camera IP',
 			width: 6,
 			regex: self.REGEX_IP
+		},
+		{
+			type: 'text',
+			id: 'tallyOnInfo',
+			width: 12,
+			label: 'Tally On',
+			value: 'Set camera tally ON when the instance variable equals the value'
+		},
+		{
+			type: 'checkbox',
+			id: 'tallyOnEnabled',
+			width: 1,
+			label: 'Enable',
+			default: true
+		},
+		{
+			type: 'dropdown',
+			id: 'tallyOnVariable',
+			label: 'Tally On Variable',
+			width: 6,
+			tooltip: 'The instance label and variable name',
+			choices: dynamicVariableChoices,
+			minChoicesForSearch: 5
+		},
+		{
+			type: 'textinput',
+			id: 'tallyOnValue',
+			label: 'Tally On Value',
+			width: 5,
+			tooltip: 'When the variable equals this value, the camera tally light will be turned on.  Also supports dynamic variable references.  For example, $(atem:short_1)'
 		}
 	]
 };
@@ -254,6 +329,10 @@ instance.prototype.config_fields = function () {
 // When module gets deleted
 instance.prototype.destroy = function() {
 	var self = this;
+	if (self.activeTallyOnListener) {
+		self.system.removeListener('variable_changed', self.activeTallyOnListener);
+		delete self.activeTallyOnListener;
+	}
 }
 
 instance.prototype.init_presets = function () {
@@ -828,7 +907,7 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
-			category: 'Power',
+			category: 'Power/Tally',
 			label: 'Power Off',
 			bank: {
 				style: 'text',
@@ -844,7 +923,7 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
-			category: 'Power',
+			category: 'Power/Tally',
 			label: 'Power On',
 			bank: {
 				style: 'text',
@@ -856,6 +935,38 @@ instance.prototype.init_presets = function () {
 			actions: [
 				{
 					action: 'powerOn',
+				}
+			]
+		},
+		{
+			category: 'Power/Tally',
+			label: 'Tally Off',
+			bank: {
+				style: 'text',
+				text: 'Tally\\nOff',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'tallyOff',
+				}
+			]
+		},
+		{
+			category: 'Power/Tally',
+			label: 'Tally On',
+			bank: {
+				style: 'text',
+				text: 'Tally\\nOn',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'tallyOn',
 				}
 			]
 		},
@@ -964,6 +1075,8 @@ instance.prototype.actions = function(system) {
 		},
 		'ptSpeedU':       { label: 'P/T Speed Up'},
 		'ptSpeedD':       { label: 'P/T Speed Down'},
+		'tallyOff':       { label: 'Tally Off' },
+		'tallyOn':        { label: 'Tally On' },
 		'zoomI':          { label: 'Zoom In' },
 		'zoomO':          { label: 'Zoom Out' },
 		'zoomS':          { label: 'Zoom Stop' },
@@ -1232,6 +1345,16 @@ instance.prototype.action = function(action) {
 			}
 			self.ptSpeed = SPEED[self.ptSpeedIndex].id
 			self.setVariable('ptSpeedVar', self.ptSpeed);
+			break;
+
+		case 'tallyOff':
+			cmd = 'DA0';
+			self.sendPTZ(cmd);
+			break;
+
+		case 'tallyOn':
+			cmd = 'DA1';
+			self.sendPTZ(cmd);
 			break;
 
 		case 'zoomO':
