@@ -196,6 +196,37 @@ function instance(system, id, config) {
 
 
 
+instance.prototype.tallyOnListener = function (label, variable, value) {
+	const self = this;
+	const { tallyOnEnabled, tallyOnVariable, tallyOnValue } = self.config;
+
+	if (!tallyOnEnabled || `${label}:${variable}` !== tallyOnVariable) {
+		return;
+	}
+
+	self.system.emit('variable_parse', tallyOnValue, (parsedValue) => {
+		debug('variable changed... updating tally', { label, variable, value, parsedValue });
+		self.system.emit('action_run', {
+			action: (value === parsedValue ? 'tallyOn' : 'tallyOff'),
+			instance: self.id
+		});
+	});
+}
+
+instance.prototype.setupEventListeners = function () {
+	const self = this;
+
+	if (self.config.tallyOnEnabled && self.config.tallyOnVariable) {
+		if (!self.activeTallyOnListener) {
+			self.activeTallyOnListener = self.tallyOnListener.bind(self);
+			self.system.on('variable_changed', self.activeTallyOnListener);
+		}
+	} else if (self.activeTallyOnListener) {
+		self.system.removeListener('variable_changed', self.activeTallyOnListener);
+		delete self.activeTallyOnListener;
+	}
+}
+
 instance.prototype.init = function() {
 	var self = this;
 
@@ -221,17 +252,31 @@ instance.prototype.init = function() {
 	self.actions(); // export actions
 	self.init_presets();
 	self.init_variables();
+	self.setupEventListeners();
 }
 
 instance.prototype.updateConfig = function(config) {
 	var self = this;
 	self.config = config;
 	self.status(self.STATUS_UNKNOWN);
+	self.setupEventListeners();
 };
 
 // Return config fields for web config
 instance.prototype.config_fields = function () {
 	var self = this;
+
+	const dynamicVariableChoices = [];
+	self.system.emit('variable_get_definitions', (definitions) =>
+		Object.entries(definitions).forEach(([instanceLabel, variables]) =>
+			variables.forEach((variable) =>
+				dynamicVariableChoices.push({
+					id: `${instanceLabel}:${variable.name}`,
+					label: `${instanceLabel}:${variable.name}`
+				})
+			)
+		)
+	);
 
 	return [
 		{
@@ -247,6 +292,36 @@ instance.prototype.config_fields = function () {
 			label: 'Camera IP',
 			width: 6,
 			regex: self.REGEX_IP
+		},
+		{
+			type: 'text',
+			id: 'tallyOnInfo',
+			width: 12,
+			label: 'Tally On',
+			value: 'Set camera tally ON when the instance variable equals the value'
+		},
+		{
+			type: 'checkbox',
+			id: 'tallyOnEnabled',
+			width: 1,
+			label: 'Enable',
+			default: true
+		},
+		{
+			type: 'dropdown',
+			id: 'tallyOnVariable',
+			label: 'Tally On Variable',
+			width: 6,
+			tooltip: 'The instance label and variable name',
+			choices: dynamicVariableChoices,
+			minChoicesForSearch: 5
+		},
+		{
+			type: 'textinput',
+			id: 'tallyOnValue',
+			label: 'Tally On Value',
+			width: 5,
+			tooltip: 'When the variable equals this value, the camera tally light will be turned on.  Also supports dynamic variable references.  For example, $(atem:short_1)'
 		}
 	]
 };
@@ -254,6 +329,10 @@ instance.prototype.config_fields = function () {
 // When module gets deleted
 instance.prototype.destroy = function() {
 	var self = this;
+	if (self.activeTallyOnListener) {
+		self.system.removeListener('variable_changed', self.activeTallyOnListener);
+		delete self.activeTallyOnListener;
+	}
 }
 
 instance.prototype.init_presets = function () {
@@ -265,11 +344,11 @@ instance.prototype.init_presets = function () {
 			bank: {
 				style: 'png',
 				text: '',
-				png64: self.ICON_UP,
+				png64: image_up,
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0)
+				bgcolor: self.rgb(0,0,255)
 			},
 			actions: [
 				{
@@ -288,7 +367,7 @@ instance.prototype.init_presets = function () {
 			bank: {
 				style: 'png',
 				text: '',
-				png64: self.ICON_DOWN,
+				png64: image_down,
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
@@ -311,7 +390,7 @@ instance.prototype.init_presets = function () {
 			bank: {
 				style: 'png',
 				text: '',
-				png64: self.ICON_LEFT,
+				png64: image_left,
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
@@ -334,7 +413,7 @@ instance.prototype.init_presets = function () {
 			bank: {
 				style: 'png',
 				text: '',
-				png64: self.ICON_RIGHT,
+				png64: image_right,
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
@@ -357,7 +436,7 @@ instance.prototype.init_presets = function () {
 			bank: {
 				style: 'png',
 				text: '',
-				png64: self.ICON_UP_RIGHT,
+				png64: image_up_right,
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
@@ -380,7 +459,7 @@ instance.prototype.init_presets = function () {
 			bank: {
 				style: 'png',
 				text: '',
-				png64: self.ICON_UP_LEFT,
+				png64: image_up_left,
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
@@ -403,7 +482,7 @@ instance.prototype.init_presets = function () {
 			bank: {
 				style: 'png',
 				text: '',
-				png64: self.ICON_DOWN_LEFT,
+				png64: image_down_left,
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
@@ -426,7 +505,7 @@ instance.prototype.init_presets = function () {
 			bank: {
 				style: 'png',
 				text: '',
-				png64: self.ICON_DOWN_RIGHT,
+				png64: image_down_right,
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
@@ -828,6 +907,70 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
+			category: 'Power/Tally',
+			label: 'Power Off',
+			bank: {
+				style: 'text',
+				text: 'Power\\nOff',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'powerOff',
+				}
+			]
+		},
+		{
+			category: 'Power/Tally',
+			label: 'Power On',
+			bank: {
+				style: 'text',
+				text: 'Power\\nOn',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'powerOn',
+				}
+			]
+		},
+		{
+			category: 'Power/Tally',
+			label: 'Tally Off',
+			bank: {
+				style: 'text',
+				text: 'Tally\\nOff',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'tallyOff',
+				}
+			]
+		},
+		{
+			category: 'Power/Tally',
+			label: 'Tally On',
+			bank: {
+				style: 'text',
+				text: 'Tally\\nOn',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'tallyOn',
+				}
+			]
+		},
+		{
 			category: 'Recall Preset',
 			label: 'Set Recall Speed',
 			bank: {
@@ -917,6 +1060,8 @@ instance.prototype.actions = function(system) {
 		'downRight':      { label: 'Down Right' },
 		'stop':           { label: 'P/T Stop' },
 		'home':           { label: 'P/T Home' },
+		'powerOff':       { label: 'Power Off' },
+		'powerOn':        { label: 'Power On' },
 		'ptSpeedS':       {
 			label: 'P/T Speed',
 			options: [
@@ -930,6 +1075,8 @@ instance.prototype.actions = function(system) {
 		},
 		'ptSpeedU':       { label: 'P/T Speed Up'},
 		'ptSpeedD':       { label: 'P/T Speed Down'},
+		'tallyOff':       { label: 'Tally Off' },
+		'tallyOn':        { label: 'Tally On' },
 		'zoomI':          { label: 'Zoom In' },
 		'zoomO':          { label: 'Zoom Out' },
 		'zoomS':          { label: 'Zoom Stop' },
@@ -1062,7 +1209,7 @@ instance.prototype.sendPTZ = function(str) {
 							self.log('Error from PTZ: ' + result);
 							return;
 							}
-						console.log("Result from REST: ", result);
+						//console.log("Result from REST: ", result);
 						});
 			}
 	debug('PTZ Command =',str)
@@ -1077,7 +1224,7 @@ instance.prototype.sendCam = function(str) {
 							self.log('Error from PTZ: ' + result);
 							return;
 							}
-						console.log("Result from REST: ", result);
+						//console.log("Result from REST: ", result);
 						});
 			}
 	debug('CAM Command =',str)
@@ -1087,12 +1234,15 @@ instance.prototype.sendCam = function(str) {
 instance.prototype.action = function(action) {
 	var self = this;
 	var opt = action.options;
-	var cmd = ''
+	var cmd = '';
+	var n;
+	var string;
+
 	switch (action.action) {
 
 		case 'left':
 			n = parseInt(50 - self.ptSpeed);
-			var string = '' + (n < 10 ? "0"+n : n)
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'PTS'+ string +'50';
 			self.sendPTZ(cmd);
 			break;
@@ -1109,14 +1259,14 @@ instance.prototype.action = function(action) {
 
 		case 'down':
 			n = parseInt(50 - self.ptSpeed);
-			var string = '' + (n < 10 ? "0"+n : n)
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'PTS50' + string;
 			self.sendPTZ(cmd);
 			break;
 
 		case 'upLeft':
 			n = parseInt(50 - self.ptSpeed);
-			var string = '' + (n < 10 ? "0"+n : n)
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'PTS'+ string + parseInt(50 + self.ptSpeed);
 			self.sendPTZ(cmd);
 			break;
@@ -1128,14 +1278,14 @@ instance.prototype.action = function(action) {
 
 		case 'downLeft':
 			n = parseInt(50 - self.ptSpeed);
-			var string = '' + (n < 10 ? "0"+n : n)
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'PTS' + string + string;
 			self.sendPTZ(cmd);
 			break;
 
 		case 'downRight':
 			n = parseInt(50 - self.ptSpeed);
-			var string = '' + (n < 10 ? "0"+n : n)
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'PTS' + parseInt(50 + self.ptSpeed) + string;
 			self.sendPTZ(cmd);
 			break;
@@ -1147,6 +1297,16 @@ instance.prototype.action = function(action) {
 
 		case 'home':
 			cmd = 'APC7FFF7FFF';
+			self.sendPTZ(cmd);
+			break;
+
+		case 'powerOff':
+			cmd = 'O0';
+			self.sendPTZ(cmd);
+			break;
+
+		case 'powerOn':
+			cmd = 'O1';
 			self.sendPTZ(cmd);
 			break;
 
@@ -1187,9 +1347,19 @@ instance.prototype.action = function(action) {
 			self.setVariable('ptSpeedVar', self.ptSpeed);
 			break;
 
+		case 'tallyOff':
+			cmd = 'DA0';
+			self.sendPTZ(cmd);
+			break;
+
+		case 'tallyOn':
+			cmd = 'DA1';
+			self.sendPTZ(cmd);
+			break;
+
 		case 'zoomO':
 			n = parseInt(50 - self.zSpeed);
-			var string = '' + (n < 10 ? "0"+n : n)
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'Z' + string;
 			self.sendPTZ(cmd);
 			break;
@@ -1227,8 +1397,8 @@ instance.prototype.action = function(action) {
 			break;
 
 		case 'focusN':
-			cmd = n = parseInt(50 - self.fSpeed);
-			var string = '' + (n < 10 ? "0"+n : n)
+			n = parseInt(50 - self.fSpeed);
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'F' + string;
 			self.sendPTZ(cmd);
 			break;
@@ -1312,7 +1482,7 @@ instance.prototype.action = function(action) {
 			}
 			self.gainVal = GAIN[self.gainIndex].id
 
-			var cmd = 'OGU:' + self.gainVal.toUpperCase();
+			cmd = 'OGU:' + self.gainVal.toUpperCase();
 			self.sendCam(cmd);
 			break;
 
@@ -1325,13 +1495,13 @@ instance.prototype.action = function(action) {
 			}
 			self.gainVal = GAIN[self.gainIndex].id
 
-			var cmd = 'OGU:' + self.gainVal.toUpperCase();
+			cmd = 'OGU:' + self.gainVal.toUpperCase();
 			self.sendCam(cmd);
 			break;
 
 
 		case 'gainS':
-			var cmd = 'OGU:' + opt.val;
+			cmd = 'OGU:' + opt.val;
 			self.sendCam(cmd);
 			break;
 
@@ -1344,7 +1514,7 @@ instance.prototype.action = function(action) {
 			}
 			self.shutVal = SHUTTER[self.shutIndex].id
 
-			var cmd = 'OSH:' + self.shutVal.toUpperCase();
+			cmd = 'OSH:' + self.shutVal.toUpperCase();
 			self.sendCam(cmd);
 			break;
 
@@ -1357,13 +1527,12 @@ instance.prototype.action = function(action) {
 			}
 			self.shutVal = SHUTTER[self.shutIndex].id
 
-			var cmd = 'OSH:' + self.shutVal.toUpperCase();
+			cmd = 'OSH:' + self.shutVal.toUpperCase();
 			self.sendCam(cmd);
 			break;
 
-
 		case 'shutS':
-			var cmd = 'OSH:' + opt.val.toUpperCase();
+			cmd = 'OSH:' + opt.val.toUpperCase();
 			self.sendCam(cmd);
 			break;
 
@@ -1376,7 +1545,7 @@ instance.prototype.action = function(action) {
 			}
 			self.filterVal = FILTER[self.filterIndex].id
 
-			var cmd = 'OFT:' + self.filterVal;
+			cmd = 'OFT:' + self.filterVal;
 			self.sendCam(cmd);
 			debug(self.filterVal);
 			break;
@@ -1390,14 +1559,14 @@ instance.prototype.action = function(action) {
 			}
 			self.filterVal = FILTER[self.filterIndex].id
 
-			var cmd = 'OFT:' + self.filterVal;
+			cmd = 'OFT:' + self.filterVal;
 			self.sendCam(cmd);
 			debug(self.filterVal);
 			break;
 
 
 		case 'filterS':
-			var cmd = 'OFT:' + opt.val;
+			cmd = 'OFT:' + opt.val;
 			self.sendCam(cmd);
 			break;
 
@@ -1410,7 +1579,7 @@ instance.prototype.action = function(action) {
 			}
 			self.pedestalVal = PEDESTAL[self.pedestalIndex].id
 
-			var cmd = 'OTP:' + self.pedestalVal.toUpperCase();
+			cmd = 'OTP:' + self.pedestalVal.toUpperCase();
 			self.sendCam(cmd);
 			break;
 
@@ -1423,13 +1592,13 @@ instance.prototype.action = function(action) {
 			}
 			self.pedestalVal = PEDESTAL[self.pedestalIndex].id
 
-			var cmd = 'OTP:' + self.pedestalVal.toUpperCase();
+			cmd = 'OTP:' + self.pedestalVal.toUpperCase();
 			self.sendCam(cmd);
 			break;
 
 
 		case 'pedS':
-			var cmd = 'OTP:' + opt.val.toUpperCase();
+			cmd = 'OTP:' + opt.val.toUpperCase();
 			self.sendCam(cmd);
 			break;
 
@@ -1454,4 +1623,22 @@ instance.prototype.action = function(action) {
 };
 
 instance_skel.extendedBy(instance);
+
+ // Variables for Base64 image data do not edit
+var image_up = 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6AQMAAAApyY3OAAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDAgNzkuMTYwNDUxLCAyMDE3LzA1LzA2LTAxOjA4OjIxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+LUNEtwAAAARnQU1BAACxjwv8YQUAAAABc1JHQgCuzhzpAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAAIFJREFUKM+90EEKgzAQRmFDFy49ghcp5FquVPBighcRegHBjWDJ68D8U6F7m00+EnhkUlW3ru6rdyCV0INQzSg1zFLLKmU2aeCQQMEEJXIQORRsTLNyKJhNm3IoaPBg4mQorp2Mh1+00kKN307o/bZrpt5O/FlPU/c75X91/fPd6wPRD1eHyHEL4wAAAABJRU5ErkJggg==';
+
+var image_down = 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6AQMAAAApyY3OAAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDAgNzkuMTYwNDUxLCAyMDE3LzA1LzA2LTAxOjA4OjIxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+LUNEtwAAAARnQU1BAACxjwv8YQUAAAABc1JHQgCuzhzpAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAAIlJREFUKM/F0DEOwyAMBVAjDxk5Qo7CtdiClIv1KJF6gUpZIhXxY2zTDJ2benoS8LFN9MsKbYjxF2XRS1UZ4bCeGFztFmNqphURpidm146kpwFvLDYJpPQtLSLNoySyP2bRpoqih2oSFW8K3lYAxmJGXA88XMnjeuDmih7XA8vXvNeeqX6U6aY6AacbWAQNWOPUAAAAAElFTkSuQmCC';
+
+var image_left = 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6AQMAAAApyY3OAAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDAgNzkuMTYwNDUxLCAyMDE3LzA1LzA2LTAxOjA4OjIxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+LUNEtwAAAARnQU1BAACxjwv8YQUAAAABc1JHQgCuzhzpAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAAHpJREFUKM+1kTEOgCAQBM9Q2JjwA/mJPA2fxlN4giWF8TRBBhMpbKSaZie3i8gPb4Y8FNZKGm8YIAONkNWacIruQLejy+gyug1dQhfRqZa0v6gYA6QfqSWapZnto1B6XdUuFaVHoJunr2MD21nIdJYUEhLYfoGmP777BKKIXC0eYSD5AAAAAElFTkSuQmCC';
+
+var image_right = 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6AQMAAAApyY3OAAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDAgNzkuMTYwNDUxLCAyMDE3LzA1LzA2LTAxOjA4OjIxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+LUNEtwAAAARnQU1BAACxjwv8YQUAAAABc1JHQgCuzhzpAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAAHhJREFUKM+10LERgCAMQFE4CktHcBRWcRMYzVEcwdKCI+od+fGksVCq3/AuiXOfvZnaNXzRClVrEKtMLdSqP2RTRQAFMAFGwAlw7MAk0sAzGnhVoerLKg/F5Pv4NoFNZZNGpk9sxJYeLsDdL5T7S8IFOM/R3OZ+fQeQZV9pMy+bVgAAAABJRU5ErkJggg==';
+
+var image_up_right = 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAMAAAAk2e+/AAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDAgNzkuMTYwNDUxLCAyMDE3LzA1LzA2LTAxOjA4OjIxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+LUNEtwAAAARnQU1BAACxjwv8YQUAAAABc1JHQgCuzhzpAAABhlBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+X02G5AAAAgXRSTlMAAte32QZhZx7d+TywDTf8/d5VstYPOxULNvKmSY8TFBrxyeGCluJeELQ5uw7ULND4BedlKuv2P/vDA8UgCk30WO41s8+5X8dABAz6QhHVaR156JpPnihSfTJDNOMBm4bzSICqr23NsRjcGRbtjTCS2lzsOmyu9+WLKb2fTL8+RPDhqO4yAAABfElEQVRYw+3WZW/CUBQG4AO0FBsOwwcMm7sLc3d3d3e388/HGGs7lpD0tsm+9P3S5CT3SdPec+8BkCNHzv9FAVAAEABYdQDkA7jo9GNUIDMBzstb5vr0/Gx8Z35zOjI36R2xbu+619eWa2xCoK0FClF5h1cWxDHEwilEOyLlQc8hokoAlMRcESBh7siQlJBWKkijNaHuPrWBED9iYiDQ7Pv1D4Z4/DXyFo2JgeAghQEkEgAvT6IgNo/PIUmgd62oj80mqEIpINoXRkmg2j2UBDIWVXKLTSXEUIOF/xbV5aRQsJvvUOoqMqjZZ+c7FcX8ThYCtTbxHV0fkEGDA73D3Dpzi/6rWEYAdSn579PZ/t3IBJChkef0dLRlHXdkJ6TSmSnmiYPq1LQIiGHX9BvZYinJ7/+R6q1czUG0j9KSOTxDc6UhshZhMIQrS78mncwZtzErrNcYL6V2Zd0tJ6i7QFtAYPcvHv25W6J+/Y3BrRA/x6WGuGN5mpUjhyyfsGtrpKE95HoAAAAASUVORK5CYII=';
+
+var image_down_right = 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAMAAAAk2e+/AAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDAgNzkuMTYwNDUxLCAyMDE3LzA1LzA2LTAxOjA4OjIxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+LUNEtwAAAARnQU1BAACxjwv8YQUAAAABc1JHQgCuzhzpAAABXFBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9jYfXuAAAAc3RSTlMAQ98Ox1j9gAtRNTqBPfgu9p/MTQ+G1Qfx7Y0VBYyJgjkGd3ysU+Zz1IQvMM20PgwBp8Mi4TSUiDvlPxylsaF2WfcjJh0S+wLzQLmY4l/ovX3ra1rPLAOSKa4RUEvgcZwbFHqPzodGbX7qPMvCtsEq1laguT+HEwAAAVlJREFUWMPt1sduwkAQgOGxDfFCIITe0nvvvZHee++992TeX4pJQIC9hPWaQ6T41x6skfY7WGPJAGZm/6qgZjIH4AMgOp2Lq32batTkdW/trPt9+qC70DVmSKS2BXF7A1fX9DDnN2FUSpe8y5hID3SZuJMmrcwmoSFm5vD0BDWSNTnCUmZoD1PZtJCDGfIgRUpBMjPkR4rEAwUtFIkHAkKRuCCaxAdRJE5IK/FCGumWF1JLEW5ILfFD2ST9UBaJA6JLPBCQ57xAJcp5NQbtSgBReJSsH8QI5No8ODo+u397ecL3T35IGhcRA4jig8E9qmjAX2OGnAV5ggrxr0ELOaByVmg6B1TGvEYyTvxcKUaMv/ii7xN/VAZYY2dfSHkkPOYY7Kpf7OmLzLfGPIFGd6izWrRUjdYt9Xfo+ULsLpgRKqGtGyadAEIUmnuhXSAwMAXD5j+omZlZRl+X30CWTm2dHwAAAABJRU5ErkJggg==';
+
+var image_up_left = 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAMAAAAk2e+/AAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDAgNzkuMTYwNDUxLCAyMDE3LzA1LzA2LTAxOjA4OjIxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+LUNEtwAAAARnQU1BAACxjwv8YQUAAAABc1JHQgCuzhzpAAABLFBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9PVkEkAAAAY3RSTlMAAQ/6Uc0OEAvHTzL7TcudsMHvdwnfUwMcG8UGiIfTrIkg9QI+/ZTDe460km73LNovCo1vQUuR4Lwk45/OK+3UERTkekziZlSK8QQnoOsFaaXmLqOylvPZLYDRZTUWUpiTDfAuEmiSAAABUklEQVRYw+3WZ2+DMBAG4EtTygrQ7NHsJt1777333vv+/38o6gIMSo0dqf3AK1lIZ/mRjPEJgCBBgvxtQr8WqDKbCiWUG1AnYXU7C7UJqKQSR5oKQwqIPphsYW24nEPjJCYXilf9F+G+qeTmThTP5w8X8gK9NLqOGMGPhD8fdXtBkGihlmlsmF5aqK2xg9FmQe3/DupuEhTpoT41z/V1HVHfxWRRo/6ORBfyjILx9mRo+2MDlS3ggF5q4uP9qzmVNjfOA+EDdDLcWA8IW6FJEJPkCbFI3hCDZEFVPsmC7mQuyYJ0iUuyIAG4JDvEJTkgHskJcUgExC6RECmxQ4REDa24ILsU6wL/rfYHskmX9C87Pfi9aA5cUmnRx/kffDmncSCkat7X342KSzOIuesNR1WSl7GU8Xfbbs9Gyoo0TvRp6Tie8d2TOsyx51UMEiQIS94B13oTqqYgGGoAAAAASUVORK5CYII=';
+
+var image_down_left = 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAMAAAAk2e+/AAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDAgNzkuMTYwNDUxLCAyMDE3LzA1LzA2LTAxOjA4OjIxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+LUNEtwAAAARnQU1BAACxjwv8YQUAAAABc1JHQgCuzhzpAAABg1BMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8aT76cAAAAgHRSTlMAafwJfflezc+3WA7Z5Rk6PAvpBNE73kJT89QxZ48czNIv9A1DnI3qKQUaymjT4a7HdVuGf85LR20CVHr+tLBlA0GvYSTYZEnbAcazNPX4yB4GrAgnmL6Bcj4qIVKIe8kdVadIEe27B90bOG/3Er1rYJq1wibyh+4Q5CMzRllMXDo5euMAAAGfSURBVFjD7dblUwJBGAbw5aSlBJRGQERBkLC7u7u7u7veP90jDnaEcdhjP+k9X5h9Zu43O7PLe4eQECH/KGsIaUooOEcLK75LpehH628idSrE+nMANfyQ3MY2BRm0C6mM462tUwJAJtVyUB1WmsoSFZEk46D6TBcYS3UKPpCYawxD5VxHImVD/RHIxMQbGintkGQcppkcOkuutQPYfkDfmjck556ZTSydve2YY5UWk0Mww672VPh+XFqCU8tA+whtL+KOpa+bF3Rh8B4ymDNaSnSzG9IPIpsL34/HTPZfS58auMPYuYNMWcQXOsD3U9ZDOkZkkCvqwSIqUI2WfEDmgiQxRANiIp8GKtDLO6/Znw19oOdXhKoROtEUBr1F5Y9f4dt1XygqKgh6YqcHwMQkQBWICr1H6czTgrpoQde0IGnekJEWNEwLMv/GPDDB/M/fDioVeLYA5GqoYt+xNRY4toJkCiBUG7vTEVxJu2Z549RbqXQuba7uVDZWO66mgw6d7kYaEPvvCb+REIp/srGzLP4aa0n8zKFkKUSIkD+Qb9QrYMvxAbaBAAAAAElFTkSuQmCC';
+
 exports = module.exports = instance;
