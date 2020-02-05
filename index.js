@@ -1192,6 +1192,7 @@ instance.prototype.actions = function(system) {
 					type: 'dropdown',
 					label: 'speed setting',
 					id: 'speed',
+					default: 999,
 					choices: PSSPEED
 				}
 			]
