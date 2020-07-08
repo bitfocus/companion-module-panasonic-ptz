@@ -273,9 +273,10 @@ instance.prototype.getCameraInformation = function () {
 				self.log('Error from PTZ: ' + err);
 				return;
 			}
-			console.log('response',response);
-			console.log('data',data);
-			self.setVariable('model', 'from camera data');
+			if('data',data.response.req) {
+				self.status(self.STATUS_OK);
+			}
+			// self.setVariable('model', 'from camera data');
 		});
 	}
 };
@@ -1068,7 +1069,7 @@ instance.prototype.init_variables = function () {
 	variables.push({ name: 'ptSpeedVar', label: 'Pan/Tilt Speed' });
 	variables.push({ name: 'zSpeedVar', label: 'Zoom Speed' });
 	variables.push({ name: 'fSpeedVar', label: 'Focus Speed' });
-	variables.push({ name: 'model', label: 'Model of camera' });
+	// variables.push({ name: 'model', label: 'Model of camera' });
 	self.setVariableDefinitions(variables);
 };
 
