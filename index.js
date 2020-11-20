@@ -36,12 +36,12 @@ var SHUTTER = [
 
 var PRESET = [];
 for (var i = 0; i < 100; ++i) {
-	PRESET.push({ id: ('0' + i.toString(10)).substr(-2, 2), label: 'Preset ' + (i + 1) });
+	PRESET.push({ id: ('0' + i.toString(10)).substr(-2,2), label: 'Preset ' + (i +1) });
 }
 
 var PEDESTAL = [];
 for (var i = 0; i < 300; ++i) {
-	PEDESTAL.push({ id: ('00' + i.toString(16)).substr(-3, 3), label: 'Pedestal ' + i });
+	PEDESTAL.push({ id: ('00' + i.toString(16)).substr(-3,3), label: 'Pedestal ' + i });
 }
 
 var PSSPEED = [
@@ -119,16 +119,16 @@ var SPEED = [
 	{ id: 12, label: 'Speed 12' },
 	{ id: 11, label: 'Speed 11' },
 	{ id: 10, label: 'Speed 10' },
-	{ id: 9, label: 'Speed 09' },
-	{ id: 8, label: 'Speed 08' },
-	{ id: 7, label: 'Speed 07' },
-	{ id: 6, label: 'Speed 06' },
-	{ id: 5, label: 'Speed 05' },
-	{ id: 4, label: 'Speed 04' },
-	{ id: 3, label: 'Speed 03' },
-	{ id: 2, label: 'Speed 02' },
-	{ id: 1, label: 'Speed 01 (Slow)' },
-	{ id: 0, label: 'Stop' }
+	{ id: 9,  label: 'Speed 09' },
+	{ id: 8,  label: 'Speed 08' },
+	{ id: 7,  label: 'Speed 07' },
+	{ id: 6,  label: 'Speed 06' },
+	{ id: 5,  label: 'Speed 05' },
+	{ id: 4,  label: 'Speed 04' },
+	{ id: 3,  label: 'Speed 03' },
+	{ id: 2,  label: 'Speed 02' },
+	{ id: 1,  label: 'Speed 01 (Slow)' },
+	{ id: 0,  label: 'Stop' }
 ];
 
 var GAIN = [
@@ -227,7 +227,7 @@ instance.prototype.setupEventListeners = function () {
 	}
 }
 
-instance.prototype.init = function () {
+instance.prototype.init = function() {
 	var self = this;
 
 	debug = self.debug;
@@ -248,40 +248,14 @@ instance.prototype.init = function () {
 	self.shutIndex = 0
 	self.pedestalVal = '096'
 	self.pedestalIndex = 150
-	self.status(self.STATUS_WARNING, 'connecting');
+	self.status(self.STATUS_UNKNOWN);
 	self.actions(); // export actions
 	self.init_presets();
 	self.init_variables();
-	self.setInitialVariables();
 	self.setupEventListeners();
-	self.getCameraInformation();
 }
 
-instance.prototype.setInitialVariables = function() {
-	var self = this;
-	self.setVariable('ptSpeedVar', self.ptSpeed);
-	self.setVariable('zSpeedVar', self.zSpeed);
-	self.setVariable('fSpeedVar', self.fSpeed);
-}
-
-instance.prototype.getCameraInformation = function () {
-	var self = this;
-
-	if (self.config.host) {
-		self.system.emit('rest_get', 'http://' + self.config.host + '/live/camdata.html', function (err, data, response) {
-			if (err) {
-				self.log('Error from PTZ: ' + err);
-				return;
-			}
-			if('data',data.response.req) {
-				self.status(self.STATUS_OK);
-			}
-			// self.setVariable('model', 'from camera data');
-		});
-	}
-};
-
-instance.prototype.updateConfig = function (config) {
+instance.prototype.updateConfig = function(config) {
 	var self = this;
 	self.config = config;
 	self.status(self.STATUS_UNKNOWN);
@@ -353,7 +327,7 @@ instance.prototype.config_fields = function () {
 };
 
 // When module gets deleted
-instance.prototype.destroy = function () {
+instance.prototype.destroy = function() {
 	var self = this;
 	if (self.activeTallyOnListener) {
 		self.system.removeListener('variable_changed', self.activeTallyOnListener);
@@ -374,7 +348,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0,0,0)
 			},
 			actions: [
 				{
@@ -397,7 +371,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0,0,0)
 			},
 			actions: [
 				{
@@ -420,7 +394,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0,0,0)
 			},
 			actions: [
 				{
@@ -443,7 +417,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0,0,0)
 			},
 			actions: [
 				{
@@ -466,7 +440,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0,0,0)
 			},
 			actions: [
 				{
@@ -489,7 +463,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0,0,0)
 			},
 			actions: [
 				{
@@ -512,7 +486,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0,0,0)
 			},
 			actions: [
 				{
@@ -535,7 +509,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0,0,0)
 			},
 			actions: [
 				{
@@ -556,7 +530,7 @@ instance.prototype.init_presets = function () {
 				text: 'HOME',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0,0,0)
 			},
 			actions: [
 				{
@@ -572,7 +546,7 @@ instance.prototype.init_presets = function () {
 				text: 'SPEED\\nUP\\n$(HE120:ptSpeedVar)',
 				size: '14',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0,0,0)
 			},
 			actions: [
 				{
@@ -588,7 +562,7 @@ instance.prototype.init_presets = function () {
 				text: 'SPEED\\nDOWN\\n$(HE120:ptSpeedVar)',
 				size: '14',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0,0,0)
 			},
 			actions: [
 				{
@@ -604,7 +578,7 @@ instance.prototype.init_presets = function () {
 				text: 'ZOOM\\nIN',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0,0,0)
 			},
 			actions: [
 				{
@@ -625,7 +599,7 @@ instance.prototype.init_presets = function () {
 				text: 'ZOOM\\nOUT',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0,0,0)
 			},
 			actions: [
 				{
@@ -646,7 +620,7 @@ instance.prototype.init_presets = function () {
 				text: 'ZOOM\\nSPEED\\nUP\\n$(HE120:zSpeedVar)',
 				size: '7',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0,0,0)
 			},
 			actions: [
 				{
@@ -662,7 +636,7 @@ instance.prototype.init_presets = function () {
 				text: 'ZOOM\\nSPEED\\nDOWN\\n$(HE120:zSpeedVar)',
 				size: '7',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0,0,0)
 			},
 			actions: [
 				{
@@ -678,7 +652,7 @@ instance.prototype.init_presets = function () {
 				text: 'FOCUS\\nNEAR',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
@@ -699,7 +673,7 @@ instance.prototype.init_presets = function () {
 				text: 'FOCUS\\nFAR',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
@@ -720,7 +694,7 @@ instance.prototype.init_presets = function () {
 				text: 'FOCUS\\nSPEED\\nUP\\n$(HE120:fSpeedVar)',
 				size: '7',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0,0,0)
 			},
 			actions: [
 				{
@@ -736,8 +710,8 @@ instance.prototype.init_presets = function () {
 				text: 'FOCUS\\nSPEED\\nDOWN\\n$(HE120:fSpeedVar)',
 				size: '7',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
-			},
+				bgcolor: self.rgb(0,0,0)
+		},
 			actions: [
 				{
 					action: 'fSpeedD',
@@ -752,7 +726,7 @@ instance.prototype.init_presets = function () {
 				text: 'AUTO\\nFOCUS',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 				latch: true
 			},
 			actions: [
@@ -773,6 +747,26 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
+			category: 'Lens',
+			label: 'One Touch Focus',
+			bank: {
+				style: 'text',
+				text: 'OTF\\nFOCUS',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+				latch: true
+			},
+			actions: [
+				{
+					action: 'focusOTF',
+					options: {
+						bol: 0,
+					}
+				}
+			],
+		},
+		{
 			category: 'Exposure',
 			label: 'Gain Up',
 			bank: {
@@ -780,7 +774,7 @@ instance.prototype.init_presets = function () {
 				text: 'GAIN\\nUP',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
@@ -796,7 +790,7 @@ instance.prototype.init_presets = function () {
 				text: 'GAIN\\nDOWN',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
@@ -812,7 +806,7 @@ instance.prototype.init_presets = function () {
 				text: 'IRIS\\nUP',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
@@ -828,7 +822,7 @@ instance.prototype.init_presets = function () {
 				text: 'IRIS\\nDOWN',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
@@ -844,7 +838,7 @@ instance.prototype.init_presets = function () {
 				text: 'Shut\\nUP',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
@@ -860,7 +854,7 @@ instance.prototype.init_presets = function () {
 				text: 'Shut\\nDOWN',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
@@ -876,7 +870,7 @@ instance.prototype.init_presets = function () {
 				text: 'Pedestal\\nUP',
 				size: '14',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
@@ -892,7 +886,7 @@ instance.prototype.init_presets = function () {
 				text: 'Pedestal\\nDOWN',
 				size: '14',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
@@ -908,7 +902,7 @@ instance.prototype.init_presets = function () {
 				text: 'Filter\\nUP',
 				size: '14',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
@@ -924,7 +918,7 @@ instance.prototype.init_presets = function () {
 				text: 'Filter\\nDOWN',
 				size: '14',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
@@ -940,7 +934,7 @@ instance.prototype.init_presets = function () {
 				text: 'Power\\nOff',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
@@ -956,7 +950,7 @@ instance.prototype.init_presets = function () {
 				text: 'Power\\nOn',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
@@ -972,7 +966,7 @@ instance.prototype.init_presets = function () {
 				text: 'Tally\\nOff',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
@@ -988,7 +982,7 @@ instance.prototype.init_presets = function () {
 				text: 'Tally\\nOn',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
@@ -1004,7 +998,7 @@ instance.prototype.init_presets = function () {
 				text: 'Set\\nRecall\\nSpeed',
 				size: '14',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
@@ -1018,19 +1012,19 @@ instance.prototype.init_presets = function () {
 	for (save = 0; save < 100; save++) {
 		presets.push({
 			category: 'Save Preset',
-			label: 'Save Preset ' + parseInt(save + 1),
+			label: 'Save Preset '+ parseInt(save+1) ,
 			bank: {
 				style: 'text',
-				text: 'SAVE\\nPSET\\n' + parseInt(save + 1),
+				text: 'SAVE\\nPSET\\n' + parseInt(save+1) ,
 				size: '14',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
 					action: 'savePset',
 					options: {
-						val: ('0' + save.toString(10).toUpperCase()).substr(-2, 2),
+						val: ('0' + save.toString(10).toUpperCase()).substr(-2,2),
 					}
 				}
 			]
@@ -1041,19 +1035,19 @@ instance.prototype.init_presets = function () {
 	for (recall = 0; recall < 100; recall++) {
 		presets.push({
 			category: 'Recall Preset',
-			label: 'Recall Preset ' + parseInt(recall + 1),
+			label: 'Recall Preset '+ parseInt(recall+1) ,
 			bank: {
 				style: 'text',
-				text: 'Recall\\nPSET\\n' + parseInt(recall + 1),
+				text: 'Recall\\nPSET\\n' + parseInt(recall+1) ,
 				size: '14',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0,0,0),
 			},
 			actions: [
 				{
 					action: 'recallPset',
 					options: {
-						val: ('0' + recall.toString(10).toUpperCase()).substr(-2, 2),
+						val: ('0' + recall.toString(10).toUpperCase()).substr(-2,2),
 					}
 				}
 			]
@@ -1063,33 +1057,32 @@ instance.prototype.init_presets = function () {
 	self.setPresetDefinitions(presets);
 };
 
-instance.prototype.init_variables = function () {
+instance.prototype.init_variables = function() {
 	var self = this;
 	var variables = [];
 	variables.push({ name: 'ptSpeedVar', label: 'Pan/Tilt Speed' });
-	variables.push({ name: 'zSpeedVar', label: 'Zoom Speed' });
-	variables.push({ name: 'fSpeedVar', label: 'Focus Speed' });
-	// variables.push({ name: 'model', label: 'Model of camera' });
+	variables.push({ name: 'zSpeedVar',  label: 'Zoom Speed' });
+	variables.push({ name: 'fSpeedVar',  label: 'Focus Speed' });
 	self.setVariableDefinitions(variables);
 };
 
-instance.prototype.actions = function (system) {
+instance.prototype.actions = function(system) {
 	var self = this;
 
 	self.system.emit('instance_actions', self.id, {
-		'left': { label: 'Pan Left' },
-		'right': { label: 'Pan Right' },
-		'up': { label: 'Tilt Up' },
-		'down': { label: 'Tilt Down' },
-		'upLeft': { label: 'Up Left' },
-		'upRight': { label: 'Up Right' },
-		'downLeft': { label: 'Down Left' },
-		'downRight': { label: 'Down Right' },
-		'stop': { label: 'P/T Stop' },
-		'home': { label: 'P/T Home' },
-		'powerOff': { label: 'Power Off' },
-		'powerOn': { label: 'Power On' },
-		'ptSpeedS': {
+		'left':           { label: 'Pan Left' },
+		'right':          { label: 'Pan Right' },
+		'up':             { label: 'Tilt Up' },
+		'down':           { label: 'Tilt Down' },
+		'upLeft':         { label: 'Up Left' },
+		'upRight':        { label: 'Up Right' },
+		'downLeft':       { label: 'Down Left' },
+		'downRight':      { label: 'Down Right' },
+		'stop':           { label: 'P/T Stop' },
+		'home':           { label: 'P/T Home' },
+		'powerOff':       { label: 'Power Off' },
+		'powerOn':        { label: 'Power On' },
+		'ptSpeedS':       {
 			label: 'P/T Speed',
 			options: [
 				{
@@ -1100,34 +1093,35 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
-		'ptSpeedU': { label: 'P/T Speed Up' },
-		'ptSpeedD': { label: 'P/T Speed Down' },
-		'tallyOff': { label: 'Tally Off' },
-		'tallyOn': { label: 'Tally On' },
-		'zoomI': { label: 'Zoom In' },
-		'zoomO': { label: 'Zoom Out' },
-		'zoomS': { label: 'Zoom Stop' },
-		'zSpeedU': { label: 'Zoom Speed Up' },
-		'zSpeedD': { label: 'Zoom Speed Down' },
-		'focusN': { label: 'Focus Near' },
-		'focusF': { label: 'Focus Far' },
-		'focusS': { label: 'Focus Stop' },
-		'fSpeedU': { label: 'Focus Speed Up' },
-		'fSpeedD': { label: 'Focus Speed Down' },
-		'focusM': {
+		'ptSpeedU':       { label: 'P/T Speed Up'},
+		'ptSpeedD':       { label: 'P/T Speed Down'},
+		'tallyOff':       { label: 'Tally Off' },
+		'tallyOn':        { label: 'Tally On' },
+		'zoomI':          { label: 'Zoom In' },
+		'zoomO':          { label: 'Zoom Out' },
+		'zoomS':          { label: 'Zoom Stop' },
+		'zSpeedU':        { label: 'Zoom Speed Up'},
+		'zSpeedD':        { label: 'Zoom Speed Down'},
+		'focusN':         { label: 'Focus Near' },
+		'focusF':         { label: 'Focus Far' },
+		'focusS':         { label: 'Focus Stop' },
+		'focusOTF':       { label: 'Focus OTF' },
+		'fSpeedU':        { label: 'Focus Speed Up'},
+		'fSpeedD':        { label: 'Focus Speed Down'},
+		'focusM':         {
 			label: 'Focus Mode',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Auto / Manual Focus',
 					id: 'bol',
-					choices: [{ id: '0', label: 'Auto Focus' }, { id: '1', label: 'Manual Focus' }]
+					choices: [ { id: '0', label: 'Auto Focus' }, { id: '1', label: 'Manual Focus' } ]
 				}
 			]
 		},
-		'irisU': { label: 'Iris Up' },
-		'irisD': { label: 'Iris Down' },
-		'irisS': {
+		'irisU':          { label: 'Iris Up' },
+		'irisD':          { label: 'Iris Down' },
+		'irisS':          {
 			label: 'Set Iris',
 			options: [
 				{
@@ -1138,9 +1132,9 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
-		'gainU': { label: 'Gain Up' },
-		'gainD': { label: 'Gain Down' },
-		'gainS': {
+		'gainU':          { label: 'Gain Up' },
+		'gainD':          { label: 'Gain Down' },
+		'gainS':          {
 			label: 'Set Gain',
 			options: [
 				{
@@ -1151,9 +1145,9 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
-		'shutU': { label: 'Shutter Up' },
-		'shutD': { label: 'Shutter Down' },
-		'shutS': {
+		'shutU':          { label: 'Shutter Up' },
+		'shutD':          { label: 'Shutter Down' },
+		'shutS':          {
 			label: 'Set Shutter',
 			options: [
 				{
@@ -1164,9 +1158,9 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
-		'pedU': { label: 'Pedestal Up' },
-		'pedD': { label: 'Pedestal Down' },
-		'pedS': {
+		'pedU':           { label: 'Pedestal Up' },
+		'pedD':           { label: 'Pedestal Down' },
+		'pedS':           {
 			label: 'Set Pedestal',
 			options: [
 				{
@@ -1177,9 +1171,9 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
-		'filterU': { label: 'Filter Up' },
-		'filterD': { label: 'Filter Down' },
-		'filterS': {
+		'filterU':        { label: 'Filter Up' },
+		'filterD':        { label: 'Filter Down' },
+		'filterS':        {
 			label: 'Set Filter',
 			options: [
 				{
@@ -1190,7 +1184,7 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
-		'savePset': {
+		'savePset':       {
 			label: 'Save Preset',
 			options: [
 				{
@@ -1201,7 +1195,7 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
-		'recallPset': {
+		'recallPset':     {
 			label: 'Recall Preset',
 			options: [
 				{
@@ -1212,7 +1206,7 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
-		'speedPset': {
+		'speedPset':      {
 			label: 'Preset Drive Speed',
 			options: [
 				{
@@ -1228,38 +1222,38 @@ instance.prototype.actions = function (system) {
 }
 
 
-instance.prototype.sendPTZ = function (str) {
+instance.prototype.sendPTZ = function(str) {
 	var self = this;
 
-	if (str !== undefined) {
-		self.system.emit('rest_get', 'http://' + self.config.host + '/cgi-bin/aw_ptz?cmd=%23' + str + '&res=1', function (err, data, response) {
-			if (!err) {
-				self.log('Error from PTZ: ' + result);
-				return;
+		if (str !== undefined) {
+				self.system.emit('rest_get', 'http://' + self.config.host + '/cgi-bin/aw_ptz?cmd=%23' + str +'&res=1',function (err, data, response) {
+					if (!err) {
+							self.log('Error from PTZ: ' + result);
+							return;
+							}
+						//console.log("Result from REST: ", result);
+						});
 			}
-			//console.log("Result from REST: ", result);
-		});
-	}
-	debug('PTZ Command =', str)
+	debug('PTZ Command =',str)
 };
 
-instance.prototype.sendCam = function (str) {
+instance.prototype.sendCam = function(str) {
 	var self = this;
 
-	if (str !== undefined) {
-		self.system.emit('rest_get', 'http://' + self.config.host + '/cgi-bin/aw_cam?cmd=' + str + '&res=1', function (err, data, response) {
-			if (!err) {
-				self.log('Error from PTZ: ' + result);
-				return;
+		if (str !== undefined) {
+				self.system.emit('rest_get', 'http://' + self.config.host + '/cgi-bin/aw_cam?cmd=' + str +'&res=1',function (err, data, response) {
+					if (!err) {
+							self.log('Error from PTZ: ' + result);
+							return;
+							}
+						//console.log("Result from REST: ", result);
+						});
 			}
-			//console.log("Result from REST: ", result);
-		});
-	}
-	debug('CAM Command =', str)
+	debug('CAM Command =',str)
 };
 
 
-instance.prototype.action = function (action) {
+instance.prototype.action = function(action) {
 	var self = this;
 	var opt = action.options;
 	var cmd = '';
@@ -1270,32 +1264,38 @@ instance.prototype.action = function (action) {
 
 		case 'left':
 			n = parseInt(50 - self.ptSpeed);
-			string = '' + (n < 10 ? "0" + n : n)
-			cmd = 'PTS' + string + '50';
+			string = '' + (n < 10 ? "0"+n : n)		// Ohne diese Zeile würde hier bei einer Zahl kleiner als 10 nur eine Ziffer statt Zwei stehen, deswegen wird eine führende 0 vorgesetzt
+			cmd = 'PTS'+ string +'50';
 			self.sendPTZ(cmd);
 			break;
 
 		case 'right':
-			cmd = 'PTS' + parseInt(50 + self.ptSpeed) + '50';
+			cmd = 'PTS' + parseInt(50 + self.ptSpeed) +'50';
 			self.sendPTZ(cmd);
+			console.log("TEST:")
+			console.log(cmd)
 			break;
 
 		case 'up':
-			cmd = 'PTS50' + parseInt(50 + self.ptSpeed);
+			n = parseInt(50 + self.ptSpeed)
+			string = '' + n
+			cmd = 'PTS50'+ string;
 			self.sendPTZ(cmd);
+			console.log("TEST:")
+			console.log(cmd)
 			break;
 
 		case 'down':
 			n = parseInt(50 - self.ptSpeed);
-			string = '' + (n < 10 ? "0" + n : n)
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'PTS50' + string;
 			self.sendPTZ(cmd);
 			break;
 
 		case 'upLeft':
 			n = parseInt(50 - self.ptSpeed);
-			string = '' + (n < 10 ? "0" + n : n)
-			cmd = 'PTS' + string + parseInt(50 + self.ptSpeed);
+			string = '' + (n < 10 ? "0"+n : n)
+			cmd = 'PTS'+ string + parseInt(50 + self.ptSpeed);
 			self.sendPTZ(cmd);
 			break;
 
@@ -1306,14 +1306,14 @@ instance.prototype.action = function (action) {
 
 		case 'downLeft':
 			n = parseInt(50 - self.ptSpeed);
-			string = '' + (n < 10 ? "0" + n : n)
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'PTS' + string + string;
 			self.sendPTZ(cmd);
 			break;
 
 		case 'downRight':
 			n = parseInt(50 - self.ptSpeed);
-			string = '' + (n < 10 ? "0" + n : n)
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'PTS' + parseInt(50 + self.ptSpeed) + string;
 			self.sendPTZ(cmd);
 			break;
@@ -1350,6 +1350,7 @@ instance.prototype.action = function (action) {
 			if (idx > -1) {
 				self.ptSpeedIndex = idx;
 			}
+			self.ptSpeed = SPEED[self.ptSpeedIndex].id
 			self.setVariable('ptSpeedVar', self.ptSpeed);
 			break;
 
@@ -1358,7 +1359,7 @@ instance.prototype.action = function (action) {
 				self.ptSpeedIndex = 49;
 			}
 			else if (self.ptSpeedIndex < 49) {
-				self.ptSpeedIndex++;
+				self.ptSpeedIndex ++;
 			}
 			self.ptSpeed = SPEED[self.ptSpeedIndex].id
 			self.setVariable('ptSpeedVar', self.ptSpeed);
@@ -1387,13 +1388,13 @@ instance.prototype.action = function (action) {
 
 		case 'zoomO':
 			n = parseInt(50 - self.zSpeed);
-			string = '' + (n < 10 ? "0" + n : n)
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'Z' + string;
 			self.sendPTZ(cmd);
 			break;
 
 		case 'zoomI':
-			cmd = 'Z' + parseInt(50 + self.zSpeed);
+			cmd = 'Z' + parseInt(50 +self.zSpeed);
 			self.sendPTZ(cmd);
 			break;
 
@@ -1407,7 +1408,7 @@ instance.prototype.action = function (action) {
 				self.zSpeedIndex = 49;
 			}
 			else if (self.zSpeedIndex < 49) {
-				self.zSpeedIndex++;
+				self.zSpeedIndex ++;
 			}
 			self.zSpeed = SPEED[self.zSpeedIndex].id
 			self.setVariable('zSpeedVar', self.zSpeed);
@@ -1426,14 +1427,19 @@ instance.prototype.action = function (action) {
 
 		case 'focusN':
 			n = parseInt(50 - self.fSpeed);
-			string = '' + (n < 10 ? "0" + n : n)
+			string = '' + (n < 10 ? "0"+n : n)
 			cmd = 'F' + string;
 			self.sendPTZ(cmd);
 			break;
 
 		case 'focusF':
-			cmd = 'F' + parseInt(50 + self.fSpeed);
+			cmd = 'F' + parseInt(50 +self.fSpeed);
 			self.sendPTZ(cmd);
+			break;
+
+		case 'focusOTF':
+			cmd = 'OSE:69:1';
+			self.sendCam(cmd);
 			break;
 
 		case 'fSpeedD':
@@ -1441,7 +1447,7 @@ instance.prototype.action = function (action) {
 				self.fSpeedIndex = 49;
 			}
 			else if (self.fSpeedIndex < 49) {
-				self.fSpeedIndex++;
+				self.fSpeedIndex ++;
 			}
 			self.fSpeed = SPEED[self.fSpeedIndex].id
 			self.setVariable('fSpeedVar', self.fSpeed);
@@ -1464,10 +1470,10 @@ instance.prototype.action = function (action) {
 			break;
 
 		case 'focusM':
-			if (opt.bol == 0) {
+			if (opt.bol == 0){
 				cmd = 'D10';
 			}
-			if (opt.bol == 1) {
+			if (opt.bol == 1){
 				cmd = 'D11';
 			}
 			self.sendPTZ(cmd);
@@ -1478,7 +1484,7 @@ instance.prototype.action = function (action) {
 				self.irisIndex = 99;
 			}
 			else if (self.irisIndex < 99) {
-				self.irisIndex++;
+				self.irisIndex ++;
 			}
 			self.irisVal = IRIS[self.irisIndex].id;
 			self.sendPTZ('I' + self.irisVal.toUpperCase());
@@ -1506,7 +1512,7 @@ instance.prototype.action = function (action) {
 				self.gainIndex = 49;
 			}
 			else if (self.gainIndex < 49) {
-				self.gainIndex++;
+				self.gainIndex ++;
 			}
 			self.gainVal = GAIN[self.gainIndex].id
 
@@ -1538,7 +1544,7 @@ instance.prototype.action = function (action) {
 				self.shutIndex = 14;
 			}
 			else if (self.shutIndex < 14) {
-				self.shutIndex++;
+				self.shutIndex ++;
 			}
 			self.shutVal = SHUTTER[self.shutIndex].id
 
@@ -1569,7 +1575,7 @@ instance.prototype.action = function (action) {
 				self.filterIndex = 5;
 			}
 			else if (self.filterIndex < 5) {
-				self.filterIndex++;
+				self.filterIndex ++;
 			}
 			self.filterVal = FILTER[self.filterIndex].id
 
@@ -1603,7 +1609,7 @@ instance.prototype.action = function (action) {
 				self.pedestalIndex = 299;
 			}
 			else if (self.pedestalIndex < 299) {
-				self.pedestalIndex++;
+				self.pedestalIndex ++;
 			}
 			self.pedestalVal = PEDESTAL[self.pedestalIndex].id
 
@@ -1631,17 +1637,17 @@ instance.prototype.action = function (action) {
 			break;
 
 		case 'savePset':
-			cmd = 'M' + opt.val;
+			cmd ='M' + opt.val;
 			self.sendPTZ(cmd);
 			break;
 
 		case 'recallPset':
-			cmd = 'R' + opt.val;
+			cmd ='R' + opt.val ;
 			self.sendPTZ(cmd);
 			break;
 
 		case 'speedPset':
-			cmd = 'UPVS' + opt.speed
+			cmd ='UPVS' + opt.speed
 			self.sendPTZ(cmd);
 			break;
 
