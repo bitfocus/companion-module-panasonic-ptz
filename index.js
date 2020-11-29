@@ -953,7 +953,7 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
-			category: 'Power/Tally',
+			category: 'Power/Position/Tally',
 			label: 'Power Off',
 			bank: {
 				style: 'text',
@@ -969,7 +969,7 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
-			category: 'Power/Tally',
+			category: 'Power/Position/Tally',
 			label: 'Power On',
 			bank: {
 				style: 'text',
@@ -985,7 +985,45 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
-			category: 'Power/Tally',
+			category: 'Power/Position/Tally',
+			label: 'INS Desktop',
+			bank: {
+				style: 'text',
+				text: 'INS\\nDesk',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'insPosition',
+					options: {
+						position: 0,
+					}
+				}
+			]
+		},
+		{
+			category: 'Power/Position/Tally',
+			label: 'INS Hanging',
+			bank: {
+				style: 'text',
+				text: 'INS\\nHang',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'insPosition',
+					options: {
+						position: 1,
+					}
+				}
+			]
+		},
+		{
+			category: 'Power/Position/Tally',
 			label: 'Tally Off',
 			bank: {
 				style: 'text',
@@ -1001,7 +1039,7 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
-			category: 'Power/Tally',
+			category: 'Power/Position/Tally',
 			label: 'Tally On',
 			bank: {
 				style: 'text',
@@ -1109,6 +1147,21 @@ instance.prototype.actions = function (system) {
 		'home': { label: 'P/T Home' },
 		'powerOff': { label: 'Power Off' },
 		'powerOn': { label: 'Power On' },
+		'insPosition': { 
+			label: 'Installation position',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Position',
+					id: 'position',
+					default: 0,
+					choices: [
+						{ id: '0', label: 'Desktop' },
+						{ id: '1', label: 'Hanging' },
+					]
+				}
+			]
+		},
 		'ptSpeedS': {
 			label: 'P/T Speed',
 			options: [
@@ -1383,6 +1436,11 @@ instance.prototype.action = function (action) {
 			self.sendPTZ(cmd);
 			break;
 
+		case 'insPosition':
+			cmd = 'INS' + opt.position;
+			self.sendPTZ(cmd);
+			break;
+	
 		case 'ptSpeedS':
 			self.ptSpeed = opt.speed;
 			var idx = -1;

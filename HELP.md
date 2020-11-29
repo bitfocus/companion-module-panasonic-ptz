@@ -20,9 +20,9 @@ Zoom In, Zoom Out, Set Zoom Speed, Zoom Speed Up, Zoom Speed Down, Focus Far, Fo
 
 Set Iris, Iris Open, Iris Close, Set Gain, Gain Up, Gain Down, Set Shutter, Shutter Up, Shutter Down, Set Filter, Filter Up, Filter Down, Set Pedestal, Pedestal Up, Pedestal Down
 
-*Power/Tally*
+*Power/Position/Tally*
 
-Power Off, Power On, Tally Off, Tally On
+Power Off, Power On, Installation position Desktop and Hanging, Tally Off, Tally On
 
 *Save presets*
 
