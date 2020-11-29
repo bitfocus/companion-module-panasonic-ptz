@@ -773,6 +773,26 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
+			category: 'Lens',
+			label: 'One Touch Focus',
+			bank: {
+				style: 'text',
+				text: 'OTF\\nFOCUS',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+				latch: true
+			},
+			actions: [
+				{
+					action: 'focusOTF',
+					options: {
+						bol: 0,
+					}
+				}
+			],
+		},
+		{
 			category: 'Exposure',
 			label: 'Gain Up',
 			bank: {
@@ -1096,6 +1116,7 @@ instance.prototype.actions = function (system) {
 					type: 'dropdown',
 					label: 'speed setting',
 					id: 'speed',
+					default: 25,
 					choices: SPEED
 				}
 			]
@@ -1107,11 +1128,35 @@ instance.prototype.actions = function (system) {
 		'zoomI': { label: 'Zoom In' },
 		'zoomO': { label: 'Zoom Out' },
 		'zoomS': { label: 'Zoom Stop' },
+		'zSpeedS': {
+			label: 'Zoom Speed',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'speed setting',
+					id: 'speed',
+					default: 25,
+					choices: SPEED
+				}
+			]
+		},
 		'zSpeedU': { label: 'Zoom Speed Up' },
 		'zSpeedD': { label: 'Zoom Speed Down' },
 		'focusN': { label: 'Focus Near' },
 		'focusF': { label: 'Focus Far' },
 		'focusS': { label: 'Focus Stop' },
+		'fSpeedS': {
+			label: 'Focus Speed',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'speed setting',
+					id: 'speed',
+					default: 25,
+					choices: SPEED
+				}
+			]
+		},
 		'fSpeedU': { label: 'Focus Speed Up' },
 		'fSpeedD': { label: 'Focus Speed Down' },
 		'focusM': {
@@ -1350,6 +1395,7 @@ instance.prototype.action = function (action) {
 			if (idx > -1) {
 				self.ptSpeedIndex = idx;
 			}
+			self.ptSpeed = SPEED[self.ptSpeedIndex].id
 			self.setVariable('ptSpeedVar', self.ptSpeed);
 			break;
 
@@ -1402,6 +1448,22 @@ instance.prototype.action = function (action) {
 			self.sendPTZ(cmd);
 			break;
 
+		case 'zSpeedS':
+			self.zSpeed = opt.speed;
+			var idx = -1;
+			for (var i = 0; i < SPEED.length; ++i) {
+				if (SPEED[i].id == self.zSpeed) {
+					idx = i;
+					break;
+				}
+			}
+			if (idx > -1) {
+				self.zSpeedIndex = idx;
+			}
+			self.zSpeed = SPEED[self.zSpeedIndex].id
+			self.setVariable('zSpeedVar', self.zSpeed);
+			break;
+
 		case 'zSpeedD':
 			if (self.zSpeedIndex == 49) {
 				self.zSpeedIndex = 49;
@@ -1434,6 +1496,22 @@ instance.prototype.action = function (action) {
 		case 'focusF':
 			cmd = 'F' + parseInt(50 + self.fSpeed);
 			self.sendPTZ(cmd);
+			break;
+
+		case 'fSpeedS':
+			self.fSpeed = opt.speed;
+			var idx = -1;
+			for (var i = 0; i < SPEED.length; ++i) {
+				if (SPEED[i].id == self.fSpeed) {
+					idx = i;
+					break;
+				}
+			}
+			if (idx > -1) {
+				self.fSpeedIndex = idx;
+			}
+			self.fSpeed = SPEED[self.fSpeedIndex].id
+			self.setVariable('fSpeedVar', self.fSpeed);
 			break;
 
 		case 'fSpeedD':
@@ -1471,6 +1549,11 @@ instance.prototype.action = function (action) {
 				cmd = 'D11';
 			}
 			self.sendPTZ(cmd);
+			break;
+
+		case 'focusOTF':
+			cmd = 'OSE:69:1';
+			self.sendCam(cmd);
 			break;
 
 		case 'irisU':

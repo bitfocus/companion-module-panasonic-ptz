@@ -2,7 +2,7 @@ Panasonic PTZ Cameras
 
 *This Module supports the following Panasonic PTZ cameras*
 
-AW-HE120, AW-HE130, AW-HE40, AW-HE50, AW-HE60, AW-HE65, AW-HE70, AW-UE70, AW-SFU01
+AW-HE120, AW-HE130, AW-HE40, AW-HE50, AW-HE60, AW-HE65, AW-HE70, AW-UE70, AW-UE150, AW-SFU01
 
 
 ## Actions
@@ -14,7 +14,7 @@ It's recommended to use the presets as much as possible as there is a lot of act
 Up, Down, Left, Right, UpLeft, UpRight, DownLeft, DownRight, Set Pan/Tilt Speed, Pan/Tilt Speed Up, Pan/Tilt Speed Down.
 
 *Lens*
-Zoom In, Zoom Out, Zoom Speed Up, Zoom Speed Down, Focus Far, Focus Near, Focus Speed Up, Focus Speed Down, Focus Mode.
+Zoom In, Zoom Out, Set Zoom Speed, Zoom Speed Up, Zoom Speed Down, Focus Far, Focus Near, Set Focus Speed, Focus Speed Up, Focus Speed Down, Focus Mode, One Time Focus.
 
 *Exposure*
 

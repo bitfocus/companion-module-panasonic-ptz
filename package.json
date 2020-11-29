@@ -1,6 +1,6 @@
 {
 	"name": "panasonic-ptz",
-	"version": "1.0.5",
+	"version": "1.0.6",
 	"api_version": "1.0.0",
 	"keywords": [
 		"ptz",
@@ -16,6 +16,7 @@
 		"AW-HE65",
 		"AW-HE70",
 		"AW-UE70",
+		"AW-UE150",
 		"AW-SFU01"
 	],
 	"shortname": "Panasonic-PTZ",
