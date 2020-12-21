@@ -285,7 +285,12 @@ instance.prototype.updateConfig = function (config) {
 	var self = this;
 	self.config = config;
 	self.status(self.STATUS_UNKNOWN);
+	self.actions(); // export actions
+	self.init_presets();
+	self.init_variables();
+	self.setInitialVariables();
 	self.setupEventListeners();
+	self.getCameraInformation();
 };
 
 // Return config fields for web config
@@ -777,15 +782,14 @@ instance.prototype.init_presets = function () {
 			label: 'One Touch Focus',
 			bank: {
 				style: 'text',
-				text: 'OTF\\nFOCUS',
+				text: 'OTAF\\nFOCUS',
 				size: '18',
 				color: '16777215',
 				bgcolor: self.rgb(0,0,0),
-				latch: true
 			},
 			actions: [
 				{
-					action: 'focusOTF',
+					action: 'focusOTAF',
 					options: {
 						bol: 0,
 					}
@@ -1335,7 +1339,7 @@ instance.prototype.sendPTZ = function (str) {
 				self.log('Error from PTZ: ' + result);
 				return;
 			}
-			//console.log("Result from REST: ", result);
+			// console.log("Result from REST:" + result);
 		});
 	}
 	debug('PTZ Command =', str)
@@ -1350,7 +1354,7 @@ instance.prototype.sendCam = function (str) {
 				self.log('Error from PTZ: ' + result);
 				return;
 			}
-			//console.log("Result from REST: ", result);
+			// console.log("Result from REST:" + result);
 		});
 	}
 	debug('CAM Command =', str)
@@ -1609,7 +1613,7 @@ instance.prototype.action = function (action) {
 			self.sendPTZ(cmd);
 			break;
 
-		case 'focusOTF':
+		case 'focusOTAF':
 			cmd = 'OSE:69:1';
 			self.sendCam(cmd);
 			break;

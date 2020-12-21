@@ -1,6 +1,6 @@
 {
 	"name": "panasonic-ptz",
-	"version": "1.0.6",
+	"version": "1.0.8",
 	"api_version": "1.0.0",
 	"keywords": [
 		"ptz",
@@ -26,5 +26,8 @@
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"author": "Per Røine <per.roine@gmail.com>",
+	"contributors": [
+		"Andreas H. Thomsen <mc-hauge@hotmail.com>"
+	],
 	"license": "MIT"
 }
