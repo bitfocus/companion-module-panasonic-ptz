@@ -1227,6 +1227,7 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
+		'focusOTAF': { label: 'Focus One Touch Auto (OTAF)' },
 		'irisU': { label: 'Iris Up' },
 		'irisD': { label: 'Iris Down' },
 		'irisS': {
