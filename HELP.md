@@ -34,4 +34,4 @@ Recall Preset 1-100, Set Preset Playback Speed
 
 
 
-For additional actions, please raise a feature request on [GitHub](https://github.com/bitfocus/companion-panasonic-ptz/).
+For additional actions, please raise a feature request on [GitHub](https://github.com/bitfocus/companion-module-panasonic-ptz/).
