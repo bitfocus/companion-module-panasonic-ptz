@@ -2,7 +2,7 @@ Panasonic PTZ Cameras
 
 *This Module supports the following Panasonic PTZ cameras*
 
-AW-HE120, AW-HE130, AW-HE40, AW-HE50, AW-HE60, AW-HE65, AW-HE70, AW-UE70, AW-UE150, AW-SFU01
+AW-HE120, AW-HE130, AW-HE40, AW-HE42, AW-HE50, AW-HE60, AW-HE65, AW-HE70, AW-UE70, AW-UE150, AW-HR140, AW-SFU01, AK-UB300.
 
 
 ## Actions

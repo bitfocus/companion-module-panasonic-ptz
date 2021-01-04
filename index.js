@@ -1,7 +1,13 @@
+var tcp           = require('../../tcp');
 var instance_skel = require('../../instance_skel');
+const Net = require('net');
+const { response } = require('express');
 var debug;
 var log;
 
+// ########################
+// #### Value Look Ups ####
+// ########################
 var IRIS = [];
 for (var i = 0; i < 100; ++i) {
 	IRIS.push({ id: ('0' + i.toString(10)).substr(-2, 2), label: 'Iris ' + i });
@@ -184,7 +190,9 @@ var GAIN = [
 	{ id: '80', label: 'Auto' }
 ];
 
-
+// ########################
+// #### Instance setup ####
+// ########################
 function instance(system, id, config) {
 	var self = this;
 
@@ -194,7 +202,124 @@ function instance(system, id, config) {
 	return self;
 }
 
+instance.prototype.init_tcp = function() {
+	var self = this;
+	var socketlist = [];
 
+	// Remove old TCP Server and close all connections
+	if (self.server !== undefined) {
+		// Stop getting Status Updates
+		self.system.emit('rest_get', 'http://' + self.config.host + '/cgi bin/event?connect=stop&my_port=' + self.port + '&uid=0', function (err, result) {
+			if (err) {
+				self.log('Error from PTZ: ' + err);
+				return;
+			}
+			if('data',result.response.req) {
+				console.log("un-subscribed: " + 'http://' + self.config.host + '/cgi-bin/event?connect=stop&my_port=' + self.config.port || 31004 + '&uid=0');
+				self.status(self.STATUS_OK);
+			}
+		});
+
+		// Close all remaning Connections
+		socketlist.forEach(function(socket) {
+			socket.close();
+		});
+
+		// Close and delete server
+		self.server.close();
+		delete self.server;
+	}
+
+	self.status(self.STATE_WARNING, 'Connecting');
+
+	if (self.config.host) {
+
+		self.system.emit('rest_get', 'http://' + self.config.host + '/cgi-bin/event?connect=start&my_port=' + self.config.port || 31004 + '&uid=0', function (err, result) {
+			console.log("subscribed: " + 'http://' + self.config.host + '/cgi-bin/event?connect=start&my_port=' + self.config.port || 31004 + '&uid=0');
+			if (err) {
+				self.log('Error from PTZ: ' + err);
+				return;
+			}
+			if('data',result.response.req) {
+				self.status(self.STATUS_OK);
+			}
+		});
+
+		// The port on which the server is listening.
+		const port = self.config.port;
+
+		// Create a new TCP server.
+		self.server = new Net.Server();
+
+		// Listens for a client to make a connection request.
+		self.server.listen(port, function() {
+			console.log('Server listening for PTZ requests on socket localhost:' + port);
+			debug('Server listening for PTZ requests on socket localhost:' + port);
+		});
+
+		// When a client requests a connection with the server, the server creates a new
+		// socket dedicated to that client.
+		self.server.on('connection', function(socket) {
+			socketlist.push(socket);
+			// console.log('A new connection to a PTZ established.');
+			// debug('A new connection to a PTZ established.');
+
+			// Receive data from the client.
+			socket.on('data', function(data) {
+
+				let str_raw = String(data);
+				str_raw = str_raw.split('\r\n'); // Split Data in order to remove data before and after command
+				let str = str_raw[1].trim(); // remove new line, carage return and so on.
+				console.log('TCP Recived from PTZ: ' + str); 
+				debug('TCP Recived from PTZ: ' + str); // Debug Recived data
+				str = str.split(':'); // Split Commands and data
+
+				// Store Firmware Version (not supported for the AK-UB300.)
+				if (str[0].substring(0, 4) === 'qSV3') {
+					self.data.version = str[0].substring(4);
+				}
+
+				// Store Values from Events
+				switch (str[0]) {
+					case 'p1': self.data.power = 'ON'; break;
+					case 'p0': self.data.power = 'OFF'; break;
+					case 'OAF': 
+						if (str[1] == '0') {self.data.oaf = 'Manual';}
+						else if (str[1] == '1') {self.data.oaf = 'Auto';}
+						break;
+		
+					default:
+						break;
+				}
+
+				// Update Varibles and Feedbacks
+				self.checkVariables();
+				self.checkFeedbacks();
+			});
+
+			// When the client requests to end the TCP connection with the server, the server
+			// ends the connection.
+			socket.on('end', function() {
+				// console.log('Closing connection with the PTZ');
+				// debug('Closing connection with the PTZ');
+			});
+
+			// Close Connections
+			socket.on('close', function () {
+				// console.log('socket closed');
+				socketlist.splice(socketlist.indexOf(socket), 1);
+			});
+  
+			// Don't forget to catch error, for your own sake.
+			socket.on('error', function(err) {
+				console.log("TCP error: " + err.message);
+				debug("TCP error: " + err.message)
+				self.log('error',"TCP error: " + err.message);
+			});
+		});
+
+	}
+};
 
 instance.prototype.tallyOnListener = function (label, variable, value) {
 	const self = this;
@@ -232,6 +357,15 @@ instance.prototype.init = function () {
 
 	debug = self.debug;
 	log = self.log;
+
+	self.data = {
+		model: 'NaN',
+		name: 'NaN',
+		version: 'NaN',
+		power: 'NaN',
+		oaf: 'NaN',
+	};
+
 	self.ptSpeed = 25;
 	self.ptSpeedIndex = 25;
 	self.zSpeed = 25;
@@ -250,33 +384,59 @@ instance.prototype.init = function () {
 	self.pedestalIndex = 150
 	self.status(self.STATUS_WARNING, 'connecting');
 	self.actions(); // export actions
+	self.init_tcp();
 	self.init_presets();
 	self.init_variables();
-	self.setInitialVariables();
+	self.checkVariables();
+	self.init_feedbacks();
+	self.checkFeedbacks();
 	self.setupEventListeners();
 	self.getCameraInformation();
-}
-
-instance.prototype.setInitialVariables = function() {
-	var self = this;
-	self.setVariable('ptSpeedVar', self.ptSpeed);
-	self.setVariable('zSpeedVar', self.zSpeed);
-	self.setVariable('fSpeedVar', self.fSpeed);
 }
 
 instance.prototype.getCameraInformation = function () {
 	var self = this;
 
 	if (self.config.host) {
-		self.system.emit('rest_get', 'http://' + self.config.host + '/live/camdata.html', function (err, data, response) {
+		self.system.emit('rest_get', 'http://' + self.config.host + '/live/camdata.html', function (err, result) {
+			// If there was an Error
 			if (err) {
 				self.log('Error from PTZ: ' + err);
 				return;
 			}
-			if('data',data.response.req) {
-				self.status(self.STATUS_OK);
+
+			// If We get a responce, store the values
+			if('data',result.response.req) {
+				var str_raw = String(result.data);
+				var str = {};
+
+				str_raw = str_raw.split('\r\n') // Split Data in order to remove data before and after command
+				
+				for (var i in str_raw) {
+					str = str_raw[i].trim(); // remove new line, carage return and so on.
+					str = str.split(':'); // Split Commands and data
+					console.log('HTTP Recived from PTZ: ' + str_raw[i]);
+					debug('HTTP Recived from PTZ: ' + str_raw[i]); // Debug Recived data				
+
+					// Store Values from Events
+					switch (str[0]) {
+						case 'OID': self.data.model = str[1];
+						case 'TITLE': self.data.name = str[1];
+						case 'p1': self.data.power = 'ON'; break;
+						case 'p0': self.data.power = 'OFF'; break;
+						case 'OAF': 
+							if (str[1] == '0') {self.data.oaf = 'Manual';}
+							else if (str[1] == '1') {self.data.oaf = 'Auto';}
+							break;
+			
+						default:
+							break;
+					}
+				}
 			}
-			// self.setVariable('model', 'from camera data');
+
+			self.checkVariables();
+			self.checkFeedbacks();
 		});
 	}
 };
@@ -286,9 +446,12 @@ instance.prototype.updateConfig = function (config) {
 	self.config = config;
 	self.status(self.STATUS_UNKNOWN);
 	self.actions(); // export actions
+	self.init_tcp();
 	self.init_presets();
 	self.init_variables();
-	self.setInitialVariables();
+	self.checkVariables();
+	self.init_feedbacks();
+	self.checkFeedbacks();
 	self.setupEventListeners();
 	self.getCameraInformation();
 };
@@ -322,8 +485,16 @@ instance.prototype.config_fields = function () {
 			id: 'host',
 			label: 'Camera IP',
 			width: 6,
-			regex: self.REGEX_IP
+			// regex: self.REGEX_IP
 		},
+		{
+			type: 'textinput',
+			id: 'port',
+			label: 'TCP Port (Default: 31004)',
+			width: 3,
+			default: 31004,
+			regex: self.REGEX_PORT
+        },
 		{
 			type: 'text',
 			id: 'tallyOnInfo',
@@ -360,12 +531,42 @@ instance.prototype.config_fields = function () {
 // When module gets deleted
 instance.prototype.destroy = function () {
 	var self = this;
+
+	// Remove TCP Server and close all connections
+	if (self.server !== undefined) {
+		// Stop getting Status Updates
+		self.system.emit('rest_get', 'http://' + self.config.host + '/cgi bin/event?connect=stop&my_port=' + self.port + '&uid=0', function (err, result) {
+			console.log("un-subscribed: " + 'http://' + self.config.host + '/cgi-bin/event?connect=stop&my_port=' + self.config.port || 31004 + '&uid=0');
+			if (err) {
+				self.log('Error from PTZ: ' + err);
+				return;
+			}
+			if('data',result.response.req) {
+				self.status(self.STATUS_OK);
+			}
+		});
+
+		// Close all remaning Connections
+		socketlist.forEach(function(socket) {
+			socket.close();
+		});
+
+		// Close and delete server
+		self.server.close();
+		delete self.server;
+	}
+
 	if (self.activeTallyOnListener) {
 		self.system.removeListener('variable_changed', self.activeTallyOnListener);
 		delete self.activeTallyOnListener;
 	}
-}
 
+	debug("destroy", self.id);
+};
+
+// ##########################
+// #### Instance Presets ####
+// ##########################
 instance.prototype.init_presets = function () {
 	var self = this;
 	var presets = [
@@ -1125,14 +1326,136 @@ instance.prototype.init_presets = function () {
 	self.setPresetDefinitions(presets);
 };
 
+// ############################
+// #### Instance Variables ####
+// ############################
 instance.prototype.init_variables = function () {
 	var self = this;
 	var variables = [];
+	variables.push({ name: 'model', label: 'Model of camera' });
+	variables.push({ name: 'name', label: 'Name of camera' });
+	variables.push({ name: 'version', label: 'Firmware Version' });
+	variables.push({ name: 'power', label: 'Power ON/OFF' });
+	variables.push({ name: 'OAF', label: 'Auto Focus Mode' });
 	variables.push({ name: 'ptSpeedVar', label: 'Pan/Tilt Speed' });
 	variables.push({ name: 'zSpeedVar', label: 'Zoom Speed' });
 	variables.push({ name: 'fSpeedVar', label: 'Focus Speed' });
-	// variables.push({ name: 'model', label: 'Model of camera' });
 	self.setVariableDefinitions(variables);
+};
+
+// Setup Initial Values
+instance.prototype.checkVariables = function() {
+	var self = this;
+	self.setVariable('model', self.data.model);
+	self.setVariable('name', self.data.name);
+	self.setVariable('version', self.data.version);
+	self.setVariable('power', self.data.power);
+	self.setVariable('OAF', self.data.oaf);
+	self.setVariable('ptSpeedVar', self.ptSpeed);
+	self.setVariable('zSpeedVar', self.zSpeed);
+	self.setVariable('fSpeedVar', self.fSpeed);
+}
+
+// ############################
+// #### Instance Feedbacks ####
+// ############################
+instance.prototype.init_feedbacks = function (system) {
+	var self = this;
+	var feedbacks = {};
+
+	const foregroundColor = {
+		type: 'colorpicker',
+		label: 'Foreground color',
+		id: 'fg',
+		default: this.rgb(255, 255, 255) // White
+	};
+
+	const backgroundColorGreen = {
+		type: 'colorpicker',
+		label: 'Background color',
+		id: 'bg',
+		default: this.rgb(0, 255, 0) // Green
+	};
+
+	const backgroundColorRed = {
+		type: 'colorpicker',
+		label: 'Background color ON',
+		id: 'bg',
+		default: this.rgb(255, 0, 0) // Red
+	};
+
+	const backgroundColorOrange = {
+		type: 'colorpicker',
+		label: 'Background color Pulse',
+		id: 'bg',
+		default: this.rgb(255, 102, 0) // Orange
+	};
+
+	feedbacks.powerState = {
+		label: 'PTZ - Power State',
+		description: 'Indicate if PTZ is ON or OFF',
+		options: [foregroundColor, backgroundColorRed]
+	};
+
+	feedbacks.autoFocus = {
+		label: 'PTZ - Auto Focus State',
+		description: 'Indicate if Autofocus is ON or OFF',
+		options: [foregroundColor, backgroundColorRed]
+	};
+
+	self.setFeedbackDefinitions(feedbacks);
+}
+
+// Setup Feedback Logic
+instance.prototype.feedback = function(feedback, bank) {
+	var self = this;
+
+	if (feedback.type === 'powerState') {
+		if (self.data.power === 'ON') {
+			return { color: feedback.options.fg, bgcolor: feedback.options.bg };				
+		}
+	}
+	else if (feedback.type === 'autoFocus') {
+		if (self.data.oaf === 'Auto') {
+			return { color: feedback.options.fg, bgcolor: feedback.options.bg };				
+		}
+	}
+
+}
+
+// ##########################
+// #### Instance Actions ####
+// ##########################
+instance.prototype.sendPTZ = function (str) {
+	var self = this;
+
+	if (str !== undefined) {
+		self.system.emit('rest_get', 'http://' + self.config.host + '/cgi-bin/aw_ptz?cmd=%23' + str + '&res=1', function (err, result) {
+			console.log('http://' + self.config.host + '/cgi-bin/aw_ptz?cmd=%23' + str + '&res=1')
+				if (!err) {
+				self.log('Error from PTZ: ' + result);
+				return;
+			}
+			// console.log("Result from REST:" + result);
+		});
+	}
+	debug('PTZ Command =', str)
+};
+
+instance.prototype.sendCam = function (str) {
+	var self = this;
+
+	if (str !== undefined) {
+		self.system.emit('rest_get', 'http://' + self.config.host + '/cgi-bin/aw_cam?cmd=' + str + '&res=1', function (err, result) {
+			console.log('http://' + self.config.host + '/cgi-bin/aw_cam?cmd=' + str + '&res=1')
+				if (!err) {
+				self.log('Error from PTZ: ' + result);
+				return;
+			}
+			// console.log("Result from REST:" + result);
+		});
+	}
+	debug('CAM Command =', str)
 };
 
 instance.prototype.actions = function (system) {
@@ -1223,7 +1546,8 @@ instance.prototype.actions = function (system) {
 					type: 'dropdown',
 					label: 'Auto / Manual Focus',
 					id: 'bol',
-					choices: [{ id: '0', label: 'Auto Focus' }, { id: '1', label: 'Manual Focus' }]
+					default: 0,
+					choices: [{ id: 0, label: 'Auto Focus' }, { id: 1, label: 'Manual Focus' }]
 				}
 			]
 		},
@@ -1329,38 +1653,6 @@ instance.prototype.actions = function (system) {
 		}
 	});
 }
-
-
-instance.prototype.sendPTZ = function (str) {
-	var self = this;
-
-	if (str !== undefined) {
-		self.system.emit('rest_get', 'http://' + self.config.host + '/cgi-bin/aw_ptz?cmd=%23' + str + '&res=1', function (err, data, response) {
-			if (!err) {
-				self.log('Error from PTZ: ' + result);
-				return;
-			}
-			// console.log("Result from REST:" + result);
-		});
-	}
-	debug('PTZ Command =', str)
-};
-
-instance.prototype.sendCam = function (str) {
-	var self = this;
-
-	if (str !== undefined) {
-		self.system.emit('rest_get', 'http://' + self.config.host + '/cgi-bin/aw_cam?cmd=' + str + '&res=1', function (err, data, response) {
-			if (!err) {
-				self.log('Error from PTZ: ' + result);
-				return;
-			}
-			// console.log("Result from REST:" + result);
-		});
-	}
-	debug('CAM Command =', str)
-};
-
 
 instance.prototype.action = function (action) {
 	var self = this;
