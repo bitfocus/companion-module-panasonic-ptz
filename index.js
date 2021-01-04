@@ -2,6 +2,7 @@ var tcp           = require('../../tcp');
 var instance_skel = require('../../instance_skel');
 const Net = require('net');
 const { response } = require('express');
+var socketlist = []; // Stores Clients Connedted
 var debug;
 var log;
 
@@ -204,7 +205,6 @@ function instance(system, id, config) {
 
 instance.prototype.init_tcp = function() {
 	var self = this;
-	var socketlist = [];
 
 	// Remove old TCP Server and close all connections
 	if (self.server !== undefined) {
@@ -1158,7 +1158,7 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
-			category: 'Power/Position/Tally',
+			category: 'System',
 			label: 'Power Off',
 			bank: {
 				style: 'text',
@@ -1174,7 +1174,7 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
-			category: 'Power/Position/Tally',
+			category: 'System',
 			label: 'Power On',
 			bank: {
 				style: 'text',
@@ -1190,7 +1190,7 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
-			category: 'Power/Position/Tally',
+			category: 'System',
 			label: 'INS Desktop',
 			bank: {
 				style: 'text',
@@ -1209,7 +1209,7 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
-			category: 'Power/Position/Tally',
+			category: 'System',
 			label: 'INS Hanging',
 			bank: {
 				style: 'text',
@@ -1228,7 +1228,7 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
-			category: 'Power/Position/Tally',
+			category: 'System',
 			label: 'Tally Off',
 			bank: {
 				style: 'text',
@@ -1244,7 +1244,7 @@ instance.prototype.init_presets = function () {
 			]
 		},
 		{
-			category: 'Power/Position/Tally',
+			category: 'System',
 			label: 'Tally On',
 			bank: {
 				style: 'text',

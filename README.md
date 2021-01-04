@@ -14,4 +14,5 @@ See HELP.md and LICENSE
 * Added Feedback Structure and Support
 * Added Variables Structure and Support
 * Fixed Auto Focus Action having wrong default
+* Cleaned up "Help" File
 * (Might break old configs)
