@@ -1,9 +1,26 @@
 Panasonic PTZ Cameras
 
-*This Module supports the following Panasonic PTZ cameras*
+## This Module supports the following Panasonic PTZ cameras
 
-AW-HE120, AW-HE130, AW-HE40, AW-HE42, AW-HE50, AW-HE60, AW-HE65, AW-HE70, AW-UE70, AW-UE150, AW-HR140, AW-SFU01, AK-UB300.
+**AW-HE50, AW-HE60, AW-HE120, AW-HE130, AW-HR140, AW-SFU01, AK-UB300, <br/>AW-HE40 series, AW-HE42 series, AW-UE70 series, AW-UE150 series**
 
+**HE40 series**
+* AW-HE35, AW-HE38, AW-HE40, AW-HE48, AW-HE58, AW,HE65, AW-HE70
+* AW-HN38, AW-HN40, AW-HN65, AW-HN70
+* AW HEF5
+
+**HE42 series**
+* AW-HE42, AW-HE68, AW-HE75
+
+**UE70 series**
+* AW-UE63, AW-UE65, AW-UE70
+* AW-UN70
+
+**UE150 series**
+* AW-UE150, AW-UE155
+* AW-UN145
+
+**Disclaimer not all models supports all actions, variables and feedbacks. But it should auto sort so that you can only use what works with your model**
 
 ## Actions
 The actions are separated into the following categories
@@ -66,7 +83,11 @@ A list of all the available Variables in this module, sorted into the following 
 * PTZ Model
 * PTZ Name
 * Firmware Version
+* PTZ Error Codes
 * Power ON/OFF
+* Install Position
+
+**Lens**
 * Auto Focus Mode
 
 ## Feedbacks
@@ -74,6 +95,11 @@ A list of all the available Feedbacks in this module, sorted into the following 
 
 **System**
 * Power ON/OFF
+* Install Position
+
+**Lens**
 * Auto Focus Mode
+
+Current support is bassed on "HD/4K Integrated Camera Interface Specifications" version 1.12 from Apr. 27, 2020.
 
 For additional actions, please raise a feature request on [GitHub](https://github.com/bitfocus/companion-module-panasonic-ptz/).

@@ -11,8 +11,11 @@ See HELP.md and LICENSE
 * Fixed bug with OTAF missing an action
 
 **V1.0.9**
+* (Might break old configs)
+* Cleaned up "Help.md" file
+* Cleaned up "Index.js" file, by splitting it up into difrent files
+* Sorted Actions in dropdown
+* Fixed Auto Focus Action having wrong default
 * Added Feedback Structure and Support
 * Added Variables Structure and Support
-* Fixed Auto Focus Action having wrong default
-* Cleaned up "Help" File
-* (Might break old configs)
+* Added Auto Detect Model, and the option to specify camera type
