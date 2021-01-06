@@ -31,6 +31,131 @@ module.exports = {
         { id: 'AW-HEF5', series: 'AW-HEF5', label: 'AW-HEF5' },
         { id: 'AW-SHU01', series: 'AW-SFU01', label: 'AW-SFU01' },
         { id: 'AK-UB300', series: 'AK-UB300', label: 'AK-UB300' },
-        { id: 'Other', series: 'Other', label: 'Other Cameras' }
+        { id: 'Other', series: 'Other', label: 'Other Cameras' },
+    ],
+
+
+    // list of all Series:
+    // Other
+    // HE40
+    // HE42
+    // UE70
+    // UE150
+    // AW-HE50
+    // AW-HE60
+    // AW-HE120
+    // AW-HE130
+    // AW-HE140
+    // AW-HEF5
+    // AW-SHU01
+    // AK-UB300
+
+    SERIES_SPECS: [
+        {   // Includes all Actions / Variabels / Feedbacks
+            id: 'Other', 
+            variables: {
+                version: true,
+                error: true,
+                ins: true,
+                power: true,
+                tally: true,
+                OAF: true,
+            },
+            feedbacks: {
+                powerState: true,
+                tallyState: true,
+                insState: true,
+                autoFocus: true,
+            }, 
+            actions: {
+                panTilt: true,
+                ptSpeed: true,
+                zoom: true,
+                zSpeed: true,
+                focus: true,
+                fSpeed: true,
+                OAF: true,
+                iris: true,
+                gain: true,
+                shut: true,
+                ped: true,
+                filter: true,
+                preset: true,
+                speedPset: true,
+                power: true,
+                tally: true,
+                ins: true,
+            }
+        },
+
+        // {   // // Specific for the UE150 Series
+        //     id: 'UE150', 
+        //     variables: {
+        //         version: true,
+        //         error: true,
+        //         power: true,
+        //         ins: true,
+        //         OAF: true,
+        //     },
+        //     feedbacks: {
+        //         powerState: true,
+        //         insState: true,
+        //         autoFocus: true,
+        //     }, 
+        //     actions: {
+        //         panTilt: true,
+        //         ptSpeed: true,
+        //         zoom: true,
+        //         zSpeed: true,
+        //         focus: true,
+        //         fSpeed: true,
+        //         OAF: true,
+        //         iris: true,
+        //         gain: true,
+        //         shut: true,
+        //         ped: true,
+        //         filter: true,
+        //         preset: true,
+        //         speedPset: true,
+        //         power: true,
+        //         ins: true,
+        //         tally: true,
+        //     }
+        // },
+
+        {   // Specific for the AK-UB300
+            id: 'AK-UB300', 
+            variables: {
+                version: false,
+                error: true,
+                power: true,
+                ins: true,
+                OAF: false,
+            },
+            feedbacks: {
+                powerState: true,
+                insState: true,
+                autoFocus: false,
+            }, 
+            actions: {
+                panTilt: true,
+                ptSpeed: true,
+                zoom: true,
+                zSpeed: true,
+                focus: true,
+                fSpeed: true,
+                OAF: false,
+                iris: true,
+                gain: true,
+                shut: true,
+                ped: true,
+                filter: true,
+                preset: true,
+                speedPset: true,
+                power: true,
+                ins: true,
+                tally: true,
+            }
+        }
     ]
 }

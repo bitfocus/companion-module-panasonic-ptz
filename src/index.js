@@ -46,41 +46,6 @@ instance.prototype.setupEventListeners = function () {
 	}
 };
 
-instance.prototype.getCameraInformation = function () {
-	var self = this;
-
-	if (self.config.host) {
-		self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/live/camdata.html', function (err, result) {
-			// If there was an Error
-			if (err) {
-				self.log('Error from PTZ: ' + err);
-				return;
-			}
-
-			// If We get a responce, store the values
-			if('data',result.response.req) {
-				var str_raw = String(result.data);
-				var str = {};
-
-				str_raw = str_raw.split('\r\n') // Split Data in order to remove data before and after command
-				
-				for (var i in str_raw) {
-					str = str_raw[i].trim(); // remove new line, carage return and so on.
-					str = str.split(':'); // Split Commands and data
-					console.log('HTTP Recived from PTZ: ' + str_raw[i]);
-					debug('HTTP Recived from PTZ: ' + str_raw[i]); // Debug Recived data				
-
-					// Store Data
-					self.storeData(str);
-				}
-
-				self.checkVariables();
-				self.checkFeedbacks();	
-			}
-		});
-	}
-};
-
 instance.prototype.init_tcp = function () {
 	var self = this;
 
@@ -184,6 +149,41 @@ instance.prototype.init_tcp = function () {
 	}
 };
 
+instance.prototype.getCameraInformation = function () {
+	var self = this;
+
+	if (self.config.host) {
+		self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/live/camdata.html', function (err, result) {
+			// If there was an Error
+			if (err) {
+				self.log('Error from PTZ: ' + err);
+				return;
+			}
+
+			// If We get a responce, store the values
+			if('data',result.response.req) {
+				var str_raw = String(result.data);
+				var str = {};
+
+				str_raw = str_raw.split('\r\n') // Split Data in order to remove data before and after command
+				
+				for (var i in str_raw) {
+					str = str_raw[i].trim(); // remove new line, carage return and so on.
+					str = str.split(':'); // Split Commands and data
+					console.log('HTTP Recived from PTZ: ' + str_raw[i]);
+					debug('HTTP Recived from PTZ: ' + str_raw[i]); // Debug Recived data				
+
+					// Store Data
+					self.storeData(str);
+				}
+
+				self.checkVariables();
+				self.checkFeedbacks();	
+			}
+		});
+	}
+};
+
 instance.prototype.storeData = function (str) {
 	var self = this;
 
@@ -214,6 +214,10 @@ instance.prototype.storeData = function (str) {
 		case 'TITLE': self.data.name = str[1]; break;
 		case 'p1': self.data.power = 'ON'; break;
 		case 'p0': self.data.power = 'OFF'; break;
+		case 'TLR': 
+			if (str[1] == '0') {self.data.tally = 'OFF';}
+			else if (str[1] == '1') {self.data.tally = 'ON';}
+			break;
 		case 'iNS0': self.data.ins = 'Desktop'; break;
 		case 'iNS1': self.data.ins = 'Hanging'; break;
 		case 'OAF': 
@@ -290,6 +294,7 @@ instance.prototype.init = function () {
 		error: 'NaN',
 		power: 'NaN',
 		ins: 'NaN',
+		tally: 'NaN',
 		oaf: 'NaN',
 	};
 
