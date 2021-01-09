@@ -75,6 +75,9 @@ It's recommended to use the presets as much as possible as there is a lot of act
 **Recall Presets**
 * Recall Preset 1-100
 * Set Preset Playback Speed
+* Set Preset Playback Time (AW-UE150)
+* Set Preset Playback Mode (AW-UE150)
+
 
 ## Variables
 A list of all the available Variables in this module, sorted into the following categories. For their correct naming, refer to the list under "Edit" "Instance".

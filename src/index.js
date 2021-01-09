@@ -224,7 +224,9 @@ instance.prototype.storeData = function (str) {
 			if (str[1] == '0') {self.data.oaf = 'Manual';}
 			else if (str[1] == '1') {self.data.oaf = 'Auto';}
 			break;
-
+		case 'd30': self.data.irisMode = 'Manual'; break;
+		case 'd31': self.data.irisMode = 'Auto'; break;
+	
 		default:
 			break;
 	}
@@ -296,6 +298,7 @@ instance.prototype.init = function () {
 		ins: 'NaN',
 		tally: 'NaN',
 		oaf: 'NaN',
+		irisMode: 'NaN',
 	};
 
 	self.ptSpeed = 25;
@@ -317,7 +320,7 @@ instance.prototype.init = function () {
 
 	self.config.host = this.config.host || '';
 	self.config.httpPort = this.config.httpPort || 80;
-	self.config.tcpPort = this.config.tcpPort || 31004;
+	self.config.tcpPort = this.config.tcpPort || 31004; // TODO: Add Auto detect/Select TCP port
 	self.config.model = this.config.model || 'Auto';
 
 	self.status(self.STATUS_WARNING, 'connecting');
@@ -483,10 +486,6 @@ instance.prototype.sendCam = function (str) {
 
 instance.prototype.actions = function (system) {
 	this.setActions(actions.setActions(this));
-};
-
-instance.prototype.action = function (action) {
-	actions.setAction(this, action);	
 };
 
 instance_skel.extendedBy(instance);

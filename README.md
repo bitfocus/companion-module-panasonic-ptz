@@ -19,3 +19,4 @@ See HELP.md and LICENSE
 * Added Feedback Structure and Support
 * Added Variables Structure and Support
 * Added Auto Detect Model, and the option to specify camera type
+* Made Actions Model specific, with options that match the model

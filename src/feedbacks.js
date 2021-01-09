@@ -145,7 +145,7 @@ module.exports = {
         if (SERIES.feedbacks.autoFocus == true) {
             feedbacks.autoFocus = {
                 label: 'Lens - Auto Focus State',
-                description: 'Indicate if Autofocus is ON or OFF',
+                description: 'Indicate if Auto focus is ON or OFF',
                 options: [
                     {
                         type: 'dropdown',
@@ -170,6 +170,36 @@ module.exports = {
                 }    
             };	
         }
+
+        if (SERIES.feedbacks.autoIris == true) {
+            feedbacks.autoIris = {
+                label: 'Lens - Auto Iris State',
+                description: 'Indicate if Auto iris is ON or OFF',
+                options: [
+                    {
+                        type: 'dropdown',
+                        label: 'Indicate in X State',
+                        id: 'option',
+                        default: '1',
+                        choices: [
+                            { id: '0', label: 'Manual' },
+                            { id: '1', label: 'Auto' },
+                        ]
+                    },
+                    foregroundColor, 
+                    backgroundColorRed
+                ],
+                callback: function(feedback, bank) {
+                    var opt = feedback.options;
+                    switch (opt.option) {
+                        case '0': if (self.data.irisMode === 'Manual') { return { color: opt.fg, bgcolor: opt.bg }; } break;
+                        case '1': if (self.data.irisMode === 'Auto') { return { color: opt.fg, bgcolor: opt.bg }; } break;
+                        default: break;
+                    }
+                }    
+            };	
+        }
+
         return(feedbacks);
     }
 }

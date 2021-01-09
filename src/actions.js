@@ -1,5 +1,6 @@
-var { CHOICES_FILTER, CHOICES_SHUTTER, CHOICES_PSSPEED, CHOICES_SPEED, CHOICES_GAIN } = require('./choices.js');
 var { MODELS, SERIES_SPECS } = require('./models.js');
+const c = require('./choices.js');
+const { data } = require('jquery');
 
 // ########################
 // #### Value Look Ups ####
@@ -12,11 +13,6 @@ for (var i = 0; i < 100; ++i) {
 var CHOICES_PRESET = [];
 for (var i = 0; i < 100; ++i) {
 	CHOICES_PRESET.push({ id: ('0' + i.toString(10)).substr(-2, 2), label: 'Preset ' + (i + 1) });
-}
-
-var CHOICES_PEDESTAL = [];
-for (var i = 0; i < 300; ++i) {
-	CHOICES_PEDESTAL.push({ id: ('00' + i.toString(16)).substr(-3, 3), label: 'Pedestal ' + i });
 }
 
 module.exports = {
@@ -55,13 +51,16 @@ module.exports = {
         }
     },
 
-    // ########################
-    // #### Create Actions ####
-    // ########################
+    // ##########################
+    // #### Instance Actions ####
+    // ##########################
 	setActions: function (i) {
         var self = i;
         var actions = {};
-        var SERIES = {};
+		var SERIES = {};
+		var cmd = '';
+        var n;
+		var string;
 
         // Set the model and series selected, if in auto, dettect what model is connected via TCP
         if (self.config.model === 'Auto') {
@@ -78,20 +77,94 @@ module.exports = {
         } else {
             SERIES = SERIES_SPECS.find(SERIES_SPECS => SERIES_SPECS.id == self.data.series);
         }
+        var s = SERIES.actions;
         // console.log(SERIES);
-    
-        // Pan/Tilt
-        if (SERIES.actions.panTilt == true) {actions.left = { label: 'Pan/Tilt - Pan Left' };}
-        if (SERIES.actions.panTilt == true) {actions.right = { label: 'Pan/Tilt - Pan Right' };}
-        if (SERIES.actions.panTilt == true) {actions.up = { label: 'Pan/Tilt - Tilt Up' };}
-        if (SERIES.actions.panTilt == true) {actions.down = { label: 'Pan/Tilt - Tilt Down' };}
-        if (SERIES.actions.panTilt == true) {actions.upLeft = { label: 'Pan/Tilt - Up Left' };}
-        if (SERIES.actions.panTilt == true) {actions.upRight = { label: 'Pan/Tilt - Up Right' };}
-        if (SERIES.actions.panTilt == true) {actions.downLeft = { label: 'Pan/Tilt - Down Left' };}
-        if (SERIES.actions.panTilt == true) {actions.downRight = { label: 'Pan/Tilt - Down Right' };}
-        if (SERIES.actions.panTilt == true) {actions.stop = { label: 'Pan/Tilt - Stop' };}
-        if (SERIES.actions.panTilt == true) {actions.home = { label: 'Pan/Tilt - Home' };}
-        if (SERIES.actions.ptSpeed == true) {actions.ptSpeedS = {
+
+		// ##########################
+		// #### Pan/Tilt Actions ####
+		// ##########################
+
+		if (s.panTilt == true) {actions.left = { label: 'Pan/Tilt - Pan Left',
+            callback: function(action, bank) {
+                n = parseInt(50 - self.ptSpeed);
+                string = '' + (n < 10 ? "0" + n : n)
+                cmd = 'PTS' + string + '50';
+                self.sendPTZ(cmd);
+            }
+        };}
+
+        if (s.panTilt == true) {actions.right = { label: 'Pan/Tilt - Pan Right',
+            callback: function(action, bank) {
+                cmd = 'PTS' + parseInt(50 + self.ptSpeed) + '50';
+                self.sendPTZ(cmd);
+            }
+        };}
+
+        if (s.panTilt == true) {actions.up = { label: 'Pan/Tilt - Tilt Up',
+            callback: function(action, bank) {
+                cmd = 'PTS50' + parseInt(50 + self.ptSpeed);
+                self.sendPTZ(cmd);
+            }        
+        };}
+
+        if (s.panTilt == true) {actions.down = { label: 'Pan/Tilt - Tilt Down',
+            callback: function(action, bank) {
+                n = parseInt(50 - self.ptSpeed);
+                string = '' + (n < 10 ? "0" + n : n)
+                cmd = 'PTS50' + string;
+                self.sendPTZ(cmd);
+            }    
+        };}
+
+        if (s.panTilt == true) {actions.upLeft = { label: 'Pan/Tilt - Up Left',
+            callback: function(action, bank) {
+                n = parseInt(50 - self.ptSpeed);
+                string = '' + (n < 10 ? "0" + n : n)
+                cmd = 'PTS' + string + parseInt(50 + self.ptSpeed);
+                self.sendPTZ(cmd);
+            }
+        };}
+
+        if (s.panTilt == true) {actions.upRight = { label: 'Pan/Tilt - Up Right',
+            callback: function(action, bank) {
+                cmd = 'PTS' + parseInt(50 + self.ptSpeed) + parseInt(50 + self.ptSpeed);
+                self.sendPTZ(cmd);
+            }
+        };}
+
+        if (s.panTilt == true) {actions.downLeft = { label: 'Pan/Tilt - Down Left',
+            callback: function(action, bank) {
+                n = parseInt(50 - self.ptSpeed);
+                string = '' + (n < 10 ? "0" + n : n)
+                cmd = 'PTS' + string + string;
+                self.sendPTZ(cmd);
+            }
+        };}
+        
+        if (s.panTilt == true) {actions.downRight = { label: 'Pan/Tilt - Down Right',
+            callback: function(action, bank) {
+                n = parseInt(50 - self.ptSpeed);
+                string = '' + (n < 10 ? "0" + n : n)
+                cmd = 'PTS' + parseInt(50 + self.ptSpeed) + string;
+                self.sendPTZ(cmd);
+            }
+        };}
+
+        if (s.panTilt == true) {actions.stop = { label: 'Pan/Tilt - Stop',
+            callback: function(action, bank) {
+                cmd = 'PTS5050';
+                self.sendPTZ(cmd);
+            }
+        };}
+        
+        if (s.panTilt == true) {actions.home = { label: 'Pan/Tilt - Home',    
+            callback: function(action, bank) {
+                cmd = 'APC7FFF7FFF';
+                self.sendPTZ(cmd);
+            }
+        };}
+        
+        if (s.ptSpeed == true) {actions.ptSpeedS = {
             label: 'Pan/Tilt - Speed',
             options: [
                 {
@@ -99,18 +172,80 @@ module.exports = {
                     label: 'speed setting',
                     id: 'speed',
                     default: 25,
-                    choices: CHOICES_SPEED
+                    choices: c.CHOICES_SPEED
                 }
-            ]
+            ],
+            callback: function(action, bank) {
+                self.ptSpeed = action.options.speed;
+                var idx = -1;
+                for (var i = 0; i < c.CHOICES_SPEED.length; ++i) {
+                    if (c.CHOICES_SPEED[i].id == self.ptSpeed) {
+                        idx = i;
+                        break;
+                    }
+                }
+                if (idx > -1) {
+                    self.ptSpeedIndex = idx;
+                }
+                self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
+                self.setVariable('ptSpeedVar', self.ptSpeed);
+            }
         };}
-        if (SERIES.actions.ptSpeed == true) {actions.ptSpeedU = { label: 'Pan/Tilt - Speed Up' };}
-        if (SERIES.actions.ptSpeed == true) {actions.ptSpeedD = { label: 'Pan/Tilt - Speed Down' };}
 
-        // Lens
-        if (SERIES.actions.zoom == true) {actions.zoomI = { label: 'Lens - Zoom In' };}
-        if (SERIES.actions.zoom == true) {actions.zoomO = { label: 'Lens - Zoom Out' };}
-        if (SERIES.actions.zoom == true) {actions.zoomS = { label: 'Lens - Zoom Stop' };}
-        if (SERIES.actions.zSpeed == true) {actions.zSpeedS = {
+        if (s.ptSpeed == true) {actions.ptSpeedU = { label: 'Pan/Tilt - Speed Up',
+            callback: function(action, bank) {
+                if (self.ptSpeedIndex == 0) {
+                    self.ptSpeedIndex = 0;
+                }
+                else if (self.ptSpeedIndex > 0) {
+                    self.ptSpeedIndex--;
+                }
+                self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
+                self.setVariable('ptSpeedVar', self.ptSpeed);
+            }
+        };}
+
+        if (s.ptSpeed == true) {actions.ptSpeedD = { label: 'Pan/Tilt - Speed Down',
+            callback: function(action, bank) {
+                if (self.ptSpeedIndex == c.CHOICES_SPEED.length) {
+                    self.ptSpeedIndex = c.CHOICES_SPEED.length;
+                }
+                else if (self.ptSpeedIndex < c.CHOICES_SPEED.length) {
+                    self.ptSpeedIndex++;
+                }
+                self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
+                self.setVariable('ptSpeedVar', self.ptSpeed);
+            }
+        };}
+
+		// ######################
+		// #### Lens Actions ####
+		// ######################
+
+        if (s.zoom == true) {actions.zoomI = { label: 'Lens - Zoom In',
+            callback: function(action, bank) {
+                cmd = 'Z' + parseInt(50 + self.zSpeed);
+                self.sendPTZ(cmd);
+            }
+        };}
+
+        if (s.zoom == true) {actions.zoomO = { label: 'Lens - Zoom Out',
+            callback: function(action, bank) {
+                n = parseInt(50 - self.zSpeed);
+                string = '' + (n < 10 ? "0" + n : n)
+                cmd = 'Z' + string;
+                self.sendPTZ(cmd);
+            }
+        };}
+
+        if (s.zoom == true) {actions.zoomS = { label: 'Lens - Zoom Stop',
+            callback: function(action, bank) {
+                cmd = 'Z50';
+                self.sendPTZ(cmd);
+            }
+        };}
+
+        if (s.zSpeed == true) {actions.zSpeedS = {
             label: 'Lens - Zoom Speed',
             options: [
                 {
@@ -118,16 +253,87 @@ module.exports = {
                     label: 'speed setting',
                     id: 'speed',
                     default: 25,
-                    choices: CHOICES_SPEED
+                    choices: c.CHOICES_SPEED
                 }
-            ]
-        };}
-        if (SERIES.actions.zSpeed == true) {actions.zSpeedU = { label: 'Lens - Zoom Speed Up' };}
-        if (SERIES.actions.zSpeed == true) {actions.zSpeedD = { label: 'Lens - Zoom Speed Down' };}
-        if (SERIES.actions.focus == true) {actions.focusN = { label: 'Lens - Focus Near' };}
-        if (SERIES.actions.focus == true) {actions.focusF = { label: 'Lens - Focus Far' };}
-        if (SERIES.actions.focus == true) {actions.focusS = { label: 'Lens - Focus Stop' };}
-        if (SERIES.actions.fSpeed == true) {actions.fSpeedS = {
+			],
+			callback: function(action, bank) {
+                self.zSpeed = action.options.speed;
+                var idx = -1;
+                for (var i = 0; i < c.CHOICES_SPEED.length; ++i) {
+                    if (c.CHOICES_SPEED[i].id == self.zSpeed) {
+                        idx = i;
+                        break;
+                    }
+                }
+                if (idx > -1) {
+                    self.zSpeedIndex = idx;
+                }
+                self.zSpeed = c.CHOICES_SPEED[self.zSpeedIndex].id
+                self.setVariable('zSpeedVar', self.zSpeed);
+            }
+		};}
+		
+		if (s.zSpeed == true) {actions.zSpeedU = { label: 'Lens - Zoom Speed Up',
+			callback: function(action, bank) {
+                if (self.zSpeedIndex == 0) {
+                    self.zSpeedIndex = 0;
+                }
+                else if (self.zSpeedIndex > 0) {
+                    self.zSpeedIndex--;
+                }
+                self.zSpeed = c.CHOICES_SPEED[self.zSpeedIndex].id
+                self.setVariable('zSpeedVar', self.zSpeed);
+			}
+		};}
+		
+		if (s.zSpeed == true) {actions.zSpeedD = { label: 'Lens - Zoom Speed Down',
+			callback: function(action, bank) {
+                if (self.zSpeedIndex == c.CHOICES_SPEED.length) {
+                    self.zSpeedIndex = c.CHOICES_SPEED.length;
+                }
+                else if (self.zSpeedIndex < c.CHOICES_SPEED.length) {
+                    self.zSpeedIndex++;
+                }
+                self.zSpeed = c.CHOICES_SPEED[self.zSpeedIndex].id
+                self.setVariable('zSpeedVar', self.zSpeed);
+			}
+		};}
+		
+		if (s.focus == true) {actions.focusN = { label: 'Lens - Focus Near',
+			callback: function(action, bank) {
+                n = parseInt(50 - self.fSpeed);
+                string = '' + (n < 10 ? "0" + n : n)
+                cmd = 'F' + string;
+                self.sendPTZ(cmd);
+			}
+		};}
+		
+		if (s.focus == true) {actions.focusF = { label: 'Lens - Focus Far',
+			callback: function(action, bank) {
+				cmd = 'F' + parseInt(50 + self.fSpeed);
+                self.sendPTZ(cmd);
+			}
+		};}
+		
+		if (s.focus == true) {actions.focusS = { label: 'Lens - Focus Stop',
+			callback: function(action, bank) {
+                self.fSpeed = action.options.speed;
+                var idx = -1;
+                for (var i = 0; i < c.CHOICES_SPEED.length; ++i) {
+                    if (c.CHOICES_SPEED[i].id == self.fSpeed) {
+                        idx = i;
+                        break;
+                    }
+                }
+                if (idx > -1) {
+                    self.fSpeedIndex = idx;
+                }
+                self.fSpeed = c.CHOICES_SPEED[self.fSpeedIndex].id
+                self.setVariable('fSpeedVar', self.fSpeed);
+			}
+		};}
+		
+		if (s.fSpeed == true) {actions.fSpeedS = {
             label: 'Lens - Focus Speed',
             options: [
                 {
@@ -135,13 +341,42 @@ module.exports = {
                     label: 'speed setting',
                     id: 'speed',
                     default: 25,
-                    choices: CHOICES_SPEED
+                    choices: c.CHOICES_SPEED
                 }
-            ]
+			],
+			callback: function(action, bank) {
+				cmd = 'F50';
+                self.sendPTZ(cmd);
+			}
         };}
-        if (SERIES.actions.fSpeed == true) {actions.fSpeedU = { label: 'Lens - Focus Speed Up' };}
-        if (SERIES.actions.fSpeed == true) {actions.fSpeedD = { label: 'Lens - Focus Speed Down' };}
-        if (SERIES.actions.OAF == true) {actions.focusM = {
+
+		if (s.fSpeed == true) {actions.fSpeedU = { label: 'Lens - Focus Speed Up',
+			callback: function(action, bank) {
+                if (self.fSpeedIndex == 0) {
+                    self.fSpeedIndex = 0;
+                }
+                else if (self.fSpeedIndex > 0) {
+                    self.fSpeedIndex--;
+                }
+                self.fSpeed = c.CHOICES_SPEED[self.fSpeedIndex].id
+                self.setVariable('fSpeedVar', self.fSpeed);
+			}
+		};}
+	
+		if (s.fSpeed == true) {actions.fSpeedD = { label: 'Lens - Focus Speed Down',
+			callback: function(action, bank) {
+                if (self.fSpeedIndex == c.CHOICES_SPEED.length) {
+                    self.fSpeedIndex = c.CHOICES_SPEED.length;
+                }
+                else if (self.fSpeedIndex < c.CHOICES_SPEED.length) {
+                    self.fSpeedIndex++;
+                }
+                self.fSpeed = c.CHOICES_SPEED[self.fSpeedIndex].id
+                self.setVariable('fSpeedVar', self.fSpeed);
+			}
+		};}
+	
+		if (s.OAF == true) {actions.focusM = {
             label: 'Lens - Focus Mode (Auto Focus)',
             options: [
                 {
@@ -151,14 +386,56 @@ module.exports = {
                     default: 0,
                     choices: [{ id: 0, label: 'Auto Focus' }, { id: 1, label: 'Manual Focus' }]
                 }
-            ]
+			],
+			callback: function(action, bank) {
+                if (action.options.bol == 0) {
+                    cmd = 'D10';
+                }
+                if (action.options.bol == 1) {
+                    cmd = 'D11';
+                }
+                self.sendPTZ(cmd);
+			}
         };}
-        if (SERIES.actions.OAF == true) {actions.focusOTAF = { label: 'Lens - Focus One Touch Auto (OTAF)' };}
-        
-        // Exposure
-        if (SERIES.actions.iris == true) {actions.irisU = { label: 'Exposure - Iris Up' };}
-        if (SERIES.actions.iris == true) {actions.irisD = { label: 'Exposure - Iris Down' };}
-        if (SERIES.actions.iris == true) {actions.irisS = {
+
+		if (s.OTAF == true) {actions.focusOTAF = { label: 'Lens - Focus One Touch Auto (OTAF)',
+			callback: function(action, bank) {
+                cmd = 'OSE:69:1';
+                self.sendCam(cmd);
+			}
+		};}
+
+		// ##########################
+		// #### Exposure Actions ####
+		// ##########################
+
+		if (s.iris == true) {actions.irisU = { label: 'Exposure - Iris Up',
+			callback: function(action, bank) {
+                if (self.irisIndex == CHOICES_IRIS.length) {
+                    self.irisIndex = CHOICES_IRIS.length;
+                }
+                else if (self.irisIndex < CHOICES_IRIS.length) {
+                    self.irisIndex++;
+                }
+                self.irisVal = CHOICES_IRIS[self.irisIndex].id;
+                self.sendPTZ('I' + self.irisVal.toUpperCase());
+			}
+		};}
+		
+		if (s.iris == true) {actions.irisD = { label: 'Exposure - Iris Down',
+			callback: function(action, bank) {
+                if (self.irisIndex == 0) {
+                    self.irisIndex = 0;
+                }
+                else if (self.irisIndex > 0) {
+                    self.irisIndex--;
+                }
+                self.irisVal = CHOICES_IRIS[self.irisIndex].id;
+                self.sendPTZ('I' + self.irisVal.toUpperCase());
+			}
+		};}
+		
+		if (s.iris == true) {actions.irisS = {
             label: 'Exposure - Set Iris',
             options: [
                 {
@@ -167,63 +444,225 @@ module.exports = {
                     id: 'val',
                     choices: CHOICES_IRIS
                 }
-            ]
-        };}
-        if (SERIES.actions.gain == true) {actions.gainU = { label: 'Exposure - Gain Up' };}
-        if (SERIES.actions.gain == true) {actions.gainD = { label: 'Exposure - Gain Down' };}
-        if (SERIES.actions.gain == true) {actions.gainS = {
+			],
+			callback: function(action, bank) {
+                self.sendPTZ('I' + action.options.val);
+                self.irisVal = action.options.val;
+                self.irisIndex = action.options.val;
+			}
+		};}
+		
+        if (s.iris == true) {actions.irisM = {
+            label: 'Exposure - Iris Mode (Auto Iris)',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Auto / Manual Iris',
+                    id: 'bol',
+                    default: 0,
+                    choices: [{ id: 0, label: 'Auto Iris' }, { id: 1, label: 'Manual Iris' }]
+                }
+            ],
+			callback: function(action, bank) {
+                if (action.options.bol == 0) {
+                    cmd = 'D30';
+                }
+                if (action.options.bol == 1) {
+                    cmd = 'D31';
+                }
+                self.sendPTZ(cmd);
+			}
+		};}
+
+		if (s.gain.cmd) {actions.gainU = { label: 'Exposure - Gain Up',
+			callback: function(action, bank) {
+                if (self.gainIndex == s.gain.dropdown.length) {
+                    self.gainIndex = s.gain.dropdown.length;
+                }
+                else if (self.gainIndex < s.gain.dropdown.length) {
+                    self.gainIndex++;
+                }
+                self.gainVal = s.gain.dropdown[self.gainIndex].id
+    
+                cmd = s.gain.cmd + self.gainVal.toUpperCase();
+                self.sendCam(cmd);
+			}
+		};}
+	
+		if (s.gain.cmd) {actions.gainD = { label: 'Exposure - Gain Down',
+			callback: function(action, bank) {
+                if (self.gainIndex == 0) {
+                    self.gainIndex = 0;
+                }
+                else if (self.gainIndex > 0) {
+                    self.gainIndex--;
+                }
+                self.gainVal = s.gain.dropdown[self.gainIndex].id
+    
+                cmd = s.gain.cmd + self.gainVal.toUpperCase();
+                self.sendCam(cmd);
+			}
+		};}
+	
+		if (s.gain.cmd) {actions.gainS = {
             label: 'Exposure - Set Gain',
             options: [
                 {
                     type: 'dropdown',
                     label: 'Gain setting',
                     id: 'val',
-                    choices: CHOICES_GAIN
+                    choices: s.gain.dropdown
                 }
-            ]
-        };}
-        if (SERIES.actions.shut == true) {actions.shutU = { label: 'Exposure - Shutter Up' };}
-        if (SERIES.actions.shut == true) {actions.shutD = { label: 'Exposure - Shutter Down' };}
-        if (SERIES.actions.shut == true) {actions.shutS = {
+			],
+			callback: function(action, bank) {
+                cmd = s.gain.cmd + action.options.val;
+                self.sendCam(cmd);
+			}
+		};}
+		
+		if (s.shut.cmd) {actions.shutU = { label: 'Exposure - Shutter Up',
+			callback: function(action, bank) {
+                if (self.shutIndex == s.shut.dropdown.length) {
+                    self.shutIndex = s.shut.dropdown.length;
+                }
+                else if (self.shutIndex < s.shut.dropdown.length) {
+                    self.shutIndex++;
+                }
+                self.shutVal = s.shut.dropdown[self.shutIndex].id
+
+                cmd = s.shut.cmd + self.shutVal.toUpperCase();
+                self.sendCam(cmd);
+			}
+		};}
+
+		if (s.shut.cmd) {actions.shutD = { label: 'Exposure - Shutter Down',
+			callback: function(action, bank) {
+                if (self.shutIndex == 0) {
+                    self.shutIndex = 0;
+                }
+                else if (self.shutIndex > 0) {
+                    self.shutIndex--;
+                }
+                self.shutVal = s.shut.dropdown[self.shutIndex].id
+
+                cmd = s.shut.cmd + self.shutVal.toUpperCase();
+                self.sendCam(cmd);
+			}
+		};}
+		
+		if (s.shut.cmd) {actions.shutS = {
             label: 'Exposure - Set Shutter',
             options: [
                 {
                     type: 'dropdown',
                     label: 'Shutter setting',
                     id: 'val',
-                    choices: CHOICES_SHUTTER
+                    choices: s.shut.dropdown
                 }
-            ]
+			],
+			callback: function(action, bank) {
+                cmd = s.shut.cmd + action.options.val.toUpperCase();
+                self.sendCam(cmd);
+			}
+
         };}
-        if (SERIES.actions.ped == true) {actions.pedU = { label: 'Exposure - Pedestal Up' };}
-        if (SERIES.actions.ped == true) {actions.pedD = { label: 'Exposure - Pedestal Down' };}
-        if (SERIES.actions.ped == true) {actions.pedS = {
+
+		if (s.ped.cmd) {actions.pedU = { label: 'Exposure - Pedestal Up',
+			callback: function(action, bank) {
+				if (self.pedestalIndex == s.ped.dropdown.length) {
+                    self.pedestalIndex = s.ped.dropdown.length;
+                }
+                else if (self.pedestalIndex < s.ped.dropdown.length) {
+                    self.pedestalIndex++;
+                }
+                self.pedestalVal = s.ped.dropdown[self.pedestalIndex].id
+    
+                cmd = s.ped.cmd + self.pedestalVal.toUpperCase;
+                self.sendCam(cmd);
+			}
+		};}
+
+		if (s.ped.cmd) {actions.pedD = { label: 'Exposure - Pedestal Down',
+			callback: function(action, bank) {
+                if (self.pedestalIndex == 0) {
+                    self.pedestalIndex = 0;
+                }
+                else if (self.pedestalIndex > 0) {
+                    self.pedestalIndex--;
+                }
+                self.pedestalVal = s.ped.dropdown[self.pedestalIndex].id
+    
+                cmd = s.ped.cmd + self.pedestalVal.toUpperCase();
+                self.sendCam(cmd);
+			}
+		};}
+		
+		if (s.ped.cmd) {actions.pedS = {
             label: 'Exposure - Set Pedestal',
             options: [
                 {
                     type: 'dropdown',
-                    label: 'Iris setting',
+                    label: 'Pedestal setting',
                     id: 'val',
-                    choices: CHOICES_PEDESTAL
+                    choices: s.ped.dropdown
                 }
-            ]
+			],
+			callback: function(action, bank) {
+                cmd = s.ped.cmd + action.options.val.toUpperCase();
+                self.sendCam(cmd);
+			}
         };}
-        if (SERIES.actions.filter == true) {actions.filterU = { label: 'Exposure - Filter Up' };}
-        if (SERIES.actions.filter == true) {actions.filterD = { label: 'Exposure - Filter Down' };}
-        if (SERIES.actions.filter == true) {actions.filterS = {
-            label: 'Exposure - Set Filter',
+		if (s.filter.cmd) {actions.filterU = { label: 'Exposure - ND Filter Up',
+			callback: function(action, bank) {
+                if (self.filterIndex == s.filter.dropdown.length) {
+                    self.filterIndex = s.filter.dropdown.length;
+                }
+                else if (self.filterIndex < s.filter.dropdown.length) {
+                    self.filterIndex++;
+                }
+                self.filterVal = s.filter.dropdown[self.filterIndex].id
+    
+                cmd = s.filter.cmd + self.filterVal;
+                self.sendCam(cmd);
+			}
+		};}
+
+		if (s.filter.cmd) {actions.filterD = { label: 'Exposure - ND Filter Down',
+			callback: function(action, bank) {
+				if (self.filterIndex == 0) {
+					self.filterIndex = 0;
+				}
+				else if (self.filterIndex > 0) {
+					self.filterIndex--;
+				}
+				self.filterVal = s.filter.dropdown[self.filterIndex].id
+
+				cmd = s.filter.cmd + self.filterVal;
+				self.sendCam(cmd);
+			}
+		};}
+		
+		if (s.filter.cmd) {actions.filterS = {
+            label: 'Exposure - Set ND Filter',
             options: [
                 {
                     type: 'dropdown',
-                    label: 'Iris setting',
+                    label: 'ND Filter setting',
                     id: 'val',
-                    choices: CHOICES_FILTER
+                    choices: s.filter.dropdown
                 }
-            ]
+			],
+			callback: function(action, bank) {
+                cmd = s.filter.dropdown + action.options.val;
+                self.sendCam(cmd);
+			}
         };}
 
-        // Presets
-        if (SERIES.actions.preset == true) {actions.savePset = {
+		// #########################
+		// #### Presets Actions ####
+		// #########################
+
+		if (s.preset == true) {actions.savePset = {
             label: 'Preset - Save',
             options: [
                 {
@@ -232,9 +671,13 @@ module.exports = {
                     id: 'val',
                     choices: CHOICES_PRESET
                 }
-            ]
+            ],
+			callback: function(action, bank) {
+                cmd = 'M' + action.options.val;
+                self.sendPTZ(cmd);
+			}
         };}
-        if (SERIES.actions.preset == true) {actions.recallPset = {
+        if (s.preset == true) {actions.recallPset = {
             label: 'Preset - Recall',
             options: [
                 {
@@ -243,9 +686,13 @@ module.exports = {
                     id: 'val',
                     choices: CHOICES_PRESET
                 }
-            ]
+            ],
+			callback: function(action, bank) {
+				cmd = 'R' + action.options.val;
+                self.sendPTZ(cmd);
+			}
         };}
-        if (SERIES.actions.speedPset == true) {actions.speedPset = {
+        if (s.speedPset == true) {actions.speedPset = {
             label: 'Preset - Drive Speed',
             options: [
                 {
@@ -253,17 +700,84 @@ module.exports = {
                     label: 'speed setting',
                     id: 'speed',
                     default: 999,
-                    choices: CHOICES_PSSPEED
+                    choices: c.CHOICES_PSSPEED
                 }
-            ]
+            ],
+			callback: function(action, bank) {
+                cmd = 'UPVS' + action.options.speed
+                self.sendPTZ(cmd);
+			}
+        };}
+        if (s.timePset == true) {actions.timePset = { // TODO: currently only works when in Time mode.
+            label: 'Preset - Drive Time',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Time Secconds',
+                    id: 'speed',
+                    default: '001',
+                    choices: c.CHOICES_PSTIME()
+                }
+            ],
+			callback: function(action, bank) {
+                cmd = 'UPVS' + action.options.speed
+                self.sendPTZ(cmd);
+			}
         };}
 
-        // System
-        if (SERIES.actions.power == true) {actions.powerOff = { label: 'System - Power Off' };}
-        if (SERIES.actions.power == true) {actions.powerOn = { label: 'System - Power On' };}
-        if (SERIES.actions.tally == true) {actions.tallyOff = {label: 'System - Tally Off'};}
-        if (SERIES.actions.tally == true) {actions.tallyOn = {label: 'System - Tally On'};}
-        if (SERIES.actions.ins == true) {actions.insPosition = { 
+        if (s.timePset == true) {actions.modePset = { // TODO: currently only works when in Time mode.
+            label: 'Preset - Drive Speed/Time Mode',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Select mode',
+                    id: 'mode',
+                    default: '0',
+                    choices: [
+                        {id: '0', label: 'Speed mode'},
+                        {id: '1', label: 'Time mode'},
+                    ]
+                }
+            ],
+			callback: function(action, bank) {
+                cmd = 'OSJ:29:' + action.options.mode
+                self.sendCam(cmd);
+			}
+        };}
+
+		// ########################
+		// #### System Actions ####
+		// ########################
+
+		if (s.power == true) {actions.powerOff = { label: 'System - Power Off',
+			callback: function(action, bank) {
+                cmd = 'O0';
+                self.sendPTZ(cmd);
+			}
+		};}
+
+		if (s.power == true) {actions.powerOn = { label: 'System - Power On',
+			callback: function(action, bank) {
+                cmd = 'O1';
+                self.sendPTZ(cmd);
+			}
+		};}
+
+		if (s.tally == true) {actions.tallyOff = {label: 'System - Tally Off',
+			callback: function(action, bank) {
+                cmd = 'DA0';
+                self.sendPTZ(cmd);
+			}
+		};}
+
+		if (s.tally == true) {actions.tallyOn = {label: 'System - Tally On',
+			callback: function(action, bank) {
+                cmd = 'DA1';
+                self.sendPTZ(cmd);
+			}
+		};}
+
+		if (s.ins == true) {actions.insPosition = { 
             label: 'System - Installation position',
             options: [
                 {
@@ -276,441 +790,14 @@ module.exports = {
                         { id: '1', label: 'Hanging' }
                     ]
                 }
-            ]
+			],
+			callback: function(action, bank) {
+                cmd = 'INS' + action.options.position;
+                self.sendPTZ(cmd);
+			}
         };}
 
         return(actions);
     },
 
-    // #########################
-    // #### Execute Actions ####
-    // #########################
-    setAction: function (i, action) {
-        var self = i;
-        var opt = action.options;
-        var cmd = '';
-        var n;
-        var string;
-    
-        switch (action.action) {
-    
-            case 'left':
-                n = parseInt(50 - self.ptSpeed);
-                string = '' + (n < 10 ? "0" + n : n)
-                cmd = 'PTS' + string + '50';
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'right':
-                cmd = 'PTS' + parseInt(50 + self.ptSpeed) + '50';
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'up':
-                cmd = 'PTS50' + parseInt(50 + self.ptSpeed);
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'down':
-                n = parseInt(50 - self.ptSpeed);
-                string = '' + (n < 10 ? "0" + n : n)
-                cmd = 'PTS50' + string;
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'upLeft':
-                n = parseInt(50 - self.ptSpeed);
-                string = '' + (n < 10 ? "0" + n : n)
-                cmd = 'PTS' + string + parseInt(50 + self.ptSpeed);
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'upRight':
-                cmd = 'PTS' + parseInt(50 + self.ptSpeed) + parseInt(50 + self.ptSpeed);
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'downLeft':
-                n = parseInt(50 - self.ptSpeed);
-                string = '' + (n < 10 ? "0" + n : n)
-                cmd = 'PTS' + string + string;
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'downRight':
-                n = parseInt(50 - self.ptSpeed);
-                string = '' + (n < 10 ? "0" + n : n)
-                cmd = 'PTS' + parseInt(50 + self.ptSpeed) + string;
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'stop':
-                cmd = 'PTS5050';
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'home':
-                cmd = 'APC7FFF7FFF';
-                self.sendPTZ(cmd);
-                break;
-
-            case 'ptSpeedS':
-                self.ptSpeed = opt.speed;
-                var idx = -1;
-                for (var i = 0; i < SPEED.length; ++i) {
-                    if (SPEED[i].id == self.ptSpeed) {
-                        idx = i;
-                        break;
-                    }
-                }
-                if (idx > -1) {
-                    self.ptSpeedIndex = idx;
-                }
-                self.ptSpeed = SPEED[self.ptSpeedIndex].id
-                self.setVariable('ptSpeedVar', self.ptSpeed);
-                break;
-    
-            case 'ptSpeedU':
-                if (self.ptSpeedIndex == 0) {
-                    self.ptSpeedIndex = 0;
-                }
-                else if (self.ptSpeedIndex > 0) {
-                    self.ptSpeedIndex--;
-                }
-                self.ptSpeed = SPEED[self.ptSpeedIndex].id
-                self.setVariable('ptSpeedVar', self.ptSpeed);
-                break;
-    
-            case 'ptSpeedD':
-                if (self.ptSpeedIndex == 49) {
-                    self.ptSpeedIndex = 49;
-                }
-                else if (self.ptSpeedIndex < 49) {
-                    self.ptSpeedIndex++;
-                }
-                self.ptSpeed = SPEED[self.ptSpeedIndex].id
-                self.setVariable('ptSpeedVar', self.ptSpeed);
-                break;
-                    
-            case 'zoomI':
-                cmd = 'Z' + parseInt(50 + self.zSpeed);
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'zoomO':
-                n = parseInt(50 - self.zSpeed);
-                string = '' + (n < 10 ? "0" + n : n)
-                cmd = 'Z' + string;
-                self.sendPTZ(cmd);
-                break;
-        
-            case 'zoomS':
-                cmd = 'Z50';
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'zSpeedS':
-                self.zSpeed = opt.speed;
-                var idx = -1;
-                for (var i = 0; i < SPEED.length; ++i) {
-                    if (SPEED[i].id == self.zSpeed) {
-                        idx = i;
-                        break;
-                    }
-                }
-                if (idx > -1) {
-                    self.zSpeedIndex = idx;
-                }
-                self.zSpeed = SPEED[self.zSpeedIndex].id
-                self.setVariable('zSpeedVar', self.zSpeed);
-                break;
-    
-            case 'zSpeedU':
-                if (self.zSpeedIndex == 0) {
-                    self.zSpeedIndex = 0;
-                }
-                else if (self.zSpeedIndex > 0) {
-                    self.zSpeedIndex--;
-                }
-                self.zSpeed = SPEED[self.zSpeedIndex].id
-                self.setVariable('zSpeedVar', self.zSpeed);
-                break;
-
-            case 'zSpeedD':
-                if (self.zSpeedIndex == 49) {
-                    self.zSpeedIndex = 49;
-                }
-                else if (self.zSpeedIndex < 49) {
-                    self.zSpeedIndex++;
-                }
-                self.zSpeed = SPEED[self.zSpeedIndex].id
-                self.setVariable('zSpeedVar', self.zSpeed);
-                break;
-        
-            case 'focusN':
-                n = parseInt(50 - self.fSpeed);
-                string = '' + (n < 10 ? "0" + n : n)
-                cmd = 'F' + string;
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'focusF':
-                cmd = 'F' + parseInt(50 + self.fSpeed);
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'fSpeedS':
-                self.fSpeed = opt.speed;
-                var idx = -1;
-                for (var i = 0; i < SPEED.length; ++i) {
-                    if (SPEED[i].id == self.fSpeed) {
-                        idx = i;
-                        break;
-                    }
-                }
-                if (idx > -1) {
-                    self.fSpeedIndex = idx;
-                }
-                self.fSpeed = SPEED[self.fSpeedIndex].id
-                self.setVariable('fSpeedVar', self.fSpeed);
-                break;
-    
-            case 'fSpeedU':
-                if (self.fSpeedIndex == 0) {
-                    self.fSpeedIndex = 0;
-                }
-                else if (self.fSpeedIndex > 0) {
-                    self.fSpeedIndex--;
-                }
-                self.fSpeed = SPEED[self.fSpeedIndex].id
-                self.setVariable('fSpeedVar', self.fSpeed);
-                break;
-
-            case 'fSpeedD':
-                if (self.fSpeedIndex == 49) {
-                    self.fSpeedIndex = 49;
-                }
-                else if (self.fSpeedIndex < 49) {
-                    self.fSpeedIndex++;
-                }
-                self.fSpeed = SPEED[self.fSpeedIndex].id
-                self.setVariable('fSpeedVar', self.fSpeed);
-                break;
-        
-            case 'focusS':
-                cmd = 'F50';
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'focusM':
-                if (opt.bol == 0) {
-                    cmd = 'D10';
-                }
-                if (opt.bol == 1) {
-                    cmd = 'D11';
-                }
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'focusOTAF':
-                cmd = 'OSE:69:1';
-                self.sendCam(cmd);
-                break;
-    
-            case 'irisU':
-                if (self.irisIndex == 99) {
-                    self.irisIndex = 99;
-                }
-                else if (self.irisIndex < 99) {
-                    self.irisIndex++;
-                }
-                self.irisVal = IRIS[self.irisIndex].id;
-                self.sendPTZ('I' + self.irisVal.toUpperCase());
-                break;
-    
-            case 'irisD':
-                if (self.irisIndex == 0) {
-                    self.irisIndex = 0;
-                }
-                else if (self.irisIndex > 0) {
-                    self.irisIndex--;
-                }
-                self.irisVal = IRIS[self.irisIndex].id;
-                self.sendPTZ('I' + self.irisVal.toUpperCase());
-                break;
-    
-            case 'irisS':
-                self.sendPTZ('I' + opt.val);
-                self.irisVal = opt.val;
-                self.irisIndex = opt.val;
-                break;
-    
-            case 'gainU':
-                if (self.gainIndex == 49) {
-                    self.gainIndex = 49;
-                }
-                else if (self.gainIndex < 49) {
-                    self.gainIndex++;
-                }
-                self.gainVal = GAIN[self.gainIndex].id
-    
-                cmd = 'OGU:' + self.gainVal.toUpperCase();
-                self.sendCam(cmd);
-                break;
-    
-            case 'gainD':
-                if (self.gainIndex == 0) {
-                    self.gainIndex = 0;
-                }
-                else if (self.gainIndex > 0) {
-                    self.gainIndex--;
-                }
-                self.gainVal = GAIN[self.gainIndex].id
-    
-                cmd = 'OGU:' + self.gainVal.toUpperCase();
-                self.sendCam(cmd);
-                break;
-    
-    
-            case 'gainS':
-                cmd = 'OGU:' + opt.val;
-                self.sendCam(cmd);
-                break;
-    
-            case 'shutU':
-                if (self.shutIndex == 14) {
-                    self.shutIndex = 14;
-                }
-                else if (self.shutIndex < 14) {
-                    self.shutIndex++;
-                }
-                self.shutVal = SHUTTER[self.shutIndex].id
-    
-                cmd = 'OSH:' + self.shutVal.toUpperCase();
-                self.sendCam(cmd);
-                break;
-    
-            case 'shutD':
-                if (self.shutIndex == 0) {
-                    self.shutIndex = 0;
-                }
-                else if (self.shutIndex > 0) {
-                    self.shutIndex--;
-                }
-                self.shutVal = SHUTTER[self.shutIndex].id
-    
-                cmd = 'OSH:' + self.shutVal.toUpperCase();
-                self.sendCam(cmd);
-                break;
-    
-            case 'shutS':
-                cmd = 'OSH:' + opt.val.toUpperCase();
-                self.sendCam(cmd);
-                break;
-    
-            case 'pedU':
-                if (self.pedestalIndex == 299) {
-                    self.pedestalIndex = 299;
-                }
-                else if (self.pedestalIndex < 299) {
-                    self.pedestalIndex++;
-                }
-                self.pedestalVal = PEDESTAL[self.pedestalIndex].id
-    
-                cmd = 'OTP:' + self.pedestalVal.toUpperCase();
-                self.sendCam(cmd);
-                break;
-    
-            case 'pedD':
-                if (self.pedestalIndex == 0) {
-                    self.pedestalIndex = 0;
-                }
-                else if (self.pedestalIndex > 0) {
-                    self.pedestalIndex--;
-                }
-                self.pedestalVal = PEDESTAL[self.pedestalIndex].id
-    
-                cmd = 'OTP:' + self.pedestalVal.toUpperCase();
-                self.sendCam(cmd);
-                break;
-    
-    
-            case 'pedS':
-                cmd = 'OTP:' + opt.val.toUpperCase();
-                self.sendCam(cmd);
-                break;
- 
-            case 'filterU':
-                if (self.filterIndex == 5) {
-                    self.filterIndex = 5;
-                }
-                else if (self.filterIndex < 5) {
-                    self.filterIndex++;
-                }
-                self.filterVal = FILTER[self.filterIndex].id
-    
-                cmd = 'OFT:' + self.filterVal;
-                self.sendCam(cmd);
-                break;
-    
-            case 'filterD':
-                if (self.filterIndex == 0) {
-                    self.filterIndex = 0;
-                }
-                else if (self.filterIndex > 0) {
-                    self.filterIndex--;
-                }
-                self.filterVal = FILTER[self.filterIndex].id
-    
-                cmd = 'OFT:' + self.filterVal;
-                self.sendCam(cmd);
-                break;
-    
-    
-            case 'filterS':
-                cmd = 'OFT:' + opt.val;
-                self.sendCam(cmd);
-                break;
-       
-            case 'savePset':
-                cmd = 'M' + opt.val;
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'recallPset':
-                cmd = 'R' + opt.val;
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'speedPset':
-                cmd = 'UPVS' + opt.speed
-                self.sendPTZ(cmd);
-                break;
-
-            case 'powerOff':
-                cmd = 'O0';
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'powerOn':
-                cmd = 'O1';
-                self.sendPTZ(cmd);
-                break;
-            
-            case 'tallyOff':
-                cmd = 'DA0';
-                self.sendPTZ(cmd);
-                break;
-    
-            case 'tallyOn':
-                cmd = 'DA1';
-                self.sendPTZ(cmd);
-                break;
-
-            case 'insPosition':
-                cmd = 'INS' + opt.position;
-                self.sendPTZ(cmd);
-                break;
-        }    
-    }
 }

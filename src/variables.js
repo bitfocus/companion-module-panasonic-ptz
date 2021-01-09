@@ -42,6 +42,7 @@ module.exports = {
         if (SERIES.variables.power == true) {variables.push({ name: 'power', label: 'Power ON/OFF' });}
         if (SERIES.variables.tally == true) {variables.push({ name: 'tally', label: 'Tally ON/OFF' });}
         if (SERIES.variables.OAF == true) {variables.push({ name: 'OAF', label: 'Auto Focus Mode' });}
+        if (SERIES.variables.iris == true) {variables.push({ name: 'irisMode', label: 'Auto Iris Mode' });}
         variables.push({ name: 'ptSpeedVar', label: 'Pan/Tilt Speed' });
         variables.push({ name: 'zSpeedVar', label: 'Zoom Speed' });
         variables.push({ name: 'fSpeedVar', label: 'Focus Speed' });
@@ -63,6 +64,7 @@ module.exports = {
         self.setVariable('power', self.data.power);
         self.setVariable('tally', self.data.tally);
         self.setVariable('OAF', self.data.oaf);
+        self.setVariable('irisMode', self.data.irisMode);
         self.setVariable('ptSpeedVar', self.ptSpeed);
         self.setVariable('zSpeedVar', self.zSpeed);
         self.setVariable('fSpeedVar', self.fSpeed);    
