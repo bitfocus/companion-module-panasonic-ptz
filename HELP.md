@@ -31,6 +31,7 @@ It's recommended to use the presets as much as possible as there is a lot of act
 * Set Pan/Tilt Speed
 * Pan/Tilt Speed Up
 * Pan/Tilt Speed Down
+* Pan/Tilt Home
 
 **Lens**
 * Zoom In
@@ -42,25 +43,26 @@ It's recommended to use the presets as much as possible as there is a lot of act
 * Set Focus Speed
 * Focus Speed Up
 * Focus Speed Down
-* Focus Mode
-* One Time Focus
+* Focus Mode (Auto/Manual)
+* One Touch Auto Focus (OTAF)
 
 **Exposure**
 * Set Iris
 * Iris Open
 * Iris Close
+* Iris Mode (Auto/Manual)
 * Set Gain
 * Gain Up
 * Gain Down
 * Set Shutter
 * Shutter Up
 * Shutter Down
-* Set Filter
-* Filter Up
-* Filter Down
 * Set Pedestal
 * Pedestal Up
 * Pedestal Down
+* Set ND Filter
+* ND Filter Up
+* ND Filter Down
 
 **System**
 * Power Off
@@ -83,25 +85,35 @@ It's recommended to use the presets as much as possible as there is a lot of act
 A list of all the available Variables in this module, sorted into the following categories. For their correct naming, refer to the list under "Edit" "Instance".
 
 **System**
+* PTZ Series
 * PTZ Model
 * PTZ Name
 * Firmware Version
 * PTZ Error Codes
 * Power ON/OFF
 * Install Position
+* Tally State
 
 **Lens**
 * Auto Focus Mode
+* Pan/Tilt, Zoom and Focus Speed
+
+**Exposure**
+* Auto Iris Mode
 
 ## Feedbacks
 A list of all the available Feedbacks in this module, sorted into the following categories.
 
 **System**
 * Power ON/OFF
+* Tally State
 * Install Position
 
 **Lens**
 * Auto Focus Mode
+
+**Exposure**
+* Auto Iris Mode
 
 Current support is bassed on "HD/4K Integrated Camera Interface Specifications" version 1.12 from Apr. 27, 2020.
 
