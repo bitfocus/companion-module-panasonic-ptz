@@ -1,6 +1,6 @@
 Panasonic PTZ Cameras
 
-## This Module supports the following Panasonic PTZ cameras
+## This module supports the following Panasonic PTZ cameras.
 
 **AW-HE50, AW-HE60, AW-HE120, AW-HE130, AW-HR140, AW-SFU01, AK-UB300, <br/>AW-HE40 series, AW-HE42 series, AW-UE70 series, AW-UE150 series**
 
@@ -20,10 +20,10 @@ Panasonic PTZ Cameras
 * AW-UE150, AW-UE155
 * AW-UN145
 
-**Disclaimer not all models supports all actions, variables and feedbacks. But it should auto sort so that you can only use what works with your model**
+**Disclaimer, not all models supports all actions, variables and feedbacks. But it should be auto sorted so that you can only use actions and feedbacks that works with your model**
 
 ## Actions
-The actions are separated into the following categories
+The actions are separated into the following categories.
 It's recommended to use the presets as much as possible as there is a lot of actions.
 
 **Pan/Tilt**
@@ -82,7 +82,7 @@ It's recommended to use the presets as much as possible as there is a lot of act
 
 
 ## Variables
-A list of all the available Variables in this module, sorted into the following categories. For their correct naming, refer to the list under "Edit" "Instance".
+A list of all the available Variables in this module sorted into the following categories. For their correct naming, refer to the list under "Edit" "Instance".
 
 **System**
 * PTZ Series
@@ -102,7 +102,7 @@ A list of all the available Variables in this module, sorted into the following 
 * Auto Iris Mode
 
 ## Feedbacks
-A list of all the available Feedbacks in this module, sorted into the following categories.
+A list of all the available Feedbacks in this module sorted into the following categories.
 
 **System**
 * Power ON/OFF
@@ -115,6 +115,6 @@ A list of all the available Feedbacks in this module, sorted into the following 
 **Exposure**
 * Auto Iris Mode
 
-Current support is bassed on "HD/4K Integrated Camera Interface Specifications" version 1.12 from Apr. 27, 2020.
+Current support is based on "HD/4K Integrated Camera Interface Specifications" version 1.12 from Apr. 27, 2020.
 
 For additional actions, please raise a feature request on [GitHub](https://github.com/bitfocus/companion-module-panasonic-ptz/).

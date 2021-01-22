@@ -271,6 +271,27 @@ module.exports = {
         { id: 'E', label: '1/25' },
         { id: 'F', label: '1/30' }
     ],
+    CHOICES_SHUTTER_UB300: [
+        { id: '00', label: '1/48' },
+        { id: '01', label: '1/50' },
+        { id: '02', label: '1/60' },
+        { id: '03', label: '1/96' },
+        { id: '04', label: '1/100' },
+        { id: '05', label: '1/120' },
+        { id: '06', label: '1/125' },
+        { id: '07', label: '1/250' },
+        { id: '08', label: '1/500' },
+        { id: '09', label: '1/1000' },
+        { id: '0A', label: '1/1500' },
+        { id: '0B', label: '1/2000' },
+        { id: '0C', label: '180.0 deg' },
+        { id: '0D', label: '172.8 deg' },
+        { id: '0E', label: '144.0 deg' },
+        { id: '0F', label: '120.0 deg' },
+        { id: '10', label: '90.0 deg' },
+        { id: '11', label: '45.0 deg' }
+    ],
+
     CHOICES_SHUTTER_HE60: function () { return this.CHOICES_SHUTTER_HE50},
     CHOICES_SHUTTER_HE40: function () { return this.CHOICES_SHUTTER_HE50},
     CHOICES_SHUTTER_UE70: function () { return this.CHOICES_SHUTTER_HE50},

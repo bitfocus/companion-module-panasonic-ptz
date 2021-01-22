@@ -577,7 +577,7 @@ module.exports = {
                 }
                 self.pedestalVal = s.ped.dropdown[self.pedestalIndex].id
     
-                cmd = s.ped.cmd + self.pedestalVal.toUpperCase;
+                cmd = s.ped.cmd + self.pedestalVal.toUpperCase();
                 self.sendCam(cmd);
 			}
 		};}

@@ -571,7 +571,7 @@ module.exports = {
                 OTAF: false,
                 iris: false,
                 gain: {cmd: 'OGS:', dropdown: c.CHOICES_GAIN_UB300},
-                shut: false, // TODO: Add UB300 Shutter "OSG:5D:"
+                shut: {cmd: 'OSG:5D:', dropdown: c.CHOICES_SHUTTER_UB300},
                 ped: false, // TODO: Add UB300 Pedestal "OSG:4A:"
                 filter: {cmd: 'OFT:', dropdown: c.CHOICES_FILTER_UB300},
                 preset: false,
