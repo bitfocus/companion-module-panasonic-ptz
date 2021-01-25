@@ -247,7 +247,7 @@ module.exports = {
                 label: 'Speed Up',
                 bank: {
                     style: 'text',
-                    text: 'SPEED\\nUP\\n$(HE120:ptSpeedVar)',
+                    text: 'SPEED\\nUP\\n$(Panasonic-PTZ:ptSpeedVar)',
                     size: '14',
                     color: '16777215',
                     bgcolor: self.rgb(0, 0, 0)
@@ -264,7 +264,7 @@ module.exports = {
                 label: 'Speed Down',
                 bank: {
                     style: 'text',
-                    text: 'SPEED\\nDOWN\\n$(HE120:ptSpeedVar)',
+                    text: 'SPEED\\nDOWN\\n$(Panasonic-PTZ:ptSpeedVar)',
                     size: '14',
                     color: '16777215',
                     bgcolor: self.rgb(0, 0, 0)
@@ -272,6 +272,69 @@ module.exports = {
                 actions: [
                     {
                         action: 'ptSpeedD',
+                    }
+                ]
+            });
+
+            presets.push({
+                category: 'Pan/Tilt',
+                label: 'Speed Set High',
+                bank: {
+                    style: 'text',
+                    text: 'SET\\nSPEED\\nHIGH',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0)
+                },
+                actions: [
+                    {
+                        action: 'ptSpeedS',
+                        options: {
+                            speed: 40,
+                        }
+
+                    }
+                ]
+            });
+
+            presets.push({
+                category: 'Pan/Tilt',
+                label: 'Speed Set Mid',
+                bank: {
+                    style: 'text',
+                    text: 'SET\\nSPEED\\nMID',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0)
+                },
+                actions: [
+                    {
+                        action: 'ptSpeedS',
+                        options: {
+                            speed: 25,
+                        }
+
+                    }
+                ]
+            });
+
+            presets.push({
+                category: 'Pan/Tilt',
+                label: 'Speed Set Low',
+                bank: {
+                    style: 'text',
+                    text: 'SET\\nSPEED\\nLOW',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0)
+                },
+                actions: [
+                    {
+                        action: 'ptSpeedS',
+                        options: {
+                            speed: 10,
+                        }
+
                     }
                 ]
             });
@@ -333,7 +396,7 @@ module.exports = {
                 label: 'Zoom Speed Up',
                 bank: {
                     style: 'text',
-                    text: 'ZOOM\\nSPEED\\nUP\\n$(HE120:zSpeedVar)',
+                    text: 'ZOOM\\nSPEED\\nUP\\n$(Panasonic-PTZ:zSpeedVar)',
                     size: '7',
                     color: '16777215',
                     bgcolor: self.rgb(0, 0, 0)
@@ -350,7 +413,7 @@ module.exports = {
                 label: 'Zoom Speed Down',
                 bank: {
                     style: 'text',
-                    text: 'ZOOM\\nSPEED\\nDOWN\\n$(HE120:zSpeedVar)',
+                    text: 'ZOOM\\nSPEED\\nDOWN\\n$(Panasonic-PTZ:zSpeedVar)',
                     size: '7',
                     color: '16777215',
                     bgcolor: self.rgb(0, 0, 0)
@@ -358,6 +421,69 @@ module.exports = {
                 actions: [
                     {
                         action: 'zSpeedD',
+                    }
+                ]
+            });
+
+            presets.push({
+                category: 'Lens',
+                label: 'Zoom Speed High',
+                bank: {
+                    style: 'text',
+                    text: 'ZOOM\\nSPEED\\nHIGH',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0)
+                },
+                actions: [
+                    {
+                        action: 'zSpeedS',
+                        options: {
+                            speed: 40,
+                        }
+
+                    }
+                ]
+            });
+
+            presets.push({
+                category: 'Lens',
+                label: 'Zoom Speed Mid',
+                bank: {
+                    style: 'text',
+                    text: 'ZOOM\\nSPEED\\nMID',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0)
+                },
+                actions: [
+                    {
+                        action: 'zSpeedS',
+                        options: {
+                            speed: 25,
+                        }
+
+                    }
+                ]
+            });
+
+            presets.push({
+                category: 'Lens',
+                label: 'Zoom Speed Low',
+                bank: {
+                    style: 'text',
+                    text: 'ZOOM\\nSPEED\\nLOW',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0)
+                },
+                actions: [
+                    {
+                        action: 'zSpeedS',
+                        options: {
+                            speed: 10,
+                        }
+
                     }
                 ]
             });
@@ -415,7 +541,7 @@ module.exports = {
                 label: 'Focus Speed Up',
                 bank: {
                     style: 'text',
-                    text: 'FOCUS\\nSPEED\\nUP\\n$(HE120:fSpeedVar)',
+                    text: 'FOCUS\\nSPEED\\nUP\\n$(Panasonic-PTZ:fSpeedVar)',
                     size: '7',
                     color: '16777215',
                     bgcolor: self.rgb(0, 0, 0)
@@ -432,7 +558,7 @@ module.exports = {
                 label: 'focusM Speed Down',
                 bank: {
                     style: 'text',
-                    text: 'FOCUS\\nSPEED\\nDOWN\\n$(HE120:fSpeedVar)',
+                    text: 'FOCUS\\nSPEED\\nDOWN\\n$(Panasonic-PTZ:fSpeedVar)',
                     size: '7',
                     color: '16777215',
                     bgcolor: self.rgb(0, 0, 0)
@@ -443,19 +569,108 @@ module.exports = {
                     }
                 ]
             });
+            presets.push({
+                category: 'Lens',
+                label: 'Focus Speed High',
+                bank: {
+                    style: 'text',
+                    text: 'FOCUS\\nSPEED\\nHIGH',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0)
+                },
+                actions: [
+                    {
+                        action: 'fSpeedS',
+                        options: {
+                            speed: 40,
+                        }
+
+                    }
+                ]
+            });
+
+            presets.push({
+                category: 'Lens',
+                label: 'Focus Speed Mid',
+                bank: {
+                    style: 'text',
+                    text: 'FOCUS\\nSPEED\\nMID',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0)
+                },
+                actions: [
+                    {
+                        action: 'fSpeedS',
+                        options: {
+                            speed: 25,
+                        }
+
+                    }
+                ]
+            });
+
+            presets.push({
+                category: 'Lens',
+                label: 'Focus Speed Low',
+                bank: {
+                    style: 'text',
+                    text: 'FOCUS\\nSPEED\\nLOW',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0)
+                },
+                actions: [
+                    {
+                        action: 'fSpeedS',
+                        options: {
+                            speed: 10,
+                        }
+
+                    }
+                ]
+            });
         }
 
         if (s.OAF == true) {
+            presets.push({
+                category: 'Lens',
+                label: 'Manual Focus',
+                bank: {
+                    style: 'text',
+                    text: 'MANUAL\\nFOCUS',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0),
+                },
+                actions: [
+                    {
+                        action: 'focusM',
+                        options: {
+                            bol: 1,
+                        }
+                    }
+                ],
+                feedbacks: [
+                    {
+                        type: 'autoFocus',
+                        options: {
+                            option: '0'
+                        }
+                    }
+                ],
+            });
+
             presets.push({
                 category: 'Lens',
                 label: 'Auto Focus',
                 bank: {
                     style: 'text',
                     text: 'AUTO\\nFOCUS',
-                    size: '18',
+                    size: '14',
                     color: '16777215',
                     bgcolor: self.rgb(0, 0, 0),
-                    latch: true
                 },
                 actions: [
                     {
@@ -465,23 +680,23 @@ module.exports = {
                         }
                     }
                 ],
-                release_actions: [
+                feedbacks: [
                     {
-                        action: 'focusM',
+                        type: 'autoFocus',
                         options: {
-                            bol: 1,
+                            option: '1'
                         }
                     }
-                ]
+                ],
             });
-                
+
             presets.push({
                 category: 'Lens',
                 label: 'One Touch Focus',
                 bank: {
                     style: 'text',
                     text: 'OTAF\\nFOCUS',
-                    size: '18',
+                    size: '14',
                     color: '16777215',
                     bgcolor: self.rgb(0,0,0),
                 },
@@ -490,6 +705,14 @@ module.exports = {
                         action: 'focusOTAF',
                         options: {
                             bol: 0,
+                        }
+                    }
+                ],
+                feedbacks: [
+                    {
+                        type: 'autoFocus',
+                        options: {
+                            option: '1'
                         }
                     }
                 ],
@@ -533,6 +756,62 @@ module.exports = {
                         action: 'irisD',
                     }
                 ]
+            });
+
+            presets.push({
+                category: 'Exposure',
+                label: 'Manual Iris',
+                bank: {
+                    style: 'text',
+                    text: 'MANUAL\\nIRIS',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0),
+                },
+                actions: [
+                    {
+                        action: 'irisM',
+                        options: {
+                            bol: 1,
+                        }
+                    }
+                ],
+                feedbacks: [
+                    {
+                        type: 'autoIris',
+                        options: {
+                            option: '0'
+                        }
+                    }
+                ],
+            });
+
+            presets.push({
+                category: 'Exposure',
+                label: 'Auto Iris',
+                bank: {
+                    style: 'text',
+                    text: 'AUTO\\nIRIS',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0),
+                },
+                actions: [
+                    {
+                        action: 'irisM',
+                        options: {
+                            bol: 0,
+                        }
+                    }
+                ],
+                feedbacks: [
+                    {
+                        type: 'autoIris',
+                        options: {
+                            option: '1'
+                        }
+                    }
+                ],
             });
         }
 
@@ -678,7 +957,34 @@ module.exports = {
                     }
                 ]
             });
+
+            for (var x in s.filter.dropdown) {
+                presets.push({
+                    category: 'Exposure',
+                    label: 'ND Filter Set ' + s.filter.dropdown[x].label,
+                    bank: {
+                        style: 'text',
+                        text: 'FILTER\\nSET\\n' + s.filter.dropdown[x].label,
+                        size: '14',
+                        color: '16777215',
+                        bgcolor: self.rgb(0, 0, 0),
+                    },
+                    actions: [
+                        {
+                            action: 'filterS',
+                            options: {
+                                val: s.filter.dropdown[x].id
+                            }
+                        }
+                    ]
+                });    
+            }
+
         }
+
+        // ########################
+		// #### System Presets ####
+		// ########################
 
         if (s.power == true) {
             presets.push({
@@ -686,7 +992,7 @@ module.exports = {
                 label: 'Power Off',
                 bank: {
                     style: 'text',
-                    text: 'Power\\nOff',
+                    text: 'Power\\nOFF',
                     size: '18',
                     color: '16777215',
                     bgcolor: self.rgb(0, 0, 0),
@@ -695,7 +1001,15 @@ module.exports = {
                     {
                         action: 'powerOff',
                     }
-                ]
+                ],
+                feedbacks: [
+                    {
+                        type: 'powerState',
+                        options: {
+                            option: '0'
+                        }
+                    }
+                ],
             });
 
             presets.push({
@@ -703,7 +1017,7 @@ module.exports = {
                 label: 'Power On',
                 bank: {
                     style: 'text',
-                    text: 'Power\\nOn',
+                    text: 'Power\\nON',
                     size: '18',
                     color: '16777215',
                     bgcolor: self.rgb(0, 0, 0),
@@ -712,7 +1026,15 @@ module.exports = {
                     {
                         action: 'powerOn',
                     }
-                ]
+                ],
+                feedbacks: [
+                    {
+                        type: 'powerState',
+                        options: {
+                            option: '1'
+                        }
+                    }
+                ],
             });
         }
                 
@@ -722,7 +1044,7 @@ module.exports = {
                 label: 'Tally Off',
                 bank: {
                     style: 'text',
-                    text: 'Tally\\nOff',
+                    text: 'Tally\\nOFF',
                     size: '18',
                     color: '16777215',
                     bgcolor: self.rgb(0, 0, 0),
@@ -731,7 +1053,16 @@ module.exports = {
                     {
                         action: 'tallyOff',
                     }
-                ]
+                ],
+                feedbacks: [
+                    {
+                        type: 'tallyState',
+                        options: {
+                            option: '0'
+                        }
+                    }
+                ],
+
             });
             
             presets.push({
@@ -739,7 +1070,7 @@ module.exports = {
                 label: 'Tally On',
                 bank: {
                     style: 'text',
-                    text: 'Tally\\nOn',
+                    text: 'Tally\\nON',
                     size: '18',
                     color: '16777215',
                     bgcolor: self.rgb(0, 0, 0),
@@ -748,7 +1079,15 @@ module.exports = {
                     {
                         action: 'tallyOn',
                     }
-                ]
+                ],
+                feedbacks: [
+                    {
+                        type: 'tallyState',
+                        options: {
+                            option: '1'
+                        }
+                    }
+                ],
             });
         }
 
@@ -770,7 +1109,15 @@ module.exports = {
                             position: 0,
                         }
                     }
-                ]
+                ],
+                feedbacks: [
+                    {
+                        type: 'insState',
+                        options: {
+                            option: '0'
+                        }
+                    }
+                ],
             });
 
             presets.push({
@@ -790,7 +1137,15 @@ module.exports = {
                             position: 1,
                         }
                     }
-                ]
+                ],
+                feedbacks: [
+                    {
+                        type: 'insState',
+                        options: {
+                            option: '1'
+                        }
+                    }
+                ],
             });
         }
 
@@ -799,8 +1154,7 @@ module.exports = {
 		// ###########################
     
         if (s.preset == true) {
-            var save;
-            for (save = 0; save < 100; save++) {
+            for (var save = 0; save < 100; save++) {
                 presets.push({
                     category: 'Save Preset',
                     label: 'Save Preset ' + parseInt(save + 1),
@@ -823,13 +1177,55 @@ module.exports = {
             }
         }
 
+        if (s.timePset == true) {
+            presets.push({
+                category: 'Recall Preset',
+                label: 'Preset Mode Speed',
+                bank: {
+                    style: 'text',
+                    text: 'PRESET\\nMODE\\nSPEED',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0),
+                },
+                actions: [
+                    {
+                        action: 'modePset',
+                        options: {
+                            mode: 0,
+                        }
+                    }
+                ],
+            });
+
+            presets.push({
+                category: 'Recall Preset',
+                label: 'Preset Mode Time',
+                bank: {
+                    style: 'text',
+                    text: 'PRESET\\nMODE\\nTIME',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0),
+                },
+                actions: [
+                    {
+                        action: 'modePset',
+                        options: {
+                            mode: 1,
+                        }
+                    }
+                ],
+            });
+        }
+
         if (s.speedPset == true) {
             presets.push({
                 category: 'Recall Preset',
-                label: 'Set Recall Speed',
+                label: 'Set Recall Speed High',
                 bank: {
                     style: 'text',
-                    text: 'Set\\nRecall\\nSpeed',
+                    text: 'RECALL\\nSPEED\\nHIGH',
                     size: '14',
                     color: '16777215',
                     bgcolor: self.rgb(0, 0, 0),
@@ -837,14 +1233,118 @@ module.exports = {
                 actions: [
                     {
                         action: 'speedPset',
+                        options: {
+                            speed: 25
+                        }
+                    }
+                ]
+            });
+
+            presets.push({
+                category: 'Recall Preset',
+                label: 'Set Recall Speed Mid',
+                bank: {
+                    style: 'text',
+                    text: 'RECALL\\nSPEED\\nMID',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0),
+                },
+                actions: [
+                    {
+                        action: 'speedPset',
+                        options: {
+                            speed: 15
+                        }
+                    }
+                ]
+            });
+
+            presets.push({
+                category: 'Recall Preset',
+                label: 'Set Recall Speed Low',
+                bank: {
+                    style: 'text',
+                    text: 'RECALL\\nSPEED\\nLOW',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0),
+                },
+                actions: [
+                    {
+                        action: 'speedPset',
+                        options: {
+                            speed: 5
+                        }
                     }
                 ]
             });
         }
-    
+        
+        if (s.timePset == true) {
+            presets.push({
+                category: 'Recall Preset',
+                label: 'Set Recall Time High',
+                bank: {
+                    style: 'text',
+                    text: 'RECALL\\nTIME\\n5 Sec',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0),
+                },
+                actions: [
+                    {
+                        action: 'speedPset',
+                        options: {
+                            speed: 5
+                        }
+                    }
+                ]
+            });
+
+            presets.push({
+                category: 'Recall Preset',
+                label: 'Set Recall Time Mid',
+                bank: {
+                    style: 'text',
+                    text: 'RECALL\\nTIME\\n10 Sec',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0),
+                },
+                actions: [
+                    {
+                        action: 'speedPset',
+                        options: {
+                            speed: 10
+                        }
+                    }
+                ]
+            });
+
+            presets.push({
+                category: 'Recall Preset',
+                label: 'Set Recall Time Low',
+                bank: {
+                    style: 'text',
+                    text: 'RECALL\\nTIME\\n30 Sec',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0),
+                },
+                actions: [
+                    {
+                        action: 'speedPset',
+                        options: {
+                            speed: 30
+                        }
+                    }
+                ]
+            });
+        }
+
         if (s.preset == true) {
-            var recall;
-            for (recall = 0; recall < 100; recall++) {
+            for (var recall = 0; recall < 100; recall++) {
                 presets.push({
                     category: 'Recall Preset',
                     label: 'Recall Preset ' + parseInt(recall + 1),

@@ -20,3 +20,4 @@ See HELP.md and LICENSE
 * Added Variables Structure and Support
 * Added Auto Detect Model, and the option to specify camera type
 * Made Actions Model specific, with options that match the model
+* Updated all presets to work with current feedbacks and actions, and is made dynamicly based on model

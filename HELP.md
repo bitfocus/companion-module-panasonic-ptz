@@ -20,7 +20,7 @@ Panasonic PTZ Cameras
 * AW-UE150, AW-UE155
 * AW-UN145
 
-**Disclaimer, not all models supports all actions, variables and feedbacks. But it should be auto sorted so that you can only use actions and feedbacks that works with your model**
+**Disclaimer, not all models supports all actions, variables and feedbacks. But it should be auto sorted so that you can only use actions, feedbacks, variables and presets that works with your model**
 
 ## Actions
 The actions are separated into the following categories.
