@@ -27,8 +27,9 @@ module.exports = {
         if (str !== undefined) {
             self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_ptz?cmd=%23' + str + '&res=1', function (err, result) {
                 console.log('http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_ptz?cmd=%23' + str + '&res=1')
-                    if (!err) {
-                    self.log('Error from PTZ: ' + result);
+                self.log('debug','Send CMD: ' + str);
+                if (!err) {
+                    self.log('error', 'Error from PTZ: ' + result);
                     return;
                 }
                 // console.log("Result from REST:" + result);
@@ -42,8 +43,9 @@ module.exports = {
         if (str !== undefined) {
             self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_cam?cmd=' + str + '&res=1', function (err, result) {
                 console.log('http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_cam?cmd=' + str + '&res=1')
+                self.log('debug', 'Send CMD: ' + str);
                     if (!err) {
-                    self.log('Error from PTZ: ' + result);
+                    self.log('error', 'Error from PTZ: ' + result);
                     return;
                 }
                 // console.log("Result from REST:" + result);
@@ -317,19 +319,8 @@ module.exports = {
 		
 		if (s.focus == true) {actions.focusS = { label: 'Lens - Focus Stop',
 			callback: function(action, bank) {
-                self.fSpeed = action.options.speed;
-                var idx = -1;
-                for (var i = 0; i < c.CHOICES_SPEED.length; ++i) {
-                    if (c.CHOICES_SPEED[i].id == self.fSpeed) {
-                        idx = i;
-                        break;
-                    }
-                }
-                if (idx > -1) {
-                    self.fSpeedIndex = idx;
-                }
-                self.fSpeed = c.CHOICES_SPEED[self.fSpeedIndex].id
-                self.setVariable('fSpeedVar', self.fSpeed);
+				cmd = 'F50';
+                self.sendPTZ(cmd);
 			}
 		};}
 		
@@ -345,8 +336,19 @@ module.exports = {
                 }
 			],
 			callback: function(action, bank) {
-				cmd = 'F50';
-                self.sendPTZ(cmd);
+                self.fSpeed = action.options.speed;
+                var idx = -1;
+                for (var i = 0; i < c.CHOICES_SPEED.length; ++i) {
+                    if (c.CHOICES_SPEED[i].id == self.fSpeed) {
+                        idx = i;
+                        break;
+                    }
+                }
+                if (idx > -1) {
+                    self.fSpeedIndex = idx;
+                }
+                self.fSpeed = c.CHOICES_SPEED[self.fSpeedIndex].id
+                self.setVariable('fSpeedVar', self.fSpeed);
 			}
         };}
 

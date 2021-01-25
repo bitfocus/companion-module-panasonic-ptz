@@ -1,9 +1,37 @@
+var { MODELS, SERIES_SPECS } = require('./models.js');
+const c = require('./choices.js');
+
 module.exports = {
     
     setPresets: function(i) {
         var self = i;
-        var presets = [
-            {
+        var presets = [];
+        var SERIES = {};
+
+        // Set the model and series selected, if in auto, dettect what model is connected via TCP
+        if (self.config.model === 'Auto') {
+            self.data.model = self.data.modelTCP;
+        } else { self.data.model = self.config.model;}
+
+        if (self.data.model !== 'NaN') {
+            self.data.series = MODELS.find(MODELS => MODELS.id == self.data.model).series;
+        }
+
+        // Find the specific commands for a given series 
+        if (self.data.series === 'Auto' || self.data.series === 'Other' || SERIES_SPECS.find(SERIES_SPECS => SERIES_SPECS.id == self.data.series) == undefined) {
+            SERIES = SERIES_SPECS.find(SERIES_SPECS => SERIES_SPECS.id == 'Other');
+        } else {
+            SERIES = SERIES_SPECS.find(SERIES_SPECS => SERIES_SPECS.id == self.data.series);
+        }
+        var s = SERIES.actions;
+        // console.log(SERIES);
+
+        // ##########################
+		// #### Pan/Tilt Presets ####
+		// ##########################
+        
+		if (s.panTilt == true) { 
+            presets.push({
                 category: 'Pan/Tilt',
                 label: 'UP',
                 bank: {
@@ -25,8 +53,9 @@ module.exports = {
                         action: 'stop',
                     }
                 ]
-            },
-            {
+            });
+
+            presets.push({
                 category: 'Pan/Tilt',
                 label: 'DOWN',
                 bank: {
@@ -48,8 +77,9 @@ module.exports = {
                         action: 'stop',
                     }
                 ]
-            },
-            {
+            });
+            
+            presets.push({
                 category: 'Pan/Tilt',
                 label: 'LEFT',
                 bank: {
@@ -71,8 +101,9 @@ module.exports = {
                         action: 'stop',
                     }
                 ]
-            },
-            {
+            });
+            
+            presets.push({
                 category: 'Pan/Tilt',
                 label: 'RIGHT',
                 bank: {
@@ -94,8 +125,9 @@ module.exports = {
                         action: 'stop',
                     }
                 ]
-            },
-            {
+            });
+            
+            presets.push({
                 category: 'Pan/Tilt',
                 label: 'UP RIGHT',
                 bank: {
@@ -117,8 +149,9 @@ module.exports = {
                         action: 'stop',
                     }
                 ]
-            },
-            {
+            });
+            
+            presets.push({
                 category: 'Pan/Tilt',
                 label: 'UP LEFT',
                 bank: {
@@ -140,8 +173,9 @@ module.exports = {
                         action: 'stop',
                     }
                 ]
-            },
-            {
+            });
+            
+            presets.push({
                 category: 'Pan/Tilt',
                 label: 'DOWN LEFT',
                 bank: {
@@ -163,8 +197,9 @@ module.exports = {
                         action: 'stop',
                     }
                 ]
-            },
-            {
+            });
+            
+            presets.push({
                 category: 'Pan/Tilt',
                 label: 'DOWN RIGHT',
                 bank: {
@@ -186,8 +221,9 @@ module.exports = {
                         action: 'stop',
                     }
                 ]
-            },
-            {
+            });
+        
+            presets.push({
                 category: 'Pan/Tilt',
                 label: 'Home',
                 bank: {
@@ -202,8 +238,11 @@ module.exports = {
                         action: 'home',
                     }
                 ]
-            },
-            {
+            });
+        }
+
+        if (s.ptSpeed == true) {
+            presets.push({
                 category: 'Pan/Tilt',
                 label: 'Speed Up',
                 bank: {
@@ -218,8 +257,9 @@ module.exports = {
                         action: 'ptSpeedU',
                     }
                 ]
-            },
-            {
+            });
+        
+            presets.push({
                 category: 'Pan/Tilt',
                 label: 'Speed Down',
                 bank: {
@@ -234,8 +274,15 @@ module.exports = {
                         action: 'ptSpeedD',
                     }
                 ]
-            },
-            {
+            });
+        }
+
+        // ######################
+		// #### Lens Presets ####
+		// ######################
+
+        if (s.zoom == true) {
+            presets.push({
                 category: 'Lens',
                 label: 'Zoom In',
                 bank: {
@@ -255,8 +302,9 @@ module.exports = {
                         action: 'zoomS',
                     }
                 ]
-            },
-            {
+            });
+        
+            presets.push({
                 category: 'Lens',
                 label: 'Zoom Out',
                 bank: {
@@ -276,8 +324,11 @@ module.exports = {
                         action: 'zoomS',
                     }
                 ]
-            },
-            {
+            });
+        }
+
+        if (s.zSpeed == true) {
+            presets.push({
                 category: 'Lens',
                 label: 'Zoom Speed Up',
                 bank: {
@@ -292,8 +343,9 @@ module.exports = {
                         action: 'zSpeedU',
                     }
                 ]
-            },
-            {
+            });
+            
+            presets.push({
                 category: 'Lens',
                 label: 'Zoom Speed Down',
                 bank: {
@@ -308,8 +360,11 @@ module.exports = {
                         action: 'zSpeedD',
                     }
                 ]
-            },
-            {
+            });
+        }
+
+        if (s.focus == true) {
+            presets.push({
                 category: 'Lens',
                 label: 'Focus Near',
                 bank: {
@@ -329,8 +384,9 @@ module.exports = {
                         action: 'focusS',
                     }
                 ]
-            },
-            {
+            });
+            
+            presets.push({
                 category: 'Lens',
                 label: 'Focus Far',
                 bank: {
@@ -350,8 +406,11 @@ module.exports = {
                         action: 'focusS',
                     }
                 ]
-            },
-            {
+            });
+        }
+            
+        if (s.fSpeed == true) {
+            presets.push({
                 category: 'Lens',
                 label: 'Focus Speed Up',
                 bank: {
@@ -366,8 +425,9 @@ module.exports = {
                         action: 'fSpeedU',
                     }
                 ]
-            },
-            {
+            });
+            
+            presets.push({
                 category: 'Lens',
                 label: 'focusM Speed Down',
                 bank: {
@@ -382,8 +442,11 @@ module.exports = {
                         action: 'fSpeedD',
                     }
                 ]
-            },
-            {
+            });
+        }
+
+        if (s.OAF == true) {
+            presets.push({
                 category: 'Lens',
                 label: 'Auto Focus',
                 bank: {
@@ -410,8 +473,9 @@ module.exports = {
                         }
                     }
                 ]
-            },
-            {
+            });
+                
+            presets.push({
                 category: 'Lens',
                 label: 'One Touch Focus',
                 bank: {
@@ -429,40 +493,15 @@ module.exports = {
                         }
                     }
                 ],
-            },
-            {
-                category: 'Exposure',
-                label: 'Gain Up',
-                bank: {
-                    style: 'text',
-                    text: 'GAIN\\nUP',
-                    size: '18',
-                    color: '16777215',
-                    bgcolor: self.rgb(0, 0, 0),
-                },
-                actions: [
-                    {
-                        action: 'gainU',
-                    }
-                ]
-            },
-            {
-                category: 'Exposure',
-                label: 'Gain Down',
-                bank: {
-                    style: 'text',
-                    text: 'GAIN\\nDOWN',
-                    size: '18',
-                    color: '16777215',
-                    bgcolor: self.rgb(0, 0, 0),
-                },
-                actions: [
-                    {
-                        action: 'gainD',
-                    }
-                ]
-            },
-            {
+            });
+        }
+
+        // ##########################
+		// #### Exposure Presets ####
+		// ##########################
+
+        if (s.iris == true) {
+            presets.push({
                 category: 'Exposure',
                 label: 'Iris Up',
                 bank: {
@@ -477,8 +516,9 @@ module.exports = {
                         action: 'irisU',
                     }
                 ]
-            },
-            {
+            });
+            
+            presets.push({
                 category: 'Exposure',
                 label: 'Iris Down',
                 bank: {
@@ -493,8 +533,47 @@ module.exports = {
                         action: 'irisD',
                     }
                 ]
-            },
-            {
+            });
+        }
+
+        if (s.gain.cmd) {
+            presets.push({
+                category: 'Exposure',
+                label: 'Gain Up',
+                bank: {
+                    style: 'text',
+                    text: 'GAIN\\nUP',
+                    size: '18',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0),
+                },
+                actions: [
+                    {
+                        action: 'gainU',
+                    }
+                ]
+            });
+            
+            presets.push({
+                category: 'Exposure',
+                label: 'Gain Down',
+                bank: {
+                    style: 'text',
+                    text: 'GAIN\\nDOWN',
+                    size: '18',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0),
+                },
+                actions: [
+                    {
+                        action: 'gainD',
+                    }
+                ]
+            });
+        }
+
+        if (s.shut.cmd) {
+            presets.push({
                 category: 'Exposure',
                 label: 'Shutter Up',
                 bank: {
@@ -509,8 +588,9 @@ module.exports = {
                         action: 'shutU',
                     }
                 ]
-            },
-            {
+            });
+            
+            presets.push({
                 category: 'Exposure',
                 label: 'Shutter Down',
                 bank: {
@@ -525,8 +605,11 @@ module.exports = {
                         action: 'shutD',
                     }
                 ]
-            },
-            {
+            });
+        }      
+
+        if (s.ped.cmd) {
+            presets.push({
                 category: 'Exposure',
                 label: 'Pedestal Up',
                 bank: {
@@ -541,8 +624,9 @@ module.exports = {
                         action: 'pedU',
                     }
                 ]
-            },
-            {
+            });
+            
+            presets.push({
                 category: 'Exposure',
                 label: 'Pedestal Down',
                 bank: {
@@ -557,8 +641,11 @@ module.exports = {
                         action: 'pedD',
                     }
                 ]
-            },
-            {
+            });
+        }
+        
+        if (s.filter.cmd) {
+            presets.push({
                 category: 'Exposure',
                 label: 'Filter Up',
                 bank: {
@@ -573,8 +660,9 @@ module.exports = {
                         action: 'filterU',
                     }
                 ]
-            },
-            {
+            });
+            
+            presets.push({
                 category: 'Exposure',
                 label: 'Filter Down',
                 bank: {
@@ -589,8 +677,11 @@ module.exports = {
                         action: 'filterD',
                     }
                 ]
-            },
-            {
+            });
+        }
+
+        if (s.power == true) {
+            presets.push({
                 category: 'System',
                 label: 'Power Off',
                 bank: {
@@ -605,8 +696,9 @@ module.exports = {
                         action: 'powerOff',
                     }
                 ]
-            },
-            {
+            });
+
+            presets.push({
                 category: 'System',
                 label: 'Power On',
                 bank: {
@@ -621,8 +713,47 @@ module.exports = {
                         action: 'powerOn',
                     }
                 ]
-            },
-            {
+            });
+        }
+                
+        if (s.tally == true) {
+            presets.push({
+                category: 'System',
+                label: 'Tally Off',
+                bank: {
+                    style: 'text',
+                    text: 'Tally\\nOff',
+                    size: '18',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0),
+                },
+                actions: [
+                    {
+                        action: 'tallyOff',
+                    }
+                ]
+            });
+            
+            presets.push({
+                category: 'System',
+                label: 'Tally On',
+                bank: {
+                    style: 'text',
+                    text: 'Tally\\nOn',
+                    size: '18',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0),
+                },
+                actions: [
+                    {
+                        action: 'tallyOn',
+                    }
+                ]
+            });
+        }
+
+        if (s.ins == true) {
+            presets.push({
                 category: 'System',
                 label: 'INS Desktop',
                 bank: {
@@ -640,8 +771,9 @@ module.exports = {
                         }
                     }
                 ]
-            },
-            {
+            });
+
+            presets.push({
                 category: 'System',
                 label: 'INS Hanging',
                 bank: {
@@ -659,40 +791,40 @@ module.exports = {
                         }
                     }
                 ]
-            },
-            {
-                category: 'System',
-                label: 'Tally Off',
-                bank: {
-                    style: 'text',
-                    text: 'Tally\\nOff',
-                    size: '18',
-                    color: '16777215',
-                    bgcolor: self.rgb(0, 0, 0),
-                },
-                actions: [
-                    {
-                        action: 'tallyOff',
-                    }
-                ]
-            },
-            {
-                category: 'System',
-                label: 'Tally On',
-                bank: {
-                    style: 'text',
-                    text: 'Tally\\nOn',
-                    size: '18',
-                    color: '16777215',
-                    bgcolor: self.rgb(0, 0, 0),
-                },
-                actions: [
-                    {
-                        action: 'tallyOn',
-                    }
-                ]
-            },
-            {
+            });
+        }
+
+        // ###########################
+		// #### Load/save Presets ####
+		// ###########################
+    
+        if (s.preset == true) {
+            var save;
+            for (save = 0; save < 100; save++) {
+                presets.push({
+                    category: 'Save Preset',
+                    label: 'Save Preset ' + parseInt(save + 1),
+                    bank: {
+                        style: 'text',
+                        text: 'SAVE\\nPSET\\n' + parseInt(save + 1),
+                        size: '14',
+                        color: '16777215',
+                        bgcolor: self.rgb(0, 0, 0),
+                    },
+                    actions: [
+                        {
+                            action: 'savePset',
+                            options: {
+                                val: ('0' + save.toString(10).toUpperCase()).substr(-2, 2),
+                            }
+                        }
+                    ]
+                });
+            }
+        }
+
+        if (s.speedPset == true) {
+            presets.push({
                 category: 'Recall Preset',
                 label: 'Set Recall Speed',
                 bank: {
@@ -707,54 +839,34 @@ module.exports = {
                         action: 'speedPset',
                     }
                 ]
-            },
-        ];
-    
-        var save;
-        for (save = 0; save < 100; save++) {
-            presets.push({
-                category: 'Save Preset',
-                label: 'Save Preset ' + parseInt(save + 1),
-                bank: {
-                    style: 'text',
-                    text: 'SAVE\\nPSET\\n' + parseInt(save + 1),
-                    size: '14',
-                    color: '16777215',
-                    bgcolor: self.rgb(0, 0, 0),
-                },
-                actions: [
-                    {
-                        action: 'savePset',
-                        options: {
-                            val: ('0' + save.toString(10).toUpperCase()).substr(-2, 2),
-                        }
-                    }
-                ]
             });
         }
     
-        var recall;
-        for (recall = 0; recall < 100; recall++) {
-            presets.push({
-                category: 'Recall Preset',
-                label: 'Recall Preset ' + parseInt(recall + 1),
-                bank: {
-                    style: 'text',
-                    text: 'Recall\\nPSET\\n' + parseInt(recall + 1),
-                    size: '14',
-                    color: '16777215',
-                    bgcolor: self.rgb(0, 0, 0),
-                },
-                actions: [
-                    {
-                        action: 'recallPset',
-                        options: {
-                            val: ('0' + recall.toString(10).toUpperCase()).substr(-2, 2),
+        if (s.preset == true) {
+            var recall;
+            for (recall = 0; recall < 100; recall++) {
+                presets.push({
+                    category: 'Recall Preset',
+                    label: 'Recall Preset ' + parseInt(recall + 1),
+                    bank: {
+                        style: 'text',
+                        text: 'Recall\\nPSET\\n' + parseInt(recall + 1),
+                        size: '14',
+                        color: '16777215',
+                        bgcolor: self.rgb(0, 0, 0),
+                    },
+                    actions: [
+                        {
+                            action: 'recallPset',
+                            options: {
+                                val: ('0' + recall.toString(10).toUpperCase()).substr(-2, 2),
+                            }
                         }
-                    }
-                ]
-            });
+                    ]
+                });
+            }
         }
+
         return(presets);
     }
 }

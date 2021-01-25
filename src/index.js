@@ -54,7 +54,7 @@ instance.prototype.init_tcp = function () {
 		// Stop getting Status Updates
 		self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi bin/event?connect=stop&my_port=' + self.tcpPort + '&uid=0', function (err, result) {
 			if (err) {
-				self.log('Error from PTZ: ' + err);
+				self.log('error', 'Error from PTZ: ' + err);
 				return;
 			}
 			if('data',result.response.req) {
@@ -80,7 +80,7 @@ instance.prototype.init_tcp = function () {
 		self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=start&my_port=' + self.config.tcpPort || 31004 + '&uid=0', function (err, result) {
 			console.log("subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=start&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
 			if (err) {
-				self.log('Error from PTZ: ' + err);
+				self.log('error', 'Error from PTZ: ' + err);
 				return;
 			}
 			if('data',result.response.req) {
@@ -115,6 +115,7 @@ instance.prototype.init_tcp = function () {
 				let str = str_raw[1].trim(); // remove new line, carage return and so on.
 				console.log('TCP Recived from PTZ: ' + str); 
 				debug('TCP Recived from PTZ: ' + str); // Debug Recived data
+				self.log('info', 'Recived CMD: ' + str);
 				str = str.split(':'); // Split Commands and data
 
 				// Store Data
@@ -142,7 +143,7 @@ instance.prototype.init_tcp = function () {
 			socket.on('error', function(err) {
 				console.log("TCP error: " + err.message);
 				debug("TCP error: " + err.message)
-				self.log('error',"TCP error: " + err.message);
+				self.log('error', "TCP error: " + err.message);
 			});
 		});
 
@@ -156,7 +157,7 @@ instance.prototype.getCameraInformation = function () {
 		self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/live/camdata.html', function (err, result) {
 			// If there was an Error
 			if (err) {
-				self.log('Error from PTZ: ' + err);
+				self.log('error', 'Error from PTZ: ' + err);
 				return;
 			}
 
@@ -172,6 +173,7 @@ instance.prototype.getCameraInformation = function () {
 					str = str.split(':'); // Split Commands and data
 					console.log('HTTP Recived from PTZ: ' + str_raw[i]);
 					debug('HTTP Recived from PTZ: ' + str_raw[i]); // Debug Recived data				
+					self.log('info', 'Recived CMD: ' + str_raw[i]);
 
 					// Store Data
 					self.storeData(str);
@@ -254,7 +256,7 @@ instance.prototype.destroy = function () {
 		self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi bin/event?connect=stop&my_port=' + self.tcpPort + '&uid=0', function (err, result) {
 			console.log("un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
 			if (err) {
-				self.log('Error from PTZ: ' + err);
+				self.log('error', 'Error from PTZ: ' + err);
 				return;
 			}
 			if('data',result.response.req) {
