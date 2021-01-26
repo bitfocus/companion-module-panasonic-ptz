@@ -27,9 +27,9 @@ module.exports = {
         if (str !== undefined) {
             self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_ptz?cmd=%23' + str + '&res=1', function (err, result) {
                 console.log('http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_ptz?cmd=%23' + str + '&res=1')
-                self.log('debug','Send CMD: ' + str);
+                self.log('debug','Send CMD: ' + String(str));
                 if (!err) {
-                    self.log('error', 'Error from PTZ: ' + result);
+                    // self.log('error', 'Error from PTZ: ' + String(err));
                     return;
                 }
                 // console.log("Result from REST:" + result);
@@ -43,9 +43,9 @@ module.exports = {
         if (str !== undefined) {
             self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_cam?cmd=' + str + '&res=1', function (err, result) {
                 console.log('http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_cam?cmd=' + str + '&res=1')
-                self.log('debug', 'Send CMD: ' + str);
+                self.log('debug', 'Send CMD: ' + String(str));
                     if (!err) {
-                    self.log('error', 'Error from PTZ: ' + result);
+                    // self.log('error', 'Error from PTZ: ' + String(err));
                     return;
                 }
                 // console.log("Result from REST:" + result);

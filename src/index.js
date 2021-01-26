@@ -46,6 +46,33 @@ instance.prototype.setupEventListeners = function () {
 	}
 };
 
+// TODO: Add auto select a port
+// instance.prototype.checkSocketIoPort = function (sPort, server) {
+//     return new Promise(function(resolve, reject) {
+// 		// Listens for a client to make a connection request.
+// 		server.listen(sPort, function() {
+// 			console.log('Server listening for PTZ requests on socket localhost:' + sPort);
+// 			debug('Server listening for PTZ requests on socket localhost:' + sPort);
+// 		});
+		
+// 		// Catch "EADDRINUSE" error that orcures if the port is already in use
+// 		process.on('uncaughtException', function(err) {
+// 			if(err.errno === 'EADDRINUSE') {
+// 				console.log("TCP error: " + err);
+// 				debug("TCP error: " + err)
+// 				// self.log('error', "TCP error: " + String(err));
+// 				self.log('error', "TCP error: Please use another TCP port, " + sPort + " is already in use");
+// 			}
+// 			else {
+// 				console.log(err);
+// 				process.exit(1);
+// 			}
+// 			reject(error);
+// 		});		
+// 			resolve();
+//     });
+// };
+
 instance.prototype.init_tcp = function () {
 	var self = this;
 
@@ -76,23 +103,47 @@ instance.prototype.init_tcp = function () {
 	self.status(self.STATE_WARNING, 'Connecting');
 
 	if (self.config.host) {
+		// Create a new TCP server.
+		self.server = new Net.Server();
 
+		// // The port on which the server is listening.
+		var xPort = self.config.tcpPort;
+		
+		// TODO: Add auto select a port
+		// var portFree = false;
+		// var i = 0;
+		// while (portFree == false) {
+		// 	if (i == 10) {
+		// 		portFree = true;
+		// 		console.log("Falied to find a free port");
+		// 	}
+		// 	i = i++;
+
+		// 	self.checkSocketIoPort(xPort, self.server).then(function() {
+		// 		// succeeded here
+		// 		portFree = true;
+		// 		console.log("Succeeded");
+		// 	}, function(reason) {
+		// 		// failed here
+		// 		portFree = false;
+		// 		xPort = xPort++;
+		// 		console.log("Falied");
+		// 	});				
+		// }
+
+		// The port on which the server is listening.
+		var sPort = xPort;
+		
 		self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=start&my_port=' + self.config.tcpPort || 31004 + '&uid=0', function (err, result) {
 			console.log("subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=start&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
 			if (err) {
-				self.log('error', 'Error from PTZ: ' + err);
+				self.log('error', 'Error from PTZ: ' + String(err));
 				return;
 			}
 			if('data',result.response.req) {
 				self.status(self.STATUS_OK);
 			}
 		});
-
-		// The port on which the server is listening.
-		var sPort = self.config.tcpPort;
-
-		// Create a new TCP server.
-		self.server = new Net.Server();
 
 		// Listens for a client to make a connection request.
 		self.server.listen(sPort, function() {
@@ -115,7 +166,7 @@ instance.prototype.init_tcp = function () {
 				let str = str_raw[1].trim(); // remove new line, carage return and so on.
 				console.log('TCP Recived from PTZ: ' + str); 
 				debug('TCP Recived from PTZ: ' + str); // Debug Recived data
-				self.log('info', 'Recived CMD: ' + str);
+				self.log('info', 'Recived CMD: ' + String(str));
 				str = str.split(':'); // Split Commands and data
 
 				// Store Data
@@ -138,15 +189,42 @@ instance.prototype.init_tcp = function () {
 				// console.log('socket closed');
 				socketlist.splice(socketlist.indexOf(socket), 1);
 			});
-  
-			// Don't forget to catch error, for your own sake.
-			socket.on('error', function(err) {
-				console.log("TCP error: " + err.message);
-				debug("TCP error: " + err.message)
-				self.log('error', "TCP error: " + err.message);
+
+			// common error handler
+			socket.on('error', function () {
+				console.log("TCP error: " + err);
+				debug("TCP error: " + err)
+				self.log('error', "TCP error: " + String(err));
 			});
 		});
 
+		// Catch "EADDRINUSE" error that orcures if the port is already in use
+		process.on('uncaughtException', function(err) {
+			if(err.errno === 'EADDRINUSE') {
+				console.log("TCP error: " + err);
+				debug("TCP error: " + err)
+				// self.log('error', "TCP error: " + String(err));
+				self.log('error', "TCP error: Please use another TCP port, " + sPort + " is already in use");
+				self.log('error', "TCP error: The TCP port must be unique between instances");
+				self.status(self.STATUS_ERROR);
+				
+				// Cancel the subscription of info from the PTZ
+				self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi bin/event?connect=stop&my_port=' + self.tcpPort + '&uid=0', function (err, result) {
+					if (err) {
+						self.log('error', 'Error from PTZ: ' + err);
+						return;
+					}
+					if('data',result.response.req) {
+						console.log("un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
+						self.status(self.STATUS_OK);
+					}
+				});		
+			}
+			else {
+				console.log(err);
+				process.exit(1);
+			}
+		});
 	}
 };
 
@@ -157,7 +235,7 @@ instance.prototype.getCameraInformation = function () {
 		self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/live/camdata.html', function (err, result) {
 			// If there was an Error
 			if (err) {
-				self.log('error', 'Error from PTZ: ' + err);
+				self.log('error', 'Error from PTZ: ' + String(err));
 				return;
 			}
 
@@ -173,7 +251,7 @@ instance.prototype.getCameraInformation = function () {
 					str = str.split(':'); // Split Commands and data
 					console.log('HTTP Recived from PTZ: ' + str_raw[i]);
 					debug('HTTP Recived from PTZ: ' + str_raw[i]); // Debug Recived data				
-					self.log('info', 'Recived CMD: ' + str_raw[i]);
+					self.log('info', 'Recived CMD: ' + String(str_raw[i]));
 
 					// Store Data
 					self.storeData(str);
