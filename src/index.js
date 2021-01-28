@@ -206,6 +206,7 @@ instance.prototype.init_tcp = function () {
 				// self.log('error', "TCP error: " + String(err));
 				self.log('error', "TCP error: Please use another TCP port, " + sPort + " is already in use");
 				self.log('error', "TCP error: The TCP port must be unique between instances");
+				self.log('error', "TCP error: Please change it and click apply in ALL PTZ instances");
 				self.status(self.STATUS_ERROR);
 				
 				// Cancel the subscription of info from the PTZ

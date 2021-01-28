@@ -26,6 +26,7 @@ module.exports = {
         { id: 'AW-UE63', series: 'UE70', label: 'AW-UE63' },
         { id: 'AW-UE65', series: 'UE70', label: 'AW-UE65' },
         { id: 'AW-UE70', series: 'UE70', label: 'AW-UE70' },
+        { id: 'AW-UE100', series: 'UE150', label: 'AW-UE100' },
         { id: 'AW-UE150', series: 'UE150', label: 'AW-UE150' },
         { id: 'AW-UE155', series: 'UE150', label: 'AW-UE155' },
         { id: 'AW-UN70', series: 'UE70', label: 'AW-UN70' },
