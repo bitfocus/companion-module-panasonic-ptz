@@ -85,7 +85,11 @@ instance.prototype.init_tcp = function () {
 				return;
 			}
 			if('data',result.response.req) {
+				debug("un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
 				console.log("un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
+				if (self.config.debug === true) {
+					self.log('warn', "un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
+				}
 				self.status(self.STATUS_OK);
 			}
 		});
@@ -135,7 +139,11 @@ instance.prototype.init_tcp = function () {
 		var sPort = xPort;
 		
 		self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=start&my_port=' + self.config.tcpPort || 31004 + '&uid=0', function (err, result) {
+			debug("subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=start&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
 			console.log("subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=start&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
+			if (self.config.debug == true) {
+				self.log('warn', "subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=start&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
+			}
 			if (err) {
 				self.log('error', 'Error from PTZ: ' + String(err));
 				return;
@@ -147,8 +155,11 @@ instance.prototype.init_tcp = function () {
 
 		// Listens for a client to make a connection request.
 		self.server.listen(sPort, function() {
-			console.log('Server listening for PTZ requests on socket localhost:' + sPort);
-			debug('Server listening for PTZ requests on socket localhost:' + sPort);
+			console.log('Server listening for PTZ updates on localhost:' + sPort);
+			debug('Server listening for PTZ updates on localhost:' + sPort);
+			if (self.config.debug == true) {
+				self.log('warn', 'Listening for PTZ updates on localhost:' + sPort);
+			}
 		});
 
 		// When a client requests a connection with the server, the server creates a new
@@ -166,7 +177,9 @@ instance.prototype.init_tcp = function () {
 				let str = str_raw[1].trim(); // remove new line, carage return and so on.
 				console.log('TCP Recived from PTZ: ' + str); 
 				debug('TCP Recived from PTZ: ' + str); // Debug Recived data
-				self.log('info', 'Recived CMD: ' + String(str));
+				if (self.config.debug == true) {
+					self.log('info', 'Recived CMD: ' + String(str));
+				}
 				str = str.split(':'); // Split Commands and data
 
 				// Store Data
@@ -217,6 +230,9 @@ instance.prototype.init_tcp = function () {
 					}
 					if('data',result.response.req) {
 						console.log("un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
+						if (self.config.debug === true) {
+							self.log('warn', "un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
+						}
 						self.status(self.STATUS_OK);
 					}
 				});		
@@ -252,8 +268,9 @@ instance.prototype.getCameraInformation = function () {
 					str = str.split(':'); // Split Commands and data
 					console.log('HTTP Recived from PTZ: ' + str_raw[i]);
 					debug('HTTP Recived from PTZ: ' + str_raw[i]); // Debug Recived data				
-					self.log('info', 'Recived CMD: ' + String(str_raw[i]));
-
+					if (self.config.debug == true) {
+						self.log('info', 'Recived CMD: ' + String(str_raw[i]));
+					}
 					// Store Data
 					self.storeData(str);
 				}
@@ -369,6 +386,7 @@ instance.prototype.init = function () {
 	log = self.log;
 
 	self.data = {
+		debug: false,
 		modelTCP: 'NaN',
 		model: 'Auto',
 		series: 'Auto',
@@ -403,6 +421,7 @@ instance.prototype.init = function () {
 	self.config.httpPort = this.config.httpPort || 80;
 	self.config.tcpPort = this.config.tcpPort || 31004; // TODO: Add Auto detect/Select TCP port
 	self.config.model = this.config.model || 'Auto';
+	self.config.debug = this.config.debugEnabled || false;
 
 	self.status(self.STATUS_WARNING, 'connecting');
 	self.getCameraInformation();
@@ -496,6 +515,13 @@ instance.prototype.config_fields = function () {
 			regex: self.REGEX_PORT
         },
 		{
+			type: 'checkbox',
+			id: 'debugEnabled',
+			width: 3,
+			label: 'Enable Debug To Log Window',
+			default: false
+		},
+		{
 			type: 'text',
 			id: 'tallyOnInfo',
 			width: 12,
@@ -524,7 +550,7 @@ instance.prototype.config_fields = function () {
 			label: 'Tally On Value',
 			width: 5,
 			tooltip: 'When the variable equals this value, the camera tally light will be turned on.  Also supports dynamic variable references.  For example, $(atem:short_1)'
-		}
+		},
 	]
 };
 

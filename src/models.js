@@ -4,6 +4,7 @@ module.exports = {
     
     MODELS: [
         { id: 'Auto', series: 'Auto', label: 'Auto Detect'},
+        { id: 'AW-HE2', series: 'HE2', label: 'AW-HE2' },
         { id: 'AW-HE35', series: 'HE40', label: 'AW-HE35' },
         { id: 'AW-HE38', series: 'HE40', label: 'AW-HE48' },
         { id: 'AW-HE40', series: 'HE40', label: 'AW-HE40' },
@@ -91,6 +92,47 @@ module.exports = {
                 power: true,
                 tally: true,
                 ins: true,
+            }
+        },
+
+        {   // Specific for the HE2 Series
+            id: 'HE2', // A lot has been turned off since it will need custop setups for this camera, can be added if requested
+            variables: {
+                version: true,
+                error: true,
+                ins: false,
+                power: true,
+                tally: true,
+                OAF: false,
+                iris: true,
+            },
+            feedbacks: {
+                powerState: true,
+                tallyState: true,
+                insState: false,
+                autoFocus: false,
+                autoIris: true,
+            }, 
+            actions: {
+                panTilt: true,
+                ptSpeed: true,
+                zoom: true,
+                zSpeed: true,
+                focus: false,
+                fSpeed: false,
+                OAF: false,
+                OTAF: false,
+                iris: true, // Might not work correctly (Auto/Manual should work though)
+                gain: false,
+                shut: false,
+                ped: false,
+                filter: false,
+                preset: false,
+                speedPset: false,
+                timePset: false,
+                power: true,
+                tally: true,
+                ins: false,
             }
         },
 

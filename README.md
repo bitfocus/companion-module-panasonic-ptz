@@ -21,3 +21,7 @@ See HELP.md and LICENSE
 * Added Auto Detect Model, and the option to specify camera type
 * Made Actions Model specific, with options that match the model
 * Updated all presets to work with current feedbacks and actions, and is made dynamicly based on model
+
+**V1.0.10**
+* Added Basic support for AW-HE2
+* Added Config option to enable PTZ debug to the "Info" and "Warn" log window
