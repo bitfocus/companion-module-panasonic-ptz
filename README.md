@@ -24,3 +24,4 @@ See HELP.md and LICENSE
 **V1.0.10**
 * Added Basic support for AW-HE2
 * Added Config option to enable PTZ debug to the "Info" and "Warn" log window
+* Added Support for Start and Stop Recording on SD Card (Only some models)

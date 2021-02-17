@@ -1149,6 +1149,47 @@ module.exports = {
             });
         }
 
+        if (s.sdCard == true) {
+            presets.push({
+                category: 'System',
+                label: 'SD Card Recording Start',
+                bank: {
+                    style: 'text',
+                    text: 'SD Card\\nRecording\\nStart',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0),
+                },
+                actions: [
+                    {
+                        action: 'sdCardRec',
+                        options: {
+                            value: 'start',
+                        }
+                    }
+                ],
+            })
+
+            presets.push({
+                category: 'System',
+                label: 'SD Card Recording Stop',
+                bank: {
+                    style: 'text',
+                    text: 'SD Card\\nRecording\\nStop',
+                    size: '14',
+                    color: '16777215',
+                    bgcolor: self.rgb(0, 0, 0),
+                },
+                actions: [
+                    {
+                        action: 'sdCardRec',
+                        options: {
+                            value: 'end',
+                        }
+                    }
+                ],
+            });
+        }
         // ###########################
 		// #### Load/save Presets ####
 		// ###########################

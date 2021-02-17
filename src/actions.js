@@ -57,6 +57,24 @@ module.exports = {
         }
     },
 
+    sendWeb: function (i, str) { // Currently Only for web commands that don't requre Admin rights
+        var self = i;
+
+        if (str !== undefined) { 
+            self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/' + str, function (err, result) {
+                console.log('http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/' + str)
+                if (self.config.debug == true) {
+                    self.log('debug', 'Send Web CMD: ' + String(str));
+                }
+                if (!err) {
+                    // self.log('error', 'Error from PTZ: ' + String(err));
+                    return;
+                }
+                // console.log("Result from REST:" + result);
+            });
+        }
+    },
+
     // ##########################
     // #### Instance Actions ####
     // ##########################
@@ -801,6 +819,26 @@ module.exports = {
                 cmd = 'INS' + action.options.position;
                 self.sendPTZ(cmd);
 			}
+        };}
+
+        if (s.sdCard == true) {actions.sdCardRec = { 
+            label: 'System - SD Card Recording',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Option',
+                    id: 'value',
+                    default: 'start',
+                    choices: [
+                        { id: 'start', label: 'Start Recording' },
+                        { id: 'end', label: 'Stop Recording' }
+                    ]
+                }
+            ],
+        callback: function(action, bank) {
+                cmd = 'sdctrl?save=' + action.options.value;
+                self.sendWeb(cmd);
+            }
         };}
 
         return(actions);

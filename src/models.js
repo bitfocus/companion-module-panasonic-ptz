@@ -40,6 +40,7 @@ module.exports = {
 
     // list of all Series:
     // Other
+    // HE2
     // HE40
     // HE42
     // UE70
@@ -92,6 +93,7 @@ module.exports = {
                 power: true,
                 tally: true,
                 ins: true,
+                sdCard: true,
             }
         },
 
@@ -133,6 +135,7 @@ module.exports = {
                 power: true,
                 tally: true,
                 ins: false,
+                sdCard: false,
             }
         },
 
@@ -174,6 +177,7 @@ module.exports = {
                 power: true,
                 tally: true,
                 ins: true,
+                sdCard: true,
             }
         },
 
@@ -215,6 +219,7 @@ module.exports = {
                 power: true,
                 tally: true,
                 ins: true,
+                sdCard: true,
             }
         },
 
@@ -256,6 +261,7 @@ module.exports = {
                 power: true,
                 tally: true,
                 ins: true,
+                sdCard: true,
             }
         },
 
@@ -297,6 +303,7 @@ module.exports = {
                 power: true,
                 ins: true,
                 tally: true,
+                sdCard: false,
             }
         },
 
@@ -338,6 +345,7 @@ module.exports = {
                 power: true,
                 tally: true,
                 ins: true,
+                sdCard: false,
             }
         },
 
@@ -379,6 +387,7 @@ module.exports = {
                 power: true,
                 tally: true,
                 ins: true,
+                sdCard: false,
             }
         },
 
@@ -420,6 +429,7 @@ module.exports = {
                 power: true,
                 tally: true,
                 ins: true,
+                sdCard: false,
             }
         },
 
@@ -461,6 +471,7 @@ module.exports = {
                 power: true,
                 tally: true,
                 ins: true,
+                sdCard: false,
             }
         },
 
@@ -502,6 +513,7 @@ module.exports = {
                 power: true,
                 tally: true,
                 ins: true,
+                sdCard: false,
             }
         },
 
@@ -543,6 +555,7 @@ module.exports = {
                 power: true,
                 tally: true,
                 ins: true,
+                sdCard: false,
             }
         },
 
@@ -584,6 +597,7 @@ module.exports = {
                 power: true,
                 tally: true,
                 ins: true,
+                sdCard: false,
             }
         },
 
@@ -623,6 +637,7 @@ module.exports = {
                 power: false,
                 ins: false,
                 tally: false,
+                sdCard: false,
             }
         }
     ]
