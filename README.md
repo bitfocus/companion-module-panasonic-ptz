@@ -11,7 +11,6 @@ See HELP.md and LICENSE
 * Fixed bug with OTAF missing an action
 
 **V1.0.9**
-* (Might break old configs)
 * Cleaned up "Help.md" file
 * Cleaned up "Index.js" file, by splitting it up into difrent files
 * Sorted Actions in dropdown
