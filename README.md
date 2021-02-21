@@ -28,3 +28,4 @@ See HELP.md and LICENSE
 
 **V1.0.11**
 * Added support for AW-UE4
+* Hotfix for SD Card Record Action

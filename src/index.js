@@ -591,6 +591,10 @@ instance.prototype.sendCam = function (str) {
 	actions.sendCam(this, str);
 };
 
+instance.prototype.sendWeb = function (str) {
+	actions.sendWeb(this, str);
+};
+
 instance.prototype.actions = function (system) {
 	this.setActions(actions.setActions(this));
 };

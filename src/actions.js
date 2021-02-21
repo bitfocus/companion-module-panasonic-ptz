@@ -46,7 +46,7 @@ module.exports = {
             self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_cam?cmd=' + str + '&res=1', function (err, result) {
                 console.log('http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_cam?cmd=' + str + '&res=1')
                 if (self.config.debug == true) {
-                    self.log('debug', 'Send CMD: ' + String(str));
+                    self.log('warn', 'Send CMD: ' + String(str));
                 }
                 if (!err) {
                     // self.log('error', 'Error from PTZ: ' + String(err));
@@ -64,7 +64,7 @@ module.exports = {
             self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/' + str, function (err, result) {
                 console.log('http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/' + str)
                 if (self.config.debug == true) {
-                    self.log('debug', 'Send Web CMD: ' + String(str));
+                    self.log('warn', 'Send Web CMD: ' + String(str));
                 }
                 if (!err) {
                     // self.log('error', 'Error from PTZ: ' + String(err));

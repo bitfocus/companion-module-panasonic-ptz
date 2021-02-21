@@ -70,6 +70,7 @@ It's recommended to use the presets as much as possible as there is a lot of act
 * Installation position Desktop and Hanging
 * Tally Off
 * Tally On
+* SD Card Recording Start/Stop
 
 **Save presets**
 * Save Preset 1-100
