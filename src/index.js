@@ -24,7 +24,9 @@ instance.prototype.tallyOnListener = function (label, variable, value) {
 	}
 
 	self.system.emit('variable_parse', tallyOnValue, (parsedValue) => {
+		value = value.toString();
 		debug('variable changed... updating tally', { label, variable, value, parsedValue });
+		console.log('variable changed... updating tally', { label, variable, value, parsedValue });
 		self.system.emit('action_run', {
 			action: (value === parsedValue ? 'tallyOn' : 'tallyOff'),
 			instance: self.id
@@ -81,7 +83,7 @@ instance.prototype.init_tcp = function () {
 		// Stop getting Status Updates
 		self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi bin/event?connect=stop&my_port=' + self.tcpPort + '&uid=0', function (err, result) {
 			if (err) {
-				self.log('error', 'Error from PTZ: ' + err);
+				self.log('error', 'Error from PTZ: ' + String(err));
 				return;
 			}
 			if('data',result.response.req) {
@@ -421,7 +423,7 @@ instance.prototype.init = function () {
 	self.config.httpPort = this.config.httpPort || 80;
 	self.config.tcpPort = this.config.tcpPort || 31004; // TODO: Add Auto detect/Select TCP port
 	self.config.model = this.config.model || 'Auto';
-	self.config.debug = this.config.debugEnabled || false;
+	self.config.debug = this.config.debug || false;
 
 	self.status(self.STATUS_WARNING, 'connecting');
 	self.getCameraInformation();
@@ -516,7 +518,7 @@ instance.prototype.config_fields = function () {
         },
 		{
 			type: 'checkbox',
-			id: 'debugEnabled',
+			id: 'debug',
 			width: 3,
 			label: 'Enable Debug To Log Window',
 			default: false

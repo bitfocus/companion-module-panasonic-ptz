@@ -28,4 +28,7 @@ See HELP.md and LICENSE
 
 **V1.0.11**
 * Added support for AW-UE4
+
+**V1.0.12**
 * Hotfix for SD Card Record Action
+* Bug Fix: Tally on variable, not working on integer variables, now works with both integer and string variables.
