@@ -31,4 +31,5 @@ See HELP.md and LICENSE
 
 **V1.0.12**
 * Hotfix for SD Card Record Action
-* Bug Fix: Tally on variable, not working on integer variables, now works with both integer and string variables.
+* Bug Fix: Tally on variable, not working on integer variables, now works with both integer and string variables
+* Bug Fix: some actions not working with defaults, due too not having a default declared

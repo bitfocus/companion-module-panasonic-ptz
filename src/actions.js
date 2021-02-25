@@ -466,6 +466,7 @@ module.exports = {
                     type: 'dropdown',
                     label: 'Iris setting',
                     id: 'val',
+                    default: CHOICES_IRIS[0].id,
                     choices: CHOICES_IRIS
                 }
 			],
@@ -535,6 +536,7 @@ module.exports = {
                     type: 'dropdown',
                     label: 'Gain setting',
                     id: 'val',
+                    default: s.gain.dropdown[0].id,
                     choices: s.gain.dropdown
                 }
 			],
@@ -581,6 +583,7 @@ module.exports = {
                     type: 'dropdown',
                     label: 'Shutter setting',
                     id: 'val',
+                    default: s.shut.dropdown[0].id,
                     choices: s.shut.dropdown
                 }
 			],
@@ -628,6 +631,7 @@ module.exports = {
                     type: 'dropdown',
                     label: 'Pedestal setting',
                     id: 'val',
+                    default: s.ped.dropdown[0].id,
                     choices: s.ped.dropdown
                 }
 			],
@@ -673,6 +677,7 @@ module.exports = {
                     type: 'dropdown',
                     label: 'ND Filter setting',
                     id: 'val',
+                    default: s.filter.dropdown[0].id,
                     choices: s.filter.dropdown
                 }
 			],
@@ -693,6 +698,7 @@ module.exports = {
                     type: 'dropdown',
                     label: 'Preset Nr.',
                     id: 'val',
+                    default: CHOICES_PRESET[0].id,
                     choices: CHOICES_PRESET
                 }
             ],
@@ -708,6 +714,7 @@ module.exports = {
                     type: 'dropdown',
                     label: 'Preset Nr.',
                     id: 'val',
+                    default: CHOICES_PRESET[0].id,
                     choices: CHOICES_PRESET
                 }
             ],
