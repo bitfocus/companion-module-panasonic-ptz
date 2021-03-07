@@ -299,7 +299,7 @@ module.exports = {
                 shut: false,
                 ped: false,
                 filter: false,
-                preset: false,
+                preset: true,
                 speedPset: false,
                 timePset: false,
                 power: true,
