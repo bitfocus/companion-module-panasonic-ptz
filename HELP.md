@@ -22,6 +22,10 @@ Panasonic PTZ Cameras
 
 **Disclaimer, not all models supports all actions, variables and feedbacks. But it should be auto sorted so that you can only use actions, feedbacks, variables and presets that works with your model**
 
+## When using more than on PTZ
+
+**When Configuring** more than one instance, please make sure you change the **TCP** port accordingly, this is a port used in companion, and you will not find a setting for it on the cameras. The TCP port **NEEDS** to be unique for each PTZ instance you add.
+
 ## Actions
 The actions are separated into the following categories.
 It's recommended to use the presets as much as possible as there is a lot of actions.

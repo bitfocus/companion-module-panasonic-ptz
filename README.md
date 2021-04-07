@@ -1,6 +1,10 @@
 # companion-module-panasonic-ptz
 See HELP.md and LICENSE
 
+Current support is based on "HD/4K Integrated Camera Interface Specifications" version 1.12 from Apr. 27, 2020.
+For more information on the Panasonic API, please refer to:
+[Panasonic Interface Specifications, Protocol](https://eww.pass.panasonic.co.jp/pro-av/support/content/guide/EN/top.html)
+
 **V1.0.7**
 * Added Hanging and Desktop mode
 * Added One Touch Auto Focus
@@ -36,3 +40,8 @@ See HELP.md and LICENSE
 **V1.0.13**
 * Bug Fix: some actions not working with defaults, due too not having a default declared
 * Enabled presets on Aw-HE2
+
+**V1.0.14**
+* Updated Help.md
+* Fixed bug with importing unused dependencies
+* Fixed bug with Auto/Manual focus being mirrored

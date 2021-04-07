@@ -1,6 +1,5 @@
 var { MODELS, SERIES_SPECS } = require('./models.js');
 const c = require('./choices.js');
-const { data } = require('jquery');
 
 // ########################
 // #### Value Look Ups ####
@@ -408,7 +407,7 @@ module.exports = {
                     label: 'Auto / Manual Focus',
                     id: 'bol',
                     default: 0,
-                    choices: [{ id: 0, label: 'Auto Focus' }, { id: 1, label: 'Manual Focus' }]
+                    choices: [{ id: 0, label: 'Manual Focus' }, { id: 1, label: 'Auto Focus' }]
                 }
 			],
 			callback: function(action, bank) {
