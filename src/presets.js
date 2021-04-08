@@ -648,7 +648,7 @@ module.exports = {
                     {
                         action: 'focusM',
                         options: {
-                            bol: 0,
+                            bol: 1,
                         }
                     }
                 ],
@@ -676,7 +676,7 @@ module.exports = {
                     {
                         action: 'focusM',
                         options: {
-                            bol: 1,
+                            bol: 0,
                         }
                     }
                 ],
