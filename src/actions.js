@@ -407,15 +407,15 @@ module.exports = {
                     label: 'Auto / Manual Focus',
                     id: 'bol',
                     default: 0,
-                    choices: [{ id: 0, label: 'Manual Focus' }, { id: 1, label: 'Auto Focus' }]
+                    choices: [{ id: 0, label: 'Auto Focus' }, { id: 1, label: 'Manual Focus' }]
                 }
 			],
 			callback: function(action, bank) {
                 if (action.options.bol == 0) {
-                    cmd = 'D10';
+                    cmd = 'D11';
                 }
                 if (action.options.bol == 1) {
-                    cmd = 'D11';
+                    cmd = 'D10';
                 }
                 self.sendPTZ(cmd);
 			}
