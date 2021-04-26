@@ -15,6 +15,45 @@ var log;
 // #########################
 // #### Other Functions ####
 // #########################
+instance.prototype.updateVariableAndInstanceLists = function () {
+	const self = this;
+
+	const dynamicVariableChoices = [];
+	const instanceList = [];
+	var i = 0;
+
+	// Gets a List of all variables that exist currently
+	self.system.emit('variable_get_definitions', (definitions) =>
+		Object.entries(definitions).forEach(([instanceLabel, variables]) => {
+			variables.forEach((variable) =>
+				dynamicVariableChoices.push({
+					id: `${instanceLabel}:${variable.name}`,
+					label: `${instanceLabel}:${variable.name}`
+				})
+			);
+		})
+	);
+
+	// Creates a list of all insances curently loaded active or not
+	system.emit('instance_getall', function (instances) {
+		try {
+			Object.entries(instances).forEach(([instanceID, instanceData]) => {
+				instanceList.push({
+					nr: `${i}`,
+					product: `${instanceData.product}`,
+					label: `${instanceData.label}`,
+					id: `${instanceID}`
+				});
+				i++;
+			});
+		} catch (e) {
+		}
+	})
+
+	this.dynamicVariableChoices = dynamicVariableChoices;
+	this.instanceList = instanceList;
+};
+
 instance.prototype.tallyOnListener = function (label, variable, value) {
 	const self = this;
 	const { tallyOnEnabled, tallyOnVariable, tallyOnValue } = self.config;
@@ -77,25 +116,28 @@ instance.prototype.setupEventListeners = function () {
 
 instance.prototype.init_tcp = function () {
 	var self = this;
+	self.updateVariableAndInstanceLists();
+	var tcpPortSelected = self.tcpPortSelected || 31004;
+	portOffset = this.instanceList.find((input) => input.id === self.id).nr; 
 
 	// Remove old TCP Server and close all connections
 	if (self.server !== undefined) {
 		// Stop getting Status Updates
-		self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi bin/event?connect=stop&my_port=' + self.tcpPort + '&uid=0', function (err, result) {
+		self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi bin/event?connect=stop&my_port=' + tcpPortSelected + '&uid=0', function (err, result) {
 			if (err) {
+				debug('Error from PTZ: ' + String(err));
 				self.log('error', 'Error from PTZ: ' + String(err));
 				return;
 			}
 			if('data',result.response.req) {
-				debug("un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
-				console.log("un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
+				debug("un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + tcpPortSelected + '&uid=0');
+				console.log("un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + tcpPortSelected + '&uid=0');
 				if (self.config.debug === true) {
-					self.log('warn', "un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
+					self.log('warn', "un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + tcpPortSelected + '&uid=0');
 				}
 				self.status(self.STATUS_OK);
 			}
 		});
-
 		// Close all remaning Connections
 		socketlist.forEach(function(socket) {
 			socket.close();
@@ -106,45 +148,30 @@ instance.prototype.init_tcp = function () {
 		delete self.server;
 	}
 
+	// After closing old server's, get the new port and setup TPC once again with a subscription and a server.
+	// Get the instance number, then we can use this to "auto" offset the port values used, instead of requering a diffrent port on each from the user.
+	// This will only get used when "Auto" port is turned on, and then it will ignore the specified port. if you use "Manual" port then this offset will get ignored.
+	if (self.config.autoTCP == true) {
+		tcpPortSelected = 31004 + parseInt(portOffset);
+	} else {
+		tcpPortSelected = self.config.tcpPort;
+	}
+	this.tcpPortSelected = tcpPortSelected;
+
 	self.status(self.STATE_WARNING, 'Connecting');
 
 	if (self.config.host) {
 		// Create a new TCP server.
 		self.server = new Net.Server();
 
-		// // The port on which the server is listening.
-		var xPort = self.config.tcpPort;
-		
-		// TODO: Add auto select a port
-		// var portFree = false;
-		// var i = 0;
-		// while (portFree == false) {
-		// 	if (i == 10) {
-		// 		portFree = true;
-		// 		console.log("Falied to find a free port");
-		// 	}
-		// 	i = i++;
-
-		// 	self.checkSocketIoPort(xPort, self.server).then(function() {
-		// 		// succeeded here
-		// 		portFree = true;
-		// 		console.log("Succeeded");
-		// 	}, function(reason) {
-		// 		// failed here
-		// 		portFree = false;
-		// 		xPort = xPort++;
-		// 		console.log("Falied");
-		// 	});				
-		// }
-
 		// The port on which the server is listening.
-		var sPort = xPort;
+		var sPort = tcpPortSelected;
 		
-		self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=start&my_port=' + self.config.tcpPort || 31004 + '&uid=0', function (err, result) {
-			debug("subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=start&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
-			console.log("subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=start&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
+		self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=start&my_port=' + sPort + '&uid=0', function (err, result) {
+			debug("subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=start&my_port=' + sPort + '&uid=0');
+			console.log("subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=start&my_port=' + sPort + '&uid=0');
 			if (self.config.debug == true) {
-				self.log('warn', "subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=start&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
+				self.log('warn', "subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=start&my_port=' + sPort + '&uid=0');
 			}
 			if (err) {
 				self.log('error', 'Error from PTZ: ' + String(err));
@@ -225,15 +252,15 @@ instance.prototype.init_tcp = function () {
 				self.status(self.STATUS_ERROR);
 				
 				// Cancel the subscription of info from the PTZ
-				self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi bin/event?connect=stop&my_port=' + self.tcpPort + '&uid=0', function (err, result) {
+				self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi bin/event?connect=stop&my_port=' + sPort + '&uid=0', function (err, result) {
 					if (err) {
 						self.log('error', 'Error from PTZ: ' + err);
 						return;
 					}
 					if('data',result.response.req) {
-						console.log("un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
+						console.log("un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + sPort + '&uid=0');
 						if (self.config.debug === true) {
-							self.log('warn', "un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
+							self.log('warn', "un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + sPort + '&uid=0');
 						}
 						self.status(self.STATUS_OK);
 					}
@@ -351,8 +378,8 @@ instance.prototype.destroy = function () {
 	// Remove TCP Server and close all connections
 	if (self.server !== undefined) {
 		// Stop getting Status Updates
-		self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi bin/event?connect=stop&my_port=' + self.tcpPort + '&uid=0', function (err, result) {
-			console.log("un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + self.config.tcpPort || 31004 + '&uid=0');
+		self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi bin/event?connect=stop&my_port=' + self.tcpPortSelected + '&uid=0', function (err, result) {
+			console.log("un-subscribed: " + 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/event?connect=stop&my_port=' + self.tcpPortSelected + '&uid=0');
 			if (err) {
 				self.log('error', 'Error from PTZ: ' + err);
 				return;
@@ -415,15 +442,19 @@ instance.prototype.init = function () {
 	self.filterVal = 0;
 	self.filterIndex = 0;
 	self.shutVal = 0;
-	self.shutIndex = 0
-	self.pedestalVal = '096'
-	self.pedestalIndex = 150
+	self.shutIndex = 0;
+	self.pedestalVal = '096';
+	self.pedestalIndex = 150;
+	self.tcpPortSelected = 31004;
 
 	self.config.host = this.config.host || '';
 	self.config.httpPort = this.config.httpPort || 80;
-	self.config.tcpPort = this.config.tcpPort || 31004; // TODO: Add Auto detect/Select TCP port
+	self.config.tcpPort = this.config.tcpPort || 31004;
+	self.config.autoTCP = this.config.autoTCP || true; // Enable Auto detect TCP port by default
 	self.config.model = this.config.model || 'Auto';
 	self.config.debug = this.config.debug || false;
+	self.dynamicVariableChoices = [];
+	self.instanceList = []
 
 	self.status(self.STATUS_WARNING, 'connecting');
 	self.getCameraInformation();
@@ -434,7 +465,8 @@ instance.prototype.init = function () {
 	self.checkVariables();
 	self.init_feedbacks();
 	self.checkFeedbacks();
-	self.setupEventListeners();	
+	self.updateVariableAndInstanceLists();
+	self.setupEventListeners();
 };
 
 // Update module after a config change
@@ -450,24 +482,13 @@ instance.prototype.updateConfig = function (config) {
 	self.checkVariables();
 	self.init_feedbacks();
 	self.checkFeedbacks();
+	self.updateVariableAndInstanceLists();
 	self.setupEventListeners();	
 };
 
 // Return config fields for web config
 instance.prototype.config_fields = function () {
 	var self = this;
-
-	const dynamicVariableChoices = [];
-	self.system.emit('variable_get_definitions', (definitions) =>
-		Object.entries(definitions).forEach(([instanceLabel, variables]) =>
-			variables.forEach((variable) =>
-				dynamicVariableChoices.push({
-					id: `${instanceLabel}:${variable.name}`,
-					label: `${instanceLabel}:${variable.name}`
-				})
-			)
-		)
-	);
 
 	return [
 		{
@@ -494,41 +515,40 @@ instance.prototype.config_fields = function () {
         },
 		{
 			type: 'text',
+			id: 'dummy1',
+			width: 12,
+			label: ' ',
+			value: ' '
+		},
+		{
+			type: 'text',
 			id: 'modelInfo',
 			width: 12,
 			label: 'Camera Model',
-			value: 'Please Select the camera model and if you want what Port to use for Feedbacks. <br/>This port should be unique, so if you have more than one camera please change this so they different from each other.'
+			value: 'Please Select the camera model or feel free to leave it on auto.'
 		},
 		{
 			type: 'dropdown',
 			id: 'model',
 			label: 'Select Your Camera Model',
-			width: 4,
+			width: 6,
 			default: 'Auto',
 			choices: MODELS,
 			minChoicesForSearch: 5
 		},
 		{
-			type: 'textinput',
-			id: 'tcpPort',
-			label: 'TCP Port (Default: 31004)',
-			width: 3,
-			default: 31004,
-			regex: self.REGEX_PORT
-        },
-		{
-			type: 'checkbox',
-			id: 'debug',
-			width: 3,
-			label: 'Enable Debug To Log Window',
-			default: false
+			type: 'text',
+			id: 'dummy2',
+			width: 12,
+			label: ' ',
+			value: ' '
 		},
 		{
 			type: 'text',
-			id: 'tallyOnInfo',
+			id: 'Info',
 			width: 12,
-			label: 'Tally On',
-			value: 'Set camera tally ON when the instance variable equals the value'
+			label: 'Other Settings',
+			value: 'These setting can be left on the default values and should give you a consistent setup, but they are there for you to use if need be.'
 		},
 		{
 			type: 'checkbox',
@@ -538,20 +558,70 @@ instance.prototype.config_fields = function () {
 			default: true
 		},
 		{
+			type: 'text',
+			id: 'tallyOnInfo',
+			width: 4,
+			label: 'Tally On',
+			value: 'Set camera tally ON when the instance variable equals the value'
+		},
+		{
 			type: 'dropdown',
 			id: 'tallyOnVariable',
 			label: 'Tally On Variable',
-			width: 6,
+			width: 4,
 			tooltip: 'The instance label and variable name',
-			choices: dynamicVariableChoices,
+			choices: self.dynamicVariableChoices,
 			minChoicesForSearch: 5
 		},
 		{
 			type: 'textinput',
 			id: 'tallyOnValue',
 			label: 'Tally On Value',
-			width: 5,
+			width: 3,
 			tooltip: 'When the variable equals this value, the camera tally light will be turned on.  Also supports dynamic variable references.  For example, $(atem:short_1)'
+		},
+		{
+			type: 'checkbox',
+			id: 'autoTCP',
+			width: 1,
+			label: 'Enable',
+			default: true
+		},
+		{
+			type: 'text',
+			id: 'autoTCPInfo',
+			width: 4,
+			label: 'Auto TCP',
+			value: 'This will ignore the port selected and find a port Automaticly, read the help.md (click "?") file for more info'
+		},
+		{
+			type: 'textinput',
+			id: 'tcpPort',
+			label: 'TCP Port',
+			width: 3,
+			default: 31004,
+			regex: self.REGEX_PORT
+        },
+		{
+			type: 'text',
+			id: 'manualTCPInfo',
+			width: 4,
+			label: 'Manual TCP Port',
+			value: 'TCP Port (Default: 31004) only used when "Auto TCP" is OFF/Disabled'
+		},
+		{
+			type: 'checkbox',
+			id: 'debug',
+			width: 1,
+			label: 'Enable',
+			default: false
+		},
+		{
+			type: 'text',
+			id: 'debugInfo',
+			width: 11,
+			label: 'Enable Debug To Log Window',
+			value: 'Requires Companion to be restarted. But this will allow you the see what is being sent from the module and what is being received from the camera.'
 		},
 	]
 };

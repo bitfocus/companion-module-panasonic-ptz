@@ -45,3 +45,7 @@ For more information on the Panasonic API, please refer to:
 * Updated Help.md
 * Fixed bug with importing unused dependencies
 * Fixed bug with Auto/Manual focus being mirrored
+
+**V1.0.15**
+* Added Auto detect TCP port based on instance ID/nr, as these will always be unique on one system. Currently, it's based on the default TCP port (31004)+ instance nr. If you only have one instance = 31004 + 1, it is the fifth instance = 31004 + 5. that should help out with errors when using more than one instance/camera. (The user selected port, gets ignored when auto mode is selected)
+* Cleaned up config page
