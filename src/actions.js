@@ -25,8 +25,8 @@ module.exports = {
 
         if (str !== undefined) {
             self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_ptz?cmd=%23' + str + '&res=1', function (err, result) {
-                console.log('http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_ptz?cmd=%23' + str + '&res=1')
                 if (self.config.debug == true) {
+                    console.log('http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_ptz?cmd=%23' + str + '&res=1')
                     self.log('warn','Send CMD: ' + String(str));
                 }
                 if (!err) {
@@ -43,8 +43,8 @@ module.exports = {
 
         if (str !== undefined) {
             self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_cam?cmd=' + str + '&res=1', function (err, result) {
-                console.log('http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_cam?cmd=' + str + '&res=1')
                 if (self.config.debug == true) {
+                    console.log('http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_cam?cmd=' + str + '&res=1')
                     self.log('warn', 'Send CMD: ' + String(str));
                 }
                 if (!err) {
@@ -61,8 +61,8 @@ module.exports = {
 
         if (str !== undefined) { 
             self.system.emit('rest_get', 'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/' + str, function (err, result) {
-                console.log('http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/' + str)
                 if (self.config.debug == true) {
+                    console.log('http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/' + str)
                     self.log('warn', 'Send Web CMD: ' + String(str));
                 }
                 if (!err) {

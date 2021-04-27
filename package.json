@@ -16,9 +16,9 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
-	"author": "Per Røine <per.roine@gmail.com>",
+	"author": "Andreas H. Thomsen <mc-hauge@hotmail.com>",
 	"contributors": [
-		"Andreas H. Thomsen <mc-hauge@hotmail.com>"
+		"Per Røine <per.roine@gmail.com>"
 	],
 	"license": "MIT"
 }

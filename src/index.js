@@ -341,10 +341,13 @@ instance.prototype.storeData = function (str) {
 		case 'TITLE': self.data.name = str[1]; break;
 		case 'p1': self.data.power = 'ON'; break;
 		case 'p0': self.data.power = 'OFF'; break;
-		case 'TLR': 
+		case 'TLR': // works on UE-XXX series for tally
 			if (str[1] == '0') {self.data.tally = 'OFF';}
 			else if (str[1] == '1') {self.data.tally = 'ON';}
 			break;
+		case 'dA0': self.data.tally = 'OFF'; break;
+		case 'dA1': self.data.tally = 'ON'; break;
+	
 		case 'iNS0': self.data.ins = 'Desktop'; break;
 		case 'iNS1': self.data.ins = 'Hanging'; break;
 		case 'OAF': 
