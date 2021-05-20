@@ -85,33 +85,6 @@ instance.prototype.setupEventListeners = function () {
 	}
 }
 
-// TODO: Add auto select a port
-// instance.prototype.checkSocketIoPort = function (sPort, server) {
-//     return new Promise(function(resolve, reject) {
-// 		// Listens for a client to make a connection request.
-// 		server.listen(sPort, function() {
-// 			console.log('Server listening for PTZ requests on socket localhost:' + sPort);
-// 			debug('Server listening for PTZ requests on socket localhost:' + sPort);
-// 		});
-
-// 		// Catch "EADDRINUSE" error that orcures if the port is already in use
-// 		process.on('uncaughtException', function(err) {
-// 			if(err.errno === 'EADDRINUSE') {
-// 				console.log("TCP error: " + err);
-// 				debug("TCP error: " + err)
-// 				// self.log('error', "TCP error: " + String(err));
-// 				self.log('error', "TCP error: Please use another TCP port, " + sPort + " is already in use");
-// 			}
-// 			else {
-// 				console.log(err);
-// 				process.exit(1);
-// 			}
-// 			reject(error);
-// 		});
-// 			resolve();
-//     });
-// };
-
 instance.prototype.init_tcp = function () {
 	var self = this
 	self.updateVariableAndInstanceLists()
@@ -502,6 +475,14 @@ function instance(system, id, config) {
 
 	// super-constructor
 	instance_skel.apply(this, arguments)
+
+	self.addUpgradeToBooleanFeedbackScript({
+		powerState: true,
+		tallyState: true,
+		insState: true,
+		autoFocus: true,
+		autoIris: true,
+	})
 
 	return self
 }

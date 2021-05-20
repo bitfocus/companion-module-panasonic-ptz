@@ -7,6 +7,11 @@ module.exports = {
 		var presets = []
 		var SERIES = {}
 
+		const foregroundColor = self.rgb(255, 255, 255) // White
+		const backgroundColorRed = self.rgb(255, 0, 0) // Red
+		const backgroundColorGreen = self.rgb(0, 255, 0) // Green
+		const backgroundColorOrange = self.rgb(255, 102, 0) // Orange
+
 		// Set the model and series selected, if in auto, dettect what model is connected via TCP
 		if (self.config.model === 'Auto') {
 			self.data.model = self.data.modelTCP
@@ -654,6 +659,10 @@ module.exports = {
 						options: {
 							option: '0',
 						},
+						style: {
+							color: foregroundColor,
+							bgcolor: backgroundColorRed,
+						},
 					},
 				],
 			})
@@ -682,6 +691,10 @@ module.exports = {
 						options: {
 							option: '1',
 						},
+						style: {
+							color: foregroundColor,
+							bgcolor: backgroundColorRed,
+						},
 					},
 				],
 			})
@@ -709,6 +722,10 @@ module.exports = {
 						type: 'autoFocus',
 						options: {
 							option: '1',
+						},
+						style: {
+							color: foregroundColor,
+							bgcolor: backgroundColorRed,
 						},
 					},
 				],
@@ -778,6 +795,10 @@ module.exports = {
 						options: {
 							option: '0',
 						},
+						style: {
+							color: foregroundColor,
+							bgcolor: backgroundColorRed,
+						},
 					},
 				],
 			})
@@ -805,6 +826,10 @@ module.exports = {
 						type: 'autoIris',
 						options: {
 							option: '1',
+						},
+						style: {
+							color: foregroundColor,
+							bgcolor: backgroundColorRed,
 						},
 					},
 				],
@@ -1003,6 +1028,10 @@ module.exports = {
 						options: {
 							option: '0',
 						},
+						style: {
+							color: foregroundColor,
+							bgcolor: backgroundColorRed,
+						},
 					},
 				],
 			})
@@ -1027,6 +1056,10 @@ module.exports = {
 						type: 'powerState',
 						options: {
 							option: '1',
+						},
+						style: {
+							color: foregroundColor,
+							bgcolor: backgroundColorRed,
 						},
 					},
 				],
@@ -1055,6 +1088,10 @@ module.exports = {
 						options: {
 							option: '0',
 						},
+						style: {
+							color: foregroundColor,
+							bgcolor: backgroundColorRed,
+						},
 					},
 				],
 			})
@@ -1079,6 +1116,10 @@ module.exports = {
 						type: 'tallyState',
 						options: {
 							option: '1',
+						},
+						style: {
+							color: foregroundColor,
+							bgcolor: backgroundColorRed,
 						},
 					},
 				],
@@ -1110,6 +1151,10 @@ module.exports = {
 						options: {
 							option: '0',
 						},
+						style: {
+							color: foregroundColor,
+							bgcolor: backgroundColorRed,
+						},
 					},
 				],
 			})
@@ -1137,6 +1182,10 @@ module.exports = {
 						type: 'insState',
 						options: {
 							option: '1',
+						},
+						style: {
+							color: foregroundColor,
+							bgcolor: backgroundColorRed,
 						},
 					},
 				],
