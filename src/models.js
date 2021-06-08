@@ -33,7 +33,7 @@ module.exports = {
 		{ id: 'AW-UN70', series: 'UE70', label: 'AW-UN70' },
 		{ id: 'AW-UN145', series: 'UE150', label: 'AW-UN145' },
 		{ id: 'AW-HEF5', series: 'AW-HEF5', label: 'AW-HEF5' },
-		{ id: 'AW-SHU01', series: 'AW-SFU01', label: 'AW-SFU01' },
+		{ id: 'AW-SFU01', series: 'AW-SFU01', label: 'AW-SFU01' },
 		{ id: 'AK-UB300', series: 'AK-UB300', label: 'AK-UB300' },
 		{ id: 'Other', series: 'Other', label: 'Other Cameras' },
 	],
