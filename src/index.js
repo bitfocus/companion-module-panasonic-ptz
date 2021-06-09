@@ -476,15 +476,19 @@ function instance(system, id, config) {
 	// super-constructor
 	instance_skel.apply(this, arguments)
 
-	self.addUpgradeToBooleanFeedbackScript({
-		powerState: true,
-		tallyState: true,
-		insState: true,
-		autoFocus: true,
-		autoIris: true,
-	})
-
 	return self
+}
+
+instance.GetUpgradeScripts = function() {
+	return [
+		instance_skel.CreateConvertToBooleanFeedbackUpgradeScript({
+			powerState: true,
+			tallyState: true,
+			insState: true,
+			autoFocus: true,
+			autoIris: true,
+		}),
+	]
 }
 
 // When module gets deleted
