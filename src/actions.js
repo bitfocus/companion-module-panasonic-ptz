@@ -33,11 +33,13 @@ module.exports = {
 						)
 						self.log('warn', 'Send CMD: ' + String(str))
 					}
-					if (!err) {
+					if (err) {
 						// self.log('error', 'Error from PTZ: ' + String(err));
 						return
 					}
-					// console.log("Result from REST:" + result);
+					if (('data', result.response.req)) {
+						// console.log("Result from REST:" + result.data);
+					}
 				}
 			)
 		}
@@ -57,11 +59,13 @@ module.exports = {
 						)
 						self.log('warn', 'Send CMD: ' + String(str))
 					}
-					if (!err) {
+					if (err) {
 						// self.log('error', 'Error from PTZ: ' + String(err));
 						return
 					}
-					// console.log("Result from REST:" + result);
+					if (('data', result.response.req)) {
+						// console.log("Result from REST:" + result.data);
+					}
 				}
 			)
 		}
@@ -852,6 +856,28 @@ module.exports = {
 				],
 				callback: function (action, bank) {
 					cmd = 'R' + action.options.val
+					self.sendPTZ(cmd)
+				},
+			}
+		}
+		if (s.preset == true) {
+			actions.recallModePset = {
+				label: 'Preset - Mode A, B, C',
+				options: [
+					{
+						type: 'dropdown',
+						label: 'Preset Mode',
+						id: 'val',
+						default: '0',
+						choices: [
+							{ id: '0', label: 'Mode A - PTZ + Iris + WB/Color' },
+							{ id: '1', label: 'Mode B - PTZ + Iris' },
+							{ id: '2', label: 'Mode C - PTZ only' },
+						],
+					},
+				],
+				callback: function (action, bank) {
+					cmd = 'OSE:71:' + action.options.val
 					self.sendPTZ(cmd)
 				},
 			}

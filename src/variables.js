@@ -62,6 +62,9 @@ module.exports = {
 		if (SERIES.variables.iris == true) {
 			variables.push({ name: 'irisMode', label: 'Auto Iris Mode' })
 		}
+		if (SERIES.variables.preset == true) {
+			variables.push({ name: 'presetMode', label: 'Preset Mode' })
+		}
 		variables.push({ name: 'ptSpeedVar', label: 'Pan/Tilt Speed' })
 		variables.push({ name: 'zSpeedVar', label: 'Zoom Speed' })
 		variables.push({ name: 'fSpeedVar', label: 'Focus Speed' })
@@ -84,6 +87,7 @@ module.exports = {
 		self.setVariable('tally', self.data.tally)
 		self.setVariable('OAF', self.data.oaf)
 		self.setVariable('irisMode', self.data.irisMode)
+		self.setVariable('presetMode', self.data.recallModePset)
 		self.setVariable('ptSpeedVar', self.ptSpeed)
 		self.setVariable('zSpeedVar', self.zSpeed)
 		self.setVariable('fSpeedVar', self.fSpeed)

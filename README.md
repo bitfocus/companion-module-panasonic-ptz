@@ -64,3 +64,11 @@ For more information on the Panasonic API, please refer to:
 **V1.0.16**
 
 - Converted Feedbacks to Boolean Feedbacks for more flexibility
+
+**V1.0.17 & V1.0.18**
+
+- Minor changes, and update script fixes
+
+**V1.0.19**
+
+- Added Action, Feedback, Preset and Variable for "Preset - Mode A, B, C"

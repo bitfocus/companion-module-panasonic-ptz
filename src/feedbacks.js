@@ -247,6 +247,54 @@ module.exports = {
 			}
 		}
 
+		if (SERIES.feedbacks.preset == true) {
+			feedbacks.recallModePset = {
+				type: 'boolean',
+				label: 'Preset - Mode A, B, C',
+				description: 'Indicate what preset mode is curently selected on the camera',
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorRed,
+				},
+				options: [
+					{
+						type: 'dropdown',
+						label: 'Select Mode',
+						id: 'option',
+						default: '0',
+						choices: [
+							{ id: '0', label: 'Mode A - PTZ + Iris + WB/Color' },
+							{ id: '1', label: 'Mode B - PTZ + Iris' },
+							{ id: '2', label: 'Mode C - PTZ only' },
+						],
+					},
+				],
+				callback: function (feedback, bank) {
+					var opt = feedback.options
+					switch (opt.option) {
+						case '0':
+							if (self.data.recallModePset === 'Mode A') {
+								return true
+							}
+							break
+						case '1':
+							if (self.data.recallModePset === 'Mode B') {
+								return true
+							}
+							break
+						case '2':
+							if (self.data.recallModePset === 'Mode C') {
+								return true
+							}
+							break
+						default:
+							break
+					}
+					return false
+				},
+			}
+		}
+
 		return feedbacks
 	},
 }

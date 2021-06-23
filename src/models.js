@@ -67,6 +67,7 @@ module.exports = {
 				tally: true, // Tally State (TLR:1 or TLR:0)
 				OAF: true, // Has Auto Focus (OAF:1 or OAF:0)
 				iris: true, // Has Auto Iris (d30 or d31)
+				preset: true,
 			},
 			feedbacks: {
 				powerState: true, // Power State (p1 or p0)
@@ -74,6 +75,7 @@ module.exports = {
 				insState: true, // Install position (iNS0 or iNS1)
 				autoFocus: true, // Has Auto Focus (OAF:1 or OAF:0)
 				autoIris: true, // Has Auto Iris (d30 or d31)
+				preset: true,
 			},
 			actions: {
 				panTilt: true, // Has Pan/Tilt Support (PTSxx)
@@ -110,6 +112,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				preset: true,
 			},
 			feedbacks: {
 				powerState: true,
@@ -117,6 +120,7 @@ module.exports = {
 				insState: true,
 				autoFocus: true,
 				autoIris: true,
+				preset: true,
 			},
 			actions: {
 				panTilt: true,
@@ -153,6 +157,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				preset: true,
 			},
 			feedbacks: {
 				powerState: true,
@@ -160,6 +165,7 @@ module.exports = {
 				insState: true,
 				autoFocus: true,
 				autoIris: true,
+				preset: true,
 			},
 			actions: {
 				panTilt: true,
@@ -196,6 +202,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				preset: true,
 			},
 			feedbacks: {
 				powerState: true,
@@ -203,6 +210,7 @@ module.exports = {
 				insState: true,
 				autoFocus: true,
 				autoIris: true,
+				preset: true,
 			},
 			actions: {
 				panTilt: true,
@@ -239,6 +247,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				preset: true,
 			},
 			feedbacks: {
 				powerState: true,
@@ -246,6 +255,7 @@ module.exports = {
 				insState: true,
 				autoFocus: true,
 				autoIris: true,
+				preset: true,
 			},
 			actions: {
 				panTilt: true,
@@ -282,6 +292,7 @@ module.exports = {
 				tally: true,
 				OAF: false,
 				iris: true,
+				preset: true,
 			},
 			feedbacks: {
 				powerState: true,
@@ -289,6 +300,7 @@ module.exports = {
 				insState: false,
 				autoFocus: false,
 				autoIris: true,
+				preset: true,
 			},
 			actions: {
 				panTilt: true,
@@ -325,6 +337,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				preset: true,
 			},
 			feedbacks: {
 				powerState: true,
@@ -332,6 +345,7 @@ module.exports = {
 				insState: true,
 				autoFocus: true,
 				autoIris: true,
+				preset: true,
 			},
 			actions: {
 				panTilt: true,
@@ -368,6 +382,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				preset: true,
 			},
 			feedbacks: {
 				powerState: true,
@@ -375,6 +390,7 @@ module.exports = {
 				insState: true,
 				autoFocus: true,
 				autoIris: true,
+				preset: true,
 			},
 			actions: {
 				panTilt: true,
@@ -411,6 +427,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				preset: true,
 			},
 			feedbacks: {
 				powerState: true,
@@ -418,6 +435,7 @@ module.exports = {
 				insState: true,
 				autoFocus: true,
 				autoIris: true,
+				preset: true,
 			},
 			actions: {
 				panTilt: true,
@@ -454,6 +472,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				preset: true,
 			},
 			feedbacks: {
 				powerState: true,
@@ -461,6 +480,7 @@ module.exports = {
 				insState: true,
 				autoFocus: true,
 				autoIris: true,
+				preset: true,
 			},
 			actions: {
 				panTilt: true,
@@ -497,6 +517,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				preset: true,
 			},
 			feedbacks: {
 				powerState: true,
@@ -504,6 +525,7 @@ module.exports = {
 				insState: true,
 				autoFocus: true,
 				autoIris: true,
+				preset: true,
 			},
 			actions: {
 				panTilt: true,
@@ -540,6 +562,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				preset: true,
 			},
 			feedbacks: {
 				powerState: true,
@@ -547,6 +570,7 @@ module.exports = {
 				insState: true,
 				autoFocus: true,
 				autoIris: true,
+				preset: true,
 			},
 			actions: {
 				panTilt: true,
@@ -583,6 +607,7 @@ module.exports = {
 				tally: true,
 				OAF: false,
 				iris: true,
+				preset: true,
 			},
 			feedbacks: {
 				powerState: true,
@@ -590,6 +615,7 @@ module.exports = {
 				insState: true,
 				autoFocus: false,
 				autoIris: true,
+				preset: true,
 			},
 			actions: {
 				panTilt: true,
@@ -626,6 +652,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				preset: true,
 			},
 			feedbacks: {
 				powerState: true,
@@ -633,6 +660,7 @@ module.exports = {
 				insState: true,
 				autoFocus: true,
 				autoIris: true,
+				preset: true,
 			},
 			actions: {
 				panTilt: true,
@@ -668,12 +696,14 @@ module.exports = {
 				ins: false,
 				OAF: false,
 				iris: false,
+				preset: false,
 			},
 			feedbacks: {
 				powerState: true,
 				insState: false,
 				autoFocus: false,
 				autoIris: false,
+				preset: false,
 			},
 			actions: {
 				panTilt: false,

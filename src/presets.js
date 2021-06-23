@@ -1428,27 +1428,123 @@ module.exports = {
 		}
 
 		if (s.preset == true) {
-			for (var recall = 0; recall < 100; recall++) {
-				presets.push({
-					category: 'Recall Preset',
-					label: 'Recall Preset ' + parseInt(recall + 1),
-					bank: {
-						style: 'text',
-						text: 'Recall\\nPSET\\n' + parseInt(recall + 1),
-						size: '14',
-						color: '16777215',
-						bgcolor: self.rgb(0, 0, 0),
-					},
-					actions: [
-						{
-							action: 'recallPset',
-							options: {
-								val: ('0' + recall.toString(10).toUpperCase()).substr(-2, 2),
-							},
+			presets.push({
+				category: 'Recall Preset',
+				label: 'Preset Mode A',
+				bank: {
+					style: 'text',
+					text: 'Preset\\nMode A',
+					size: '14',
+					color: '16777215',
+					bgcolor: self.rgb(0, 0, 0),
+				},
+				actions: [
+					{
+						action: 'recallModePset',
+						options: {
+							val: '0'
 						},
-					],
-				})
-			}
+					},
+				],
+				feedbacks: [
+					{
+						type: 'recallModePset',
+						options: {
+							option: '0',
+						},
+						style: {
+							color: foregroundColor,
+							bgcolor: backgroundColorRed,
+						},
+					},
+				],
+			})
+
+			presets.push({
+				category: 'Recall Preset',
+				label: 'Preset Mode B',
+				bank: {
+					style: 'text',
+					text: 'Preset\\nMode B',
+					size: '14',
+					color: '16777215',
+					bgcolor: self.rgb(0, 0, 0),
+				},
+				actions: [
+					{
+						action: 'recallModePset',
+						options: {
+							val: '1'
+						},
+					},
+				],
+				feedbacks: [
+					{
+						type: 'recallModePset',
+						options: {
+							option: '1',
+						},
+						style: {
+							color: foregroundColor,
+							bgcolor: backgroundColorRed,
+						},
+					},
+				],
+			})
+		}
+
+		presets.push({
+			category: 'Recall Preset',
+			label: 'Preset Mode C',
+			bank: {
+				style: 'text',
+				text: 'Preset\\nMode C',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'recallModePset',
+					options: {
+						val: '2'
+					},
+				},
+			],
+			feedbacks: [
+				{
+					type: 'recallModePset',
+					options: {
+						option: '2',
+					},
+					style: {
+						color: foregroundColor,
+						bgcolor: backgroundColorRed,
+					},
+				},
+			],
+		})
+
+		for (var recall = 0; recall < 100; recall++) {
+			presets.push({
+				category: 'Recall Preset',
+				label: 'Recall Preset ' + parseInt(recall + 1),
+				bank: {
+					style: 'text',
+					text: 'Recall\\nPSET\\n' + parseInt(recall + 1),
+					size: '14',
+					color: '16777215',
+					bgcolor: self.rgb(0, 0, 0),
+				},
+				actions: [
+					{
+						action: 'recallPset',
+						options: {
+							val: ('0' + recall.toString(10).toUpperCase()).substr(-2, 2),
+						},
+					},
+				],
+			})
 		}
 
 		return presets

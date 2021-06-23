@@ -461,6 +461,17 @@ instance.prototype.storeData = function (str) {
 		case 'd31':
 			self.data.irisMode = 'Auto'
 			break
+		case 'OSE': // All OSE:xx Commands
+		if (str[1] == '71') { // OSE:71:
+			if (str[2] == '0') {
+				self.data.modePset = 'Mode A'
+			} else if (str[2] == '1') {
+				self.data.modePset = 'Mode B'
+			} else if (str[2] == '2') {
+				self.data.modePset = 'Mode C'
+			}
+		}
+		break
 
 		default:
 			break
@@ -487,6 +498,7 @@ instance.GetUpgradeScripts = function() {
 			insState: true,
 			autoFocus: true,
 			autoIris: true,
+			modePset: true,
 		}),
 	]
 }
@@ -566,6 +578,7 @@ instance.prototype.init = function () {
 		tally: 'NaN',
 		oaf: 'NaN',
 		irisMode: 'NaN',
+		recallModePset: 'NaN',
 	}
 
 	self.ptSpeed = 25
