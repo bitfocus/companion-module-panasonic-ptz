@@ -878,7 +878,7 @@ module.exports = {
 				],
 				callback: function (action, bank) {
 					cmd = 'OSE:71:' + action.options.val
-					self.sendPTZ(cmd)
+					self.sendCam(cmd)
 				},
 			}
 		}

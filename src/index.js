@@ -405,6 +405,8 @@ instance.prototype.storeData = function (str) {
 		self.data.version = str[0].substring(4)
 	}
 
+	console.log(str)
+
 	// Store Values from Events
 	switch (str[0]) {
 		case 'OID':
@@ -464,11 +466,11 @@ instance.prototype.storeData = function (str) {
 		case 'OSE': // All OSE:xx Commands
 		if (str[1] == '71') { // OSE:71:
 			if (str[2] == '0') {
-				self.data.modePset = 'Mode A'
+				self.data.recallModePset = 'Mode A'
 			} else if (str[2] == '1') {
-				self.data.modePset = 'Mode B'
+				self.data.recallModePset = 'Mode B'
 			} else if (str[2] == '2') {
-				self.data.modePset = 'Mode C'
+				self.data.recallModePset = 'Mode C'
 			}
 		}
 		break
