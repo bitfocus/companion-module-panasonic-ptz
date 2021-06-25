@@ -72,3 +72,4 @@ For more information on the Panasonic API, please refer to:
 **V1.0.19**
 
 - Added Action, Feedback, Preset and Variable for "Preset - Mode A, B, C"
+- Fixed Tally follow variable option

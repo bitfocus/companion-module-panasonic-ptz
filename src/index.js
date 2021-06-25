@@ -476,7 +476,11 @@ instance.prototype.storeData = function (str) {
 					self.data.recallModePset = 'Mode B'
 				} else if (str[2] == '2') {
 					self.data.recallModePset = 'Mode C'
+				}
 			}
+			break
+
+		default:
 			break
 	}
 }
