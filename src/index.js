@@ -45,30 +45,35 @@ instance.prototype.updateVariableAndInstanceLists = function () {
 				})
 				i++
 			})
-		} catch (e) {}
+		} catch (e) { }
 	})
 
 	this.dynamicVariableChoices = dynamicVariableChoices
 	this.instanceList = instanceList
 }
 
-instance.prototype.tallyOnListener = function (label, variable, value) {
+instance.prototype.tallyOnListener = function (variables) {
 	const self = this
 	const { tallyOnEnabled, tallyOnVariable, tallyOnValue } = self.config
 
-	if (!tallyOnEnabled || `${label}:${variable}` !== tallyOnVariable) {
-		return
-	}
+	for (var key in variables) {
+		if (variables.hasOwnProperty(key)) {
+			// debug(key + " -> " + variables[key]);
 
-	self.system.emit('variable_parse', tallyOnValue, (parsedValue) => {
-		value = value.toString()
-		debug('variable changed... updating tally', { label, variable, value, parsedValue })
-		console.log('variable changed... updating tally', { label, variable, value, parsedValue })
-		self.system.emit('action_run', {
-			action: value === parsedValue ? 'tallyOn' : 'tallyOff',
-			instance: self.id,
-		})
-	})
+			if (!tallyOnEnabled || key !== tallyOnVariable) {
+				return
+			}
+
+			self.system.emit('variable_parse', tallyOnValue, (parsedValue) => {
+				variables[key] = variables[key].toString()
+				debug('variable changed... updating tally', variables)
+				self.system.emit('action_run', {
+					action: variables[key] === parsedValue ? 'tallyOn' : 'tallyOff',
+					instance: self.id,
+				})
+			})
+		}
+	}
 }
 
 instance.prototype.setupEventListeners = function () {
@@ -77,10 +82,10 @@ instance.prototype.setupEventListeners = function () {
 	if (self.config.tallyOnEnabled && self.config.tallyOnVariable) {
 		if (!self.activeTallyOnListener) {
 			self.activeTallyOnListener = self.tallyOnListener.bind(self)
-			self.system.on('variable_changed', self.activeTallyOnListener)
+			self.system.on('variables_changed', self.activeTallyOnListener)
 		}
 	} else if (self.activeTallyOnListener) {
-		self.system.removeListener('variable_changed', self.activeTallyOnListener)
+		self.system.removeListener('variables_changed', self.activeTallyOnListener)
 		delete self.activeTallyOnListener
 	}
 }
@@ -97,12 +102,12 @@ instance.prototype.init_tcp = function () {
 		self.system.emit(
 			'rest_get',
 			'http://' +
-				self.config.host +
-				':' +
-				self.config.httpPort +
-				'/cgi bin/event?connect=stop&my_port=' +
-				tcpPortSelected +
-				'&uid=0',
+			self.config.host +
+			':' +
+			self.config.httpPort +
+			'/cgi bin/event?connect=stop&my_port=' +
+			tcpPortSelected +
+			'&uid=0',
 			function (err, result) {
 				if (err) {
 					debug('Error from PTZ: ' + String(err))
@@ -112,35 +117,35 @@ instance.prototype.init_tcp = function () {
 				if (('data', result.response.req)) {
 					debug(
 						'un-subscribed: ' +
-							'http://' +
-							self.config.host +
-							':' +
-							self.config.httpPort +
-							'/cgi-bin/event?connect=stop&my_port=' +
-							tcpPortSelected +
-							'&uid=0'
+						'http://' +
+						self.config.host +
+						':' +
+						self.config.httpPort +
+						'/cgi-bin/event?connect=stop&my_port=' +
+						tcpPortSelected +
+						'&uid=0'
 					)
 					console.log(
 						'un-subscribed: ' +
-							'http://' +
-							self.config.host +
-							':' +
-							self.config.httpPort +
-							'/cgi-bin/event?connect=stop&my_port=' +
-							tcpPortSelected +
-							'&uid=0'
+						'http://' +
+						self.config.host +
+						':' +
+						self.config.httpPort +
+						'/cgi-bin/event?connect=stop&my_port=' +
+						tcpPortSelected +
+						'&uid=0'
 					)
 					if (self.config.debug === true) {
 						self.log(
 							'warn',
 							'un-subscribed: ' +
-								'http://' +
-								self.config.host +
-								':' +
-								self.config.httpPort +
-								'/cgi-bin/event?connect=stop&my_port=' +
-								tcpPortSelected +
-								'&uid=0'
+							'http://' +
+							self.config.host +
+							':' +
+							self.config.httpPort +
+							'/cgi-bin/event?connect=stop&my_port=' +
+							tcpPortSelected +
+							'&uid=0'
 						)
 					}
 					self.status(self.STATUS_OK)
@@ -179,44 +184,44 @@ instance.prototype.init_tcp = function () {
 		self.system.emit(
 			'rest_get',
 			'http://' +
-				self.config.host +
-				':' +
-				self.config.httpPort +
-				'/cgi-bin/event?connect=start&my_port=' +
-				sPort +
-				'&uid=0',
+			self.config.host +
+			':' +
+			self.config.httpPort +
+			'/cgi-bin/event?connect=start&my_port=' +
+			sPort +
+			'&uid=0',
 			function (err, result) {
 				debug(
 					'subscribed: ' +
-						'http://' +
-						self.config.host +
-						':' +
-						self.config.httpPort +
-						'/cgi-bin/event?connect=start&my_port=' +
-						sPort +
-						'&uid=0'
+					'http://' +
+					self.config.host +
+					':' +
+					self.config.httpPort +
+					'/cgi-bin/event?connect=start&my_port=' +
+					sPort +
+					'&uid=0'
 				)
 				console.log(
 					'subscribed: ' +
-						'http://' +
-						self.config.host +
-						':' +
-						self.config.httpPort +
-						'/cgi-bin/event?connect=start&my_port=' +
-						sPort +
-						'&uid=0'
+					'http://' +
+					self.config.host +
+					':' +
+					self.config.httpPort +
+					'/cgi-bin/event?connect=start&my_port=' +
+					sPort +
+					'&uid=0'
 				)
 				if (self.config.debug == true) {
 					self.log(
 						'warn',
 						'subscribed: ' +
-							'http://' +
-							self.config.host +
-							':' +
-							self.config.httpPort +
-							'/cgi-bin/event?connect=start&my_port=' +
-							sPort +
-							'&uid=0'
+						'http://' +
+						self.config.host +
+						':' +
+						self.config.httpPort +
+						'/cgi-bin/event?connect=start&my_port=' +
+						sPort +
+						'&uid=0'
 					)
 				}
 				if (err) {
@@ -301,12 +306,12 @@ instance.prototype.init_tcp = function () {
 				self.system.emit(
 					'rest_get',
 					'http://' +
-						self.config.host +
-						':' +
-						self.config.httpPort +
-						'/cgi bin/event?connect=stop&my_port=' +
-						sPort +
-						'&uid=0',
+					self.config.host +
+					':' +
+					self.config.httpPort +
+					'/cgi bin/event?connect=stop&my_port=' +
+					sPort +
+					'&uid=0',
 					function (err, result) {
 						if (err) {
 							self.log('error', 'Error from PTZ: ' + err)
@@ -315,6 +320,18 @@ instance.prototype.init_tcp = function () {
 						if (('data', result.response.req)) {
 							console.log(
 								'un-subscribed: ' +
+								'http://' +
+								self.config.host +
+								':' +
+								self.config.httpPort +
+								'/cgi-bin/event?connect=stop&my_port=' +
+								sPort +
+								'&uid=0'
+							)
+							if (self.config.debug === true) {
+								self.log(
+									'warn',
+									'un-subscribed: ' +
 									'http://' +
 									self.config.host +
 									':' +
@@ -322,18 +339,6 @@ instance.prototype.init_tcp = function () {
 									'/cgi-bin/event?connect=stop&my_port=' +
 									sPort +
 									'&uid=0'
-							)
-							if (self.config.debug === true) {
-								self.log(
-									'warn',
-									'un-subscribed: ' +
-										'http://' +
-										self.config.host +
-										':' +
-										self.config.httpPort +
-										'/cgi-bin/event?connect=stop&my_port=' +
-										sPort +
-										'&uid=0'
 								)
 							}
 							self.status(self.STATUS_OK)
@@ -464,18 +469,14 @@ instance.prototype.storeData = function (str) {
 			self.data.irisMode = 'Auto'
 			break
 		case 'OSE': // All OSE:xx Commands
-		if (str[1] == '71') { // OSE:71:
-			if (str[2] == '0') {
-				self.data.recallModePset = 'Mode A'
-			} else if (str[2] == '1') {
-				self.data.recallModePset = 'Mode B'
-			} else if (str[2] == '2') {
-				self.data.recallModePset = 'Mode C'
+			if (str[1] == '71') { // OSE:71:
+				if (str[2] == '0') {
+					self.data.recallModePset = 'Mode A'
+				} else if (str[2] == '1') {
+					self.data.recallModePset = 'Mode B'
+				} else if (str[2] == '2') {
+					self.data.recallModePset = 'Mode C'
 			}
-		}
-		break
-
-		default:
 			break
 	}
 }
@@ -492,7 +493,7 @@ function instance(system, id, config) {
 	return self
 }
 
-instance.GetUpgradeScripts = function() {
+instance.GetUpgradeScripts = function () {
 	return [
 		instance_skel.CreateConvertToBooleanFeedbackUpgradeScript({
 			powerState: true,
@@ -515,22 +516,22 @@ instance.prototype.destroy = function () {
 		self.system.emit(
 			'rest_get',
 			'http://' +
-				self.config.host +
-				':' +
-				self.config.httpPort +
-				'/cgi bin/event?connect=stop&my_port=' +
-				self.tcpPortSelected +
-				'&uid=0',
+			self.config.host +
+			':' +
+			self.config.httpPort +
+			'/cgi bin/event?connect=stop&my_port=' +
+			self.tcpPortSelected +
+			'&uid=0',
 			function (err, result) {
 				console.log(
 					'un-subscribed: ' +
-						'http://' +
-						self.config.host +
-						':' +
-						self.config.httpPort +
-						'/cgi-bin/event?connect=stop&my_port=' +
-						self.tcpPortSelected +
-						'&uid=0'
+					'http://' +
+					self.config.host +
+					':' +
+					self.config.httpPort +
+					'/cgi-bin/event?connect=stop&my_port=' +
+					self.tcpPortSelected +
+					'&uid=0'
 				)
 				if (err) {
 					self.log('error', 'Error from PTZ: ' + err)
@@ -553,7 +554,7 @@ instance.prototype.destroy = function () {
 	}
 
 	if (self.activeTallyOnListener) {
-		self.system.removeListener('variable_changed', self.activeTallyOnListener)
+		self.system.removeListener('variables_changed', self.activeTallyOnListener)
 		delete self.activeTallyOnListener
 	}
 
