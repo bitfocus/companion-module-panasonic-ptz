@@ -28,9 +28,7 @@ Panasonic PTZ Cameras
 
 ## When using more than on PTZ
 
-**When Configuring** more than one instance, please make sure you have **"AUTO TCP"** enabled or change the **TCP** port accordingly, this is a port used in companion, and you will not find a setting for it on the cameras. The TCP port **NEEDS** to be unique for each PTZ instance you add.
-
-**If "Auto" detect TCP** port based on instance ID/nr, as these will always be unique on one system. Currently, it's based on the default TCP port (31004)+ instance nr. If you only have one instance = 31004 + 1, it is the fifth instance = 31004 + 5. that should help out with errors when using more than one instance/camera. (The user selected port, gets ignored when "auto" mode is selected)
+**When Configuring** more than one instance, please make sure you have **"AUTO TCP"** enabled or change the **TCP** port accordingly, this is a port used in companion, and you will not find a setting for it on the cameras. The TCP port **NEEDS** to be unique for each PTZ instance you add. It's strongly recomended to leave **"Auto TCP"** turned on.
 
 ## Actions
 

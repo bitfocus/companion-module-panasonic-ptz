@@ -97,7 +97,6 @@ instance.prototype.init_tcp = function () {
 	self.updateVariableAndInstanceLists()
 	var tcpPortSelected = self.tcpPortSelected || 31004
 	var tcpPortOld = self.tcpPortOld || 31004
-	portOffset = this.instanceList.find((input) => input.id === self.id).nr
 
 	// Remove old TCP Server and close all connections
 	if (self.server !== undefined) {
@@ -156,31 +155,14 @@ instance.prototype.init_tcp = function () {
 		delete self.server
 	}
 
-	// After closing old server's, get the new port and setup TPC once again with a subscription and a server.
-	// Get the instance number, then we can use this to "auto" offset the port values used, instead of requering a diffrent port on each from the user.
-	// This will only get used when "Auto" port is turned on, and then it will ignore the specified port. if you use "Manual" port then this offset will get ignored.
-	if (self.config.autoTCP == true) {
-		tcpPortSelected = 31004 + parseInt(portOffset)
-	} else {
-		tcpPortSelected = self.config.tcpPort
-	}
-	this.tcpPortSelected = tcpPortSelected
-
 	self.status(self.STATE_WARNING, 'Connecting')
 
 	if (self.config.host) {
-		// The port on which the server is listening.
-		var sPort = tcpPortSelected
-
 		// Create a new TCP server.
 		self.server = net.createServer(function (socket) {
 			// When the client requests to end the TCP connection with the server, the server ends the connection.
 			socket.on('end', function () {
 				self.clients.splice(self.clients.indexOf(socket), 1)
-				// debug('Closing connection with the PTZ: ' + socket.name);
-				// if (self.config.debug == true) {
-				// 	self.log('info', 'Closing connection with the PTZ: ' + socket.name)
-				// }
 			})
 
 			// common error handler
@@ -193,16 +175,13 @@ instance.prototype.init_tcp = function () {
 			})
 
 			socket.name = socket.remoteAddress + ':' + socket.remotePort
+			tcpPortOld = socket.address().port
+			self.tcpPortOld = tcpPortOld
 			self.clients.push(socket)
-			// debug('PTZ connected: ' + socket.name)
-			// if (self.config.debug == true) {
-			// self.log('info', 'PTZ connected: ' + socket.name)
-			// }
 
 			// Receive data from the client.
 			socket.on('data', function (data) {
 				let str_raw = String(data)
-				console.log(str_raw)
 				str_raw = str_raw.split('\r\n') // Split Data in order to remove data before and after command
 				let str = str_raw[1].trim() // remove new line, carage return and so on.
 				debug('TCP Recived from PTZ: ' + str) // Debug Recived data
@@ -226,7 +205,7 @@ instance.prototype.init_tcp = function () {
 			if (err.code === 'EADDRINUSE') {
 				debug('TCP error: ' + err)
 				// self.log('error', "TCP error: " + String(err));
-				self.log('error', 'TCP error: Please use another TCP port, ' + sPort + ' is already in use')
+				self.log('error', 'TCP error: Please use another TCP port, ' + tcpPortSelected + ' is already in use')
 				self.log('error', 'TCP error: The TCP port must be unique between instances')
 				self.log('error', 'TCP error: Please change it and click apply in ALL PTZ instances')
 				self.status(self.STATUS_ERROR)
@@ -239,7 +218,7 @@ instance.prototype.init_tcp = function () {
 						':' +
 						self.config.httpPort +
 						'/cgi-bin/event?connect=stop&my_port=' +
-						sPort +
+						tcpPortSelected +
 						'&uid=0',
 					function (err, result) {
 						if (err) {
@@ -274,14 +253,22 @@ instance.prototype.init_tcp = function () {
 
 		// Listens for a client to make a connection request.
 		try {
-			debug('Trying to listen to TCP from PTZ on port: ' + sPort)
-			self.server.listen(sPort)
-			tcpPortOld = tcpPortSelected
-			self.tcpPortOld = tcpPortOld
-			debug('Server listening for PTZ updates on localhost:' + sPort)
-			if (self.config.debug == true) {
-				self.log('warn', 'Listening for PTZ updates on localhost:' + sPort)
+
+			debug('Trying to listen to TCP from PTZ')
+
+			if (self.config.autoTCP == true) {
+				self.server.listen(0)
+			} else {
+				self.server.listen(self.config.tcpPort)
 			}
+			tcpPortSelected = self.server.address().port
+			self.tcpPortSelected = tcpPortSelected
+		
+			debug('Server listening for PTZ updates on localhost:' + tcpPortSelected)
+			if (self.config.debug == true) {
+				self.log('warn', 'Listening for PTZ updates on localhost:' + tcpPortSelected)
+			}
+
 
 			// Subscibe to updates from PTZ
 			self.system.emit(
@@ -291,7 +278,7 @@ instance.prototype.init_tcp = function () {
 					':' +
 					self.config.httpPort +
 					'/cgi-bin/event?connect=start&my_port=' +
-					sPort +
+					tcpPortSelected +
 					'&uid=0',
 				function (err, result) {
 					debug(
@@ -301,7 +288,7 @@ instance.prototype.init_tcp = function () {
 							':' +
 							self.config.httpPort +
 							'/cgi-bin/event?connect=start&my_port=' +
-							sPort +
+							tcpPortSelected +
 							'&uid=0'
 					)
 					if (self.config.debug == true) {
@@ -313,7 +300,7 @@ instance.prototype.init_tcp = function () {
 								':' +
 								self.config.httpPort +
 								'/cgi-bin/event?connect=start&my_port=' +
-								sPort +
+								tcpPortSelected +
 								'&uid=0'
 						)
 					}
@@ -322,15 +309,14 @@ instance.prototype.init_tcp = function () {
 						return
 					}
 					if (('data', result.response.req)) {
-						console.data
 						self.status(self.STATUS_OK)
 					}
 				}
 			)
 		} catch (err) {
-			debug("Couldn't bind to TCP port " + sPort + ' on localhost: ' + String(err))
+			debug("Couldn't bind to TCP port " + tcpPortSelected + ' on localhost: ' + String(err))
 			if (self.config.debug == true) {
-				self.log('error', "Couldn't bind to TCP port " + sPort + ' on localhost: ' + String(err))
+				self.log('error', "Couldn't bind to TCP port " + tcpPortSelected + ' on localhost: ' + String(err))
 			}
 			self.status(self.STATUS_ERROR)
 		}
@@ -515,7 +501,7 @@ instance.prototype.destroy = function () {
 				':' +
 				self.config.httpPort +
 				'/cgi-bin/event?connect=stop&my_port=' +
-				self.tcpPortOld +
+				self.tcpPortSelected +
 				'&uid=0',
 			function (err, result) {
 				if (err) {
@@ -737,7 +723,7 @@ instance.prototype.config_fields = function () {
 			width: 4,
 			label: 'Auto TCP',
 			value:
-				'This will ignore the port selected and find a port Automaticly, read the help.md (click "?") file for more info',
+				'This will ignore the port selected and find a port Automaticly',
 		},
 		{
 			type: 'textinput',
