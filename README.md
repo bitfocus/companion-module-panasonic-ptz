@@ -73,3 +73,4 @@ For more information on the Panasonic API, please refer to:
 
 - Added Action, Feedback, Preset and Variable for "Preset - Mode A, B, C"
 - Fixed Tally follow variable option
+- cleaned up the subscription codebase Init_tcp()

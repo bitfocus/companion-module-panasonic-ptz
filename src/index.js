@@ -1,12 +1,13 @@
 var tcp = require('../../../tcp')
 var instance_skel = require('../../../instance_skel')
-const Net = require('net')
+var net = require('net')
 const { response } = require('express')
 var { MODELS } = require('./models.js')
 var actions = require('./actions.js')
 var presets = require('./presets.js')
 var feedbacks = require('./feedbacks.js')
 var variables = require('./variables.js')
+const { stringify } = require('querystring')
 var socketlist = [] // Stores Clients Connedted
 var debug
 var log
@@ -45,7 +46,7 @@ instance.prototype.updateVariableAndInstanceLists = function () {
 				})
 				i++
 			})
-		} catch (e) { }
+		} catch (e) {}
 	})
 
 	this.dynamicVariableChoices = dynamicVariableChoices
@@ -92,8 +93,10 @@ instance.prototype.setupEventListeners = function () {
 
 instance.prototype.init_tcp = function () {
 	var self = this
+	self.clients = []
 	self.updateVariableAndInstanceLists()
 	var tcpPortSelected = self.tcpPortSelected || 31004
+	var tcpPortOld = self.tcpPortOld || 31004
 	portOffset = this.instanceList.find((input) => input.id === self.id).nr
 
 	// Remove old TCP Server and close all connections
@@ -102,12 +105,12 @@ instance.prototype.init_tcp = function () {
 		self.system.emit(
 			'rest_get',
 			'http://' +
-			self.config.host +
-			':' +
-			self.config.httpPort +
-			'/cgi bin/event?connect=stop&my_port=' +
-			tcpPortSelected +
-			'&uid=0',
+				self.config.host +
+				':' +
+				self.config.httpPort +
+				'/cgi-bin/event?connect=stop&my_port=' +
+				tcpPortOld +
+				'&uid=0',
 			function (err, result) {
 				if (err) {
 					debug('Error from PTZ: ' + String(err))
@@ -117,41 +120,32 @@ instance.prototype.init_tcp = function () {
 				if (('data', result.response.req)) {
 					debug(
 						'un-subscribed: ' +
-						'http://' +
-						self.config.host +
-						':' +
-						self.config.httpPort +
-						'/cgi-bin/event?connect=stop&my_port=' +
-						tcpPortSelected +
-						'&uid=0'
-					)
-					console.log(
-						'un-subscribed: ' +
-						'http://' +
-						self.config.host +
-						':' +
-						self.config.httpPort +
-						'/cgi-bin/event?connect=stop&my_port=' +
-						tcpPortSelected +
-						'&uid=0'
-					)
-					if (self.config.debug === true) {
-						self.log(
-							'warn',
-							'un-subscribed: ' +
 							'http://' +
 							self.config.host +
 							':' +
 							self.config.httpPort +
 							'/cgi-bin/event?connect=stop&my_port=' +
-							tcpPortSelected +
+							tcpPortOld +
 							'&uid=0'
+					)
+					if (self.config.debug === true) {
+						self.log(
+							'warn',
+							'un-subscribed: ' +
+								'http://' +
+								self.config.host +
+								':' +
+								self.config.httpPort +
+								'/cgi-bin/event?connect=stop&my_port=' +
+								tcpPortOld +
+								'&uid=0'
 						)
 					}
 					self.status(self.STATUS_OK)
 				}
 			}
 		)
+
 		// Close all remaning Connections
 		socketlist.forEach(function (socket) {
 			socket.close()
@@ -175,87 +169,42 @@ instance.prototype.init_tcp = function () {
 	self.status(self.STATE_WARNING, 'Connecting')
 
 	if (self.config.host) {
-		// Create a new TCP server.
-		self.server = new Net.Server()
-
 		// The port on which the server is listening.
 		var sPort = tcpPortSelected
 
-		self.system.emit(
-			'rest_get',
-			'http://' +
-			self.config.host +
-			':' +
-			self.config.httpPort +
-			'/cgi-bin/event?connect=start&my_port=' +
-			sPort +
-			'&uid=0',
-			function (err, result) {
-				debug(
-					'subscribed: ' +
-					'http://' +
-					self.config.host +
-					':' +
-					self.config.httpPort +
-					'/cgi-bin/event?connect=start&my_port=' +
-					sPort +
-					'&uid=0'
-				)
-				console.log(
-					'subscribed: ' +
-					'http://' +
-					self.config.host +
-					':' +
-					self.config.httpPort +
-					'/cgi-bin/event?connect=start&my_port=' +
-					sPort +
-					'&uid=0'
-				)
+		// Create a new TCP server.
+		self.server = net.createServer(function (socket) {
+			// When the client requests to end the TCP connection with the server, the server ends the connection.
+			socket.on('end', function () {
+				self.clients.splice(self.clients.indexOf(socket), 1)
+				// debug('Closing connection with the PTZ: ' + socket.name);
+				// if (self.config.debug == true) {
+				// 	self.log('info', 'Closing connection with the PTZ: ' + socket.name)
+				// }
+			})
+
+			// common error handler
+			socket.on('error', function () {
+				self.clients.splice(self.clients.indexOf(socket), 1)
+				debug('PTZ errored/died: ' + socket.name)
 				if (self.config.debug == true) {
-					self.log(
-						'warn',
-						'subscribed: ' +
-						'http://' +
-						self.config.host +
-						':' +
-						self.config.httpPort +
-						'/cgi-bin/event?connect=start&my_port=' +
-						sPort +
-						'&uid=0'
-					)
+					self.log('error', 'PTZ errored/died: ' + socket.name)
 				}
-				if (err) {
-					self.log('error', 'Error from PTZ: ' + String(err))
-					return
-				}
-				if (('data', result.response.req)) {
-					self.status(self.STATUS_OK)
-				}
-			}
-		)
+			})
 
-		// Listens for a client to make a connection request.
-		self.server.listen(sPort, function () {
-			console.log('Server listening for PTZ updates on localhost:' + sPort)
-			debug('Server listening for PTZ updates on localhost:' + sPort)
-			if (self.config.debug == true) {
-				self.log('warn', 'Listening for PTZ updates on localhost:' + sPort)
-			}
-		})
-
-		// When a client requests a connection with the server, the server creates a new
-		// socket dedicated to that client.
-		self.server.on('connection', function (socket) {
-			socketlist.push(socket)
-			// console.log('A new connection to a PTZ established.');
-			// debug('A new connection to a PTZ established.');
+			socket.name = socket.remoteAddress + ':' + socket.remotePort
+			self.clients.push(socket)
+			// debug('PTZ connected: ' + socket.name)
+			// if (self.config.debug == true) {
+			// self.log('info', 'PTZ connected: ' + socket.name)
+			// }
 
 			// Receive data from the client.
 			socket.on('data', function (data) {
 				let str_raw = String(data)
+				console.log(str_raw)
 				str_raw = str_raw.split('\r\n') // Split Data in order to remove data before and after command
 				let str = str_raw[1].trim() // remove new line, carage return and so on.
-				console.log('TCP Recived from PTZ: ' + str)
 				debug('TCP Recived from PTZ: ' + str) // Debug Recived data
 				if (self.config.debug == true) {
 					self.log('info', 'Recived CMD: ' + String(str))
@@ -269,32 +218,12 @@ instance.prototype.init_tcp = function () {
 				self.checkVariables()
 				self.checkFeedbacks()
 			})
-
-			// When the client requests to end the TCP connection with the server, the server
-			// ends the connection.
-			socket.on('end', function () {
-				// console.log('Closing connection with the PTZ');
-				// debug('Closing connection with the PTZ');
-			})
-
-			// Close Connections
-			socket.on('close', function () {
-				// console.log('socket closed');
-				socketlist.splice(socketlist.indexOf(socket), 1)
-			})
-
-			// common error handler
-			socket.on('error', function () {
-				console.log('TCP error: ' + err)
-				debug('TCP error: ' + err)
-				self.log('error', 'TCP error: ' + String(err))
-			})
 		})
 
-		// Catch "EADDRINUSE" error that orcures if the port is already in use
-		process.on('uncaughtException', function (err) {
-			if (err.errno === 'EADDRINUSE') {
-				console.log('TCP error: ' + err)
+		// common error handler
+		self.server.on('error', function (err) {
+			// Catch uncaught Exception"EADDRINUSE" error that orcures if the port is already in use
+			if (err.code === 'EADDRINUSE') {
 				debug('TCP error: ' + err)
 				// self.log('error', "TCP error: " + String(err));
 				self.log('error', 'TCP error: Please use another TCP port, ' + sPort + ' is already in use')
@@ -306,39 +235,29 @@ instance.prototype.init_tcp = function () {
 				self.system.emit(
 					'rest_get',
 					'http://' +
-					self.config.host +
-					':' +
-					self.config.httpPort +
-					'/cgi bin/event?connect=stop&my_port=' +
-					sPort +
-					'&uid=0',
+						self.config.host +
+						':' +
+						self.config.httpPort +
+						'/cgi-bin/event?connect=stop&my_port=' +
+						sPort +
+						'&uid=0',
 					function (err, result) {
 						if (err) {
 							self.log('error', 'Error from PTZ: ' + err)
 							return
 						}
 						if (('data', result.response.req)) {
-							console.log(
-								'un-subscribed: ' +
-								'http://' +
-								self.config.host +
-								':' +
-								self.config.httpPort +
-								'/cgi-bin/event?connect=stop&my_port=' +
-								sPort +
-								'&uid=0'
-							)
 							if (self.config.debug === true) {
 								self.log(
 									'warn',
 									'un-subscribed: ' +
-									'http://' +
-									self.config.host +
-									':' +
-									self.config.httpPort +
-									'/cgi-bin/event?connect=stop&my_port=' +
-									sPort +
-									'&uid=0'
+										'http://' +
+										self.config.host +
+										':' +
+										self.config.httpPort +
+										'/cgi-bin/event?connect=stop&my_port=' +
+										tcpPortOld +
+										'&uid=0'
 								)
 							}
 							self.status(self.STATUS_OK)
@@ -346,11 +265,85 @@ instance.prototype.init_tcp = function () {
 					}
 				)
 			} else {
-				console.log(err)
-				process.exit(1)
+				debug('TCP error: ' + err)
+				if (self.config.debug == true) {
+					self.log('error', 'TCP error: ' + String(err))
+				}
 			}
 		})
+
+		// Listens for a client to make a connection request.
+		try {
+			debug('Trying to listen to TCP from PTZ on port: ' + sPort)
+			self.server.listen(sPort)
+			tcpPortOld = tcpPortSelected
+			self.tcpPortOld = tcpPortOld
+			debug('Server listening for PTZ updates on localhost:' + sPort)
+			if (self.config.debug == true) {
+				self.log('warn', 'Listening for PTZ updates on localhost:' + sPort)
+			}
+
+			// Subscibe to updates from PTZ
+			self.system.emit(
+				'rest_get',
+				'http://' +
+					self.config.host +
+					':' +
+					self.config.httpPort +
+					'/cgi-bin/event?connect=start&my_port=' +
+					sPort +
+					'&uid=0',
+				function (err, result) {
+					debug(
+						'subscribed: ' +
+							'http://' +
+							self.config.host +
+							':' +
+							self.config.httpPort +
+							'/cgi-bin/event?connect=start&my_port=' +
+							sPort +
+							'&uid=0'
+					)
+					if (self.config.debug == true) {
+						self.log(
+							'warn',
+							'subscribed: ' +
+								'http://' +
+								self.config.host +
+								':' +
+								self.config.httpPort +
+								'/cgi-bin/event?connect=start&my_port=' +
+								sPort +
+								'&uid=0'
+						)
+					}
+					if (err) {
+						self.log('error', 'Error from PTZ: ' + String(err))
+						return
+					}
+					if (('data', result.response.req)) {
+						console.data
+						self.status(self.STATUS_OK)
+					}
+				}
+			)
+		} catch (err) {
+			debug("Couldn't bind to TCP port " + sPort + ' on localhost: ' + String(err))
+			if (self.config.debug == true) {
+				self.log('error', "Couldn't bind to TCP port " + sPort + ' on localhost: ' + String(err))
+			}
+			self.status(self.STATUS_ERROR)
+		}
+
+		// Catch uncaught Exception errors that orcure
+		// process.on('uncaughtException', function (err) {
+		// 	debug(err)
+		// 	console.log(err)
+		// 	// process.exit(1)
+		// })
 	}
+
+	return self
 }
 
 instance.prototype.getCameraInformation = function () {
@@ -377,7 +370,6 @@ instance.prototype.getCameraInformation = function () {
 					for (var i in str_raw) {
 						str = str_raw[i].trim() // remove new line, carage return and so on.
 						str = str.split(':') // Split Commands and data
-						console.log('HTTP Recived from PTZ: ' + str_raw[i])
 						debug('HTTP Recived from PTZ: ' + str_raw[i]) // Debug Recived data
 						if (self.config.debug == true) {
 							self.log('info', 'Recived CMD: ' + String(str_raw[i]))
@@ -409,8 +401,6 @@ instance.prototype.storeData = function (str) {
 	if (str[0].substring(0, 4) === 'qSV3') {
 		self.data.version = str[0].substring(4)
 	}
-
-	console.log(str)
 
 	// Store Values from Events
 	switch (str[0]) {
@@ -469,7 +459,8 @@ instance.prototype.storeData = function (str) {
 			self.data.irisMode = 'Auto'
 			break
 		case 'OSE': // All OSE:xx Commands
-			if (str[1] == '71') { // OSE:71:
+			if (str[1] == '71') {
+				// OSE:71:
 				if (str[2] == '0') {
 					self.data.recallModePset = 'Mode A'
 				} else if (str[2] == '1') {
@@ -520,23 +511,13 @@ instance.prototype.destroy = function () {
 		self.system.emit(
 			'rest_get',
 			'http://' +
-			self.config.host +
-			':' +
-			self.config.httpPort +
-			'/cgi bin/event?connect=stop&my_port=' +
-			self.tcpPortSelected +
-			'&uid=0',
+				self.config.host +
+				':' +
+				self.config.httpPort +
+				'/cgi-bin/event?connect=stop&my_port=' +
+				self.tcpPortOld +
+				'&uid=0',
 			function (err, result) {
-				console.log(
-					'un-subscribed: ' +
-					'http://' +
-					self.config.host +
-					':' +
-					self.config.httpPort +
-					'/cgi-bin/event?connect=stop&my_port=' +
-					self.tcpPortSelected +
-					'&uid=0'
-				)
 				if (err) {
 					self.log('error', 'Error from PTZ: ' + err)
 					return
@@ -605,11 +586,12 @@ instance.prototype.init = function () {
 	self.pedestalVal = '096'
 	self.pedestalIndex = 150
 	self.tcpPortSelected = 31004
+	self.tcpPortOld = this.config.tcpPort || 31004
 
 	self.config.host = this.config.host || ''
 	self.config.httpPort = this.config.httpPort || 80
 	self.config.tcpPort = this.config.tcpPort || 31004
-	self.config.autoTCP = this.config.autoTCP || true // Enable Auto detect TCP port by default
+	self.config.autoTCP = this.config.autoTCP
 	self.config.model = this.config.model || 'Auto'
 	self.config.debug = this.config.debug || false
 	self.dynamicVariableChoices = []

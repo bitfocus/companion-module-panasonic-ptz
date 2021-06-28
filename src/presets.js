@@ -1442,7 +1442,7 @@ module.exports = {
 					{
 						action: 'recallModePset',
 						options: {
-							val: '0'
+							val: '0',
 						},
 					},
 				],
@@ -1474,7 +1474,7 @@ module.exports = {
 					{
 						action: 'recallModePset',
 						options: {
-							val: '1'
+							val: '1',
 						},
 					},
 				],
@@ -1507,7 +1507,7 @@ module.exports = {
 				{
 					action: 'recallModePset',
 					options: {
-						val: '2'
+						val: '2',
 					},
 				},
 			],

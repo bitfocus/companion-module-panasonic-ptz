@@ -28,7 +28,7 @@ module.exports = {
 				'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_ptz?cmd=%23' + str + '&res=1',
 				function (err, result) {
 					if (self.config.debug == true) {
-						console.log(
+						self.debug(
 							'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_ptz?cmd=%23' + str + '&res=1'
 						)
 						self.log('warn', 'Send CMD: ' + String(str))
@@ -54,7 +54,7 @@ module.exports = {
 				'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_cam?cmd=' + str + '&res=1',
 				function (err, result) {
 					if (self.config.debug == true) {
-						console.log(
+						self.debug(
 							'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_cam?cmd=' + str + '&res=1'
 						)
 						self.log('warn', 'Send CMD: ' + String(str))
@@ -81,7 +81,7 @@ module.exports = {
 				'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/' + str,
 				function (err, result) {
 					if (self.config.debug == true) {
-						console.log('http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/' + str)
+						self.debug('http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/' + str)
 						self.log('warn', 'Send Web CMD: ' + String(str))
 					}
 					if (!err) {
