@@ -1,7 +1,7 @@
 {
 	"name": "panasonic-ptz",
 	"version": "1.0.19",
-	"api_version": "1.12",
+	"api_version": "1.0.0",
 	"keywords": [
 		"ptz",
 		"Camera"
@@ -20,5 +20,13 @@
 	"contributors": [
 		"Per Røine <per.roine@gmail.com>"
 	],
-	"license": "MIT"
+	"license": "MIT",
+	"homepage": "https://github.com/bitfocus/companion-module-panasonic-ptz#readme",
+	"bugs": {
+		"url": "https://github.com/bitfocus/companion-module-panasonic-ptz/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-panasonic-ptz.git"
+	}
 }
