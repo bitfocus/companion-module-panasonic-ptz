@@ -456,7 +456,9 @@ instance.prototype.storeData = function (str) {
 				}
 			}
 			break
-
+		case 'OGU':
+			self.data.gainValue = str[1].toString().replace('0x','');
+			break;
 		default:
 			break
 	}

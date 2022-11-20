@@ -613,6 +613,11 @@ module.exports = {
 			actions.gainU = {
 				label: 'Exposure - Gain Up',
 				callback: function (action, bank) {
+					let index = s.gain.dropdown.findIndex((GAIN) => GAIN.id == self.data.gainValue);
+					if (index) {
+						self.gainIndex = index;
+					}
+
 					if (self.gainIndex == s.gain.dropdown.length) {
 						self.gainIndex = s.gain.dropdown.length
 					} else if (self.gainIndex < s.gain.dropdown.length) {
@@ -630,6 +635,11 @@ module.exports = {
 			actions.gainD = {
 				label: 'Exposure - Gain Down',
 				callback: function (action, bank) {
+					let index = s.gain.dropdown.findIndex((GAIN) => GAIN.id == self.data.gainValue);
+					if (index) {
+						self.gainIndex = index;
+					}					
+
 					if (self.gainIndex == 0) {
 						self.gainIndex = 0
 					} else if (self.gainIndex > 0) {

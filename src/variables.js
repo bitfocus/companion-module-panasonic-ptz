@@ -62,6 +62,9 @@ module.exports = {
 		if (SERIES.variables.iris == true) {
 			variables.push({ name: 'irisMode', label: 'Auto Iris Mode' })
 		}
+		if (SERIES.variables.gainValue == true) {
+			variables.push({ name: 'gainValue', label: 'Gain Value' })
+		}
 		if (SERIES.variables.preset == true) {
 			variables.push({ name: 'presetMode', label: 'Preset Mode' })
 		}
@@ -77,6 +80,30 @@ module.exports = {
 	checkVariables: function (i) {
 		var self = i
 
+		var SERIES = {}
+
+		// Set the model and series selected, if in auto, dettect what model is connected via TCP
+		if (self.config.model === 'Auto') {
+			self.data.model = self.data.modelTCP
+		} else {
+			self.data.model = self.config.model
+		}
+
+		if (self.data.model !== 'NaN') {
+			self.data.series = MODELS.find((MODELS) => MODELS.id == self.data.model).series
+		}
+
+		// Find the specific commands for a given series
+		if (
+			self.data.series === 'Auto' ||
+			self.data.series === 'Other' ||
+			SERIES_SPECS.find((SERIES_SPECS) => SERIES_SPECS.id == self.data.series) == undefined
+		) {
+			SERIES = SERIES_SPECS.find((SERIES_SPECS) => SERIES_SPECS.id == 'Other')
+		} else {
+			SERIES = SERIES_SPECS.find((SERIES_SPECS) => SERIES_SPECS.id == self.data.series)
+		}
+
 		self.setVariable('series', self.data.series)
 		self.setVariable('model', self.data.model)
 		self.setVariable('name', self.data.name)
@@ -87,6 +114,10 @@ module.exports = {
 		self.setVariable('tally', self.data.tally)
 		self.setVariable('OAF', self.data.oaf)
 		self.setVariable('irisMode', self.data.irisMode)
+		let gainValue = SERIES.actions.gain.dropdown.find((GAIN) => GAIN.id == self.data.gainValue);
+		if (gainValue) {
+			self.setVariable('gainValue', gainValue.label);
+		}		
 		self.setVariable('presetMode', self.data.recallModePset)
 		self.setVariable('ptSpeedVar', self.ptSpeed)
 		self.setVariable('zSpeedVar', self.zSpeed)

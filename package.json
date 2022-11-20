@@ -1,6 +1,6 @@
 {
 	"name": "panasonic-ptz",
-	"version": "1.0.20",
+	"version": "1.0.21",
 	"api_version": "1.0.0",
 	"keywords": [
 		"ptz",
@@ -18,7 +18,8 @@
 	},
 	"author": "Andreas H. Thomsen <mc-hauge@hotmail.com>",
 	"contributors": [
-		"Per Røine <per.roine@gmail.com>"
+		"Per Røine <per.roine@gmail.com>",
+		"Joseph Adams <josephdadams@gmail.com>"
 	],
 	"license": "MIT",
 	"homepage": "https://github.com/bitfocus/companion-module-panasonic-ptz#readme",

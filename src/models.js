@@ -67,6 +67,7 @@ module.exports = {
 				tally: true, // Tally State (TLR:1 or TLR:0)
 				OAF: true, // Has Auto Focus (OAF:1 or OAF:0)
 				iris: true, // Has Auto Iris (d30 or d31)
+				gainValue: true,
 				preset: true,
 			},
 			feedbacks: {
@@ -112,6 +113,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				gainValue: true,
 				preset: true,
 			},
 			feedbacks: {
@@ -157,6 +159,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				gainValue: true,
 				preset: true,
 			},
 			feedbacks: {
@@ -202,6 +205,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				gainValue: true,
 				preset: true,
 			},
 			feedbacks: {
@@ -247,6 +251,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				gainValue: true,
 				preset: true,
 			},
 			feedbacks: {
@@ -292,6 +297,7 @@ module.exports = {
 				tally: true,
 				OAF: false,
 				iris: true,
+				gainValue: true,
 				preset: true,
 			},
 			feedbacks: {
@@ -337,6 +343,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				gainValue: true,
 				preset: true,
 			},
 			feedbacks: {
@@ -382,6 +389,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				gainValue: true,
 				preset: true,
 			},
 			feedbacks: {
@@ -427,6 +435,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				gainValue: true,
 				preset: true,
 			},
 			feedbacks: {
@@ -472,6 +481,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				gainValue: true,
 				preset: true,
 			},
 			feedbacks: {
@@ -517,6 +527,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				gainValue: true,
 				preset: true,
 			},
 			feedbacks: {
@@ -562,6 +573,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				gainValue: true,
 				preset: true,
 			},
 			feedbacks: {
@@ -607,6 +619,7 @@ module.exports = {
 				tally: true,
 				OAF: false,
 				iris: true,
+				gainValue: true,
 				preset: true,
 			},
 			feedbacks: {
@@ -652,6 +665,7 @@ module.exports = {
 				tally: true,
 				OAF: true,
 				iris: true,
+				gainValue: true,
 				preset: true,
 			},
 			feedbacks: {
