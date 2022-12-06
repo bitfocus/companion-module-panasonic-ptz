@@ -1,7 +1,8 @@
-var instance_skel = require('../../../instance_skel')
+import { runEntrypoint, InstanceBase } from '@companion-module/base'
+import { UpgradeScripts } from './upgrades.js'
+import { getActionDefinitions } from './actions.js'
 var net = require('net')
 var { MODELS } = require('./models.js')
-var actions = require('./actions.js')
 var presets = require('./presets.js')
 var feedbacks = require('./feedbacks.js')
 var variables = require('./variables.js')
@@ -9,29 +10,7 @@ var variables = require('./variables.js')
 // ########################
 // #### Instance setup ####
 // ########################
-class instance extends instance_skel {
-	constructor(system, id, config) {
-		super(system)
-
-		var self = this
-
-		// super-constructor
-		instance_skel.apply(this, arguments)
-
-		return self
-	}
-	static GetUpgradeScripts() {
-		return [
-			instance_skel.CreateConvertToBooleanFeedbackUpgradeScript({
-				powerState: true,
-				tallyState: true,
-				insState: true,
-				autoFocus: true,
-				autoIris: true,
-				modePset: true,
-			}),
-		]
-	}
+class PanasonicPTZInstance extends InstanceBase {
 	// #########################
 	// #### Other Functions ####
 	// #########################
@@ -401,7 +380,7 @@ class instance extends instance_skel {
 				self.data.modelTCP = str[1]
 				// if a new model is detected or seected, re-initialise all actions, variable and feedbacks
 				if (self.data.modelTCP !== self.data.model) {
-					self.actions() // export actions
+					self.init_actions() // export actions
 					self.init_presets()
 					self.init_variables()
 					self.checkVariables()
@@ -558,7 +537,7 @@ class instance extends instance_skel {
 		self.status(self.STATUS_WARNING, 'connecting')
 		self.getCameraInformation()
 		self.init_tcp()
-		self.actions() // export actions
+		self.init_actions() // export actions
 		self.init_presets()
 		self.init_variables()
 		self.checkVariables()
@@ -574,7 +553,7 @@ class instance extends instance_skel {
 		self.status(self.STATUS_UNKNOWN)
 		self.getCameraInformation()
 		self.init_tcp()
-		self.actions() // export actions
+		self.init_actions() // export actions
 		self.init_presets()
 		self.init_variables()
 		self.checkVariables()
@@ -748,21 +727,10 @@ class instance extends instance_skel {
 	init_feedbacks() {
 		this.setFeedbackDefinitions(feedbacks.setFeedbacks(this))
 	}
-	// ##########################
-	// #### Instance Actions ####
-	// ##########################
-	sendPTZ(str) {
-		actions.sendPTZ(this, str)
-	}
-	sendCam(str) {
-		actions.sendCam(this, str)
-	}
-	sendWeb(str) {
-		actions.sendWeb(this, str)
-	}
-	actions() {
-		this.setActions(actions.setActions(this))
+
+	init_actions() {
+		this.setActions(getActionDefinitions(this))
 	}
 }
 
-exports = module.exports = instance
+runEntrypoint(PanasonicPTZInstance, UpgradeScripts)
