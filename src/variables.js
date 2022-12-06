@@ -14,39 +14,39 @@ export function setVariables(self) {
 	// console.log(self.data.series);
 	const variables = []
 
-	variables.push({ name: 'series', label: 'Camera Series' })
-	variables.push({ name: 'model', label: 'Model of camera' })
-	variables.push({ name: 'name', label: 'Name of camera' })
+	variables.push({ variableId: 'series', name: 'Camera Series' })
+	variables.push({ variableId: 'model', name: 'Model of camera' })
+	variables.push({ variableId: 'name', name: 'Name of camera' })
 	if (SERIES.variables.version) {
-		variables.push({ name: 'version', label: 'Firmware Version' })
+		variables.push({ variableId: 'version', name: 'Firmware Version' })
 	}
 	if (SERIES.variables.error) {
-		variables.push({ name: 'error', label: 'PTZ Error Codes' })
+		variables.push({ variableId: 'error', name: 'PTZ Error Codes' })
 	}
 	if (SERIES.variables.ins) {
-		variables.push({ name: 'ins', label: 'Install Position' })
+		variables.push({ variableId: 'ins', name: 'Install Position' })
 	}
 	if (SERIES.variables.power) {
-		variables.push({ name: 'power', label: 'Power ON/OFF' })
+		variables.push({ variableId: 'power', name: 'Power ON/OFF' })
 	}
 	if (SERIES.variables.tally) {
-		variables.push({ name: 'tally', label: 'Tally ON/OFF' })
+		variables.push({ variableId: 'tally', name: 'Tally ON/OFF' })
 	}
 	if (SERIES.variables.OAF) {
-		variables.push({ name: 'OAF', label: 'Auto Focus Mode' })
+		variables.push({ variableId: 'OAF', name: 'Auto Focus Mode' })
 	}
 	if (SERIES.variables.iris) {
-		variables.push({ name: 'irisMode', label: 'Auto Iris Mode' })
+		variables.push({ variableId: 'irisMode', name: 'Auto Iris Mode' })
 	}
 	if (SERIES.variables.gainValue) {
-		variables.push({ name: 'gainValue', label: 'Gain Value' })
+		variables.push({ variableId: 'gainValue', name: 'Gain Value' })
 	}
 	if (SERIES.variables.preset) {
-		variables.push({ name: 'presetMode', label: 'Preset Mode' })
+		variables.push({ variableId: 'presetMode', name: 'Preset Mode' })
 	}
-	variables.push({ name: 'ptSpeedVar', label: 'Pan/Tilt Speed' })
-	variables.push({ name: 'zSpeedVar', label: 'Zoom Speed' })
-	variables.push({ name: 'fSpeedVar', label: 'Focus Speed' })
+	variables.push({ variableId: 'ptSpeedVar', name: 'Pan/Tilt Speed' })
+	variables.push({ variableId: 'zSpeedVar', name: 'Zoom Speed' })
+	variables.push({ variableId: 'fSpeedVar', name: 'Focus Speed' })
 	return variables
 }
 
