@@ -57,43 +57,28 @@ export const ConfigFields = [
 	},
 	{
 		type: 'static-text',
+		id: 'info',
+		width: 12,
+		label: 'Tally On (Basic)',
+		value:
+			'Support for Tally On is no longer possible. Instead you can set this up as a trigger, and get additional control',
+	},
+	{
+		type: 'static-text',
+		id: 'dummy3',
+		width: 12,
+		label: ' ',
+		value: ' ',
+	},
+	{
+		type: 'static-text',
 		id: 'Info',
 		width: 12,
 		label: 'Other Settings',
 		value:
 			'These setting can be left on the default values and should give you a consistent setup, but they are there for you to use if need be.',
 	},
-	{
-		type: 'checkbox',
-		id: 'tallyOnEnabled',
-		width: 1,
-		label: 'Enable',
-		default: true,
-	},
-	{
-		type: 'static-text',
-		id: 'tallyOnInfo',
-		width: 4,
-		label: 'Tally On',
-		value: 'Set camera tally ON when the instance variable equals the value',
-	},
-	{
-		type: 'dropdown',
-		id: 'tallyOnVariable',
-		label: 'Tally On Variable',
-		width: 4,
-		tooltip: 'The instance label and variable name',
-		choices: self.dynamicVariableChoices,
-		minChoicesForSearch: 5,
-	},
-	{
-		type: 'textinput',
-		id: 'tallyOnValue',
-		label: 'Tally On Value',
-		width: 3,
-		tooltip:
-			'When the variable equals this value, the camera tally light will be turned on.  Also supports dynamic variable references.  For example, $(atem:short_1)',
-	},
+
 	{
 		type: 'checkbox',
 		id: 'autoTCP',

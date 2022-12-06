@@ -12,85 +12,9 @@ var variables = require('./variables.js')
 // #### Instance setup ####
 // ########################
 class PanasonicPTZInstance extends InstanceBase {
-	// #########################
-	// #### Other Functions ####
-	// #########################
-	updateVariableAndInstanceLists() {
-		const self = this
-
-		const dynamicVariableChoices = []
-		const instanceList = []
-		var i = 0
-
-		// Gets a List of all variables that exist currently
-		self.system.emit('variable_get_definitions', (definitions) =>
-			Object.entries(definitions).forEach(([instanceLabel, variables]) => {
-				variables.forEach((variable) =>
-					dynamicVariableChoices.push({
-						id: `${instanceLabel}:${variable.name}`,
-						label: `${instanceLabel}:${variable.name}`,
-					})
-				)
-			})
-		)
-
-		// Creates a list of all insances curently loaded active or not
-		system.emit('instance_getall', function (instances) {
-			try {
-				Object.entries(instances).forEach(([instanceID, instanceData]) => {
-					instanceList.push({
-						nr: `${i}`,
-						product: `${instanceData.product}`,
-						label: `${instanceData.label}`,
-						id: `${instanceID}`,
-					})
-					i++
-				})
-			} catch (e) {}
-		})
-
-		this.dynamicVariableChoices = dynamicVariableChoices
-		this.instanceList = instanceList
-	}
-	tallyOnListener(variables) {
-		const self = this
-		const { tallyOnEnabled, tallyOnVariable, tallyOnValue } = self.config
-
-		for (var key in variables) {
-			if (variables.hasOwnProperty(key)) {
-				// debug(key + " -> " + variables[key]);
-				if (!tallyOnEnabled || key !== tallyOnVariable) {
-					return
-				}
-
-				self.system.emit('variable_parse', tallyOnValue, (parsedValue) => {
-					variables[key] = variables[key].toString()
-					self.debug('variable changed... updating tally', variables)
-					self.system.emit('action_run', {
-						action: variables[key] === parsedValue ? 'tallyOn' : 'tallyOff',
-						instance: self.id,
-					})
-				})
-			}
-		}
-	}
-	setupEventListeners() {
-		const self = this
-
-		if (self.config.tallyOnEnabled && self.config.tallyOnVariable) {
-			if (!self.activeTallyOnListener) {
-				self.activeTallyOnListener = self.tallyOnListener.bind(self)
-				self.system.on('variables_changed', self.activeTallyOnListener)
-			}
-		} else if (self.activeTallyOnListener) {
-			self.system.removeListener('variables_changed', self.activeTallyOnListener)
-			delete self.activeTallyOnListener
-		}
-	}
 	init_tcp() {
 		var self = this
 		self.clients = []
-		self.updateVariableAndInstanceLists()
 		var tcpPortSelected = self.tcpPortSelected || 31004
 		var tcpPortOld = self.tcpPortOld || 31004
 
@@ -481,11 +405,6 @@ class PanasonicPTZInstance extends InstanceBase {
 			self.server.close()
 			delete self.server
 		}
-
-		if (self.activeTallyOnListener) {
-			self.system.removeListener('variables_changed', self.activeTallyOnListener)
-			delete self.activeTallyOnListener
-		}
 	}
 	// Initalize module
 	init() {
@@ -532,8 +451,6 @@ class PanasonicPTZInstance extends InstanceBase {
 		self.config.autoTCP = this.config.autoTCP
 		self.config.model = this.config.model || 'Auto'
 		self.config.debug = this.config.debug || false
-		self.dynamicVariableChoices = []
-		self.instanceList = []
 
 		self.status(self.STATUS_WARNING, 'connecting')
 		self.getCameraInformation()
@@ -544,8 +461,6 @@ class PanasonicPTZInstance extends InstanceBase {
 		self.checkVariables()
 		self.init_feedbacks()
 		self.checkFeedbacks()
-		self.updateVariableAndInstanceLists()
-		self.setupEventListeners()
 	}
 	// Update module after a config change
 	updateConfig(config) {
@@ -560,8 +475,6 @@ class PanasonicPTZInstance extends InstanceBase {
 		self.checkVariables()
 		self.init_feedbacks()
 		self.checkFeedbacks()
-		self.updateVariableAndInstanceLists()
-		self.setupEventListeners()
 	}
 
 	// Return config fields for web config
