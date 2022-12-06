@@ -1,11 +1,11 @@
 import { runEntrypoint, InstanceBase } from '@companion-module/base'
 import { UpgradeScripts } from './upgrades.js'
 import { getActionDefinitions } from './actions.js'
+import { getFeedbackDefinitions } from './feedbacks.js'
 import { ConfigFields } from './config.js'
 
 var net = require('net')
 var presets = require('./presets.js')
-var feedbacks = require('./feedbacks.js')
 var variables = require('./variables.js')
 
 // ########################
@@ -589,7 +589,7 @@ class PanasonicPTZInstance extends InstanceBase {
 	// #### Instance Feedbacks ####
 	// ############################
 	init_feedbacks() {
-		this.setFeedbackDefinitions(feedbacks.setFeedbacks(this))
+		this.setFeedbackDefinitions(getFeedbackDefinitions(this))
 	}
 
 	init_actions() {
