@@ -1,4 +1,4 @@
-module.exports = {
+export const c = {
 	// ########################
 	// #### Value Look Ups ####
 	// ########################

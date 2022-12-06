@@ -2,11 +2,11 @@ import { runEntrypoint, InstanceBase } from '@companion-module/base'
 import { UpgradeScripts } from './upgrades.js'
 import { getActionDefinitions } from './actions.js'
 import { getFeedbackDefinitions } from './feedbacks.js'
+import { getPresetDefinitions } from './presets.js'
+import { setVariables, checkVariables } from './variables.js'
 import { ConfigFields } from './config.js'
 
 var net = require('net')
-var presets = require('./presets.js')
-var variables = require('./variables.js')
 
 // ########################
 // #### Instance setup ####
@@ -486,17 +486,17 @@ class PanasonicPTZInstance extends InstanceBase {
 	// #### Instance Presets ####
 	// ##########################
 	init_presets() {
-		this.setPresetDefinitions(presets.setPresets(this))
+		this.setPresetDefinitions(getPresetDefinitions(this))
 	}
 	// ############################
 	// #### Instance Variables ####
 	// ############################
 	init_variables() {
-		this.setVariableDefinitions(variables.setVariables(this))
+		this.setVariableDefinitions(setVariables(this))
 	}
 	// Setup Initial Values
 	checkVariables() {
-		variables.checkVariables(this)
+		checkVariables(this)
 	}
 	// ############################
 	// #### Instance Feedbacks ####

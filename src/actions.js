@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import * as c from './choices.js'
+import { c } from './choices.js'
 import { getAndUpdateSeries } from './common.js'
 
 // ########################

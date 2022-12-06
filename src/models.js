@@ -1,4 +1,4 @@
-import * as c from './choices.js'
+import { c } from './choices.js'
 
 export const MODELS = [
 	{ id: 'Auto', series: 'Auto', label: 'Auto Detect' },
