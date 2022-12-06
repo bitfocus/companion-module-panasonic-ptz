@@ -1,16 +1,10 @@
-var tcp = require('../../../tcp')
 var instance_skel = require('../../../instance_skel')
 var net = require('net')
-const { response } = require('express')
 var { MODELS } = require('./models.js')
 var actions = require('./actions.js')
 var presets = require('./presets.js')
 var feedbacks = require('./feedbacks.js')
 var variables = require('./variables.js')
-const { stringify } = require('querystring')
-var socketlist = [] // Stores Clients Connedted
-var debug
-var log
 
 // #########################
 // #### Other Functions ####
@@ -67,7 +61,7 @@ instance.prototype.tallyOnListener = function (variables) {
 
 			self.system.emit('variable_parse', tallyOnValue, (parsedValue) => {
 				variables[key] = variables[key].toString()
-				debug('variable changed... updating tally', variables)
+				self.debug('variable changed... updating tally', variables)
 				self.system.emit('action_run', {
 					action: variables[key] === parsedValue ? 'tallyOn' : 'tallyOff',
 					instance: self.id,
@@ -112,12 +106,12 @@ instance.prototype.init_tcp = function () {
 				'&uid=0',
 			function (err, result) {
 				if (err) {
-					debug('Error from PTZ: ' + String(err))
+					self.debug('Error from PTZ: ' + String(err))
 					self.log('error', 'Error from PTZ: ' + String(err))
 					return
 				}
 				if (('data', result.response.req)) {
-					debug(
+					self.debug(
 						'un-subscribed: ' +
 							'http://' +
 							self.config.host +
@@ -145,11 +139,6 @@ instance.prototype.init_tcp = function () {
 			}
 		)
 
-		// Close all remaning Connections
-		socketlist.forEach(function (socket) {
-			socket.close()
-		})
-
 		// Close and delete server
 		self.server.close()
 		delete self.server
@@ -168,7 +157,7 @@ instance.prototype.init_tcp = function () {
 			// common error handler
 			socket.on('error', function () {
 				self.clients.splice(self.clients.indexOf(socket), 1)
-				debug('PTZ errored/died: ' + socket.name)
+				self.debug('PTZ errored/died: ' + socket.name)
 				if (self.config.debug == true) {
 					self.log('error', 'PTZ errored/died: ' + socket.name)
 				}
@@ -184,7 +173,7 @@ instance.prototype.init_tcp = function () {
 				let str_raw = String(data)
 				str_raw = str_raw.split('\r\n') // Split Data in order to remove data before and after command
 				let str = str_raw[1].trim() // remove new line, carage return and so on.
-				debug('TCP Recived from PTZ: ' + str) // Debug Recived data
+				self.debug('TCP Recived from PTZ: ' + str) // Debug Recived data
 				if (self.config.debug == true) {
 					self.log('info', 'Recived CMD: ' + String(str))
 				}
@@ -203,7 +192,7 @@ instance.prototype.init_tcp = function () {
 		self.server.on('error', function (err) {
 			// Catch uncaught Exception"EADDRINUSE" error that orcures if the port is already in use
 			if (err.code === 'EADDRINUSE') {
-				debug('TCP error: ' + err)
+				self.debug('TCP error: ' + err)
 				// self.log('error', "TCP error: " + String(err));
 				self.log('error', 'TCP error: Please use another TCP port, ' + tcpPortSelected + ' is already in use')
 				self.log('error', 'TCP error: The TCP port must be unique between instances')
@@ -244,7 +233,7 @@ instance.prototype.init_tcp = function () {
 					}
 				)
 			} else {
-				debug('TCP error: ' + err)
+				self.debug('TCP error: ' + err)
 				if (self.config.debug == true) {
 					self.log('error', 'TCP error: ' + String(err))
 				}
@@ -253,8 +242,7 @@ instance.prototype.init_tcp = function () {
 
 		// Listens for a client to make a connection request.
 		try {
-
-			debug('Trying to listen to TCP from PTZ')
+			self.debug('Trying to listen to TCP from PTZ')
 
 			if (self.config.autoTCP == true) {
 				self.server.listen(0)
@@ -263,12 +251,11 @@ instance.prototype.init_tcp = function () {
 			}
 			tcpPortSelected = self.server.address().port
 			self.tcpPortSelected = tcpPortSelected
-		
-			debug('Server listening for PTZ updates on localhost:' + tcpPortSelected)
+
+			self.debug('Server listening for PTZ updates on localhost:' + tcpPortSelected)
 			if (self.config.debug == true) {
 				self.log('warn', 'Listening for PTZ updates on localhost:' + tcpPortSelected)
 			}
-
 
 			// Subscibe to updates from PTZ
 			self.system.emit(
@@ -281,7 +268,7 @@ instance.prototype.init_tcp = function () {
 					tcpPortSelected +
 					'&uid=0',
 				function (err, result) {
-					debug(
+					self.debug(
 						'subscribed: ' +
 							'http://' +
 							self.config.host +
@@ -314,7 +301,7 @@ instance.prototype.init_tcp = function () {
 				}
 			)
 		} catch (err) {
-			debug("Couldn't bind to TCP port " + tcpPortSelected + ' on localhost: ' + String(err))
+			self.debug("Couldn't bind to TCP port " + tcpPortSelected + ' on localhost: ' + String(err))
 			if (self.config.debug == true) {
 				self.log('error', "Couldn't bind to TCP port " + tcpPortSelected + ' on localhost: ' + String(err))
 			}
@@ -356,7 +343,7 @@ instance.prototype.getCameraInformation = function () {
 					for (var i in str_raw) {
 						str = str_raw[i].trim() // remove new line, carage return and so on.
 						str = str.split(':') // Split Commands and data
-						debug('HTTP Recived from PTZ: ' + str_raw[i]) // Debug Recived data
+						self.debug('HTTP Recived from PTZ: ' + str_raw[i]) // Debug Recived data
 						if (self.config.debug == true) {
 							self.log('info', 'Recived CMD: ' + String(str_raw[i]))
 						}
@@ -457,8 +444,8 @@ instance.prototype.storeData = function (str) {
 			}
 			break
 		case 'OGU':
-			self.data.gainValue = str[1].toString().replace('0x','');
-			break;
+			self.data.gainValue = str[1].toString().replace('0x', '')
+			break
 		default:
 			break
 	}
@@ -516,11 +503,6 @@ instance.prototype.destroy = function () {
 			}
 		)
 
-		// Close all remaning Connections
-		socketlist.forEach(function (socket) {
-			socket.close()
-		})
-
 		// Close and delete server
 		self.server.close()
 		delete self.server
@@ -530,16 +512,11 @@ instance.prototype.destroy = function () {
 		self.system.removeListener('variables_changed', self.activeTallyOnListener)
 		delete self.activeTallyOnListener
 	}
-
-	debug('destroy', self.id)
 }
 
 // Initalize module
 instance.prototype.init = function () {
 	var self = this
-
-	debug = self.debug
-	log = self.log
 
 	self.data = {
 		debug: false,
@@ -724,8 +701,7 @@ instance.prototype.config_fields = function () {
 			id: 'autoTCPInfo',
 			width: 4,
 			label: 'Auto TCP',
-			value:
-				'This will ignore the port selected and find a port Automaticly',
+			value: 'This will ignore the port selected and find a port Automaticly',
 		},
 		{
 			type: 'textinput',

@@ -360,8 +360,8 @@ module.exports = {
 	// #### Pedestal Look Ups ####
 	// ###########################
 	CHOICES_PEDESTAL_HE40: function () {
-		var p = []
-		for (var i = 0; i <= 300; ++i) {
+		const p = []
+		for (let i = 0; i <= 300; ++i) {
 			p.push({
 				id: ('00' + i.toString(16)).substr(-3, 3).toUpperCase(),
 				label: 'Pedestal ' + ((i - 150) / 15).toPrecision(3),
@@ -371,8 +371,8 @@ module.exports = {
 	},
 
 	CHOICES_PEDESTAL_HE120: function () {
-		var p = []
-		for (var i = 0; i <= 300; ++i) {
+		const p = []
+		for (let i = 0; i <= 300; ++i) {
 			p.push({ id: ('00' + i.toString(16)).substr(-3, 3).toUpperCase(), label: 'Pedestal ' + (i - 150) })
 		}
 		return p
@@ -482,8 +482,8 @@ module.exports = {
 	],
 
 	CHOICES_PSTIME: function () {
-		var p = []
-		for (var i = 1; i <= 99; ++i) {
+		const p = []
+		for (let i = 1; i <= 99; ++i) {
 			p.push({ id: ('00' + i.toString(16)).substr(-3, 3).toUpperCase(), label: i + ' Sec' })
 		}
 		return p

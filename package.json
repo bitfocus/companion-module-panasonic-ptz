@@ -1,33 +1,19 @@
 {
 	"name": "panasonic-ptz",
-	"version": "1.0.21",
-	"api_version": "1.0.0",
-	"keywords": [
-		"ptz",
-		"Camera"
-	],
-	"manufacturer": "Panasonic",
-	"product": [
-		"PTZ Camera"
-	],
-	"shortname": "Panasonic-PTZ",
-	"description": "Companion module for Panasonic PTZ Cameras",
+	"version": "2.0.0",
 	"main": "src/index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
-	"author": "Andreas H. Thomsen <mc-hauge@hotmail.com>",
-	"contributors": [
-		"Per Røine <per.roine@gmail.com>",
-		"Joseph Adams <josephdadams@gmail.com>"
-	],
 	"license": "MIT",
-	"homepage": "https://github.com/bitfocus/companion-module-panasonic-ptz#readme",
-	"bugs": {
-		"url": "https://github.com/bitfocus/companion-module-panasonic-ptz/issues"
-	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/bitfocus/companion-module-panasonic-ptz.git"
+	},
+	"dependencies": {
+		"@companion-module/base": "~1.0.0"
+	},
+	"devDependencies": {
+		"@companion-module/tools": "^0.5.1"
 	}
 }
