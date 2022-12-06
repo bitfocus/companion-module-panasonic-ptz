@@ -12,7 +12,8 @@
 		"url": "git+https://github.com/bitfocus/companion-module-panasonic-ptz.git"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.0.0"
+		"@companion-module/base": "~1.0.0",
+		"got": "^12.5.3"
 	},
 	"devDependencies": {
 		"@companion-module/tools": "^0.5.1"

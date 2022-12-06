@@ -46,6 +46,7 @@ export function getPresetDefinitions(self) {
 					],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['pan-tilt-down'] = {
@@ -76,6 +77,7 @@ export function getPresetDefinitions(self) {
 					],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['pan-tilt-left'] = {
@@ -106,6 +108,7 @@ export function getPresetDefinitions(self) {
 					],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['pan-tilt-right'] = {
@@ -136,6 +139,7 @@ export function getPresetDefinitions(self) {
 					],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['pan-tilt-up-right'] = {
@@ -166,6 +170,7 @@ export function getPresetDefinitions(self) {
 					],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['pan-tilt-up-left'] = {
@@ -196,6 +201,7 @@ export function getPresetDefinitions(self) {
 					],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['pan-tilt-down-left'] = {
@@ -226,6 +232,7 @@ export function getPresetDefinitions(self) {
 					],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['pan-tilt-down-right'] = {
@@ -256,6 +263,7 @@ export function getPresetDefinitions(self) {
 					],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['pan-tilt-home'] = {
@@ -279,6 +287,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 	}
 
@@ -304,6 +313,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['pan-tilt-speed-down'] = {
@@ -327,6 +337,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['pan-tilt-speed-high'] = {
@@ -352,6 +363,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['pan-tilt-speed-mid'] = {
@@ -377,6 +389,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['pan-tilt-speed-low'] = {
@@ -402,6 +415,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 	}
 
@@ -436,6 +450,7 @@ export function getPresetDefinitions(self) {
 					],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['lens-zoom-out'] = {
@@ -464,6 +479,7 @@ export function getPresetDefinitions(self) {
 					],
 				},
 			],
+			feedbacks: [],
 		}
 	}
 
@@ -489,6 +505,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['lens-zoom-speed-down'] = {
@@ -512,6 +529,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['lens-zoom-speed-high'] = {
@@ -537,6 +555,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['lens-zoom-speed-mid'] = {
@@ -562,6 +581,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['lens-zoom-speed-low'] = {
@@ -587,6 +607,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 	}
 
@@ -617,6 +638,7 @@ export function getPresetDefinitions(self) {
 					],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['lens-focus-far'] = {
@@ -645,6 +667,7 @@ export function getPresetDefinitions(self) {
 					],
 				},
 			],
+			feedbacks: [],
 		}
 	}
 
@@ -670,6 +693,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['lens-focus-speed-down'] = {
@@ -693,6 +717,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 		presets['lens-focus-speed-high'] = {
 			type: 'button',
@@ -717,6 +742,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['lens-focus-speed-mid'] = {
@@ -742,6 +768,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['lens-focus-speed-low'] = {
@@ -767,6 +794,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 	}
 
@@ -909,6 +937,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['exposure-iris-down'] = {
@@ -932,6 +961,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['exposure-iris-manual'] = {
@@ -1031,6 +1061,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['exposure-gain-down'] = {
@@ -1054,6 +1085,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 	}
 
@@ -1079,6 +1111,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['exposure-shutter-down'] = {
@@ -1102,6 +1135,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 	}
 
@@ -1127,6 +1161,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['exposure-pedestal-down'] = {
@@ -1150,6 +1185,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 	}
 
@@ -1175,6 +1211,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['exposure-filter-down'] = {
@@ -1198,6 +1235,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		for (const x in seriesActions.filter.dropdown) {
@@ -1224,6 +1262,7 @@ export function getPresetDefinitions(self) {
 						up: [],
 					},
 				],
+				feedbacks: [],
 			}
 		}
 	}
@@ -1476,6 +1515,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['system-sd-card-recording-stop'] = {
@@ -1501,6 +1541,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 	}
 	// ###########################
@@ -1532,6 +1573,7 @@ export function getPresetDefinitions(self) {
 						up: [],
 					},
 				],
+				feedbacks: [],
 			}
 		}
 	}
@@ -1560,6 +1602,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['recall-preset-preset-mode-time'] = {
@@ -1585,6 +1628,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 	}
 
@@ -1612,6 +1656,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['recall-preset-speed-mid'] = {
@@ -1637,6 +1682,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['recall-preset-speed-low'] = {
@@ -1662,6 +1708,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 	}
 
@@ -1689,6 +1736,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['recall-preset-time-mid'] = {
@@ -1714,6 +1762,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 
 		presets['recall-preset-time-low'] = {
@@ -1739,6 +1788,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 	}
 
@@ -1879,6 +1929,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
+			feedbacks: [],
 		}
 	}
 

@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { c } from './choices.js'
 import { getAndUpdateSeries } from './common.js'
+import got from 'got'
 
 // ########################
 // #### Value Look Ups ####
@@ -19,69 +20,58 @@ for (let i = 0; i < 100; ++i) {
 // #### Send Actions ####
 // ######################
 
-export function sendPTZ(self, str) {
-	if (str !== undefined) {
-		self.system.emit(
-			'rest_get',
-			'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_ptz?cmd=%23' + str + '&res=1',
-			function (err, result) {
-				if (self.config.debug) {
-					self.debug(
-						'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_ptz?cmd=%23' + str + '&res=1'
-					)
-					self.log('warn', 'Send CMD: ' + String(str))
-				}
-				if (err) {
-					// self.log('error', 'Error from PTZ: ' + String(err));
-					return
-				}
-				// console.log("Result from REST:" + result.data);
-			}
-		)
+export async function sendPTZ(self, str) {
+	if (str) {
+		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/aw_ptz?cmd=%23${str}&res=1`
+		if (self.config.debug) {
+			self.log('debug', `Sending : ${url}`)
+		}
+
+		try {
+			const response = await got.get(url)
+
+			// console.log("Result from REST:" + result.data);
+		} catch (err) {
+			throw new Error(`Action failed: ${url}`)
+		}
 	}
 }
 
-export function sendCam(self, str) {
-	if (str !== undefined) {
-		self.system.emit(
-			'rest_get',
-			'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_cam?cmd=' + str + '&res=1',
-			function (err, result) {
-				if (self.config.debug) {
-					self.debug(
-						'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/aw_cam?cmd=' + str + '&res=1'
-					)
-					self.log('warn', 'Send CMD: ' + String(str))
-				}
-				if (err) {
-					// self.log('error', 'Error from PTZ: ' + String(err));
-					return
-				}
-				// console.log("Result from REST:" + result.data);
-			}
-		)
+export async function sendCam(self, str) {
+	if (str) {
+		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/aw_cam?cmd=${str}&res=1`
+
+		if (self.config.debug) {
+			self.log('debug', `Sending : ${url}`)
+		}
+
+		try {
+			const response = await got.get(url)
+
+			// console.log("Result from REST:" + result.data);
+		} catch (err) {
+			throw new Error(`Action failed: ${url}`)
+		}
 	}
 }
 
-export function sendWeb(self, str) {
+export async function sendWeb(self, str) {
 	// Currently Only for web commands that don't requre Admin rights
 
-	if (str !== undefined) {
-		self.system.emit(
-			'rest_get',
-			'http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/' + str,
-			function (err, result) {
-				if (self.config.debug) {
-					self.debug('http://' + self.config.host + ':' + self.config.httpPort + '/cgi-bin/' + str)
-					self.log('warn', 'Send Web CMD: ' + String(str))
-				}
-				if (!err) {
-					// self.log('error', 'Error from PTZ: ' + String(err));
-					return
-				}
-				// console.log("Result from REST:" + result);
-			}
-		)
+	if (str) {
+		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/${str}`
+
+		if (self.config.debug) {
+			self.log('debug', `Sending : ${url}`)
+		}
+
+		try {
+			const response = await got.get(url)
+
+			// console.log("Result from REST:" + result.data);
+		} catch (err) {
+			throw new Error(`Action failed: ${url}`)
+		}
 	}
 }
 
@@ -103,10 +93,10 @@ export function getActionDefinitions(self) {
 		actions.left = {
 			name: 'Pan/Tilt - Pan Left',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				const n = parseInt(50 - self.ptSpeed)
 				const string = '' + (n < 10 ? '0' + n : n)
-				sendPTZ(self, 'PTS' + string + '50')
+				await sendPTZ(self, 'PTS' + string + '50')
 			},
 		}
 	}
@@ -115,8 +105,8 @@ export function getActionDefinitions(self) {
 		actions.right = {
 			name: 'Pan/Tilt - Pan Right',
 			options: [],
-			callback: function (action) {
-				sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + '50')
+			callback: async (action) => {
+				await sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + '50')
 			},
 		}
 	}
@@ -125,8 +115,8 @@ export function getActionDefinitions(self) {
 		actions.up = {
 			name: 'Pan/Tilt - Tilt Up',
 			options: [],
-			callback: function (action) {
-				sendPTZ(self, 'PTS50' + parseInt(50 + self.ptSpeed))
+			callback: async (action) => {
+				await sendPTZ(self, 'PTS50' + parseInt(50 + self.ptSpeed))
 			},
 		}
 	}
@@ -135,10 +125,10 @@ export function getActionDefinitions(self) {
 		actions.down = {
 			name: 'Pan/Tilt - Tilt Down',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				const n = parseInt(50 - self.ptSpeed)
 				const string = '' + (n < 10 ? '0' + n : n)
-				sendPTZ(self, 'PTS50' + string)
+				await sendPTZ(self, 'PTS50' + string)
 			},
 		}
 	}
@@ -147,10 +137,10 @@ export function getActionDefinitions(self) {
 		actions.upLeft = {
 			name: 'Pan/Tilt - Up Left',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				const n = parseInt(50 - self.ptSpeed)
 				const string = '' + (n < 10 ? '0' + n : n)
-				sendPTZ(self, 'PTS' + string + parseInt(50 + self.ptSpeed))
+				await sendPTZ(self, 'PTS' + string + parseInt(50 + self.ptSpeed))
 			},
 		}
 	}
@@ -159,8 +149,8 @@ export function getActionDefinitions(self) {
 		actions.upRight = {
 			name: 'Pan/Tilt - Up Right',
 			options: [],
-			callback: function (action) {
-				sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + parseInt(50 + self.ptSpeed))
+			callback: async (action) => {
+				await sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + parseInt(50 + self.ptSpeed))
 			},
 		}
 	}
@@ -169,10 +159,10 @@ export function getActionDefinitions(self) {
 		actions.downLeft = {
 			name: 'Pan/Tilt - Down Left',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				const n = parseInt(50 - self.ptSpeed)
 				const string = '' + (n < 10 ? '0' + n : n)
-				sendPTZ(self, 'PTS' + string + string)
+				await sendPTZ(self, 'PTS' + string + string)
 			},
 		}
 	}
@@ -181,10 +171,10 @@ export function getActionDefinitions(self) {
 		actions.downRight = {
 			name: 'Pan/Tilt - Down Right',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				const n = parseInt(50 - self.ptSpeed)
 				const string = '' + (n < 10 ? '0' + n : n)
-				sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + string)
+				await sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + string)
 			},
 		}
 	}
@@ -193,8 +183,8 @@ export function getActionDefinitions(self) {
 		actions.stop = {
 			name: 'Pan/Tilt - Stop',
 			options: [],
-			callback: function (action) {
-				sendPTZ(self, 'PTS5050')
+			callback: async (action) => {
+				await sendPTZ(self, 'PTS5050')
 			},
 		}
 	}
@@ -203,8 +193,8 @@ export function getActionDefinitions(self) {
 		actions.home = {
 			name: 'Pan/Tilt - Home',
 			options: [],
-			callback: function (action) {
-				sendPTZ(self, 'APC7FFF7FFF')
+			callback: async (action) => {
+				await sendPTZ(self, 'APC7FFF7FFF')
 			},
 		}
 	}
@@ -221,7 +211,7 @@ export function getActionDefinitions(self) {
 					choices: c.CHOICES_SPEED,
 				},
 			],
-			callback: function (action) {
+			callback: async (action) => {
 				self.ptSpeed = action.options.speed
 
 				const idx = c.CHOICES_SPEED.findIndex((sp) => sp.id === self.ptSpeed)
@@ -239,7 +229,7 @@ export function getActionDefinitions(self) {
 		actions.ptSpeedU = {
 			name: 'Pan/Tilt - Speed Up',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				if (self.ptSpeedIndex == 0) {
 					self.ptSpeedIndex = 0
 				} else if (self.ptSpeedIndex > 0) {
@@ -255,7 +245,7 @@ export function getActionDefinitions(self) {
 		actions.ptSpeedD = {
 			name: 'Pan/Tilt - Speed Down',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				if (self.ptSpeedIndex == c.CHOICES_SPEED.length) {
 					self.ptSpeedIndex = c.CHOICES_SPEED.length
 				} else if (self.ptSpeedIndex < c.CHOICES_SPEED.length) {
@@ -275,8 +265,8 @@ export function getActionDefinitions(self) {
 		actions.zoomI = {
 			name: 'Lens - Zoom In',
 			options: [],
-			callback: function (action) {
-				sendPTZ(self, 'Z' + parseInt(50 + self.zSpeed))
+			callback: async (action) => {
+				await sendPTZ(self, 'Z' + parseInt(50 + self.zSpeed))
 			},
 		}
 	}
@@ -285,10 +275,10 @@ export function getActionDefinitions(self) {
 		actions.zoomO = {
 			name: 'Lens - Zoom Out',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				const n = parseInt(50 - self.zSpeed)
 				const string = '' + (n < 10 ? '0' + n : n)
-				sendPTZ(self, 'Z' + string)
+				await sendPTZ(self, 'Z' + string)
 			},
 		}
 	}
@@ -297,8 +287,8 @@ export function getActionDefinitions(self) {
 		actions.zoomS = {
 			name: 'Lens - Zoom Stop',
 			options: [],
-			callback: function (action) {
-				sendPTZ(self, 'Z50')
+			callback: async (action) => {
+				await sendPTZ(self, 'Z50')
 			},
 		}
 	}
@@ -315,7 +305,7 @@ export function getActionDefinitions(self) {
 					choices: c.CHOICES_SPEED,
 				},
 			],
-			callback: function (action) {
+			callback: async (action) => {
 				self.zSpeed = action.options.speed
 
 				const idx = c.CHOICES_SPEED.findIndex((sp) => sp.id === self.zSpeed)
@@ -333,7 +323,7 @@ export function getActionDefinitions(self) {
 		actions.zSpeedU = {
 			name: 'Lens - Zoom Speed Up',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				if (self.zSpeedIndex == 0) {
 					self.zSpeedIndex = 0
 				} else if (self.zSpeedIndex > 0) {
@@ -349,7 +339,7 @@ export function getActionDefinitions(self) {
 		actions.zSpeedD = {
 			name: 'Lens - Zoom Speed Down',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				if (self.zSpeedIndex == c.CHOICES_SPEED.length) {
 					self.zSpeedIndex = c.CHOICES_SPEED.length
 				} else if (self.zSpeedIndex < c.CHOICES_SPEED.length) {
@@ -365,10 +355,10 @@ export function getActionDefinitions(self) {
 		actions.focusN = {
 			name: 'Lens - Focus Near',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				const n = parseInt(50 - self.fSpeed)
 				const string = '' + (n < 10 ? '0' + n : n)
-				sendPTZ(self, 'F' + string)
+				await sendPTZ(self, 'F' + string)
 			},
 		}
 	}
@@ -377,8 +367,8 @@ export function getActionDefinitions(self) {
 		actions.focusF = {
 			name: 'Lens - Focus Far',
 			options: [],
-			callback: function (action) {
-				sendPTZ(self, 'F' + parseInt(50 + self.fSpeed))
+			callback: async (action) => {
+				await sendPTZ(self, 'F' + parseInt(50 + self.fSpeed))
 			},
 		}
 	}
@@ -387,8 +377,8 @@ export function getActionDefinitions(self) {
 		actions.focusS = {
 			name: 'Lens - Focus Stop',
 			options: [],
-			callback: function (action) {
-				sendPTZ(self, 'F50')
+			callback: async (action) => {
+				await sendPTZ(self, 'F50')
 			},
 		}
 	}
@@ -405,7 +395,7 @@ export function getActionDefinitions(self) {
 					choices: c.CHOICES_SPEED,
 				},
 			],
-			callback: function (action) {
+			callback: async (action) => {
 				self.fSpeed = action.options.speed
 
 				const idx = c.CHOICES_SPEED.findIndex((sp) => sp.id === self.fSpeed)
@@ -423,7 +413,7 @@ export function getActionDefinitions(self) {
 		actions.fSpeedU = {
 			name: 'Lens - Focus Speed Up',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				if (self.fSpeedIndex == 0) {
 					self.fSpeedIndex = 0
 				} else if (self.fSpeedIndex > 0) {
@@ -439,7 +429,7 @@ export function getActionDefinitions(self) {
 		actions.fSpeedD = {
 			name: 'Lens - Focus Speed Down',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				if (self.fSpeedIndex == c.CHOICES_SPEED.length) {
 					self.fSpeedIndex = c.CHOICES_SPEED.length
 				} else if (self.fSpeedIndex < c.CHOICES_SPEED.length) {
@@ -466,8 +456,8 @@ export function getActionDefinitions(self) {
 					],
 				},
 			],
-			callback: function (action) {
-				sendPTZ(self, action.options.bol == 0 ? 'D11' : 'D10')
+			callback: async (action) => {
+				await sendPTZ(self, action.options.bol == 0 ? 'D11' : 'D10')
 			},
 		}
 	}
@@ -476,8 +466,8 @@ export function getActionDefinitions(self) {
 		actions.focusOTAF = {
 			name: 'Lens - Focus One Touch Auto (OTAF)',
 			options: [],
-			callback: function (action) {
-				sendCam(self, 'OSE:69:1')
+			callback: async (action) => {
+				await sendCam(self, 'OSE:69:1')
 			},
 		}
 	}
@@ -490,14 +480,14 @@ export function getActionDefinitions(self) {
 		actions.irisU = {
 			name: 'Exposure - Iris Up',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				if (self.irisIndex == CHOICES_IRIS.length) {
 					self.irisIndex = CHOICES_IRIS.length
 				} else if (self.irisIndex < CHOICES_IRIS.length) {
 					self.irisIndex++
 				}
 				self.irisVal = CHOICES_IRIS[self.irisIndex].id
-				sendPTZ(self, 'I' + self.irisVal.toUpperCase())
+				await sendPTZ(self, 'I' + self.irisVal.toUpperCase())
 			},
 		}
 	}
@@ -506,14 +496,14 @@ export function getActionDefinitions(self) {
 		actions.irisD = {
 			name: 'Exposure - Iris Down',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				if (self.irisIndex == 0) {
 					self.irisIndex = 0
 				} else if (self.irisIndex > 0) {
 					self.irisIndex--
 				}
 				self.irisVal = CHOICES_IRIS[self.irisIndex].id
-				sendPTZ(self, 'I' + self.irisVal.toUpperCase())
+				await sendPTZ(self, 'I' + self.irisVal.toUpperCase())
 			},
 		}
 	}
@@ -530,8 +520,8 @@ export function getActionDefinitions(self) {
 					choices: CHOICES_IRIS,
 				},
 			],
-			callback: function (action) {
-				sendPTZ(self, 'I' + action.options.val)
+			callback: async (action) => {
+				await sendPTZ(self, 'I' + action.options.val)
 				self.irisVal = action.options.val
 				self.irisIndex = action.options.val
 			},
@@ -553,8 +543,8 @@ export function getActionDefinitions(self) {
 					],
 				},
 			],
-			callback: function (action) {
-				sendPTZ(self, action.options.bol == 0 ? 'D30' : 'D31')
+			callback: async (action) => {
+				await sendPTZ(self, action.options.bol == 0 ? 'D30' : 'D31')
 			},
 		}
 	}
@@ -563,7 +553,7 @@ export function getActionDefinitions(self) {
 		actions.gainU = {
 			name: 'Exposure - Gain Up',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				const index = seriesActions.gain.dropdown.findIndex((GAIN) => GAIN.id == self.data.gainValue)
 				if (index !== -1) {
 					self.gainIndex = index
@@ -576,7 +566,7 @@ export function getActionDefinitions(self) {
 				}
 				self.gainVal = seriesActions.gain.dropdown[self.gainIndex].id
 
-				sendCam(self, seriesActions.gain.cmd + self.gainVal.toUpperCase())
+				await sendCam(self, seriesActions.gain.cmd + self.gainVal.toUpperCase())
 			},
 		}
 	}
@@ -585,7 +575,7 @@ export function getActionDefinitions(self) {
 		actions.gainD = {
 			name: 'Exposure - Gain Down',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				let index = seriesActions.gain.dropdown.findIndex((GAIN) => GAIN.id == self.data.gainValue)
 				if (index !== -1) {
 					self.gainIndex = index
@@ -598,7 +588,7 @@ export function getActionDefinitions(self) {
 				}
 				self.gainVal = seriesActions.gain.dropdown[self.gainIndex].id
 
-				sendCam(self, seriesActions.gain.cmd + self.gainVal.toUpperCase())
+				await sendCam(self, seriesActions.gain.cmd + self.gainVal.toUpperCase())
 			},
 		}
 	}
@@ -615,8 +605,8 @@ export function getActionDefinitions(self) {
 					choices: seriesActions.gain.dropdown,
 				},
 			],
-			callback: function (action) {
-				sendCam(self, seriesActions.gain.cmd + action.options.val)
+			callback: async (action) => {
+				await sendCam(self, seriesActions.gain.cmd + action.options.val)
 			},
 		}
 	}
@@ -625,7 +615,7 @@ export function getActionDefinitions(self) {
 		actions.shutU = {
 			name: 'Exposure - Shutter Up',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				if (self.shutIndex == seriesActions.shut.dropdown.length) {
 					self.shutIndex = seriesActions.shut.dropdown.length
 				} else if (self.shutIndex < seriesActions.shut.dropdown.length) {
@@ -633,7 +623,7 @@ export function getActionDefinitions(self) {
 				}
 				self.shutVal = seriesActions.shut.dropdown[self.shutIndex].id
 
-				sendCam(self, seriesActions.shut.cmd + self.shutVal.toUpperCase())
+				await sendCam(self, seriesActions.shut.cmd + self.shutVal.toUpperCase())
 			},
 		}
 	}
@@ -642,7 +632,7 @@ export function getActionDefinitions(self) {
 		actions.shutD = {
 			name: 'Exposure - Shutter Down',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				if (self.shutIndex == 0) {
 					self.shutIndex = 0
 				} else if (self.shutIndex > 0) {
@@ -650,7 +640,7 @@ export function getActionDefinitions(self) {
 				}
 				self.shutVal = seriesActions.shut.dropdown[self.shutIndex].id
 
-				sendCam(self, seriesActions.shut.cmd + self.shutVal.toUpperCase())
+				await sendCam(self, seriesActions.shut.cmd + self.shutVal.toUpperCase())
 			},
 		}
 	}
@@ -667,8 +657,8 @@ export function getActionDefinitions(self) {
 					choices: seriesActions.shut.dropdown,
 				},
 			],
-			callback: function (action) {
-				sendCam(self, seriesActions.shut.cmd + action.options.val.toUpperCase())
+			callback: async (action) => {
+				await sendCam(self, seriesActions.shut.cmd + action.options.val.toUpperCase())
 			},
 		}
 	}
@@ -677,7 +667,7 @@ export function getActionDefinitions(self) {
 		actions.pedU = {
 			name: 'Exposure - Pedestal Up',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				if (self.pedestalIndex == seriesActions.ped.dropdown.length) {
 					self.pedestalIndex = seriesActions.ped.dropdown.length
 				} else if (self.pedestalIndex < seriesActions.ped.dropdown.length) {
@@ -685,7 +675,7 @@ export function getActionDefinitions(self) {
 				}
 				self.pedestalVal = seriesActions.ped.dropdown[self.pedestalIndex].id
 
-				sendCam(self, seriesActions.ped.cmd + self.pedestalVal.toUpperCase())
+				await sendCam(self, seriesActions.ped.cmd + self.pedestalVal.toUpperCase())
 			},
 		}
 	}
@@ -694,7 +684,7 @@ export function getActionDefinitions(self) {
 		actions.pedD = {
 			name: 'Exposure - Pedestal Down',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				if (self.pedestalIndex == 0) {
 					self.pedestalIndex = 0
 				} else if (self.pedestalIndex > 0) {
@@ -702,7 +692,7 @@ export function getActionDefinitions(self) {
 				}
 				self.pedestalVal = seriesActions.ped.dropdown[self.pedestalIndex].id
 
-				sendCam(self, seriesActions.ped.cmd + self.pedestalVal.toUpperCase())
+				await sendCam(self, seriesActions.ped.cmd + self.pedestalVal.toUpperCase())
 			},
 		}
 	}
@@ -719,8 +709,8 @@ export function getActionDefinitions(self) {
 					choices: seriesActions.ped.dropdown,
 				},
 			],
-			callback: function (action) {
-				sendCam(self, seriesActions.ped.cmd + action.options.val.toUpperCase())
+			callback: async (action) => {
+				await sendCam(self, seriesActions.ped.cmd + action.options.val.toUpperCase())
 			},
 		}
 	}
@@ -728,7 +718,7 @@ export function getActionDefinitions(self) {
 		actions.filterU = {
 			name: 'Exposure - ND Filter Up',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				if (self.filterIndex == seriesActions.filter.dropdown.length) {
 					self.filterIndex = seriesActions.filter.dropdown.length
 				} else if (self.filterIndex < seriesActions.filter.dropdown.length) {
@@ -736,7 +726,7 @@ export function getActionDefinitions(self) {
 				}
 				self.filterVal = seriesActions.filter.dropdown[self.filterIndex].id
 
-				sendCam(self, seriesActions.filter.cmd + self.filterVal)
+				await sendCam(self, seriesActions.filter.cmd + self.filterVal)
 			},
 		}
 	}
@@ -745,7 +735,7 @@ export function getActionDefinitions(self) {
 		actions.filterD = {
 			name: 'Exposure - ND Filter Down',
 			options: [],
-			callback: function (action) {
+			callback: async (action) => {
 				if (self.filterIndex == 0) {
 					self.filterIndex = 0
 				} else if (self.filterIndex > 0) {
@@ -753,7 +743,7 @@ export function getActionDefinitions(self) {
 				}
 				self.filterVal = seriesActions.filter.dropdown[self.filterIndex].id
 
-				sendCam(self, seriesActions.filter.cmd + self.filterVal)
+				await sendCam(self, seriesActions.filter.cmd + self.filterVal)
 			},
 		}
 	}
@@ -770,8 +760,8 @@ export function getActionDefinitions(self) {
 					choices: seriesActions.filter.dropdown,
 				},
 			],
-			callback: function (action) {
-				sendCam(self, seriesActions.filter.dropdown + action.options.val)
+			callback: async (action) => {
+				await sendCam(self, seriesActions.filter.dropdown + action.options.val)
 			},
 		}
 	}
@@ -792,8 +782,8 @@ export function getActionDefinitions(self) {
 					choices: CHOICES_PRESET,
 				},
 			],
-			callback: function (action) {
-				sendPTZ(self, 'M' + action.options.val)
+			callback: async (action) => {
+				await sendPTZ(self, 'M' + action.options.val)
 			},
 		}
 	}
@@ -809,8 +799,8 @@ export function getActionDefinitions(self) {
 					choices: CHOICES_PRESET,
 				},
 			],
-			callback: function (action) {
-				sendPTZ(self, 'R' + action.options.val)
+			callback: async (action) => {
+				await sendPTZ(self, 'R' + action.options.val)
 			},
 		}
 	}
@@ -830,8 +820,8 @@ export function getActionDefinitions(self) {
 					],
 				},
 			],
-			callback: function (action) {
-				sendCam(self, 'OSE:71:' + action.options.val)
+			callback: async (action) => {
+				await sendCam(self, 'OSE:71:' + action.options.val)
 			},
 		}
 	}
@@ -847,8 +837,8 @@ export function getActionDefinitions(self) {
 					choices: c.CHOICES_PSSPEED,
 				},
 			],
-			callback: function (action) {
-				sendPTZ(self, 'UPVS' + action.options.speed)
+			callback: async (action) => {
+				await sendPTZ(self, 'UPVS' + action.options.speed)
 			},
 		}
 	}
@@ -865,8 +855,8 @@ export function getActionDefinitions(self) {
 					choices: c.CHOICES_PSTIME(),
 				},
 			],
-			callback: function (action) {
-				sendPTZ(self, 'UPVS' + action.options.speed)
+			callback: async (action) => {
+				await sendPTZ(self, 'UPVS' + action.options.speed)
 			},
 		}
 	}
@@ -887,8 +877,8 @@ export function getActionDefinitions(self) {
 					],
 				},
 			],
-			callback: function (action) {
-				sendCam(self, 'OSJ:29:' + action.options.mode)
+			callback: async (action) => {
+				await sendCam(self, 'OSJ:29:' + action.options.mode)
 			},
 		}
 	}
@@ -901,8 +891,8 @@ export function getActionDefinitions(self) {
 		actions.powerOff = {
 			name: 'System - Power Off',
 			options: [],
-			callback: function (action) {
-				sendPTZ(self, 'O0')
+			callback: async (action) => {
+				await sendPTZ(self, 'O0')
 			},
 		}
 	}
@@ -911,8 +901,8 @@ export function getActionDefinitions(self) {
 		actions.powerOn = {
 			name: 'System - Power On',
 			options: [],
-			callback: function (action) {
-				sendPTZ(self, 'O1')
+			callback: async (action) => {
+				await sendPTZ(self, 'O1')
 			},
 		}
 	}
@@ -921,8 +911,8 @@ export function getActionDefinitions(self) {
 		actions.tallyOff = {
 			name: 'System - Tally Off',
 			options: [],
-			callback: function (action) {
-				sendPTZ(self, 'DA0')
+			callback: async (action) => {
+				await sendPTZ(self, 'DA0')
 			},
 		}
 	}
@@ -931,8 +921,8 @@ export function getActionDefinitions(self) {
 		actions.tallyOn = {
 			name: 'System - Tally On',
 			options: [],
-			callback: function (action) {
-				sendPTZ(self, 'DA1')
+			callback: async (action) => {
+				await sendPTZ(self, 'DA1')
 			},
 		}
 	}
@@ -952,8 +942,8 @@ export function getActionDefinitions(self) {
 					],
 				},
 			],
-			callback: function (action) {
-				sendPTZ(self, 'INS' + action.options.position)
+			callback: async (action) => {
+				await sendPTZ(self, 'INS' + action.options.position)
 			},
 		}
 	}
@@ -973,8 +963,8 @@ export function getActionDefinitions(self) {
 					],
 				},
 			],
-			callback: function (action) {
-				sendWeb(self, 'sdctrl?save=' + action.options.value)
+			callback: async (action) => {
+				await sendWeb(self, 'sdctrl?save=' + action.options.value)
 			},
 		}
 	}

@@ -56,20 +56,25 @@ export function setVariables(self) {
 export function checkVariables(self) {
 	const SERIES = getAndUpdateSeries(self)
 
-	self.setVariable('series', self.data.series)
-	self.setVariable('model', self.data.model)
-	self.setVariable('name', self.data.name)
-	self.setVariable('version', self.data.version)
-	self.setVariable('error', self.data.error)
-	self.setVariable('ins', self.data.ins)
-	self.setVariable('power', self.data.power)
-	self.setVariable('tally', self.data.tally)
-	self.setVariable('OAF', self.data.oaf)
-	self.setVariable('irisMode', self.data.irisMode)
-	const gainValue = SERIES.actions.gain.dropdown.find((GAIN) => GAIN.id == self.data.gainValue)
-	self.setVariable('gainValue', gainValue?.label)
-	self.setVariable('presetMode', self.data.recallModePset)
-	self.setVariable('ptSpeedVar', self.ptSpeed)
-	self.setVariable('zSpeedVar', self.zSpeed)
-	self.setVariable('fSpeedVar', self.fSpeed)
+	const gainValue = SERIES.actions.gain
+		? SERIES.actions.gain.dropdown.find((GAIN) => GAIN.id == self.data.gainValue)
+		: null
+
+	self.setVariableValues({
+		series: self.data.series,
+		model: self.data.model,
+		name: self.data.name,
+		version: self.data.version,
+		error: self.data.error,
+		ins: self.data.ins,
+		power: self.data.power,
+		tally: self.data.tally,
+		OAF: self.data.oaf,
+		irisMode: self.data.irisMode,
+		gainValue: gainValue?.label,
+		presetMode: self.data.recallModePset,
+		ptSpeedVar: self.ptSpeed,
+		zSpeedVar: self.zSpeed,
+		fSpeedVar: self.fSpeed,
+	})
 }

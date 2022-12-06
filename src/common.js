@@ -1,4 +1,4 @@
-import { MODELS, SERIES_SPECS } from './models'
+import { MODELS, SERIES_SPECS } from './models.js'
 
 export function getAndUpdateSeries(self) {
 	// Set the model and series selected, if in auto, dettect what model is connected via TCP

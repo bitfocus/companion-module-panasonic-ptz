@@ -1,17 +1,53 @@
-import { runEntrypoint, InstanceBase } from '@companion-module/base'
+import { runEntrypoint, InstanceBase, InstanceStatus } from '@companion-module/base'
 import { UpgradeScripts } from './upgrades.js'
 import { getActionDefinitions } from './actions.js'
 import { getFeedbackDefinitions } from './feedbacks.js'
 import { getPresetDefinitions } from './presets.js'
 import { setVariables, checkVariables } from './variables.js'
 import { ConfigFields } from './config.js'
-
-var net = require('net')
+import * as net from 'net'
+import got from 'got'
 
 // ########################
 // #### Instance setup ####
 // ########################
 class PanasonicPTZInstance extends InstanceBase {
+	async unsubscribeTCPEvents(port) {
+		const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/event?connect=stop&my_port=${port}&uid=0`
+
+		if (this.config.debug) {
+			this.log('debug', `Sending : ${url}`)
+		}
+
+		try {
+			await got.get(url)
+
+			this.log('info', 'un-subscribed: ' + url)
+		} catch (err) {
+			this.log('error', 'Error from PTZ: ' + String(err))
+		}
+	}
+
+	async subscribeTCPEvents(port) {
+		const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/event?connect=start&my_port=${port}&uid=0`
+
+		if (this.config.debug) {
+			this.log('debug', `Sending : ${url}`)
+		}
+
+		try {
+			await got.get(url)
+
+			this.log('info', 'subscribed: ' + url)
+
+			this.updateStatus(InstanceStatus.Ok)
+		} catch (err) {
+			this.log('error', 'Error from PTZ: ' + String(err))
+
+			this.updateStatus(InstanceStatus.Disconnected)
+		}
+	}
+
 	init_tcp() {
 		this.clients = []
 		var tcpPortSelected = this.tcpPortSelected || 31004
@@ -20,56 +56,14 @@ class PanasonicPTZInstance extends InstanceBase {
 		// Remove old TCP Server and close all connections
 		if (this.server) {
 			// Stop getting Status Updates
-			this.system.emit(
-				'rest_get',
-				'http://' +
-					this.config.host +
-					':' +
-					this.config.httpPort +
-					'/cgi-bin/event?connect=stop&my_port=' +
-					tcpPortOld +
-					'&uid=0',
-				(err, result) => {
-					if (err) {
-						this.debug('Error from PTZ: ' + String(err))
-						this.log('error', 'Error from PTZ: ' + String(err))
-						return
-					}
-					if (result.response.req) {
-						this.debug(
-							'un-subscribed: ' +
-								'http://' +
-								this.config.host +
-								':' +
-								this.config.httpPort +
-								'/cgi-bin/event?connect=stop&my_port=' +
-								tcpPortOld +
-								'&uid=0'
-						)
-						if (this.config.debug) {
-							this.log(
-								'warn',
-								'un-subscribed: ' +
-									'http://' +
-									this.config.host +
-									':' +
-									this.config.httpPort +
-									'/cgi-bin/event?connect=stop&my_port=' +
-									tcpPortOld +
-									'&uid=0'
-							)
-						}
-						this.status(this.STATUS_OK)
-					}
-				}
-			)
+			this.unsubscribeTCPEvents(tcpPortOld).catch(() => null)
 
 			// Close and delete server
 			this.server.close()
 			delete this.server
 		}
 
-		this.status(this.STATE_WARNING, 'Connecting')
+		this.updateStatus(InstanceStatus.Connecting)
 
 		if (this.config.host) {
 			// Create a new TCP server.
@@ -82,10 +76,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				// common error handler
 				socket.on('error', () => {
 					this.clients.splice(this.clients.indexOf(socket), 1)
-					this.debug('PTZ errored/died: ' + socket.name)
-					if (this.config.debug) {
-						this.log('error', 'PTZ errored/died: ' + socket.name)
-					}
+					this.log('error', 'PTZ errored/died: ' + socket.name)
 				})
 
 				socket.name = socket.remoteAddress + ':' + socket.remotePort
@@ -99,7 +90,6 @@ class PanasonicPTZInstance extends InstanceBase {
 					let str_raw = data.toString()
 					str_raw = str_raw.split('\r\n') // Split Data in order to remove data before and after command
 					let str = str_raw[1].trim() // remove new line, carage return and so on.
-					this.debug('TCP Recived from PTZ: ' + str) // Debug Recived data
 					if (this.config.debug) {
 						this.log('info', 'Recived CMD: ' + String(str))
 					}
@@ -118,57 +108,22 @@ class PanasonicPTZInstance extends InstanceBase {
 			this.server.on('error', (err) => {
 				// Catch uncaught Exception"EADDRINUSE" error that orcures if the port is already in use
 				if (err.code === 'EADDRINUSE') {
-					this.debug('TCP error: ' + err)
 					// self.log('error', "TCP error: " + String(err));
 					this.log('error', 'TCP error: Please use another TCP port, ' + tcpPortSelected + ' is already in use')
 					this.log('error', 'TCP error: The TCP port must be unique between instances')
 					this.log('error', 'TCP error: Please change it and click apply in ALL PTZ instances')
-					this.status(this.STATUS_ERROR)
+					this.updateStatus(InstanceStatus.UnknownError, 'TCP Port in use')
 
 					// Cancel the subscription of info from the PTZ
-					this.system.emit(
-						'rest_get',
-						'http://' +
-							this.config.host +
-							':' +
-							this.config.httpPort +
-							'/cgi-bin/event?connect=stop&my_port=' +
-							tcpPortSelected +
-							'&uid=0',
-						(err, result) => {
-							if (err) {
-								this.log('error', 'Error from PTZ: ' + err)
-								return
-							}
-							if (result.response.req) {
-								if (this.config.debug) {
-									this.log(
-										'warn',
-										'un-subscribed: ' +
-											'http://' +
-											this.config.host +
-											':' +
-											this.config.httpPort +
-											'/cgi-bin/event?connect=stop&my_port=' +
-											tcpPortOld +
-											'&uid=0'
-									)
-								}
-								this.status(this.STATUS_OK)
-							}
-						}
-					)
+					this.unsubscribeTCPEvents(tcpPortSelected).catch(() => null)
 				} else {
-					this.debug('TCP error: ' + err)
-					if (this.config.debug) {
-						this.log('error', 'TCP error: ' + String(err))
-					}
+					this.log('error', 'TCP error: ' + String(err))
 				}
 			})
 
 			// Listens for a client to make a connection request.
 			try {
-				this.debug('Trying to listen to TCP from PTZ')
+				this.log('debug', 'Trying to listen to TCP from PTZ')
 
 				if (this.config.autoTCP) {
 					this.server.listen(0)
@@ -178,60 +133,13 @@ class PanasonicPTZInstance extends InstanceBase {
 				tcpPortSelected = this.server.address().port
 				this.tcpPortSelected = tcpPortSelected
 
-				this.debug('Server listening for PTZ updates on localhost:' + tcpPortSelected)
-				if (this.config.debug) {
-					this.log('warn', 'Listening for PTZ updates on localhost:' + tcpPortSelected)
-				}
+				this.log('info', 'Listening for PTZ updates on localhost:' + tcpPortSelected)
 
 				// Subscibe to updates from PTZ
-				this.system.emit(
-					'rest_get',
-					'http://' +
-						this.config.host +
-						':' +
-						this.config.httpPort +
-						'/cgi-bin/event?connect=start&my_port=' +
-						tcpPortSelected +
-						'&uid=0',
-					(err, result) => {
-						this.debug(
-							'subscribed: ' +
-								'http://' +
-								this.config.host +
-								':' +
-								this.config.httpPort +
-								'/cgi-bin/event?connect=start&my_port=' +
-								tcpPortSelected +
-								'&uid=0'
-						)
-						if (this.config.debug) {
-							this.log(
-								'warn',
-								'subscribed: ' +
-									'http://' +
-									this.config.host +
-									':' +
-									this.config.httpPort +
-									'/cgi-bin/event?connect=start&my_port=' +
-									tcpPortSelected +
-									'&uid=0'
-							)
-						}
-						if (err) {
-							this.log('error', 'Error from PTZ: ' + String(err))
-							return
-						}
-						if (result.response.req) {
-							this.status(this.STATUS_OK)
-						}
-					}
-				)
+				this.subscribeTCPEvents(tcpPortSelected)
 			} catch (err) {
-				this.debug("Couldn't bind to TCP port " + tcpPortSelected + ' on localhost: ' + String(err))
-				if (this.config.debug) {
-					this.log('error', "Couldn't bind to TCP port " + tcpPortSelected + ' on localhost: ' + String(err))
-				}
-				this.status(this.STATUS_ERROR)
+				this.log('error', "Couldn't bind to TCP port " + tcpPortSelected + ' on localhost: ' + String(err))
+				this.updateStatus(InstanceStatus.UnknownError, 'TCP Port failure')
 			}
 
 			// Catch uncaught Exception errors that orcure
@@ -246,29 +154,19 @@ class PanasonicPTZInstance extends InstanceBase {
 	}
 	getCameraInformation() {
 		if (this.config.host) {
-			this.system.emit(
-				'rest_get',
-				'http://' + this.config.host + ':' + this.config.httpPort + '/live/camdata.html',
-				(err, result) => {
-					// If there was an Error
-					if (err) {
-						this.log('error', 'Error from PTZ: ' + String(err))
-						return
-					}
+			const url = `http://${this.config.host}:${this.config.httpPort}/live/camdata.html`
 
-					// If We get a responce, store the values
-					if (result.response.req) {
-						var str_raw = String(result.data)
-						var str = {}
+			got
+				.get(url)
+				.then((response) => {
+					if (response.body) {
+						const lines = response.body.split('\r\n') // Split Data in order to remove data before and after command
 
-						str_raw = str_raw.split('\r\n') // Split Data in order to remove data before and after command
-
-						for (var i in str_raw) {
-							str = str_raw[i].trim() // remove new line, carage return and so on.
-							str = str.split(':') // Split Commands and data
-							this.debug('HTTP Recived from PTZ: ' + str_raw[i]) // Debug Recived data
+						for (let line of lines) {
+							// remove new line, carage return and so on.
+							const str = line.trim().split(':') // Split Commands and data
 							if (this.config.debug) {
-								this.log('info', 'Recived CMD: ' + String(str_raw[i]))
+								this.log('info', 'Recived CMD: ' + String(str))
 							}
 							// Store Data
 							this.storeData(str)
@@ -277,8 +175,10 @@ class PanasonicPTZInstance extends InstanceBase {
 						this.checkVariables()
 						this.checkFeedbacks()
 					}
-				}
-			)
+				})
+				.catch((err) => {
+					this.log('error', 'Error from PTZ: ' + String(err))
+				})
 		}
 	}
 	storeData(str) {
@@ -371,29 +271,11 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 	}
 	// When module gets deleted
-	destroy() {
+	async destroy() {
 		// Remove TCP Server and close all connections
 		if (this.server) {
 			// Stop getting Status Updates
-			this.system.emit(
-				'rest_get',
-				'http://' +
-					this.config.host +
-					':' +
-					this.config.httpPort +
-					'/cgi-bin/event?connect=stop&my_port=' +
-					this.tcpPortSelected +
-					'&uid=0',
-				(err, result) => {
-					if (err) {
-						this.log('error', 'Error from PTZ: ' + err)
-						return
-					}
-					if (result.response.req) {
-						this.status(this.STATUS_OK)
-					}
-				}
-			)
+			await this.unsubscribeTCPEvents(this.tcpPortSelected)
 
 			// Close and delete server
 			this.server.close()
@@ -401,7 +283,9 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 	}
 	// Initalize module
-	init() {
+	async init(config) {
+		this.config = config
+
 		this.data = {
 			debug: false,
 			modelTCP: 'NaN',
@@ -444,7 +328,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.config.model = this.config.model || 'Auto'
 		this.config.debug = this.config.debug || false
 
-		this.status(this.STATUS_WARNING, 'connecting')
+		this.updateStatus(InstanceStatus.Connecting)
 		this.getCameraInformation()
 		this.init_tcp()
 		this.init_actions() // export actions
@@ -455,9 +339,9 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.checkFeedbacks()
 	}
 	// Update module after a config change
-	updateConfig(config) {
+	async configUpdated(config) {
 		this.config = config
-		this.status(this.STATUS_UNKNOWN)
+		this.updateStatus(InstanceStatus.Connecting)
 		this.getCameraInformation()
 		this.init_tcp()
 		this.init_actions() // export actions
@@ -497,7 +381,7 @@ class PanasonicPTZInstance extends InstanceBase {
 	}
 
 	init_actions() {
-		this.setActions(getActionDefinitions(this))
+		this.setActionDefinitions(getActionDefinitions(this))
 	}
 }
 
