@@ -1,8 +1,9 @@
 import { runEntrypoint, InstanceBase } from '@companion-module/base'
 import { UpgradeScripts } from './upgrades.js'
 import { getActionDefinitions } from './actions.js'
+import { ConfigFields } from './config.js'
+
 var net = require('net')
-var { MODELS } = require('./models.js')
 var presets = require('./presets.js')
 var feedbacks = require('./feedbacks.js')
 var variables = require('./variables.js')
@@ -562,149 +563,12 @@ class PanasonicPTZInstance extends InstanceBase {
 		self.updateVariableAndInstanceLists()
 		self.setupEventListeners()
 	}
-	// Return config fields for web config
-	config_fields() {
-		var self = this
 
-		return [
-			{
-				type: 'text',
-				id: 'info',
-				width: 12,
-				label: 'Information',
-				value:
-					"This module controls Panasonic PTZ cameras, you can find supported models in the dropdown below.<br/>If your camera isn't in the list below, feel free to try it anyway the option 'Other Cameras'.",
-			},
-			{
-				type: 'textinput',
-				id: 'host',
-				label: 'Camera IP',
-				width: 4,
-				// regex: self.REGEX_IP
-			},
-			{
-				type: 'textinput',
-				id: 'httpPort',
-				label: 'HTTP Port (Default: 80)',
-				width: 3,
-				default: 80,
-				regex: self.REGEX_PORT,
-			},
-			{
-				type: 'text',
-				id: 'dummy1',
-				width: 12,
-				label: ' ',
-				value: ' ',
-			},
-			{
-				type: 'text',
-				id: 'modelInfo',
-				width: 12,
-				label: 'Camera Model',
-				value: 'Please Select the camera model or feel free to leave it on auto.',
-			},
-			{
-				type: 'dropdown',
-				id: 'model',
-				label: 'Select Your Camera Model',
-				width: 6,
-				default: 'Auto',
-				choices: MODELS,
-				minChoicesForSearch: 5,
-			},
-			{
-				type: 'text',
-				id: 'dummy2',
-				width: 12,
-				label: ' ',
-				value: ' ',
-			},
-			{
-				type: 'text',
-				id: 'Info',
-				width: 12,
-				label: 'Other Settings',
-				value:
-					'These setting can be left on the default values and should give you a consistent setup, but they are there for you to use if need be.',
-			},
-			{
-				type: 'checkbox',
-				id: 'tallyOnEnabled',
-				width: 1,
-				label: 'Enable',
-				default: true,
-			},
-			{
-				type: 'text',
-				id: 'tallyOnInfo',
-				width: 4,
-				label: 'Tally On',
-				value: 'Set camera tally ON when the instance variable equals the value',
-			},
-			{
-				type: 'dropdown',
-				id: 'tallyOnVariable',
-				label: 'Tally On Variable',
-				width: 4,
-				tooltip: 'The instance label and variable name',
-				choices: self.dynamicVariableChoices,
-				minChoicesForSearch: 5,
-			},
-			{
-				type: 'textinput',
-				id: 'tallyOnValue',
-				label: 'Tally On Value',
-				width: 3,
-				tooltip:
-					'When the variable equals this value, the camera tally light will be turned on.  Also supports dynamic variable references.  For example, $(atem:short_1)',
-			},
-			{
-				type: 'checkbox',
-				id: 'autoTCP',
-				width: 1,
-				label: 'Enable',
-				default: true,
-			},
-			{
-				type: 'text',
-				id: 'autoTCPInfo',
-				width: 4,
-				label: 'Auto TCP',
-				value: 'This will ignore the port selected and find a port Automaticly',
-			},
-			{
-				type: 'textinput',
-				id: 'tcpPort',
-				label: 'TCP Port',
-				width: 3,
-				default: 31004,
-				regex: self.REGEX_PORT,
-			},
-			{
-				type: 'text',
-				id: 'manualTCPInfo',
-				width: 4,
-				label: 'Manual TCP Port',
-				value: 'TCP Port (Default: 31004) only used when "Auto TCP" is OFF/Disabled',
-			},
-			{
-				type: 'checkbox',
-				id: 'debug',
-				width: 1,
-				label: 'Enable',
-				default: false,
-			},
-			{
-				type: 'text',
-				id: 'debugInfo',
-				width: 11,
-				label: 'Enable Debug To Log Window',
-				value:
-					'Requires Companion to be restarted. But this will allow you the see what is being sent from the module and what is being received from the camera.',
-			},
-		]
+	// Return config fields for web config
+	getConfigFields() {
+		return ConfigFields
 	}
+
 	// ##########################
 	// #### Instance Presets ####
 	// ##########################

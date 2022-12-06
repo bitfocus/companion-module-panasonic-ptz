@@ -1,38 +1,19 @@
 var { MODELS, SERIES_SPECS } = require('./models.js')
 const c = require('./choices.js')
+const { getAndUpdateSeries } = require('./common.js')
 
 module.exports = {
 	setPresets: function (i) {
 		var self = i
 		var presets = []
-		var SERIES = {}
 
 		const foregroundColor = self.rgb(255, 255, 255) // White
 		const backgroundColorRed = self.rgb(255, 0, 0) // Red
 		const backgroundColorGreen = self.rgb(0, 255, 0) // Green
 		const backgroundColorOrange = self.rgb(255, 102, 0) // Orange
 
-		// Set the model and series selected, if in auto, dettect what model is connected via TCP
-		if (self.config.model === 'Auto') {
-			self.data.model = self.data.modelTCP
-		} else {
-			self.data.model = self.config.model
-		}
+		const SERIES = getAndUpdateSeries(self)
 
-		if (self.data.model !== 'NaN') {
-			self.data.series = MODELS.find((MODELS) => MODELS.id == self.data.model).series
-		}
-
-		// Find the specific commands for a given series
-		if (
-			self.data.series === 'Auto' ||
-			self.data.series === 'Other' ||
-			SERIES_SPECS.find((SERIES_SPECS) => SERIES_SPECS.id == self.data.series) == undefined
-		) {
-			SERIES = SERIES_SPECS.find((SERIES_SPECS) => SERIES_SPECS.id == 'Other')
-		} else {
-			SERIES = SERIES_SPECS.find((SERIES_SPECS) => SERIES_SPECS.id == self.data.series)
-		}
 		var s = SERIES.actions
 		// console.log(SERIES);
 
