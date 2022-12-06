@@ -13,253 +13,251 @@ var net = require('net')
 // ########################
 class PanasonicPTZInstance extends InstanceBase {
 	init_tcp() {
-		var self = this
-		self.clients = []
-		var tcpPortSelected = self.tcpPortSelected || 31004
-		var tcpPortOld = self.tcpPortOld || 31004
+		this.clients = []
+		var tcpPortSelected = this.tcpPortSelected || 31004
+		var tcpPortOld = this.tcpPortOld || 31004
 
 		// Remove old TCP Server and close all connections
-		if (self.server !== undefined) {
+		if (this.server) {
 			// Stop getting Status Updates
-			self.system.emit(
+			this.system.emit(
 				'rest_get',
 				'http://' +
-					self.config.host +
+					this.config.host +
 					':' +
-					self.config.httpPort +
+					this.config.httpPort +
 					'/cgi-bin/event?connect=stop&my_port=' +
 					tcpPortOld +
 					'&uid=0',
-				function (err, result) {
+				(err, result) => {
 					if (err) {
-						self.debug('Error from PTZ: ' + String(err))
-						self.log('error', 'Error from PTZ: ' + String(err))
+						this.debug('Error from PTZ: ' + String(err))
+						this.log('error', 'Error from PTZ: ' + String(err))
 						return
 					}
-					if (('data', result.response.req)) {
-						self.debug(
+					if (result.response.req) {
+						this.debug(
 							'un-subscribed: ' +
 								'http://' +
-								self.config.host +
+								this.config.host +
 								':' +
-								self.config.httpPort +
+								this.config.httpPort +
 								'/cgi-bin/event?connect=stop&my_port=' +
 								tcpPortOld +
 								'&uid=0'
 						)
-						if (self.config.debug === true) {
-							self.log(
+						if (this.config.debug) {
+							this.log(
 								'warn',
 								'un-subscribed: ' +
 									'http://' +
-									self.config.host +
+									this.config.host +
 									':' +
-									self.config.httpPort +
+									this.config.httpPort +
 									'/cgi-bin/event?connect=stop&my_port=' +
 									tcpPortOld +
 									'&uid=0'
 							)
 						}
-						self.status(self.STATUS_OK)
+						this.status(this.STATUS_OK)
 					}
 				}
 			)
 
 			// Close and delete server
-			self.server.close()
-			delete self.server
+			this.server.close()
+			delete this.server
 		}
 
-		self.status(self.STATE_WARNING, 'Connecting')
+		this.status(this.STATE_WARNING, 'Connecting')
 
-		if (self.config.host) {
+		if (this.config.host) {
 			// Create a new TCP server.
-			self.server = net.createServer(function (socket) {
+			this.server = net.createServer((socket) => {
 				// When the client requests to end the TCP connection with the server, the server ends the connection.
-				socket.on('end', function () {
-					self.clients.splice(self.clients.indexOf(socket), 1)
+				socket.on('end', () => {
+					this.clients.splice(this.clients.indexOf(socket), 1)
 				})
 
 				// common error handler
-				socket.on('error', function () {
-					self.clients.splice(self.clients.indexOf(socket), 1)
-					self.debug('PTZ errored/died: ' + socket.name)
-					if (self.config.debug == true) {
-						self.log('error', 'PTZ errored/died: ' + socket.name)
+				socket.on('error', () => {
+					this.clients.splice(this.clients.indexOf(socket), 1)
+					this.debug('PTZ errored/died: ' + socket.name)
+					if (this.config.debug) {
+						this.log('error', 'PTZ errored/died: ' + socket.name)
 					}
 				})
 
 				socket.name = socket.remoteAddress + ':' + socket.remotePort
 				tcpPortOld = socket.address().port
-				self.tcpPortOld = tcpPortOld
-				self.clients.push(socket)
+				this.tcpPortOld = tcpPortOld
+				this.clients.push(socket)
 
 				// Receive data from the client.
-				socket.on('data', function (data) {
-					let str_raw = String(data)
+				socket.on('data', (data) => {
+					// TODO - TCP doesn't guarantee messages will be chunked sensibly. When it doesnt, this logic will breaks
+					let str_raw = data.toString()
 					str_raw = str_raw.split('\r\n') // Split Data in order to remove data before and after command
 					let str = str_raw[1].trim() // remove new line, carage return and so on.
-					self.debug('TCP Recived from PTZ: ' + str) // Debug Recived data
-					if (self.config.debug == true) {
-						self.log('info', 'Recived CMD: ' + String(str))
+					this.debug('TCP Recived from PTZ: ' + str) // Debug Recived data
+					if (this.config.debug) {
+						this.log('info', 'Recived CMD: ' + String(str))
 					}
 					str = str.split(':') // Split Commands and data
 
 					// Store Data
-					self.storeData(str)
+					this.storeData(str)
 
 					// Update Varibles and Feedbacks
-					self.checkVariables()
-					self.checkFeedbacks()
+					this.checkVariables()
+					this.checkFeedbacks()
 				})
 			})
 
 			// common error handler
-			self.server.on('error', function (err) {
+			this.server.on('error', (err) => {
 				// Catch uncaught Exception"EADDRINUSE" error that orcures if the port is already in use
 				if (err.code === 'EADDRINUSE') {
-					self.debug('TCP error: ' + err)
+					this.debug('TCP error: ' + err)
 					// self.log('error', "TCP error: " + String(err));
-					self.log('error', 'TCP error: Please use another TCP port, ' + tcpPortSelected + ' is already in use')
-					self.log('error', 'TCP error: The TCP port must be unique between instances')
-					self.log('error', 'TCP error: Please change it and click apply in ALL PTZ instances')
-					self.status(self.STATUS_ERROR)
+					this.log('error', 'TCP error: Please use another TCP port, ' + tcpPortSelected + ' is already in use')
+					this.log('error', 'TCP error: The TCP port must be unique between instances')
+					this.log('error', 'TCP error: Please change it and click apply in ALL PTZ instances')
+					this.status(this.STATUS_ERROR)
 
 					// Cancel the subscription of info from the PTZ
-					self.system.emit(
+					this.system.emit(
 						'rest_get',
 						'http://' +
-							self.config.host +
+							this.config.host +
 							':' +
-							self.config.httpPort +
+							this.config.httpPort +
 							'/cgi-bin/event?connect=stop&my_port=' +
 							tcpPortSelected +
 							'&uid=0',
-						function (err, result) {
+						(err, result) => {
 							if (err) {
-								self.log('error', 'Error from PTZ: ' + err)
+								this.log('error', 'Error from PTZ: ' + err)
 								return
 							}
-							if (('data', result.response.req)) {
-								if (self.config.debug === true) {
-									self.log(
+							if (result.response.req) {
+								if (this.config.debug) {
+									this.log(
 										'warn',
 										'un-subscribed: ' +
 											'http://' +
-											self.config.host +
+											this.config.host +
 											':' +
-											self.config.httpPort +
+											this.config.httpPort +
 											'/cgi-bin/event?connect=stop&my_port=' +
 											tcpPortOld +
 											'&uid=0'
 									)
 								}
-								self.status(self.STATUS_OK)
+								this.status(this.STATUS_OK)
 							}
 						}
 					)
 				} else {
-					self.debug('TCP error: ' + err)
-					if (self.config.debug == true) {
-						self.log('error', 'TCP error: ' + String(err))
+					this.debug('TCP error: ' + err)
+					if (this.config.debug) {
+						this.log('error', 'TCP error: ' + String(err))
 					}
 				}
 			})
 
 			// Listens for a client to make a connection request.
 			try {
-				self.debug('Trying to listen to TCP from PTZ')
+				this.debug('Trying to listen to TCP from PTZ')
 
-				if (self.config.autoTCP == true) {
-					self.server.listen(0)
+				if (this.config.autoTCP) {
+					this.server.listen(0)
 				} else {
-					self.server.listen(self.config.tcpPort)
+					this.server.listen(this.config.tcpPort)
 				}
-				tcpPortSelected = self.server.address().port
-				self.tcpPortSelected = tcpPortSelected
+				tcpPortSelected = this.server.address().port
+				this.tcpPortSelected = tcpPortSelected
 
-				self.debug('Server listening for PTZ updates on localhost:' + tcpPortSelected)
-				if (self.config.debug == true) {
-					self.log('warn', 'Listening for PTZ updates on localhost:' + tcpPortSelected)
+				this.debug('Server listening for PTZ updates on localhost:' + tcpPortSelected)
+				if (this.config.debug) {
+					this.log('warn', 'Listening for PTZ updates on localhost:' + tcpPortSelected)
 				}
 
 				// Subscibe to updates from PTZ
-				self.system.emit(
+				this.system.emit(
 					'rest_get',
 					'http://' +
-						self.config.host +
+						this.config.host +
 						':' +
-						self.config.httpPort +
+						this.config.httpPort +
 						'/cgi-bin/event?connect=start&my_port=' +
 						tcpPortSelected +
 						'&uid=0',
-					function (err, result) {
-						self.debug(
+					(err, result) => {
+						this.debug(
 							'subscribed: ' +
 								'http://' +
-								self.config.host +
+								this.config.host +
 								':' +
-								self.config.httpPort +
+								this.config.httpPort +
 								'/cgi-bin/event?connect=start&my_port=' +
 								tcpPortSelected +
 								'&uid=0'
 						)
-						if (self.config.debug == true) {
-							self.log(
+						if (this.config.debug) {
+							this.log(
 								'warn',
 								'subscribed: ' +
 									'http://' +
-									self.config.host +
+									this.config.host +
 									':' +
-									self.config.httpPort +
+									this.config.httpPort +
 									'/cgi-bin/event?connect=start&my_port=' +
 									tcpPortSelected +
 									'&uid=0'
 							)
 						}
 						if (err) {
-							self.log('error', 'Error from PTZ: ' + String(err))
+							this.log('error', 'Error from PTZ: ' + String(err))
 							return
 						}
-						if (('data', result.response.req)) {
-							self.status(self.STATUS_OK)
+						if (result.response.req) {
+							this.status(this.STATUS_OK)
 						}
 					}
 				)
 			} catch (err) {
-				self.debug("Couldn't bind to TCP port " + tcpPortSelected + ' on localhost: ' + String(err))
-				if (self.config.debug == true) {
-					self.log('error', "Couldn't bind to TCP port " + tcpPortSelected + ' on localhost: ' + String(err))
+				this.debug("Couldn't bind to TCP port " + tcpPortSelected + ' on localhost: ' + String(err))
+				if (this.config.debug) {
+					this.log('error', "Couldn't bind to TCP port " + tcpPortSelected + ' on localhost: ' + String(err))
 				}
-				self.status(self.STATUS_ERROR)
+				this.status(this.STATUS_ERROR)
 			}
 
 			// Catch uncaught Exception errors that orcure
-			// process.on('uncaughtException', function (err) {
+			// process.on('uncaughtException',  (err) => {
 			// 	debug(err)
 			// 	console.log(err)
 			// 	// process.exit(1)
 			// })
 		}
 
-		return self
+		return this
 	}
 	getCameraInformation() {
-		var self = this
-
-		if (self.config.host) {
-			self.system.emit(
+		if (this.config.host) {
+			this.system.emit(
 				'rest_get',
-				'http://' + self.config.host + ':' + self.config.httpPort + '/live/camdata.html',
-				function (err, result) {
+				'http://' + this.config.host + ':' + this.config.httpPort + '/live/camdata.html',
+				(err, result) => {
 					// If there was an Error
 					if (err) {
-						self.log('error', 'Error from PTZ: ' + String(err))
+						this.log('error', 'Error from PTZ: ' + String(err))
 						return
 					}
 
 					// If We get a responce, store the values
-					if (('data', result.response.req)) {
+					if (result.response.req) {
 						var str_raw = String(result.data)
 						var str = {}
 
@@ -268,107 +266,105 @@ class PanasonicPTZInstance extends InstanceBase {
 						for (var i in str_raw) {
 							str = str_raw[i].trim() // remove new line, carage return and so on.
 							str = str.split(':') // Split Commands and data
-							self.debug('HTTP Recived from PTZ: ' + str_raw[i]) // Debug Recived data
-							if (self.config.debug == true) {
-								self.log('info', 'Recived CMD: ' + String(str_raw[i]))
+							this.debug('HTTP Recived from PTZ: ' + str_raw[i]) // Debug Recived data
+							if (this.config.debug) {
+								this.log('info', 'Recived CMD: ' + String(str_raw[i]))
 							}
 							// Store Data
-							self.storeData(str)
+							this.storeData(str)
 						}
 
-						self.checkVariables()
-						self.checkFeedbacks()
+						this.checkVariables()
+						this.checkFeedbacks()
 					}
 				}
 			)
 		}
 	}
 	storeData(str) {
-		var self = this
-
 		if (str[0].substring(0, 3) === 'rER') {
 			if (str[0] === 'rER00') {
-				self.data.error = 'No Errors'
+				this.data.error = 'No Errors'
 			} else {
-				self.data.error = str[0]
+				this.data.error = str[0]
 			}
 		}
 
 		// Store Firmware Version (not supported for the AK-UB300.)
 		if (str[0].substring(0, 4) === 'qSV3') {
-			self.data.version = str[0].substring(4)
+			this.data.version = str[0].substring(4)
 		}
 
 		// Store Values from Events
 		switch (str[0]) {
 			case 'OID':
-				self.data.modelTCP = str[1]
+				this.data.modelTCP = str[1]
 				// if a new model is detected or seected, re-initialise all actions, variable and feedbacks
-				if (self.data.modelTCP !== self.data.model) {
-					self.init_actions() // export actions
-					self.init_presets()
-					self.init_variables()
-					self.checkVariables()
-					self.init_feedbacks()
-					self.checkFeedbacks()
+				if (this.data.modelTCP !== this.data.model) {
+					this.init_actions() // export actions
+					this.init_presets()
+					this.init_variables()
+					this.checkVariables()
+					this.init_feedbacks()
+					this.checkFeedbacks()
 				}
 				break
 			case 'TITLE':
-				self.data.name = str[1]
+				this.data.name = str[1]
 				break
 			case 'p1':
-				self.data.power = 'ON'
+				this.data.power = 'ON'
 				break
 			case 'p0':
-				self.data.power = 'OFF'
+				this.data.power = 'OFF'
 				break
 			case 'TLR': // works on UE-XXX series for tally
 				if (str[1] == '0') {
-					self.data.tally = 'OFF'
+					this.data.tally = 'OFF'
 				} else if (str[1] == '1') {
-					self.data.tally = 'ON'
+					this.data.tally = 'ON'
 				}
 				break
 			case 'dA0':
-				self.data.tally = 'OFF'
+				this.data.tally = 'OFF'
 				break
 			case 'dA1':
-				self.data.tally = 'ON'
+				this.data.tally = 'ON'
 				break
 
 			case 'iNS0':
-				self.data.ins = 'Desktop'
+				this.data.ins = 'Desktop'
 				break
 			case 'iNS1':
-				self.data.ins = 'Hanging'
+				this.data.ins = 'Hanging'
 				break
 			case 'OAF':
 				if (str[1] == '0') {
-					self.data.oaf = 'Manual'
+					this.data.oaf = 'Manual'
 				} else if (str[1] == '1') {
-					self.data.oaf = 'Auto'
+					this.data.oaf = 'Auto'
 				}
 				break
 			case 'd30':
-				self.data.irisMode = 'Manual'
+				this.data.irisMode = 'Manual'
 				break
 			case 'd31':
-				self.data.irisMode = 'Auto'
+				this.data.irisMode = 'Auto'
 				break
 			case 'OSE': // All OSE:xx Commands
 				if (str[1] == '71') {
 					// OSE:71:
 					if (str[2] == '0') {
-						self.data.recallModePset = 'Mode A'
+						this.data.recallModePset = 'Mode A'
 					} else if (str[2] == '1') {
-						self.data.recallModePset = 'Mode B'
+						this.data.recallModePset = 'Mode B'
 					} else if (str[2] == '2') {
-						self.data.recallModePset = 'Mode C'
+						this.data.recallModePset = 'Mode C'
 					}
 				}
 				break
 			case 'OGU':
-				self.data.gainValue = str[1].toString().replace('0x', '')
+				this.data.gainValue = str[1].toString().replace('0x', '')
 				break
 			default:
 				break
@@ -376,41 +372,37 @@ class PanasonicPTZInstance extends InstanceBase {
 	}
 	// When module gets deleted
 	destroy() {
-		var self = this
-
 		// Remove TCP Server and close all connections
-		if (self.server !== undefined) {
+		if (this.server) {
 			// Stop getting Status Updates
-			self.system.emit(
+			this.system.emit(
 				'rest_get',
 				'http://' +
-					self.config.host +
+					this.config.host +
 					':' +
-					self.config.httpPort +
+					this.config.httpPort +
 					'/cgi-bin/event?connect=stop&my_port=' +
-					self.tcpPortSelected +
+					this.tcpPortSelected +
 					'&uid=0',
-				function (err, result) {
+				(err, result) => {
 					if (err) {
-						self.log('error', 'Error from PTZ: ' + err)
+						this.log('error', 'Error from PTZ: ' + err)
 						return
 					}
-					if (('data', result.response.req)) {
-						self.status(self.STATUS_OK)
+					if (result.response.req) {
+						this.status(this.STATUS_OK)
 					}
 				}
 			)
 
 			// Close and delete server
-			self.server.close()
-			delete self.server
+			this.server.close()
+			delete this.server
 		}
 	}
 	// Initalize module
 	init() {
-		var self = this
-
-		self.data = {
+		this.data = {
 			debug: false,
 			modelTCP: 'NaN',
 			model: 'Auto',
@@ -426,55 +418,54 @@ class PanasonicPTZInstance extends InstanceBase {
 			recallModePset: 'NaN',
 		}
 
-		self.ptSpeed = 25
-		self.ptSpeedIndex = 25
-		self.zSpeed = 25
-		self.zSpeedIndex = 25
-		self.fSpeed = 25
-		self.fSpeedIndex = 25
-		self.gainVal = '08'
-		self.gainIndex = 0
-		self.irisVal = 50
-		self.irisIndex = 50
-		self.filterVal = 0
-		self.filterIndex = 0
-		self.shutVal = 0
-		self.shutIndex = 0
-		self.pedestalVal = '096'
-		self.pedestalIndex = 150
-		self.tcpPortSelected = 31004
-		self.tcpPortOld = this.config.tcpPort || 31004
+		this.ptSpeed = 25
+		this.ptSpeedIndex = 25
+		this.zSpeed = 25
+		this.zSpeedIndex = 25
+		this.fSpeed = 25
+		this.fSpeedIndex = 25
+		this.gainVal = '08'
+		this.gainIndex = 0
+		this.irisVal = 50
+		this.irisIndex = 50
+		this.filterVal = 0
+		this.filterIndex = 0
+		this.shutVal = 0
+		this.shutIndex = 0
+		this.pedestalVal = '096'
+		this.pedestalIndex = 150
+		this.tcpPortSelected = 31004
+		this.tcpPortOld = this.config.tcpPort || 31004
 
-		self.config.host = this.config.host || ''
-		self.config.httpPort = this.config.httpPort || 80
-		self.config.tcpPort = this.config.tcpPort || 31004
-		self.config.autoTCP = this.config.autoTCP
-		self.config.model = this.config.model || 'Auto'
-		self.config.debug = this.config.debug || false
+		this.config.host = this.config.host || ''
+		this.config.httpPort = this.config.httpPort || 80
+		this.config.tcpPort = this.config.tcpPort || 31004
+		this.config.autoTCP = this.config.autoTCP || true
+		this.config.model = this.config.model || 'Auto'
+		this.config.debug = this.config.debug || false
 
-		self.status(self.STATUS_WARNING, 'connecting')
-		self.getCameraInformation()
-		self.init_tcp()
-		self.init_actions() // export actions
-		self.init_presets()
-		self.init_variables()
-		self.checkVariables()
-		self.init_feedbacks()
-		self.checkFeedbacks()
+		this.status(this.STATUS_WARNING, 'connecting')
+		this.getCameraInformation()
+		this.init_tcp()
+		this.init_actions() // export actions
+		this.init_presets()
+		this.init_variables()
+		this.checkVariables()
+		this.init_feedbacks()
+		this.checkFeedbacks()
 	}
 	// Update module after a config change
 	updateConfig(config) {
-		var self = this
-		self.config = config
-		self.status(self.STATUS_UNKNOWN)
-		self.getCameraInformation()
-		self.init_tcp()
-		self.init_actions() // export actions
-		self.init_presets()
-		self.init_variables()
-		self.checkVariables()
-		self.init_feedbacks()
-		self.checkFeedbacks()
+		this.config = config
+		this.status(this.STATUS_UNKNOWN)
+		this.getCameraInformation()
+		this.init_tcp()
+		this.init_actions() // export actions
+		this.init_presets()
+		this.init_variables()
+		this.checkVariables()
+		this.init_feedbacks()
+		this.checkFeedbacks()
 	}
 
 	// Return config fields for web config
