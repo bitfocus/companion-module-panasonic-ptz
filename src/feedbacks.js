@@ -60,8 +60,8 @@ export function getFeedbackDefinitions(self) {
 	if (SERIES.feedbacks.tallyState) {
 		feedbacks.tallyState = {
 			type: 'boolean',
-			name: 'System - Tally State',
-			description: 'Indicate if Tally is ON or OFF',
+			name: 'System - Red Tally State',
+			description: 'Indicate if red Tally is ON or OFF',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorRed,
@@ -88,6 +88,48 @@ export function getFeedbackDefinitions(self) {
 						break
 					case '1':
 						if (self.data.tally === 'ON') {
+							return true
+						}
+						break
+					default:
+						break
+				}
+				return false
+			},
+		}
+	}
+
+	if (SERIES.feedbacks.tally2State) {
+		feedbacks.tally2State = {
+			type: 'boolean',
+			name: 'System - Green Tally State',
+			description: 'Indicate if green Tally is ON or OFF',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorGreen,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Indicate in X State',
+					id: 'option',
+					default: '1',
+					choices: [
+						{ id: '0', label: 'OFF' },
+						{ id: '1', label: 'ON' },
+					],
+				},
+			],
+			callback: function (feedback) {
+				const opt = feedback.options
+				switch (opt.option) {
+					case '0':
+						if (self.data.tally2 === 'OFF') {
+							return true
+						}
+						break
+					case '1':
+						if (self.data.tally2 === 'ON') {
 							return true
 						}
 						break

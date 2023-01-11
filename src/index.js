@@ -218,20 +218,26 @@ class PanasonicPTZInstance extends InstanceBase {
 			case 'p0':
 				this.data.power = 'OFF'
 				break
-			case 'TLR': // works on UE-XXX series for tally
-				if (str[1] == '0') {
-					this.data.tally = 'OFF'
-				} else if (str[1] == '1') {
-					this.data.tally = 'ON'
-				}
-				break
 			case 'dA0':
 				this.data.tally = 'OFF'
 				break
 			case 'dA1':
 				this.data.tally = 'ON'
 				break
-
+			case 'TLR':
+				if (str[1] == '0') {
+					this.data.tally = 'OFF'
+				} else if (str[1] == '1') {
+					this.data.tally = 'ON'
+				}
+				break
+			case 'TLG':
+				if (str[1] == '0') {
+					this.data.tally2 = 'OFF'
+				} else if (str[1] == '1') {
+					this.data.tally2 = 'ON'
+				}
+				break
 			case 'iNS0':
 				this.data.ins = 'Desktop'
 				break
@@ -297,6 +303,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			power: 'NaN',
 			ins: 'NaN',
 			tally: 'NaN',
+			tally2: 'NaN',
 			oaf: 'NaN',
 			irisMode: 'NaN',
 			recallModePset: 'NaN',

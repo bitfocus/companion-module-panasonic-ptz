@@ -907,23 +907,51 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.tally) {
-		actions.tallyOff = {
-			name: 'System - Tally Off',
-			options: [],
-			callback: async (action) => {
-				await sendPTZ(self, 'DA0')
-			},
-		}
-	}
-
-	if (seriesActions.tally) {
-		actions.tallyOn = {
-			name: 'System - Tally On',
-			options: [],
-			callback: async (action) => {
-				await sendPTZ(self, 'DA1')
-			},
+	if (seriesActions.tally)  {
+		if (seriesActions.tally2)  {
+			actions.tallyOff = {
+				name: 'System - Red Tally Off',
+				options: [],
+				callback: async (action) => {
+					await sendCam(self, 'TLR:0')
+				},
+			}
+			actions.tallyOn = {
+				name: 'System - Red Tally On',
+				options: [],
+				callback: async (action) => {
+					await sendPTZ(self, 'TLR:1')
+				},
+			}
+			actions.tally2Off = {
+				name: 'System - Green Tally Off',
+				options: [],
+				callback: async (action) => {
+					await sendCam(self, 'TLG:0')
+				},
+			}
+			actions.tally2On = {
+				name: 'System - Green Tally On',
+				options: [],
+				callback: async (action) => {
+					await sendPTZ(self, 'TLG:1')
+				},
+			}
+		} else { // Use legacy PTZ Tally
+			actions.tallyOff = {
+				name: 'System - Tally Off',
+				options: [],
+				callback: async (action) => {
+					await sendPTZ(self, 'DA0')
+				},
+			}
+			actions.tallyOn = {
+				name: 'System - Tally On',
+				options: [],
+				callback: async (action) => {
+					await sendPTZ(self, 'DA1')
+				},
+			}
 		}
 	}
 

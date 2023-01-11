@@ -30,7 +30,10 @@ export function setVariables(self) {
 		variables.push({ variableId: 'power', name: 'Power ON/OFF' })
 	}
 	if (SERIES.variables.tally) {
-		variables.push({ variableId: 'tally', name: 'Tally ON/OFF' })
+		variables.push({ variableId: 'tally', name: 'Red Tally ON/OFF' })
+	}
+	if (SERIES.variables.tally2) {
+		variables.push({ variableId: 'tally2', name: 'Green Tally ON/OFF' })
 	}
 	if (SERIES.variables.OAF) {
 		variables.push({ variableId: 'OAF', name: 'Auto Focus Mode' })
@@ -69,6 +72,7 @@ export function checkVariables(self) {
 		ins: self.data.ins,
 		power: self.data.power,
 		tally: self.data.tally,
+		tally2: self.data.tally2,
 		OAF: self.data.oaf,
 		irisMode: self.data.irisMode,
 		gainValue: gainValue?.label,
