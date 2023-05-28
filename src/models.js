@@ -76,6 +76,7 @@ export const SERIES_SPECS = [
 			gainValue: true,
 			preset: true,
 			colorTemperature: false,
+			uhdCrop: true, // UHD Crop Output + SDI/IP Enable
 		},
 		feedbacks: {
 			powerState: true, // Power State (p1 or p0)
@@ -90,6 +91,7 @@ export const SERIES_SPECS = [
 			colorBarsTypeState: false,
 			colorBarsTitleState: false,
 			colorBarsToneState: false,
+			uhdCrop: true, // UHD Crop Output + SDI/IP Enable
 		},
 		actions: {
 			panTilt: true, // Has Pan/Tilt Support (PTSxx)
@@ -119,6 +121,7 @@ export const SERIES_SPECS = [
 			colorBarsType: false,
 			colorBarsTitle: false,
 			colorBarsTone: false,
+			uhdCrop: true, // UHD Crop
 		},
 	},
 
@@ -311,6 +314,7 @@ export const SERIES_SPECS = [
 			gainValue: true,
 			preset: true,
 			colorTemperature: false,
+			uhdCrop: true,
 		},
 		feedbacks: {
 			powerState: true,
@@ -325,6 +329,7 @@ export const SERIES_SPECS = [
 			colorBarsTypeState: true,
 			colorBarsTitleState: false,
 			colorBarsToneState: true,
+			uhdCrop: true,
 		},
 		actions: {
 			panTilt: true,
@@ -356,6 +361,7 @@ export const SERIES_SPECS = [
 			colorBarsTone: true,
 			sceneSelect: true,
 			whiteBalanceMode: true,
+			uhdCrop: true,
 		},
 	},
 

@@ -471,5 +471,127 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
+	if (SERIES.feedbacks.uhdCrop) {
+		feedbacks.uhdCropMode = {
+			type: 'boolean',
+			name: 'UHD Crop - Crop Mode',
+			description: 'Indicate whether the UHD Crop mode is disabled, enabled in 1080 or enabled in 720',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorRed,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Select Mode',
+					id: 'mode',
+					default: 'OFF',
+					choices: [
+						{ id: 'OFF', label: 'Disabled' },
+						{ id: '1080', label: 'Enabled in 1080' },
+						{ id: '720', label: 'Enabled in 720' },
+					],
+				},
+			],
+			callback: function (feedback) {
+				const opt = feedback.options
+				return opt.mode === self.data.uhdCropMode
+			},
+		}
+		feedbacks.uhdCropOutputSelection = {
+			type: 'boolean',
+			name: 'UHD Crop - Output Selection',
+			description: 'Indicate which of the 3 crops (Yellow / Green / Magenta) is selected for output',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorRed,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Select Crop',
+					id: 'option',
+					default: 'Yellow',
+					choices: [
+						{ id: 'Yellow', label: 'Yellow' },
+						{ id: 'Green', label: 'Green' },
+						{ id: 'Magenta', label: 'Magenta' },
+					],
+				},
+			],
+			callback: function (feedback) {
+				const opt = feedback.options
+				return opt.option === self.data.uhdCropOutput
+			},
+		}
+		feedbacks.uhdCropSDIEnabled = {
+			type: 'boolean',
+			name: 'UHD Crop - Enabled on 3G-SDI Out',
+			description: 'Indicate whether the SDI output is cropped or full',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorRed,
+			},
+			options: [],
+			callback: function (feedback) {
+				return self.data.uhdCropSDIEnable == 'ON';
+			},
+		}
+		feedbacks.uhdCropIPEnabled = {
+			type: 'boolean',
+			name: 'UHD Crop - Enabled on IP Out',
+			description: 'Indicate whether the IP output is cropped or full',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorRed,
+			},
+			options: [],
+			callback: function (feedback) {
+				return self.data.uhdCropIPEnable == 'ON';
+			},
+		}
+		feedbacks.uhdCropMarkerEnabled = {
+			type: 'boolean',
+			name: 'UHD Crop - Crop Marker Enabled',
+			description: 'Indicate whether a specific crop marker is enabled or disabled',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorRed,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Select Crop Marker',
+					id: 'color',
+					default: 'Yellow',
+					choices: [
+						{ id: 'Yellow', label: 'Yellow' },
+						{ id: 'Green', label: 'Green' },
+						{ id: 'Magenta', label: 'Magenta' },
+						{ id: 'All', label: 'All' },
+						{ id: 'None', label: 'None' },
+					],
+				},
+			],
+			callback: function (feedback) {
+				const opt = feedback.options
+				if (opt.color === 'All') {
+					return (
+						self.data.uhdCropMarkerYellow === 'ON' &&
+						self.data.uhdCropMarkerGreen === 'ON' &&
+						self.data.uhdCropMarkerMagenta === 'ON'
+					)
+				} else if (opt.color === 'None') {
+					return (
+						self.data.uhdCropMarkerYellow === 'OFF' &&
+						self.data.uhdCropMarkerGreen === 'OFF' &&
+						self.data.uhdCropMarkerMagenta === 'OFF'
+					)
+				}
+				return self.data['uhdCropMarker' + opt.color] === 'ON'
+			},
+		}
+	}
+
 	return feedbacks
 }

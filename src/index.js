@@ -264,6 +264,16 @@ class PanasonicPTZInstance extends InstanceBase {
 			case 'OSJ':
 				if(str[1] == '27') {
 					this.data.colorBarTone = str[2];
+				} else if (str[1] == '2E') {
+					// OSJ:2E:
+					var n = Number(str[2]) // in /live/camdata.html, the value is 0xN hex encoded
+					if (n == 0) {
+						this.data.uhdCropMode = 'OFF'
+					} else if (n == 1) {
+						this.data.uhdCropMode = '1080'
+					} else if (n == 2) {
+						this.data.uhdCropMode = '720'
+					}
 				}
 				break
 			case 'DCB':
@@ -287,6 +297,67 @@ class PanasonicPTZInstance extends InstanceBase {
 						this.data.recallModePset = 'Mode B'
 					} else if (str[2] == '2') {
 						this.data.recallModePset = 'Mode C'
+					}
+				}
+				break
+			case 'OSI': // All OSI:xx Commands
+				if (str[1] == '16') {
+					// OSI:16:
+					if (str[2] == '1') {
+						this.data.uhdCropOutput = 'Yellow'
+					} else if (str[2] == '2') {
+						this.data.uhdCropOutput = 'Green'
+					} else if (str[2] == '3') {
+						this.data.uhdCropOutput = 'Magenta'
+					}
+				} else if (str[1] == '32') {
+					// OSI:32:
+					if (str[2] == '0') {
+						this.data.uhdCropSDIEnable = 'OFF'
+					} else if (str[2] == '1') {
+						this.data.uhdCropSDIEnable = 'ON'
+					}
+				} else if (str[1] == '33') {
+					// OSI:33:
+					if (str[2] == '0') {
+						this.data.uhdCropIPEnable = 'OFF'
+					} else if (str[2] == '1') {
+						this.data.uhdCropIPEnable = 'ON'
+					}
+				} else if (str[1] == '1A') {
+					// OSI:1A:
+					if (str[2] == '0') {
+						this.data.uhdCropMarkerYellow = 'OFF';
+						this.data.uhdCropMarkerGreen = 'OFF';
+						this.data.uhdCropMarkerMagenta = 'OFF';
+					} else if (str[2] == '1') {
+						this.data.uhdCropMarkerYellow = 'ON';
+						this.data.uhdCropMarkerGreen = 'OFF';
+						this.data.uhdCropMarkerMagenta = 'OFF';
+					} else if (str[2] == '2') {
+						this.data.uhdCropMarkerYellow = 'OFF';
+						this.data.uhdCropMarkerGreen = 'ON';
+						this.data.uhdCropMarkerMagenta = 'OFF';
+					} else if (str[2] == '3') {
+						this.data.uhdCropMarkerYellow = 'OFF';
+						this.data.uhdCropMarkerGreen = 'OFF';
+						this.data.uhdCropMarkerMagenta = 'ON';
+					} else if (str[2] == '4') {
+						this.data.uhdCropMarkerYellow = 'ON';
+						this.data.uhdCropMarkerGreen = 'ON';
+						this.data.uhdCropMarkerMagenta = 'OFF';
+					} else if (str[2] == '5') {
+						this.data.uhdCropMarkerYellow = 'ON';
+						this.data.uhdCropMarkerGreen = 'OFF';
+						this.data.uhdCropMarkerMagenta = 'ON';
+					} else if (str[2] == '6') {
+						this.data.uhdCropMarkerYellow = 'OFF';
+						this.data.uhdCropMarkerGreen = 'ON';
+						this.data.uhdCropMarkerMagenta = 'ON';
+					} else if (str[2] == '7') {
+						this.data.uhdCropMarkerYellow = 'ON';
+						this.data.uhdCropMarkerGreen = 'ON';
+						this.data.uhdCropMarkerMagenta = 'ON';
 					}
 				}
 				break
@@ -334,6 +405,13 @@ class PanasonicPTZInstance extends InstanceBase {
 			colorBarTitle: 'NaN',
 			colorBarTone: 'NaN',
 			colorBarType: 'Nan',
+			uhdCropMode: 'Nan',
+			uhdCropSDIEnable: 'Nan',
+			uhdCropIPEnable: 'Nan',
+			uhdCropOutput: 'Nan',
+			uhdCropMarkerYellow: 'Nan',
+			uhdCropMarkerGreen: 'Nan',
+			uhdCropMarkerMagenta: 'Nan',
 		}
 
 		this.ptSpeed = 25
