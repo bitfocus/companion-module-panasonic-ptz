@@ -1347,7 +1347,7 @@ export function getPresetDefinitions(self) {
 		presets['system-tally-off'] = {
 			type: 'button',
 			category: 'System',
-			name: 'Tally Off',
+			name: 'Red Tally Off',
 			style: {
 				text: 'Tally\\nOFF',
 				size: '18',
@@ -1382,7 +1382,7 @@ export function getPresetDefinitions(self) {
 		presets['system-tally-on'] = {
 			type: 'button',
 			category: 'System',
-			name: 'Tally On',
+			name: 'Red Tally On',
 			style: {
 				text: 'Tally\\nON',
 				size: '18',
@@ -1409,6 +1409,78 @@ export function getPresetDefinitions(self) {
 					style: {
 						color: foregroundColor,
 						bgcolor: backgroundColorRed,
+					},
+				},
+			],
+		}
+	}
+
+	if (seriesActions.tally2) {
+		presets['system-tally2-off'] = {
+			type: 'button',
+			category: 'System',
+			name: 'Green Tally Off',
+			style: {
+				text: 'Tally\\nOFF',
+				size: '18',
+				color: 16777215,
+				bgcolor: combineRgb(0, 0, 0),
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'tally2Off',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'tally2State',
+					options: {
+						option: '0',
+					},
+					style: {
+						color: foregroundColor,
+						bgcolor: backgroundColorGreen,
+					},
+				},
+			],
+		}
+
+		presets['system-tally2-on'] = {
+			type: 'button',
+			category: 'System',
+			name: 'Green Tally On',
+			style: {
+				text: 'Tally\\nON',
+				size: '18',
+				color: 16777215,
+				bgcolor: combineRgb(0, 0, 0),
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'tally2On',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'tally2State',
+					options: {
+						option: '1',
+					},
+					style: {
+						color: foregroundColor,
+						bgcolor: backgroundColorGreen,
 					},
 				},
 			],

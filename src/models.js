@@ -63,7 +63,8 @@ export const SERIES_SPECS = [
 			error: true, // Camera can return Error messages when actions fail (rER)
 			ins: true, // Install position (iNS0 or iNS1)
 			power: true, // Power State (p1 or p0)
-			tally: true, // Tally State (TLR:1 or TLR:0)
+			tally: true, // Red Tally State (DA1/TLR:1 or DA0/TLR:0)
+			tally2: true, // Green Tally State (TLG:1 or TLG:0)
 			OAF: true, // Has Auto Focus (OAF:1 or OAF:0)
 			iris: true, // Has Auto Iris (d30 or d31)
 			gainValue: true,
@@ -72,7 +73,8 @@ export const SERIES_SPECS = [
 		},
 		feedbacks: {
 			powerState: true, // Power State (p1 or p0)
-			tallyState: true, // Tally State (TLR:1 or TLR:0)
+			tallyState: true, // Red Tally State (dA1/TLR:1 or dA0/TLR:0)
+			tally2State: true, // Green Tally State (TLG:1 or TLG:0)
 			insState: true, // Install position (iNS0 or iNS1)
 			autoFocus: true, // Has Auto Focus (OAF:1 or OAF:0)
 			autoIris: true, // Has Auto Iris (d30 or d31)
@@ -96,7 +98,8 @@ export const SERIES_SPECS = [
 			speedPset: true, // Has Preset Recall Speed Control (UPVSxx)
 			timePset: true, // Has Preset Recall Time Control (UPVSxx or OSJ:29:xx)
 			power: true, // Has Power Control (O0 or O1)
-			tally: true, // Has Red Tally Light Control (DA1 or DA0)
+			tally: true, // Has Red Tally Light Control (DA1/TLR:1 or DA0/TLR:0)
+			tally2: true, // Has Green Tally Light Control (TLG:1 or TLG:0)
 			ins: true, // Has Install Position Control (INSx)
 			sdCard: true, // Has SD Card Recording Control (sdctrl?save=start or sdctrl?save=end)
 			ColorTemperature: false, // Setting Color temperature OSD:B1:A8h
@@ -256,6 +259,7 @@ export const SERIES_SPECS = [
 			ins: true,
 			power: true,
 			tally: true,
+			tally2: true,
 			OAF: true,
 			iris: true,
 			gainValue: true,
@@ -265,6 +269,7 @@ export const SERIES_SPECS = [
 		feedbacks: {
 			powerState: true,
 			tallyState: true,
+			tally2State: true,
 			insState: true,
 			autoFocus: true,
 			autoIris: true,
@@ -290,6 +295,7 @@ export const SERIES_SPECS = [
 			power: true,
 			ins: true,
 			tally: true,
+			tally2: true,
 			sdCard: false,
 			ColorTemperature: false,
 		},
@@ -734,6 +740,8 @@ export const SERIES_SPECS = [
 			version: false,
 			error: true,
 			power: true,
+			tally: true,
+			tally2: true,
 			ins: false,
 			OAF: false,
 			iris: false,
@@ -766,7 +774,8 @@ export const SERIES_SPECS = [
 			timePset: false,
 			power: false,
 			ins: false,
-			tally: false,
+			tally: true,
+			tally2: true,
 			sdCard: false,
 			ColorTemperature: false,
 		},
