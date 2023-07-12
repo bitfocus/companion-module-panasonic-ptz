@@ -181,7 +181,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				})
 		}
 	}
-	storeData(str) {
+	storeData(str) {	
 		if (str[0].substring(0, 3) === 'rER') {
 			if (str[0] === 'rER00') {
 				this.data.error = 'No Errors'
@@ -245,6 +245,12 @@ class PanasonicPTZInstance extends InstanceBase {
 					this.data.oaf = 'Auto'
 				}
 				break
+			case 'OSD':
+				if(str[1] == 'B1')
+				{
+					this.data.ColorTemperature = str[2];
+				}
+			break;
 			case 'd30':
 				this.data.irisMode = 'Manual'
 				break
@@ -298,6 +304,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			ins: 'NaN',
 			tally: 'NaN',
 			oaf: 'NaN',
+			ColorTemperature: 'Unknown',
 			irisMode: 'NaN',
 			recallModePset: 'NaN',
 		}
@@ -318,6 +325,8 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.shutIndex = 0
 		this.pedestalVal = '096'
 		this.pedestalIndex = 150
+		this.ColorTemperatureValue = '000'
+		this.ColorTemperatureIndex = 0
 		this.tcpPortSelected = 31004
 		this.tcpPortOld = this.config.tcpPort || 31004
 

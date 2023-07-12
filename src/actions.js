@@ -714,6 +714,66 @@ export function getActionDefinitions(self) {
 			},
 		}
 	}
+
+	if (seriesActions.ColorTemperature) { 
+		actions.ColorTemperatureUp = {
+			name: 'Color Temperature Up',
+			options: [],
+			callback: async (action) => {
+				if (self.ColorTemperatureIndex == seriesActions.ColorTemperature.dropdown.length) {
+					self.ColorTemperatureIndex = seriesActions.ColorTemperature.dropdown.length
+				} else if (self.ColorTemperatureIndex < seriesActions.ColorTemperature.dropdown.length) {
+					self.ColorTemperatureIndex++
+				}
+				self.ColorTemperatureValue = seriesActions.ColorTemperature.dropdown[self.ColorTemperatureIndex].id
+
+				await sendCam(self, seriesActions.ColorTemperature.cmd + self.ColorTemperatureValue.toUpperCase())
+			},
+		}
+	}
+	
+	if (seriesActions.ColorTemperature) {
+		actions.ColorTemperatureDown = {
+			name: 'Color Temperature Down',
+			options: [],
+			callback: async (action) => {
+				if (self.ColorTemperatureIndex == 0) {
+					self.ColorTemperatureIndex = 0
+				} else if (self.ColorTemperatureIndex > 0) {
+					self.ColorTemperatureIndex--
+				}
+				self.ColorTemperatureValue = seriesActions.ColorTemperature.dropdown[self.ColorTemperatureIndex].id
+
+				await sendCam(self, seriesActions.ColorTemperature.cmd + self.ColorTemperatureValue.toUpperCase())
+			},
+		}
+	}
+
+	if (seriesActions.ColorTemperature) {
+		actions.ColorTemperatureSet = {
+			name: 'Set Color Temperature',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Color Temperature',
+					id: 'val',
+					default: seriesActions.ColorTemperature.dropdown[0].id,
+					choices: seriesActions.ColorTemperature.dropdown,
+				},
+			],
+			callback: async (action) => {
+				
+				let id = action.options.val.toUpperCase();
+				let index = seriesActions.ColorTemperature.dropdown.findIndex((ColorTemperature) => ColorTemperature.id == id);
+
+				self.ColorTemperatureIndex = index;
+				self.ColorTemperatureValue = id;
+
+				await sendCam(self, seriesActions.ColorTemperature.cmd + id)
+			},
+		}
+	}
+
 	if (seriesActions.filter.cmd) {
 		actions.filterU = {
 			name: 'Exposure - ND Filter Up',
