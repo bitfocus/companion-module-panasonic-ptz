@@ -212,15 +212,13 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				self.ptSpeed = action.options.speed
-
-				const idx = c.CHOICES_SPEED.findIndex((sp) => sp.id === self.ptSpeed)
-				if (idx > -1) {
-					self.ptSpeedIndex = idx
+				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === action.options.speed)
+				if (i > -1) {
+					self.ptSpeedIndex = i
 				}
 
 				self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
-				self.setVariable('ptSpeedVar', self.ptSpeed)
+				self.setVariableValues({ ptSpeedVar: self.ptSpeed })
 			},
 		}
 	}
@@ -229,14 +227,14 @@ export function getActionDefinitions(self) {
 		actions.ptSpeedU = {
 			name: 'Pan/Tilt - Speed Up',
 			options: [],
-			callback: async (action) => {
-				if (self.ptSpeedIndex == 0) {
-					self.ptSpeedIndex = 0
-				} else if (self.ptSpeedIndex > 0) {
-					self.ptSpeedIndex--
+			callback: async () => {
+				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.ptSpeed)
+				if (i > 0) {
+					self.ptSpeedIndex = i - 1
 				}
+
 				self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
-				self.setVariable('ptSpeedVar', self.ptSpeed)
+				self.setVariableValues({ ptSpeedVar: self.ptSpeed })
 			},
 		}
 	}
@@ -245,14 +243,14 @@ export function getActionDefinitions(self) {
 		actions.ptSpeedD = {
 			name: 'Pan/Tilt - Speed Down',
 			options: [],
-			callback: async (action) => {
-				if (self.ptSpeedIndex == c.CHOICES_SPEED.length) {
-					self.ptSpeedIndex = c.CHOICES_SPEED.length
-				} else if (self.ptSpeedIndex < c.CHOICES_SPEED.length) {
-					self.ptSpeedIndex++
+			callback: async () => {
+				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.ptSpeed)
+				if (i < 49) {
+					self.ptSpeedIndex = i + 1
 				}
+
 				self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
-				self.setVariable('ptSpeedVar', self.ptSpeed)
+				self.setVariableValues({ ptSpeedVar: self.ptSpeed })
 			},
 		}
 	}
@@ -306,15 +304,13 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				self.zSpeed = action.options.speed
-
-				const idx = c.CHOICES_SPEED.findIndex((sp) => sp.id === self.zSpeed)
-				if (idx > -1) {
-					self.zSpeedIndex = idx
+				const i = c.CHOICES_SPEED.findIndex((sp) => sp.id === action.options.speed)
+				if (i > -1) {
+					self.zSpeedIndex = i
 				}
 
 				self.zSpeed = c.CHOICES_SPEED[self.zSpeedIndex].id
-				self.setVariable('zSpeedVar', self.zSpeed)
+				self.setVariableValues({ zSpeedVar: self.zSpeed })
 			},
 		}
 	}
@@ -323,14 +319,14 @@ export function getActionDefinitions(self) {
 		actions.zSpeedU = {
 			name: 'Lens - Zoom Speed Up',
 			options: [],
-			callback: async (action) => {
-				if (self.zSpeedIndex == 0) {
-					self.zSpeedIndex = 0
-				} else if (self.zSpeedIndex > 0) {
-					self.zSpeedIndex--
+			callback: async () => {
+				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.zSpeed)
+				if (i > 0) {
+					self.zSpeedIndex = i - 1
 				}
+
 				self.zSpeed = c.CHOICES_SPEED[self.zSpeedIndex].id
-				self.setVariable('zSpeedVar', self.zSpeed)
+				self.setVariableValues({ zSpeedVar: self.zSpeed })
 			},
 		}
 	}
@@ -339,14 +335,14 @@ export function getActionDefinitions(self) {
 		actions.zSpeedD = {
 			name: 'Lens - Zoom Speed Down',
 			options: [],
-			callback: async (action) => {
-				if (self.zSpeedIndex == c.CHOICES_SPEED.length) {
-					self.zSpeedIndex = c.CHOICES_SPEED.length
-				} else if (self.zSpeedIndex < c.CHOICES_SPEED.length) {
-					self.zSpeedIndex++
+			callback: async () => {
+				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.zSpeed)
+				if (i < 49) {
+					self.zSpeedIndex = i + 1
 				}
+
 				self.zSpeed = c.CHOICES_SPEED[self.zSpeedIndex].id
-				self.setVariable('zSpeedVar', self.zSpeed)
+				self.setVariableValues({ zSpeedVar: self.zSpeed })
 			},
 		}
 	}
@@ -396,15 +392,13 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				self.fSpeed = action.options.speed
-
-				const idx = c.CHOICES_SPEED.findIndex((sp) => sp.id === self.fSpeed)
-				if (idx > -1) {
-					self.fSpeedIndex = idx
+				const i = c.CHOICES_SPEED.findIndex((sp) => sp.id === action.options.speed)
+				if (i > -1) {
+					self.fSpeedIndex = i
 				}
 
 				self.fSpeed = c.CHOICES_SPEED[self.fSpeedIndex].id
-				self.setVariable('fSpeedVar', self.fSpeed)
+				self.setVariableValues({ fSpeedVar: self.fSpeed })
 			},
 		}
 	}
@@ -413,14 +407,14 @@ export function getActionDefinitions(self) {
 		actions.fSpeedU = {
 			name: 'Lens - Focus Speed Up',
 			options: [],
-			callback: async (action) => {
-				if (self.fSpeedIndex == 0) {
-					self.fSpeedIndex = 0
-				} else if (self.fSpeedIndex > 0) {
-					self.fSpeedIndex--
+			callback: async () => {
+				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.fSpeed)
+				if (i > 0) {
+					self.fSpeedIndex = i - 1
 				}
+
 				self.fSpeed = c.CHOICES_SPEED[self.fSpeedIndex].id
-				self.setVariable('fSpeedVar', self.fSpeed)
+				self.setVariableValues({ fSpeedVar: self.fSpeed })
 			},
 		}
 	}
@@ -430,13 +424,13 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Focus Speed Down',
 			options: [],
 			callback: async (action) => {
-				if (self.fSpeedIndex == c.CHOICES_SPEED.length) {
-					self.fSpeedIndex = c.CHOICES_SPEED.length
-				} else if (self.fSpeedIndex < c.CHOICES_SPEED.length) {
-					self.fSpeedIndex++
+				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.fSpeed)
+				if (i < 49) {
+					self.fSpeedIndex = i + 1
 				}
+
 				self.fSpeed = c.CHOICES_SPEED[self.fSpeedIndex].id
-				self.setVariable('fSpeedVar', self.fSpeed)
+				self.setVariableValues({ fSpeedVar: self.fSpeed })
 			},
 		}
 	}
