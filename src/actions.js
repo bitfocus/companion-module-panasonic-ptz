@@ -92,11 +92,29 @@ export function getActionDefinitions(self) {
 	if (seriesActions.panTilt) {
 		actions.left = {
 			name: 'Pan/Tilt - Pan Left',
-			options: [],
+			options: [
+				{
+					id: 'liveSpeed',
+					type: 'checkbox',
+					label: 'Adjust the velocity of panning left on speed change',
+					default: false
+				}
+			],
 			callback: async (action) => {
-				const n = parseInt(50 - self.ptSpeed)
-				const string = '' + (n < 10 ? '0' + n : n)
+				let n = parseInt(50 - self.ptSpeed)
+				let string = '' + (n < 10 ? '0' + n : n)
+
 				await sendPTZ(self, 'PTS' + string + '50')
+
+				if (action.options.liveSpeed) {
+					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
+						self.speedChangeEmitter.on('ptSpeed', async () => {
+							n = parseInt(50 - self.ptSpeed)
+							string = '' + (n < 10 ? '0' + n : n)
+							await sendPTZ(self, 'PTS' + string + '50')
+						})
+					)
+				}
 			},
 		}
 	}
@@ -104,9 +122,24 @@ export function getActionDefinitions(self) {
 	if (seriesActions.panTilt) {
 		actions.right = {
 			name: 'Pan/Tilt - Pan Right',
-			options: [],
+			options: [
+				{
+					id: 'liveSpeed',
+					type: 'checkbox',
+					label: 'Adjust the velocity of panning right on speed change',
+					default: false
+				}
+			],
 			callback: async (action) => {
 				await sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + '50')
+
+				if (action.options.liveSpeed) {
+					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
+						self.speedChangeEmitter.on('ptSpeed', async () => {
+							await sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + '50')
+						})
+					)
+				}
 			},
 		}
 	}
@@ -114,9 +147,24 @@ export function getActionDefinitions(self) {
 	if (seriesActions.panTilt) {
 		actions.up = {
 			name: 'Pan/Tilt - Tilt Up',
-			options: [],
+			options: [
+				{
+					id: 'liveSpeed',
+					type: 'checkbox',
+					label: 'Adjust the velocity of tilting up on speed change',
+					default: false
+				}
+			],
 			callback: async (action) => {
 				await sendPTZ(self, 'PTS50' + parseInt(50 + self.ptSpeed))
+
+				if (action.options.liveSpeed) {
+					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
+						self.speedChangeEmitter.on('ptSpeed', async () => {
+							await sendPTZ(self, 'PTS50' + parseInt(50 + self.ptSpeed))
+						})
+					)
+				}
 			},
 		}
 	}
@@ -124,11 +172,29 @@ export function getActionDefinitions(self) {
 	if (seriesActions.panTilt) {
 		actions.down = {
 			name: 'Pan/Tilt - Tilt Down',
-			options: [],
+			options: [
+				{
+					id: 'liveSpeed',
+					type: 'checkbox',
+					label: 'Adjust the velocity of tilting down on speed change',
+					default: false
+				}
+			],
 			callback: async (action) => {
-				const n = parseInt(50 - self.ptSpeed)
-				const string = '' + (n < 10 ? '0' + n : n)
+				let n = parseInt(50 - self.ptSpeed)
+				let string = '' + (n < 10 ? '0' + n : n)
+
 				await sendPTZ(self, 'PTS50' + string)
+
+				if (action.options.liveSpeed) {
+					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
+						self.speedChangeEmitter.on('ptSpeed', async () => {
+							n = parseInt(50 - self.ptSpeed)
+							string = '' + (n < 10 ? '0' + n : n)
+							await sendPTZ(self, 'PTS50' + string)
+						})
+					)
+				}
 			},
 		}
 	}
@@ -136,11 +202,29 @@ export function getActionDefinitions(self) {
 	if (seriesActions.panTilt) {
 		actions.upLeft = {
 			name: 'Pan/Tilt - Up Left',
-			options: [],
+			options: [
+				{
+					id: 'liveSpeed',
+					type: 'checkbox',
+					label: 'Adjust the velocity of the up left movement on speed change',
+					default: false
+				}
+			],
 			callback: async (action) => {
-				const n = parseInt(50 - self.ptSpeed)
-				const string = '' + (n < 10 ? '0' + n : n)
+				let n = parseInt(50 - self.ptSpeed)
+				let string = '' + (n < 10 ? '0' + n : n)
+
 				await sendPTZ(self, 'PTS' + string + parseInt(50 + self.ptSpeed))
+
+				if (action.options.liveSpeed) {
+					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
+						self.speedChangeEmitter.on('ptSpeed', async () => {
+							n = parseInt(50 - self.ptSpeed)
+							string = '' + (n < 10 ? '0' + n : n)
+							await sendPTZ(self, 'PTS' + string + parseInt(50 + self.ptSpeed))
+						})
+					)
+				}
 			},
 		}
 	}
@@ -148,9 +232,24 @@ export function getActionDefinitions(self) {
 	if (seriesActions.panTilt) {
 		actions.upRight = {
 			name: 'Pan/Tilt - Up Right',
-			options: [],
+			options: [
+				{
+					id: 'liveSpeed',
+					type: 'checkbox',
+					label: 'Adjust the velocity of the up right movement on speed change',
+					default: false
+				}
+			],
 			callback: async (action) => {
 				await sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + parseInt(50 + self.ptSpeed))
+
+				if (action.options.liveSpeed) {
+					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
+						self.speedChangeEmitter.on('ptSpeed', async () => {
+							await sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + parseInt(50 + self.ptSpeed))
+						})
+					)
+				}
 			},
 		}
 	}
@@ -158,11 +257,29 @@ export function getActionDefinitions(self) {
 	if (seriesActions.panTilt) {
 		actions.downLeft = {
 			name: 'Pan/Tilt - Down Left',
-			options: [],
+			options: [
+				{
+					id: 'liveSpeed',
+					type: 'checkbox',
+					label: 'Adjust the velocity of the down left movement on speed change',
+					default: false
+				}
+			],
 			callback: async (action) => {
-				const n = parseInt(50 - self.ptSpeed)
-				const string = '' + (n < 10 ? '0' + n : n)
+				let n = parseInt(50 - self.ptSpeed)
+				let string = '' + (n < 10 ? '0' + n : n)
+
 				await sendPTZ(self, 'PTS' + string + string)
+
+				if (action.options.liveSpeed) {
+					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
+						self.speedChangeEmitter.on('ptSpeed', async () => {
+							n = parseInt(50 - self.ptSpeed)
+							string = '' + (n < 10 ? '0' + n : n)
+							await sendPTZ(self, 'PTS' + string + string)
+						})
+					)
+				}
 			},
 		}
 	}
@@ -170,11 +287,29 @@ export function getActionDefinitions(self) {
 	if (seriesActions.panTilt) {
 		actions.downRight = {
 			name: 'Pan/Tilt - Down Right',
-			options: [],
+			options: [
+				{
+					id: 'liveSpeed',
+					type: 'checkbox',
+					label: 'Adjust the velocity of the down right movement on speed change',
+					default: false
+				}
+			],
 			callback: async (action) => {
-				const n = parseInt(50 - self.ptSpeed)
-				const string = '' + (n < 10 ? '0' + n : n)
+				let n = parseInt(50 - self.ptSpeed)
+				let string = '' + (n < 10 ? '0' + n : n)
+
 				await sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + string)
+
+				if (action.options.liveSpeed) {
+					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
+						self.speedChangeEmitter.on('ptSpeed', async () => {
+							n = parseInt(50 - self.ptSpeed)
+							string = '' + (n < 10 ? '0' + n : n)
+							await sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + string)
+						})
+					)
+				}
 			},
 		}
 	}
@@ -185,6 +320,7 @@ export function getActionDefinitions(self) {
 			options: [],
 			callback: async (action) => {
 				await sendPTZ(self, 'PTS5050')
+				if (self.speedChangeEmitter.listenerCount('ptSpeed')) self.speedChangeEmitter.removeAllListeners('ptSpeed')
 			},
 		}
 	}
@@ -219,6 +355,7 @@ export function getActionDefinitions(self) {
 
 				self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
 				self.setVariableValues({ ptSpeedVar: self.ptSpeed })
+				self.speedChangeEmitter.emit('ptSpeed')
 			},
 		}
 	}
@@ -235,6 +372,7 @@ export function getActionDefinitions(self) {
 
 				self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
 				self.setVariableValues({ ptSpeedVar: self.ptSpeed })
+				self.speedChangeEmitter.emit('ptSpeed')
 			},
 		}
 	}
@@ -251,6 +389,7 @@ export function getActionDefinitions(self) {
 
 				self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
 				self.setVariableValues({ ptSpeedVar: self.ptSpeed })
+				self.speedChangeEmitter.emit('ptSpeed')
 			},
 		}
 	}
@@ -262,9 +401,24 @@ export function getActionDefinitions(self) {
 	if (seriesActions.zoom) {
 		actions.zoomI = {
 			name: 'Lens - Zoom In',
-			options: [],
+			options: [
+				{
+					id: 'liveSpeed',
+					type: 'checkbox',
+					label: 'Adjust the velocity of zooming in on speed change',
+					default: false
+				}
+			],
 			callback: async (action) => {
 				await sendPTZ(self, 'Z' + parseInt(50 + self.zSpeed))
+
+				if (action.options.liveSpeed) {
+					self.speedChangeEmitter.removeAllListeners('zSpeed').then(
+						self.speedChangeEmitter.on('zSpeed', async () => {
+							await sendPTZ(self, 'Z' + parseInt(50 + self.zSpeed))
+						})
+					)
+				}
 			},
 		}
 	}
@@ -272,11 +426,29 @@ export function getActionDefinitions(self) {
 	if (seriesActions.zoom) {
 		actions.zoomO = {
 			name: 'Lens - Zoom Out',
-			options: [],
+			options: [
+				{
+					id: 'liveSpeed',
+					type: 'checkbox',
+					label: 'Adjust the velocity of zooming out on speed change',
+					default: false
+				}
+			],
 			callback: async (action) => {
-				const n = parseInt(50 - self.zSpeed)
-				const string = '' + (n < 10 ? '0' + n : n)
+				let n = parseInt(50 - self.zSpeed)
+				let string = '' + (n < 10 ? '0' + n : n)
+
 				await sendPTZ(self, 'Z' + string)
+
+				if (action.options.liveSpeed) {
+					self.speedChangeEmitter.removeAllListeners('zSpeed').then(
+						self.speedChangeEmitter.on('zSpeed', async () => {
+							n = parseInt(50 - self.zSpeed)
+							string = '' + (n < 10 ? '0' + n : n)
+							await sendPTZ(self, 'Z' + string)
+						})
+					)
+				}
 			},
 		}
 	}
@@ -287,6 +459,7 @@ export function getActionDefinitions(self) {
 			options: [],
 			callback: async (action) => {
 				await sendPTZ(self, 'Z50')
+				if (self.speedChangeEmitter.listenerCount('zSpeed')) self.speedChangeEmitter.removeAllListeners('zSpeed')
 			},
 		}
 	}
@@ -311,6 +484,7 @@ export function getActionDefinitions(self) {
 
 				self.zSpeed = c.CHOICES_SPEED[self.zSpeedIndex].id
 				self.setVariableValues({ zSpeedVar: self.zSpeed })
+				self.speedChangeEmitter.emit('zSpeed')
 			},
 		}
 	}
@@ -327,6 +501,7 @@ export function getActionDefinitions(self) {
 
 				self.zSpeed = c.CHOICES_SPEED[self.zSpeedIndex].id
 				self.setVariableValues({ zSpeedVar: self.zSpeed })
+				self.speedChangeEmitter.emit('zSpeed')
 			},
 		}
 	}
@@ -343,6 +518,7 @@ export function getActionDefinitions(self) {
 
 				self.zSpeed = c.CHOICES_SPEED[self.zSpeedIndex].id
 				self.setVariableValues({ zSpeedVar: self.zSpeed })
+				self.speedChangeEmitter.emit('zSpeed')
 			},
 		}
 	}
@@ -350,11 +526,29 @@ export function getActionDefinitions(self) {
 	if (seriesActions.focus) {
 		actions.focusN = {
 			name: 'Lens - Focus Near',
-			options: [],
+			options: [
+				{
+					id: 'liveSpeed',
+					type: 'checkbox',
+					label: 'Adjust the quickness of near focusing on speed change',
+					default: false
+				}
+			],
 			callback: async (action) => {
-				const n = parseInt(50 - self.fSpeed)
-				const string = '' + (n < 10 ? '0' + n : n)
+				let n = parseInt(50 - self.fSpeed)
+				let string = '' + (n < 10 ? '0' + n : n)
+
 				await sendPTZ(self, 'F' + string)
+
+				if (action.options.liveSpeed) {
+					self.speedChangeEmitter.removeAllListeners('fSpeed').then(
+						self.speedChangeEmitter.on('fSpeed', async () => {
+							n = parseInt(50 - self.fSpeed)
+							string = '' + (n < 10 ? '0' + n : n)
+							await sendPTZ(self, 'F' + string)
+						})
+					)
+				}
 			},
 		}
 	}
@@ -362,9 +556,24 @@ export function getActionDefinitions(self) {
 	if (seriesActions.focus) {
 		actions.focusF = {
 			name: 'Lens - Focus Far',
-			options: [],
+			options: [
+				{
+					id: 'liveSpeed',
+					type: 'checkbox',
+					label: 'Adjust the quickness of far focusing on speed change',
+					default: false
+				}
+			],
 			callback: async (action) => {
 				await sendPTZ(self, 'F' + parseInt(50 + self.fSpeed))
+
+				if (action.options.liveSpeed) {
+					self.speedChangeEmitter.removeAllListeners('fSpeed').then(
+						self.speedChangeEmitter.on('fSpeed', async () => {
+							await sendPTZ(self, 'F' + parseInt(50 + self.fSpeed))
+						})
+					)
+				}
 			},
 		}
 	}
@@ -375,6 +584,7 @@ export function getActionDefinitions(self) {
 			options: [],
 			callback: async (action) => {
 				await sendPTZ(self, 'F50')
+				if (self.speedChangeEmitter.listenerCount('fSpeed')) self.speedChangeEmitter.removeAllListeners('fSpeed')
 			},
 		}
 	}
@@ -399,6 +609,7 @@ export function getActionDefinitions(self) {
 
 				self.fSpeed = c.CHOICES_SPEED[self.fSpeedIndex].id
 				self.setVariableValues({ fSpeedVar: self.fSpeed })
+				self.speedChangeEmitter.emit('fSpeed')
 			},
 		}
 	}
@@ -415,6 +626,7 @@ export function getActionDefinitions(self) {
 
 				self.fSpeed = c.CHOICES_SPEED[self.fSpeedIndex].id
 				self.setVariableValues({ fSpeedVar: self.fSpeed })
+				self.speedChangeEmitter.emit('fSpeed')
 			},
 		}
 	}
@@ -431,6 +643,7 @@ export function getActionDefinitions(self) {
 
 				self.fSpeed = c.CHOICES_SPEED[self.fSpeedIndex].id
 				self.setVariableValues({ fSpeedVar: self.fSpeed })
+				self.speedChangeEmitter.emit('fSpeed')
 			},
 		}
 	}
