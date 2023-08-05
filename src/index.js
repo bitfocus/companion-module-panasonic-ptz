@@ -7,6 +7,7 @@ import { setVariables, checkVariables } from './variables.js'
 import { ConfigFields } from './config.js'
 import * as net from 'net'
 import got from 'got'
+import EventEmitter from 'events'
 
 // ########################
 // #### Instance setup ####
@@ -353,6 +354,8 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.checkVariables()
 		this.init_feedbacks()
 		this.checkFeedbacks()
+
+		this.speedChangeEmitter = new EventEmitter();
 	}
 	// Update module after a config change
 	async configUpdated(config) {
