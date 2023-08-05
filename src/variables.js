@@ -51,6 +51,8 @@ export function setVariables(self) {
 		variables.push({ variableId: 'presetMode', name: 'Preset Mode' })
 	}
 	variables.push({ variableId: 'ptSpeedVar', name: 'Pan/Tilt Speed' })
+	variables.push({ variableId: 'pSpeedVar', name: 'Pan Speed' })
+	variables.push({ variableId: 'tSpeedVar', name: 'Tilt Speed' })
 	variables.push({ variableId: 'zSpeedVar', name: 'Zoom Speed' })
 	variables.push({ variableId: 'fSpeedVar', name: 'Focus Speed' })
 	return variables
@@ -88,6 +90,8 @@ export function checkVariables(self) {
 		gainValue: gainValue?.label,
 		presetMode: self.data.recallModePset,
 		ptSpeedVar: self.ptSpeed,
+		pSpeedVar: self.pSpeed,
+		tSpeedVar: self.tSpeed,
 		zSpeedVar: self.zSpeed,
 		fSpeedVar: self.fSpeed,
 	})

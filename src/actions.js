@@ -211,17 +211,17 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				let n = parseInt(50 - self.ptSpeed)
+				let n = parseInt(50 - self.pSpeed)
 				let string = '' + (n < 10 ? '0' + n : n)
 
-				await sendPTZ(self, 'PTS' + string + parseInt(50 + self.ptSpeed))
+				await sendPTZ(self, 'PTS' + string + parseInt(50 + self.tSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							n = parseInt(50 - self.ptSpeed)
+							n = parseInt(50 - self.pSpeed)
 							string = '' + (n < 10 ? '0' + n : n)
-							await sendPTZ(self, 'PTS' + string + parseInt(50 + self.ptSpeed))
+							await sendPTZ(self, 'PTS' + string + parseInt(50 + self.tSpeed))
 						})
 					)
 				}
@@ -241,12 +241,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + parseInt(50 + self.ptSpeed))
+				await sendPTZ(self, 'PTS' + parseInt(50 + self.pSpeed) + parseInt(50 + self.tSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + parseInt(50 + self.ptSpeed))
+							await sendPTZ(self, 'PTS' + parseInt(50 + self.pSpeed) + parseInt(50 + self.tSpeed))
 						})
 					)
 				}
@@ -266,17 +266,21 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				let n = parseInt(50 - self.ptSpeed)
-				let string = '' + (n < 10 ? '0' + n : n)
+				let np = parseInt(50 - self.pSpeed)
+				let nt = parseInt(50 - self.tSpeed)
+				let pString = '' + (np < 10 ? '0' + np : np)
+				let tString = '' + (nt < 10 ? '0' + nt : nt)
 
-				await sendPTZ(self, 'PTS' + string + string)
+				await sendPTZ(self, 'PTS' + pString + tString)
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							n = parseInt(50 - self.ptSpeed)
-							string = '' + (n < 10 ? '0' + n : n)
-							await sendPTZ(self, 'PTS' + string + string)
+							np = parseInt(50 - self.pSpeed)
+							nt = parseInt(50 - self.tSpeed)
+							pString = '' + (np < 10 ? '0' + np : np)
+							tString = '' + (nt < 10 ? '0' + nt : nt)
+							await sendPTZ(self, 'PTS' + pString + tString)
 						})
 					)
 				}
@@ -296,17 +300,17 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				let n = parseInt(50 - self.ptSpeed)
+				let n = parseInt(50 - self.tSpeed)
 				let string = '' + (n < 10 ? '0' + n : n)
 
-				await sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + string)
+				await sendPTZ(self, 'PTS' + parseInt(50 + self.pSpeed) + string)
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							n = parseInt(50 - self.ptSpeed)
+							n = parseInt(50 - self.tSpeed)
 							string = '' + (n < 10 ? '0' + n : n)
-							await sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + string)
+							await sendPTZ(self, 'PTS' + parseInt(50 + self.pSpeed) + string)
 						})
 					)
 				}
@@ -340,21 +344,61 @@ export function getActionDefinitions(self) {
 			name: 'Pan/Tilt - Speed',
 			options: [
 				{
+					type: 'checkbox',
+					label: 'Advanced mode - set independent speed for panning and tilting',
+					id: 'advanced',
+					default: false,
+				},
+				{
 					type: 'dropdown',
-					label: 'speed setting',
+					label: 'Speed setting',
 					id: 'speed',
 					default: 25,
 					choices: c.CHOICES_SPEED,
+					isVisible: ((options) => options.advanced ? false : true)
+				},
+				{
+					type: 'dropdown',
+					label: 'Pan speed setting',
+					id: 'pSpeed',
+					default: 25,
+					choices: c.CHOICES_SPEED,
+					isVisible: ((options) => options.advanced ? true : false)
+				},
+				{
+					type: 'dropdown',
+					label: 'Tilt speed setting',
+					id: 'tSpeed',
+					default: 25,
+					choices: c.CHOICES_SPEED,
+					isVisible: ((options) => options.advanced ? true : false)
 				},
 			],
 			callback: async (action) => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === action.options.speed)
-				if (i > -1) {
-					self.ptSpeedIndex = i
-				}
+				if (action.options.advanced === false) {
+					const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === action.options.speed)
 
-				self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
-				self.setVariableValues({ ptSpeedVar: self.ptSpeed })
+					if (i > -1) self.ptSpeedIndex = i
+					self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
+					self.pSpeed = self.ptSpeed
+					self.tSpeed = self.ptSpeed
+				} else {
+					const j = c.CHOICES_SPEED.findIndex((speed) => speed.id === action.options.pSpeed)
+					const k = c.CHOICES_SPEED.findIndex((speed) => speed.id === action.options.tSpeed)
+
+					if (j > -1) self.pSpeedIndex = j
+					if (k > -1) self.tSpeedIndex = k
+					self.pSpeed = c.CHOICES_SPEED[self.pSpeedIndex].id
+					self.tSpeed = c.CHOICES_SPEED[self.tSpeedIndex].id
+					if (self.pSpeed === self.tSpeed) {
+						self.ptSpeed = self.pSpeed
+					}
+				}
+				self.setVariableValues({
+					ptSpeedVar: self.ptSpeed,
+					pSpeedVar: self.pSpeed,
+					tSpeedVar: self.tSpeed,
+				})
 				self.speedChangeEmitter.emit('ptSpeed')
 			},
 		}
@@ -371,7 +415,55 @@ export function getActionDefinitions(self) {
 				}
 
 				self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
-				self.setVariableValues({ ptSpeedVar: self.ptSpeed })
+				self.pSpeed = self.ptSpeed
+				self.tSpeed = self.ptSpeed
+				self.setVariableValues({
+					ptSpeedVar: self.ptSpeed,
+					pSpeedVar: self.pSpeed,
+					tSpeedVar: self.tSpeed,
+				})
+				self.speedChangeEmitter.emit('ptSpeed')
+			},
+		}
+	}
+
+	if (seriesActions.ptSpeed) {
+		actions.pSpeedU = {
+			name: 'Pan/Tilt - Pan - Speed Up',
+			options: [],
+			callback: async () => {
+				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.pSpeed)
+				if (i > 0) {
+					self.pSpeedIndex = i - 1
+				}
+
+				self.pSpeed = c.CHOICES_SPEED[self.pSpeedIndex].id
+				if (self.pSpeed === self.tSpeed) self.ptSpeed = self.pSpeed
+				self.setVariableValues({
+					pSpeedVar: self.pSpeed,
+					ptSpeedVar: self.ptSpeed,
+				})
+				self.speedChangeEmitter.emit('ptSpeed')
+			},
+		}
+	}
+
+	if (seriesActions.ptSpeed) {
+		actions.tSpeedU = {
+			name: 'Pan/Tilt - Tilt - Speed Up',
+			options: [],
+			callback: async () => {
+				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.tSpeed)
+				if (i > 0) {
+					self.tSpeedIndex = i - 1
+				}
+
+				self.tSpeed = c.CHOICES_SPEED[self.tSpeedIndex].id
+				if (self.tSpeed === self.pSpeed) self.ptSpeed = self.tSpeed
+				self.setVariableValues({
+					tSpeedVar: self.tSpeed,
+					ptSpeedVar: self.ptSpeed,
+				})
 				self.speedChangeEmitter.emit('ptSpeed')
 			},
 		}
@@ -388,7 +480,55 @@ export function getActionDefinitions(self) {
 				}
 
 				self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
-				self.setVariableValues({ ptSpeedVar: self.ptSpeed })
+				self.pSpeed = self.ptSpeed
+				self.tSpeed = self.ptSpeed
+				self.setVariableValues({
+					ptSpeedVar: self.ptSpeed,
+					pSpeedVar: self.pSpeed,
+					tSpeedVar: self.tSpeed,
+				})
+				self.speedChangeEmitter.emit('ptSpeed')
+			},
+		}
+	}
+
+	if (seriesActions.ptSpeed) {
+		actions.pSpeedD = {
+			name: 'Pan/Tilt - Pan - Speed Down',
+			options: [],
+			callback: async () => {
+				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.pSpeed)
+				if (i < 49) {
+					self.pSpeedIndex = i + 1
+				}
+
+				self.pSpeed = c.CHOICES_SPEED[self.pSpeedIndex].id
+				if (self.pSpeed === self.tSpeed) self.ptSpeed = self.pSpeed
+				self.setVariableValues({
+					pSpeedVar: self.pSpeed,
+					ptSpeedVar: self.ptSpeed,
+				})
+				self.speedChangeEmitter.emit('ptSpeed')
+			},
+		}
+	}
+
+	if (seriesActions.ptSpeed) {
+		actions.tSpeedD = {
+			name: 'Pan/Tilt - Tilt - Speed Down',
+			options: [],
+			callback: async () => {
+				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.tSpeed)
+				if (i < 49) {
+					self.tSpeedIndex = i + 1
+				}
+
+				self.tSpeed = c.CHOICES_SPEED[self.tSpeedIndex].id
+				if (self.tSpeed === self.pSpeed) self.ptSpeed = self.tSpeed
+				self.setVariableValues({
+					tSpeedVar: self.tSpeed,
+					ptSpeedVar: self.ptSpeed,
+				})
 				self.speedChangeEmitter.emit('ptSpeed')
 			},
 		}
@@ -470,14 +610,14 @@ export function getActionDefinitions(self) {
 			options: [
 				{
 					type: 'dropdown',
-					label: 'speed setting',
+					label: 'Speed setting',
 					id: 'speed',
 					default: 25,
 					choices: c.CHOICES_SPEED,
 				},
 			],
 			callback: async (action) => {
-				const i = c.CHOICES_SPEED.findIndex((sp) => sp.id === action.options.speed)
+				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === action.options.speed)
 				if (i > -1) {
 					self.zSpeedIndex = i
 				}
@@ -595,14 +735,14 @@ export function getActionDefinitions(self) {
 			options: [
 				{
 					type: 'dropdown',
-					label: 'speed setting',
+					label: 'Speed setting',
 					id: 'speed',
 					default: 25,
 					choices: c.CHOICES_SPEED,
 				},
 			],
 			callback: async (action) => {
-				const i = c.CHOICES_SPEED.findIndex((sp) => sp.id === action.options.speed)
+				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === action.options.speed)
 				if (i > -1) {
 					self.fSpeedIndex = i
 				}

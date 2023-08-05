@@ -319,6 +319,10 @@ class PanasonicPTZInstance extends InstanceBase {
 
 		this.ptSpeed = 25
 		this.ptSpeedIndex = 25
+		this.pSpeed = 25
+		this.pSpeedIndex = 25
+		this.tSpeed = 25
+		this.tSpeedIndex = 25
 		this.zSpeed = 25
 		this.zSpeedIndex = 25
 		this.fSpeed = 25
