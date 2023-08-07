@@ -255,7 +255,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			case 'OSD':
 				if(str[1] == 'B1')
 				{
-					this.data.ColorTemperature = str[2];
+					this.data.colorTemperature = str[2];
 				}
 			break;
 			case 'd30':
@@ -312,7 +312,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			tally: 'NaN',
 			tally2: 'NaN',
 			oaf: 'NaN',
-			ColorTemperature: 'Unknown',
+			colorTemperature: 'Unknown',
 			irisMode: 'NaN',
 			recallModePset: 'NaN',
 		}
@@ -333,8 +333,8 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.shutIndex = 0
 		this.pedestalVal = '096'
 		this.pedestalIndex = 150
-		this.ColorTemperatureValue = '000'
-		this.ColorTemperatureIndex = 0
+		this.colorTemperatureValue = '000'
+		this.colorTemperatureIndex = 0
 		this.tcpPortSelected = 31004
 		this.tcpPortOld = this.config.tcpPort || 31004
 

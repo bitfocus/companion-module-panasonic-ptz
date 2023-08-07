@@ -922,61 +922,61 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.ColorTemperature) { 
-		actions.ColorTemperatureUp = {
+	if (seriesActions.colorTemperature) { 
+		actions.colorTemperatureUp = {
 			name: 'Color Temperature Up',
 			options: [],
 			callback: async (action) => {
-				if (self.ColorTemperatureIndex == seriesActions.ColorTemperature.dropdown.length) {
-					self.ColorTemperatureIndex = seriesActions.ColorTemperature.dropdown.length
-				} else if (self.ColorTemperatureIndex < seriesActions.ColorTemperature.dropdown.length) {
-					self.ColorTemperatureIndex++
+				if (self.colorTemperatureIndex == seriesActions.colorTemperature.dropdown.length) {
+					self.colorTemperatureIndex = seriesActions.colorTemperature.dropdown.length
+				} else if (self.colorTemperatureIndex < seriesActions.colorTemperature.dropdown.length) {
+					self.colorTemperatureIndex++
 				}
-				self.ColorTemperatureValue = seriesActions.ColorTemperature.dropdown[self.ColorTemperatureIndex].id
+				self.colorTemperatureValue = seriesActions.colorTemperature.dropdown[self.colorTemperatureIndex].id
 
-				await sendCam(self, seriesActions.ColorTemperature.cmd + self.ColorTemperatureValue.toUpperCase())
+				await sendCam(self, seriesActions.colorTemperature.cmd + self.colorTemperatureValue.toUpperCase())
 			},
 		}
 	}
 	
-	if (seriesActions.ColorTemperature) {
-		actions.ColorTemperatureDown = {
+	if (seriesActions.colorTemperature) {
+		actions.colorTemperatureDown = {
 			name: 'Color Temperature Down',
 			options: [],
 			callback: async (action) => {
-				if (self.ColorTemperatureIndex == 0) {
-					self.ColorTemperatureIndex = 0
-				} else if (self.ColorTemperatureIndex > 0) {
-					self.ColorTemperatureIndex--
+				if (self.colorTemperatureIndex == 0) {
+					self.colorTemperatureIndex = 0
+				} else if (self.colorTemperatureIndex > 0) {
+					self.colorTemperatureIndex--
 				}
-				self.ColorTemperatureValue = seriesActions.ColorTemperature.dropdown[self.ColorTemperatureIndex].id
+				self.colorTemperatureValue = seriesActions.colorTemperature.dropdown[self.colorTemperatureIndex].id
 
-				await sendCam(self, seriesActions.ColorTemperature.cmd + self.ColorTemperatureValue.toUpperCase())
+				await sendCam(self, seriesActions.colorTemperature.cmd + self.colorTemperatureValue.toUpperCase())
 			},
 		}
 	}
 
-	if (seriesActions.ColorTemperature) {
-		actions.ColorTemperatureSet = {
+	if (seriesActions.colorTemperature) {
+		actions.colorTemperatureSet = {
 			name: 'Set Color Temperature',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Color Temperature',
 					id: 'val',
-					default: seriesActions.ColorTemperature.dropdown[0].id,
-					choices: seriesActions.ColorTemperature.dropdown,
+					default: seriesActions.colorTemperature.dropdown[0].id,
+					choices: seriesActions.colorTemperature.dropdown,
 				},
 			],
 			callback: async (action) => {
 				
 				let id = action.options.val.toUpperCase();
-				let index = seriesActions.ColorTemperature.dropdown.findIndex((ColorTemperature) => ColorTemperature.id == id);
+				let index = seriesActions.colorTemperature.dropdown.findIndex((colorTemperature) => colorTemperature.id == id);
 
-				self.ColorTemperatureIndex = index;
-				self.ColorTemperatureValue = id;
+				self.colorTemperatureIndex = index;
+				self.colorTemperatureValue = id;
 
-				await sendCam(self, seriesActions.ColorTemperature.cmd + id)
+				await sendCam(self, seriesActions.colorTemperature.cmd + id)
 			},
 		}
 	}
