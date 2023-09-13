@@ -38,8 +38,8 @@ export function setVariables(self) {
 	if (SERIES.variables.OAF) {
 		variables.push({ variableId: 'OAF', name: 'Auto Focus Mode' })
 	}
-	if (SERIES.variables.ColorTemperature) {
-		variables.push({ variableId: 'ColorTemperature', name: 'Color Temperature' })
+	if (SERIES.variables.colorTemperature) {
+		variables.push({ variableId: 'colorTemperature', name: 'Color Temperature' })
 	}
 	if (SERIES.variables.iris) {
 		variables.push({ variableId: 'irisMode', name: 'Auto Iris Mode' })
@@ -67,8 +67,8 @@ export function checkVariables(self) {
 		: null
 
 
-	const ColorTemperature = SERIES.actions.ColorTemperature
-		? SERIES.actions.ColorTemperature.dropdown.find((ColorTemperature) => ColorTemperature.id == self.data.ColorTemperature)
+	const colorTemperature = SERIES.actions.colorTemperature
+		? SERIES.actions.colorTemperature.dropdown.find((colorTemperature) => colorTemperature.id == self.data.colorTemperature)
 		: null
 
 
@@ -83,7 +83,7 @@ export function checkVariables(self) {
 		tally: self.data.tally,
 		tally2: self.data.tally2,
 		OAF: self.data.oaf,
-		ColorTemperature: ColorTemperature?.label,
+		colorTemperature: colorTemperature?.label,
 		irisMode: self.data.irisMode,
 		gainValue: gainValue?.label,
 		presetMode: self.data.recallModePset,
