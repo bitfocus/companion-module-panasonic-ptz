@@ -1327,7 +1327,7 @@ export function getActionDefinitions(self) {
 				name: 'System - Red Tally On',
 				options: [],
 				callback: async (action) => {
-					await sendPTZ(self, 'TLR:1')
+					await sendCam(self, 'TLR:1')
 				},
 			}
 			actions.tally2Off = {
@@ -1341,7 +1341,7 @@ export function getActionDefinitions(self) {
 				name: 'System - Green Tally On',
 				options: [],
 				callback: async (action) => {
-					await sendPTZ(self, 'TLG:1')
+					await sendCam(self, 'TLG:1')
 				},
 			}
 		} else { // Use legacy PTZ Tally
