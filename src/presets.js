@@ -1,5 +1,6 @@
 import { combineRgb } from '@companion-module/base'
 import { getAndUpdateSeries } from './common.js'
+import ICONS from './icons.js';
 
 export function getPresetDefinitions(self) {
 	const presets = {}
@@ -24,7 +25,7 @@ export function getPresetDefinitions(self) {
 			name: 'UP',
 			style: {
 				text: '',
-				png64: self.ICON_UP,
+				png64: ICONS.UP,
 				pngalignment: 'center:center',
 				size: '18',
 				color: 16777215,
@@ -55,7 +56,7 @@ export function getPresetDefinitions(self) {
 			name: 'DOWN',
 			style: {
 				text: '',
-				png64: self.ICON_DOWN,
+				png64: ICONS.DOWN,
 				pngalignment: 'center:center',
 				size: '18',
 				color: 16777215,
@@ -86,7 +87,7 @@ export function getPresetDefinitions(self) {
 			name: 'LEFT',
 			style: {
 				text: '',
-				png64: self.ICON_LEFT,
+				png64: ICONS.LEFT,
 				pngalignment: 'center:center',
 				size: '18',
 				color: 16777215,
@@ -117,7 +118,7 @@ export function getPresetDefinitions(self) {
 			name: 'RIGHT',
 			style: {
 				text: '',
-				png64: self.ICON_RIGHT,
+				png64: ICONS.RIGHT,
 				pngalignment: 'center:center',
 				size: '18',
 				color: 16777215,
@@ -148,7 +149,7 @@ export function getPresetDefinitions(self) {
 			name: 'UP RIGHT',
 			style: {
 				text: '',
-				png64: self.ICON_UP_RIGHT,
+				png64: ICONS.UP_RIGHT,
 				pngalignment: 'center:center',
 				size: '18',
 				color: 16777215,
@@ -179,7 +180,7 @@ export function getPresetDefinitions(self) {
 			name: 'UP LEFT',
 			style: {
 				text: '',
-				png64: self.ICON_UP_LEFT,
+				png64: ICONS.UP_LEFT,
 				pngalignment: 'center:center',
 				size: '18',
 				color: 16777215,
@@ -210,7 +211,7 @@ export function getPresetDefinitions(self) {
 			name: 'DOWN LEFT',
 			style: {
 				text: '',
-				png64: self.ICON_DOWN_LEFT,
+				png64: ICONS.DOWN_LEFT,
 				pngalignment: 'center:center',
 				size: '18',
 				color: 16777215,
@@ -241,7 +242,7 @@ export function getPresetDefinitions(self) {
 			name: 'DOWN RIGHT',
 			style: {
 				text: '',
-				png64: self.ICON_DOWN_RIGHT,
+				png64: ICONS.DOWN_RIGHT,
 				pngalignment: 'center:center',
 				size: '18',
 				color: 16777215,
