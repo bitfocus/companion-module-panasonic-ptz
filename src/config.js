@@ -7,7 +7,7 @@ export const ConfigFields = [
 		width: 12,
 		label: 'Information',
 		value:
-			"This module controls Panasonic PTZ cameras, you can find supported models in the dropdown below.<br/>If your camera isn't in the list below, feel free to try it anyway the option 'Other Cameras'.",
+			"This module controls Panasonic PTZ cameras, you can find supported models in the dropdown below.<br/>If your camera isn't in the list below, feel free to try it anyway by option 'Other Cameras'.",
 	},
 	{
 		type: 'textinput',
@@ -37,7 +37,7 @@ export const ConfigFields = [
 		id: 'modelInfo',
 		width: 12,
 		label: 'Camera Model',
-		value: 'Please Select the camera model or feel free to leave it on auto.',
+		value: "Please select the camera model or feel free to leave it on 'Auto Detect'.",
 	},
 	{
 		type: 'dropdown',
@@ -57,28 +57,12 @@ export const ConfigFields = [
 	},
 	{
 		type: 'static-text',
-		id: 'info',
-		width: 12,
-		label: 'Tally On (Basic)',
-		value:
-			'Support for Tally On is no longer possible. Instead you can set this up as a trigger, and get additional control',
-	},
-	{
-		type: 'static-text',
-		id: 'dummy3',
-		width: 12,
-		label: ' ',
-		value: ' ',
-	},
-	{
-		type: 'static-text',
 		id: 'Info',
 		width: 12,
 		label: 'Other Settings',
 		value:
 			'These setting can be left on the default values and should give you a consistent setup, but they are there for you to use if need be.',
 	},
-
 	{
 		type: 'checkbox',
 		id: 'autoTCP',
@@ -90,8 +74,8 @@ export const ConfigFields = [
 		type: 'static-text',
 		id: 'autoTCPInfo',
 		width: 4,
-		label: 'Auto TCP',
-		value: 'This will ignore the port selected and find a port Automaticly',
+		label: 'Automatic local TCP port assignment',
+		value: 'This will ignore the manual port selection and find a free port automatically',
 	},
 	{
 		type: 'number',
@@ -106,8 +90,8 @@ export const ConfigFields = [
 		type: 'static-text',
 		id: 'manualTCPInfo',
 		width: 4,
-		label: 'Manual TCP Port',
-		value: 'TCP Port (Default: 31004) only used when "Auto TCP" is OFF/Disabled',
+		label: 'Manual local TCP port assignment',
+		value: 'TCP Port (Default: 31004) only used when "Automatic TCP port assignment" is disabled',
 	},
 	{
 		type: 'checkbox',
