@@ -263,7 +263,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		switch (str[0]) {
 			case 'OID':
 				this.data.modelTCP = str[1]
-				// if a new model is detected or seected, re-initialise all actions, variable and feedbacks
+				// if a new model is detected or selected, re-initialise all actions, variables and feedbacks
 				if (this.data.modelTCP !== this.data.model) {
 					this.init_actions() // export actions
 					this.init_presets()
