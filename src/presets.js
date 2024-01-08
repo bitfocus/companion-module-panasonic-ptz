@@ -5,10 +5,10 @@ import ICONS from './icons.js';
 export function getPresetDefinitions(self) {
 	const presets = {}
 
-	const foregroundColor = combineRgb(255, 255, 255) // White
-	const backgroundColorRed = combineRgb(255, 0, 0) // Red
-	const backgroundColorGreen = combineRgb(0, 255, 0) // Green
-	const backgroundColorOrange = combineRgb(255, 102, 0) // Orange
+	const colorWhite = combineRgb(255, 255, 255)
+	const colorRed = combineRgb(255, 0, 0)
+	const colorGreen = combineRgb(0, 255, 0)
+	const colorBlack = combineRgb(0, 0, 0)
 
 	const SERIES = getAndUpdateSeries(self)
 	const seriesActions = SERIES.actions
@@ -28,8 +28,8 @@ export function getPresetDefinitions(self) {
 				png64: ICONS.UP,
 				pngalignment: 'center:center',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -59,8 +59,8 @@ export function getPresetDefinitions(self) {
 				png64: ICONS.DOWN,
 				pngalignment: 'center:center',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -90,8 +90,8 @@ export function getPresetDefinitions(self) {
 				png64: ICONS.LEFT,
 				pngalignment: 'center:center',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -121,8 +121,8 @@ export function getPresetDefinitions(self) {
 				png64: ICONS.RIGHT,
 				pngalignment: 'center:center',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -152,8 +152,8 @@ export function getPresetDefinitions(self) {
 				png64: ICONS.UP_RIGHT,
 				pngalignment: 'center:center',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -183,8 +183,8 @@ export function getPresetDefinitions(self) {
 				png64: ICONS.UP_LEFT,
 				pngalignment: 'center:center',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -214,8 +214,8 @@ export function getPresetDefinitions(self) {
 				png64: ICONS.DOWN_LEFT,
 				pngalignment: 'center:center',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -245,8 +245,8 @@ export function getPresetDefinitions(self) {
 				png64: ICONS.DOWN_RIGHT,
 				pngalignment: 'center:center',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -274,8 +274,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'HOME',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -300,8 +300,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'SPEED\\nUP\\n$(Panasonic-PTZ:ptSpeedVar)',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -324,8 +324,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'SPEED\\nDOWN\\n$(Panasonic-PTZ:ptSpeedVar)',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -348,8 +348,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'SET\\nSPEED\\nHIGH',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -374,8 +374,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'SET\\nSPEED\\nMID',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -400,8 +400,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'SET\\nSPEED\\nLOW',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -432,8 +432,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'ZOOM\\nIN',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -461,8 +461,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'ZOOM\\nOUT',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -492,8 +492,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'ZOOM\\nSPEED\\nUP\\n$(Panasonic-PTZ:zSpeedVar)',
 				size: '7',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -516,8 +516,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'ZOOM\\nSPEED\\nDOWN\\n$(Panasonic-PTZ:zSpeedVar)',
 				size: '7',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -540,8 +540,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'ZOOM\\nSPEED\\nHIGH',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -566,8 +566,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'ZOOM\\nSPEED\\nMID',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -592,8 +592,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'ZOOM\\nSPEED\\nLOW',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -620,8 +620,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'FOCUS\\nNEAR',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -649,8 +649,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'FOCUS\\nFAR',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -680,8 +680,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'FOCUS\\nSPEED\\nUP\\n$(Panasonic-PTZ:fSpeedVar)',
 				size: '7',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -704,8 +704,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'FOCUS\\nSPEED\\nDOWN\\n$(Panasonic-PTZ:fSpeedVar)',
 				size: '7',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -727,8 +727,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'FOCUS\\nSPEED\\nHIGH',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -753,8 +753,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'FOCUS\\nSPEED\\nMID',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -779,8 +779,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'FOCUS\\nSPEED\\nLOW',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -807,8 +807,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'MANUAL\\nFOCUS',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -830,8 +830,8 @@ export function getPresetDefinitions(self) {
 						option: '0',
 					},
 					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed,
+						color: colorWhite,
+						bgcolor: colorRed,
 					},
 				},
 			],
@@ -844,8 +844,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'AUTO\\nFOCUS',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -867,8 +867,8 @@ export function getPresetDefinitions(self) {
 						option: '1',
 					},
 					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed,
+						color: colorWhite,
+						bgcolor: colorRed,
 					},
 				},
 			],
@@ -881,8 +881,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'OTAF\\nFOCUS',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -904,8 +904,8 @@ export function getPresetDefinitions(self) {
 						option: '1',
 					},
 					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed,
+						color: colorWhite,
+						bgcolor: colorRed,
 					},
 				},
 			],
@@ -924,8 +924,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'IRIS\\nUP',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -948,8 +948,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'IRIS\\nDOWN',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -972,8 +972,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'MANUAL\\nIRIS',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -995,8 +995,8 @@ export function getPresetDefinitions(self) {
 						option: '0',
 					},
 					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed,
+						color: colorWhite,
+						bgcolor: colorRed,
 					},
 				},
 			],
@@ -1009,8 +1009,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'AUTO\\nIRIS',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1032,8 +1032,8 @@ export function getPresetDefinitions(self) {
 						option: '1',
 					},
 					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed,
+						color: colorWhite,
+						bgcolor: colorRed,
 					},
 				},
 			],
@@ -1048,8 +1048,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'GAIN\\nUP',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1072,8 +1072,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'GAIN\\nDOWN',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1098,8 +1098,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'Shut\\nUP',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1122,8 +1122,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'Shut\\nDOWN',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1148,8 +1148,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'Pedestal\\nUP',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1172,8 +1172,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'Pedestal\\nDOWN',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1194,12 +1194,12 @@ export function getPresetDefinitions(self) {
 		presets['exposure-filter-up'] = {
 			type: 'button',
 			category: 'Exposure',
-			name: 'Filter Up',
+			name: 'ND Filter Up',
 			style: {
-				text: 'Filter\\nUP',
+				text: 'ND Filter\\nUP',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1218,12 +1218,12 @@ export function getPresetDefinitions(self) {
 		presets['exposure-filter-down'] = {
 			type: 'button',
 			category: 'Exposure',
-			name: 'Filter Down',
+			name: 'ND Filter Down',
 			style: {
-				text: 'Filter\\nDOWN',
+				text: 'ND Filter\\nDOWN',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1245,10 +1245,10 @@ export function getPresetDefinitions(self) {
 				category: 'Exposure',
 				name: 'ND Filter Set ' + seriesActions.filter.dropdown[x].label,
 				style: {
-					text: 'FILTER\\nSET\\n' + seriesActions.filter.dropdown[x].label,
+					text: 'ND FILTER\\nSET\\n' + seriesActions.filter.dropdown[x].label,
 					size: '14',
-					color: 16777215,
-					bgcolor: combineRgb(0, 0, 0),
+					color: colorWhite,
+					bgcolor: colorBlack,
 				},
 				steps: [
 					{
@@ -1280,8 +1280,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'Power\\nOFF',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1301,8 +1301,8 @@ export function getPresetDefinitions(self) {
 						option: '0',
 					},
 					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed,
+						color: colorWhite,
+						bgcolor: colorRed,
 					},
 				},
 			],
@@ -1315,8 +1315,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'Power\\nON',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1336,8 +1336,8 @@ export function getPresetDefinitions(self) {
 						option: '1',
 					},
 					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed,
+						color: colorWhite,
+						bgcolor: colorRed,
 					},
 				},
 			],
@@ -1350,10 +1350,10 @@ export function getPresetDefinitions(self) {
 			category: 'System',
 			name: 'Red Tally Off',
 			style: {
-				text: 'Tally\\nOFF',
-				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				text: 'Red Tally\\nOFF',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1373,8 +1373,8 @@ export function getPresetDefinitions(self) {
 						option: '0',
 					},
 					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed,
+						color: colorWhite,
+						bgcolor: colorRed,
 					},
 				},
 			],
@@ -1385,10 +1385,10 @@ export function getPresetDefinitions(self) {
 			category: 'System',
 			name: 'Red Tally On',
 			style: {
-				text: 'Tally\\nON',
-				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				text: 'Red Tally\\nON',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1408,8 +1408,8 @@ export function getPresetDefinitions(self) {
 						option: '1',
 					},
 					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed,
+						color: colorWhite,
+						bgcolor: colorRed,
 					},
 				},
 			],
@@ -1422,10 +1422,10 @@ export function getPresetDefinitions(self) {
 			category: 'System',
 			name: 'Green Tally Off',
 			style: {
-				text: 'Tally\\nOFF',
-				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				text: 'Green Tally\\nOFF',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1445,8 +1445,8 @@ export function getPresetDefinitions(self) {
 						option: '0',
 					},
 					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorGreen,
+						color: colorWhite,
+						bgcolor: colorGreen,
 					},
 				},
 			],
@@ -1457,10 +1457,10 @@ export function getPresetDefinitions(self) {
 			category: 'System',
 			name: 'Green Tally On',
 			style: {
-				text: 'Tally\\nON',
-				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				text: 'Green Tally\\nON',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1480,8 +1480,8 @@ export function getPresetDefinitions(self) {
 						option: '1',
 					},
 					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorGreen,
+						color: colorWhite,
+						bgcolor: colorGreen,
 					},
 				},
 			],
@@ -1496,8 +1496,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'INS\\nDesk',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1519,8 +1519,8 @@ export function getPresetDefinitions(self) {
 						option: '0',
 					},
 					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed,
+						color: colorWhite,
+						bgcolor: colorRed,
 					},
 				},
 			],
@@ -1533,8 +1533,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'INS\\nHang',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1556,8 +1556,8 @@ export function getPresetDefinitions(self) {
 						option: '1',
 					},
 					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed,
+						color: colorWhite,
+						bgcolor: colorRed,
 					},
 				},
 			],
@@ -1572,8 +1572,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'SD Card\\nRecording\\nStart',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1598,8 +1598,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'SD Card\\nRecording\\nStop',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1630,8 +1630,8 @@ export function getPresetDefinitions(self) {
 				style: {
 					text: 'SAVE\\nPSET\\n' + parseInt(save + 1),
 					size: '14',
-					color: 16777215,
-					bgcolor: combineRgb(0, 0, 0),
+					color: colorWhite,
+					bgcolor: colorBlack,
 				},
 				steps: [
 					{
@@ -1659,8 +1659,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'PRESET\\nMODE\\nSPEED',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1685,8 +1685,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'PRESET\\nMODE\\nTIME',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1713,8 +1713,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'RECALL\\nSPEED\\nHIGH',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1739,8 +1739,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'RECALL\\nSPEED\\nMID',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1765,8 +1765,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'RECALL\\nSPEED\\nLOW',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1793,8 +1793,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'RECALL\\nTIME\\n5 Sec',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1819,8 +1819,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'RECALL\\nTIME\\n10 Sec',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1845,8 +1845,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'RECALL\\nTIME\\n30 Sec',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1873,8 +1873,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'Preset\\nMode A',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1896,8 +1896,8 @@ export function getPresetDefinitions(self) {
 						option: '0',
 					},
 					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed,
+						color: colorWhite,
+						bgcolor: colorRed,
 					},
 				},
 			],
@@ -1910,8 +1910,8 @@ export function getPresetDefinitions(self) {
 			style: {
 				text: 'Preset\\nMode B',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
@@ -1933,76 +1933,76 @@ export function getPresetDefinitions(self) {
 						option: '1',
 					},
 					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed,
+						color: colorWhite,
+						bgcolor: colorRed,
 					},
 				},
 			],
 		}
-	}
 
-	presets['recall-preset-mode-c'] = {
-		type: 'button',
-		category: 'Recall Preset',
-		name: 'Preset Mode C',
-		style: {
-			text: 'Preset\\nMode C',
-			size: '14',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: 'recallModePset',
-						options: {
-							val: '2',
-						},
-					},
-				],
-				up: [],
-			},
-		],
-		feedbacks: [
-			{
-				feedbackId: 'recallModePset',
-				options: {
-					option: '2',
-				},
-				style: {
-					color: foregroundColor,
-					bgcolor: backgroundColorRed,
-				},
-			},
-		],
-	}
-
-	for (let recall = 0; recall < 100; recall++) {
-		presets[`recall-preset-${recall}`] = {
+		presets['recall-preset-mode-c'] = {
 			type: 'button',
 			category: 'Recall Preset',
-			name: 'Recall Preset ' + parseInt(recall + 1),
+			name: 'Preset Mode C',
 			style: {
-				text: 'Recall\\nPSET\\n' + parseInt(recall + 1),
+				text: 'Preset\\nMode C',
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
 			steps: [
 				{
 					down: [
 						{
-							actionId: 'recallPset',
+							actionId: 'recallModePset',
 							options: {
-								val: ('0' + recall.toString(10).toUpperCase()).substr(-2, 2),
+								val: '2',
 							},
 						},
 					],
 					up: [],
 				},
 			],
-			feedbacks: [],
+			feedbacks: [
+				{
+					feedbackId: 'recallModePset',
+					options: {
+						option: '2',
+					},
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
+		}
+
+		for (let recall = 0; recall < 100; recall++) {
+			presets[`recall-preset-${recall}`] = {
+				type: 'button',
+				category: 'Recall Preset',
+				name: 'Recall Preset ' + parseInt(recall + 1),
+				style: {
+					text: 'Recall\\nPSET\\n' + parseInt(recall + 1),
+					size: '14',
+					color: colorWhite,
+					bgcolor: colorBlack,
+				},
+				steps: [
+					{
+						down: [
+							{
+								actionId: 'recallPset',
+								options: {
+									val: ('0' + recall.toString(10).toUpperCase()).substr(-2, 2),
+								},
+							},
+						],
+						up: [],
+					},
+				],
+				feedbacks: [],
+			}
 		}
 	}
 
