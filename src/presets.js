@@ -1344,6 +1344,78 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
+	if (seriesActions.colorbar) {
+		presets['system-colorbar-off'] = {
+			type: 'button',
+			category: 'System',
+			name: 'Color Bar Off',
+			style: {
+				text: 'Color Bar\\nOFF',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'colorbarOff',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'colorbarState',
+					options: {
+						option: '0',
+					},
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
+		}
+
+		presets['system-colorbar-on'] = {
+			type: 'button',
+			category: 'System',
+			name: 'Color Bar On',
+			style: {
+				text: 'Color Bar\\nON',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'colorbarOn',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'colorbarState',
+					options: {
+						option: '1',
+					},
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
+		}
+	}
+
 	if (seriesActions.tally) {
 		presets['system-tally-off'] = {
 			type: 'button',

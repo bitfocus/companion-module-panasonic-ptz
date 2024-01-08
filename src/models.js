@@ -62,13 +62,14 @@ export const MODELS = [
 
 export const SERIES_SPECS = [
 	{
-		// Includes all Actions / Variabels / Feedbacks
+		// Includes all Actions / Variables / Feedbacks
 		id: 'Other',
 		variables: {
 			version: true, // If a camera sends a package every minute with the firmware version (qSV3)
 			error: true, // Camera can return Error messages when actions fail (rER)
 			ins: true, // Install position (iNS0 or iNS1)
 			power: true, // Power State (p1 or p0)
+			colorbar: true, // Color Bar State (OBR:1 or OBR:0)
 			tally: true, // Red Tally State (DA1/TLR:1 or DA0/TLR:0)
 			tally2: true, // Green Tally State (TLG:1 or TLG:0)
 			OAF: true, // Has Auto Focus (OAF:1 or OAF:0)
@@ -79,6 +80,7 @@ export const SERIES_SPECS = [
 		},
 		feedbacks: {
 			powerState: true, // Power State (p1 or p0)
+			colorbarState: true, // Color Bar State (OBR:1 or OBR:0)
 			tallyState: true, // Red Tally State (dA1/TLR:1 or dA0/TLR:0)
 			tally2State: true, // Green Tally State (TLG:1 or TLG:0)
 			insState: true, // Install position (iNS0 or iNS1)
@@ -104,6 +106,7 @@ export const SERIES_SPECS = [
 			speedPset: true, // Has Preset Recall Speed Control (UPVSxx)
 			timePset: true, // Has Preset Recall Time Control (UPVSxx or OSJ:29:xx)
 			power: true, // Has Power Control (O0 or O1)
+			colorbar: true, // Has Color Bar Control (DCB:1 or DCB:0)
 			tally: true, // Has Red Tally Light Control (DA1/TLR:1 or DA0/TLR:0)
 			tally2: true, // Has Green Tally Light Control (TLG:1 or TLG:0)
 			ins: true, // Has Install Position Control (INSx)
@@ -120,6 +123,7 @@ export const SERIES_SPECS = [
 			error: true,
 			ins: true,
 			power: true,
+			colorbar: true,
 			tally: true,
 			OAF: true,
 			iris: true,
@@ -129,6 +133,7 @@ export const SERIES_SPECS = [
 		},
 		feedbacks: {
 			powerState: true,
+			colorbarState: true,
 			tallyState: true,
 			insState: true,
 			autoFocus: true,
@@ -153,6 +158,7 @@ export const SERIES_SPECS = [
 			speedPset: true,
 			timePset: false,
 			power: true,
+			colorbar: true,
 			tally: true,
 			ins: true,
 			sdCard: true,
@@ -168,6 +174,7 @@ export const SERIES_SPECS = [
 			error: true,
 			ins: true,
 			power: true,
+			colorbar: true,
 			tally: true,
 			OAF: true,
 			iris: true,
@@ -177,6 +184,7 @@ export const SERIES_SPECS = [
 		},
 		feedbacks: {
 			powerState: true,
+			colorbarState: true,
 			tallyState: true,
 			insState: true,
 			autoFocus: true,
@@ -201,6 +209,7 @@ export const SERIES_SPECS = [
 			speedPset: true,
 			timePset: false,
 			power: true,
+			colorbar: true,
 			tally: true,
 			ins: true,
 			sdCard: true,
@@ -216,6 +225,7 @@ export const SERIES_SPECS = [
 			error: true,
 			ins: true,
 			power: true,
+			colorbar: true,
 			tally: true,
 			OAF: true,
 			iris: true,
@@ -225,6 +235,7 @@ export const SERIES_SPECS = [
 		},
 		feedbacks: {
 			powerState: true,
+			colorbarState: true,
 			tallyState: true,
 			insState: true,
 			autoFocus: true,
@@ -249,6 +260,7 @@ export const SERIES_SPECS = [
 			speedPset: true,
 			timePset: false,
 			power: true,
+			colorbar: true,
 			tally: true,
 			ins: true,
 			sdCard: true,
@@ -264,6 +276,7 @@ export const SERIES_SPECS = [
 			error: true,
 			ins: true,
 			power: true,
+			colorbar: true,
 			tally: true,
 			tally2: true,
 			OAF: true,
@@ -274,6 +287,7 @@ export const SERIES_SPECS = [
 		},
 		feedbacks: {
 			powerState: true,
+			colorbarState: true,
 			tallyState: true,
 			tally2State: true,
 			insState: true,
@@ -300,6 +314,7 @@ export const SERIES_SPECS = [
 			timePset: true,
 			power: true,
 			ins: true,
+			colorbar: true,
 			tally: true,
 			tally2: true,
 			sdCard: false,
@@ -315,6 +330,7 @@ export const SERIES_SPECS = [
 			error: true,
 			ins: false,
 			power: true,
+			colorbar: true,
 			tally: true,
 			OAF: false,
 			iris: true,
@@ -324,6 +340,7 @@ export const SERIES_SPECS = [
 		},
 		feedbacks: {
 			powerState: true,
+			colorbarState: true,
 			tallyState: true,
 			insState: false,
 			autoFocus: false,
@@ -348,6 +365,7 @@ export const SERIES_SPECS = [
 			speedPset: false,
 			timePset: false,
 			power: true,
+			colorbar: true,
 			tally: true,
 			ins: false,
 			sdCard: false,
@@ -363,6 +381,7 @@ export const SERIES_SPECS = [
 			error: true,
 			ins: true,
 			power: true,
+			colorbar: true,
 			tally: true,
 			OAF: true,
 			iris: true,
@@ -372,6 +391,7 @@ export const SERIES_SPECS = [
 		},
 		feedbacks: {
 			powerState: true,
+			colorbarState: true,
 			tallyState: true,
 			insState: true,
 			autoFocus: true,
@@ -396,6 +416,7 @@ export const SERIES_SPECS = [
 			speedPset: true,
 			timePset: false,
 			power: true,
+			colorbar: true,
 			tally: true,
 			ins: true,
 			sdCard: false,
@@ -411,6 +432,7 @@ export const SERIES_SPECS = [
 			error: true,
 			ins: true,
 			power: true,
+			colorbar: true,
 			tally: true,
 			OAF: true,
 			iris: true,
@@ -420,6 +442,7 @@ export const SERIES_SPECS = [
 		},
 		feedbacks: {
 			powerState: true,
+			colorbarState: true,
 			tallyState: true,
 			insState: true,
 			autoFocus: true,
@@ -444,6 +467,7 @@ export const SERIES_SPECS = [
 			speedPset: true,
 			timePset: false,
 			power: true,
+			colorbar: true,
 			tally: true,
 			ins: true,
 			sdCard: false,
@@ -459,6 +483,7 @@ export const SERIES_SPECS = [
 			error: true,
 			ins: true,
 			power: true,
+			colorbar: true,
 			tally: true,
 			OAF: true,
 			iris: true,
@@ -468,6 +493,7 @@ export const SERIES_SPECS = [
 		},
 		feedbacks: {
 			powerState: true,
+			colorbarState: true,
 			tallyState: true,
 			insState: true,
 			autoFocus: true,
@@ -492,6 +518,7 @@ export const SERIES_SPECS = [
 			speedPset: true,
 			timePset: false,
 			power: true,
+			colorbar: true,
 			tally: true,
 			ins: true,
 			sdCard: false,
@@ -507,6 +534,7 @@ export const SERIES_SPECS = [
 			error: true,
 			ins: true,
 			power: true,
+			colorbar: true,
 			tally: true,
 			OAF: true,
 			iris: true,
@@ -516,6 +544,7 @@ export const SERIES_SPECS = [
 		},
 		feedbacks: {
 			powerState: true,
+			colorbarState: true,
 			tallyState: true,
 			insState: true,
 			autoFocus: true,
@@ -540,6 +569,7 @@ export const SERIES_SPECS = [
 			speedPset: true,
 			timePset: false,
 			power: true,
+			colorbar: true,
 			tally: true,
 			ins: true,
 			sdCard: false,
@@ -555,6 +585,7 @@ export const SERIES_SPECS = [
 			error: true,
 			ins: true,
 			power: true,
+			colorbar: true,
 			tally: true,
 			OAF: true,
 			iris: true,
@@ -564,6 +595,7 @@ export const SERIES_SPECS = [
 		},
 		feedbacks: {
 			powerState: true,
+			colorbarState: true,
 			tallyState: true,
 			insState: true,
 			autoFocus: true,
@@ -588,6 +620,7 @@ export const SERIES_SPECS = [
 			speedPset: true,
 			timePset: false,
 			power: true,
+			colorbar: true,
 			tally: true,
 			ins: true,
 			sdCard: false,
@@ -603,6 +636,7 @@ export const SERIES_SPECS = [
 			error: true,
 			ins: true,
 			power: true,
+			colorbar: true,
 			tally: true,
 			OAF: true,
 			iris: true,
@@ -612,6 +646,7 @@ export const SERIES_SPECS = [
 		},
 		feedbacks: {
 			powerState: true,
+			colorbarState: true,
 			tallyState: true,
 			insState: true,
 			autoFocus: true,
@@ -636,6 +671,7 @@ export const SERIES_SPECS = [
 			speedPset: true,
 			timePset: false,
 			power: true,
+			colorbar: true,
 			tally: true,
 			ins: true,
 			sdCard: false,
@@ -651,6 +687,7 @@ export const SERIES_SPECS = [
 			error: true,
 			ins: true,
 			power: true,
+			colorbar: true,
 			tally: true,
 			OAF: false,
 			iris: true,
@@ -660,6 +697,7 @@ export const SERIES_SPECS = [
 		},
 		feedbacks: {
 			powerState: true,
+			colorbarState: true,
 			tallyState: true,
 			insState: true,
 			autoFocus: false,
@@ -684,6 +722,7 @@ export const SERIES_SPECS = [
 			speedPset: false,
 			timePset: false,
 			power: true,
+			colorbar: true,
 			tally: true,
 			ins: true,
 			sdCard: false,
@@ -699,6 +738,7 @@ export const SERIES_SPECS = [
 			error: true,
 			ins: true,
 			power: true,
+			colorbar: true,
 			tally: true,
 			OAF: true,
 			iris: true,
@@ -708,6 +748,7 @@ export const SERIES_SPECS = [
 		},
 		feedbacks: {
 			powerState: true,
+			colorbarState: true,
 			tallyState: true,
 			insState: true,
 			autoFocus: true,
@@ -732,6 +773,7 @@ export const SERIES_SPECS = [
 			speedPset: true,
 			timePset: false,
 			power: true,
+			colorbar: true,
 			tally: true,
 			ins: true,
 			sdCard: false,
@@ -746,6 +788,7 @@ export const SERIES_SPECS = [
 			version: false,
 			error: true,
 			power: true,
+			colorbar: true,
 			tally: true,
 			tally2: true,
 			ins: false,
@@ -756,6 +799,7 @@ export const SERIES_SPECS = [
 		},
 		feedbacks: {
 			powerState: true,
+			colorbarState: true,
 			insState: false,
 			autoFocus: false,
 			autoIris: false,
@@ -780,6 +824,7 @@ export const SERIES_SPECS = [
 			timePset: false,
 			power: false,
 			ins: false,
+			colorbar: true,
 			tally: true,
 			tally2: true,
 			sdCard: false,
@@ -791,39 +836,41 @@ export const SERIES_SPECS = [
 		// Specific for the AG-CX350/4000 Camera
 		id: 'CX350',
 		variables: {
-			// Camera firmware lacks event update notification support
-			version: false, // If a camera sends a package every minute with the firmware version (qSV3)
-			error: false, // Camera can return Error messages when actions fail (rER)
-			ins: false, // Install position (iNS0 or iNS1)
-			power: false, // Power State (p1 or p0)
-			tally: false, // Red Tally State (DA1/TLR:1 or DA0/TLR:0)
-			tally2: false, // Green Tally State (TLG:1 or TLG:0)
-			OAF: false, // Has Auto Focus (OAF:1 or OAF:0)
-			iris: false, // Has Auto Iris (d30 or d31)
+			// Camera firmware lacks event update notification support!
+			version: false,
+			error: false,
+			ins: false,
+			power: false,
+			colorbar: false,
+			tally: false,
+			tally2: false,
+			OAF: false,
+			iris: false,
 			gainValue: false,
 			preset: false,
 			colorTemperature: false,
 		},
 		feedbacks: {
-			// Camera firmware lacks event update notification support
-			powerState: false, // Power State (p1 or p0)
-			tallyState: false, // Red Tally State (dA1/TLR:1 or dA0/TLR:0)
-			tally2State: false, // Green Tally State (TLG:1 or TLG:0)
-			insState: false, // Install position (iNS0 or iNS1)
-			autoFocus: false, // Has Auto Focus (OAF:1 or OAF:0)
-			autoIris: false, // Has Auto Iris (d30 or d31)
+			// Camera firmware lacks event update notification support!
+			powerState: false,
+			colorbarState: false,
+			tallyState: false,
+			tally2State: false,
+			insState: false,
+			autoFocus: false,
+			autoIris: false,
 			preset: false,			
 		},
 		actions: {
-			panTilt: false, // Has Pan/Tilt Support (PTSxx)
-			ptSpeed: false, // Internal Speed Options
-			zoom: true, // Has Zoom Support (Zxx)
-			zSpeed: true, // Internal Speed Options
-			focus: true, // Has Focus Support (Fxx)
-			fSpeed: true, // Internal Speed Options
-			OAF: true, // Has Auto Focus Support (D10 or D11)
-			OTAF: true, // Has One Touch Auto Focus Support (OSE:69:1)
-			iris: true, // Has Iris Support (manual and auto) (Ixx)
+			panTilt: false,
+			ptSpeed: false,
+			zoom: true,
+			zSpeed: true,
+			focus: true,
+			fSpeed: true,
+			OAF: true,
+			OTAF: true,
+			iris: true,
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_CX350 },
 			shut: false,
 			ped: { cmd: 'OSJ:0F:', dropdown: c.CHOICES_PEDESTAL_CX350() },
@@ -832,6 +879,7 @@ export const SERIES_SPECS = [
 			speedPset: false,
 			timePset: false,
 			power: false,
+			colorbar: true,
 			tally: true,
 			tally2: true,
 			ins: false,

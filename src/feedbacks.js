@@ -19,7 +19,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.powerState = {
 			type: 'boolean',
 			name: 'System - Power State',
-			description: 'Indicate if PTZ is ON or OFF',
+			description: 'Indicate if Camera is ON or OFF',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorRed,
@@ -27,7 +27,7 @@ export function getFeedbackDefinitions(self) {
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Indicate in X State',
+					label: 'Indicate Power State',
 					id: 'option',
 					default: '1',
 					choices: [
@@ -53,6 +53,22 @@ export function getFeedbackDefinitions(self) {
 						break
 				}
 				return false
+			},
+		}
+	}
+
+	if (SERIES.feedbacks.colorbarState) {
+		feedbacks.colorbarState = {
+			type: 'boolean',
+			name: 'System - Color Bar State',
+			description: 'Indicates whether the color bar is currently ENABLED on this camera',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorRed,
+			},
+			options: [],
+			callback: function (feedback) {
+				return self.data.colorbar
 			},
 		}
 	}
