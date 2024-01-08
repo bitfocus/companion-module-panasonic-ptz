@@ -885,8 +885,8 @@ export function getActionDefinitions(self) {
 					id: 'bol',
 					default: 0,
 					choices: [
-						{ id: 0, label: 'Auto Iris' },
-						{ id: 1, label: 'Manual Iris' },
+						{ id: 0, label: 'Manual Iris' },
+						{ id: 1, label: 'Auto Iris' },
 					],
 				},
 			],

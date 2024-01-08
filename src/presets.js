@@ -981,7 +981,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'irisM',
 							options: {
-								bol: 1,
+								bol: 0,
 							},
 						},
 					],
@@ -1018,7 +1018,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'irisM',
 							options: {
-								bol: 0,
+								bol: 1,
 							},
 						},
 					],
