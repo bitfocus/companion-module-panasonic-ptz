@@ -339,7 +339,7 @@ export function getFeedbackDefinitions(self) {
 		}
 		feedbacks.presetCompletion = {
 			type: 'boolean',
-			name: 'Preset Completion Notification',
+			name: 'Preset - Recall Completion Notification',
 			description: 'Indicate if recalled preset is completed',
 			defaultStyle: {
 				color: foregroundColor,
