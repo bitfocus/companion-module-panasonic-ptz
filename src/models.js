@@ -824,7 +824,7 @@ export const SERIES_SPECS = [
 			OAF: true, // Has Auto Focus Support (D10 or D11)
 			OTAF: true, // Has One Touch Auto Focus Support (OSE:69:1)
 			iris: true, // Has Iris Support (manual and auto) (Ixx)
-			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_CX350() },
+			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_CX350 },
 			shut: false,
 			ped: { cmd: 'OSJ:0F:', dropdown: c.CHOICES_PEDESTAL_CX350() },
 			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_CX350() },
