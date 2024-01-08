@@ -1700,7 +1700,7 @@ export function getPresetDefinitions(self) {
 				category: 'Save Preset',
 				name: 'Save Preset ' + parseInt(save + 1),
 				style: {
-					text: 'SAVE\\nPSET\\n' + parseInt(save + 1),
+					text: 'SAVE\\nPRESET\\n' + parseInt(save + 1),
 					size: '14',
 					color: colorWhite,
 					bgcolor: colorBlack,
@@ -2055,7 +2055,7 @@ export function getPresetDefinitions(self) {
 				category: 'Recall Preset',
 				name: 'Recall Preset ' + parseInt(recall + 1),
 				style: {
-					text: 'Recall\\nPSET\\n' + parseInt(recall + 1),
+					text: 'Recall\\nPRESET\\n' + parseInt(recall + 1),
 					size: '14',
 					color: colorWhite,
 					bgcolor: colorBlack,

@@ -52,6 +52,7 @@ export function setVariables(self) {
 	}
 	if (SERIES.variables.preset) {
 		variables.push({ variableId: 'presetMode', name: 'Preset Mode' })
+		variables.push({ variableId: 'lastPresetCompleted', name: 'Last Preset Completed' })
 	}
 	variables.push({ variableId: 'ptSpeedVar', name: 'Pan/Tilt Speed' })
 	variables.push({ variableId: 'pSpeedVar', name: 'Pan Speed' })
@@ -98,5 +99,6 @@ export function checkVariables(self) {
 		tSpeedVar: self.tSpeed,
 		zSpeedVar: self.zSpeed,
 		fSpeedVar: self.fSpeed,
+		lastPresetCompleted: self.data.lastPresetCompleted,
 	})
 }

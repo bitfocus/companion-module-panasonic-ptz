@@ -254,6 +254,12 @@ class PanasonicPTZInstance extends InstanceBase {
 			}
 		}
 
+		// Store last Preset completed
+		const q = str[0].match(/q(\d\d)/)
+		if (q) {
+			this.data.lastPresetCompleted = parseInt(q[1])+1
+		}
+
 		// Store Firmware Version (not supported for the AK-UB300.)
 		if (str[0].substring(0, 4) === 'qSV3') {
 			this.data.version = str[0].substring(4)
@@ -384,6 +390,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			colorTemperature: 'Unknown',
 			irisMode: 'NaN',
 			recallModePset: 'NaN',
+			lastPresetCompleted: null,
 		}
 
 		this.ptSpeed = 25
