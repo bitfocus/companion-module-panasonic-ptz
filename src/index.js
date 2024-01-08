@@ -25,7 +25,7 @@ class PanasonicPTZInstance extends InstanceBase {
 
 			this.log('info', 'un-subscribed: ' + url)
 		} catch (err) {
-			this.log('error', 'Error from PTZ: ' + String(err))
+			this.log('error', 'Error from PTZ on unsubscribe: ' + String(err))
 		}
 	}
 
@@ -43,9 +43,9 @@ class PanasonicPTZInstance extends InstanceBase {
 
 			this.updateStatus(InstanceStatus.Ok)
 		} catch (err) {
-			this.log('error', 'Error from PTZ: ' + String(err))
+			this.log('error', 'Error from PTZ on subscribe: ' + String(err))
 
-			this.updateStatus(InstanceStatus.Disconnected)
+			this.updateStatus(InstanceStatus.UnknownWarning, 'Subscription unsuccessful')
 		}
 	}
 
@@ -63,8 +63,6 @@ class PanasonicPTZInstance extends InstanceBase {
 			this.server.close()
 			delete this.server
 		}
-
-		this.updateStatus(InstanceStatus.Connecting)
 
 		if (this.config.host) {
 			// Create a new TCP server.
@@ -87,7 +85,7 @@ class PanasonicPTZInstance extends InstanceBase {
 
 				// Receive data from the client.
 				socket.on('data', (data) => {
-					// TODO - TCP doesn't guarantee messages will be chunked sensibly. When it doesnt, this logic will breaks
+					// TODO - TCP doesn't guarantee messages will be chunked sensibly. When it doesnt, this logic will break
 					let str_raw = data.toString()
 					str_raw = str_raw.split('\r\n') // Split Data in order to remove data before and after command
 					let str = str_raw[1].trim() // remove new line, carage return and so on.
@@ -97,7 +95,7 @@ class PanasonicPTZInstance extends InstanceBase {
 					str = str.split(':') // Split Commands and data
 
 					// Store Data
-					this.storeData(str)
+					this.parseStatus(str)
 
 					// Update Varibles and Feedbacks
 					this.checkVariables()
@@ -153,9 +151,74 @@ class PanasonicPTZInstance extends InstanceBase {
 
 		return this
 	}
-	getCameraInformation() {
+	getCameraInfo() {
+		if (this.config.host) {
+			const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/getinfo?FILE=1`
+
+			if (this.config.debug) {
+				this.log('debug', `Sending : ${url}`)
+			}
+
+			got
+				.get(url)
+				.then((response) => {
+
+					this.updateStatus(InstanceStatus.Ok)
+
+					if (response.body) {
+						const lines = response.body.split('\r\n') // Split Data in order to remove data before and after command
+
+						for (let line of lines) {
+							// remove new line, carage return and so on.
+							const str = line.trim().split('=') // Split keys and values
+							if (this.config.debug) {
+								this.log('info', 'Received INFO: ' + String(str))
+							}
+							// Store Data
+							this.parseInfo(str)
+						}
+
+						this.checkVariables()
+						this.checkFeedbacks()
+					}
+				})
+				.catch((err) => {
+					this.log('error', 'Error checking basic communication and receiving model info from PTZ: ' + String(err))
+
+					this.updateStatus(InstanceStatus.Disconnected)
+				})
+		}
+	}
+	parseInfo(str) {	
+		// Store Values from Events
+		switch (str[0]) {
+			case 'VERSION':
+				this.data.version = str[1]
+				break
+			case 'NAME':
+				this.data.modelINFO = str[1]
+				this.log('info', 'Detected Camera Model: ' + this.data.modelINFO)
+				// if a new model is detected or seected, re-initialise all actions, variable and feedbacks
+				if (this.data.modelINFO !== this.data.model) {
+					this.init_actions() // export actions
+					this.init_presets()
+					this.init_variables()
+					this.checkVariables()
+					this.init_feedbacks()
+					this.checkFeedbacks()
+				}
+				break
+			default:
+				break
+		}
+	}
+	getCameraStatus() {
 		if (this.config.host) {
 			const url = `http://${this.config.host}:${this.config.httpPort}/live/camdata.html`
+
+			if (this.config.debug) {
+				this.log('debug', `Sending : ${url}`)
+			}
 
 			got
 				.get(url)
@@ -170,7 +233,7 @@ class PanasonicPTZInstance extends InstanceBase {
 								this.log('info', 'Recived CMD: ' + String(str))
 							}
 							// Store Data
-							this.storeData(str)
+							this.parseStatus(str)
 						}
 
 						this.checkVariables()
@@ -178,11 +241,11 @@ class PanasonicPTZInstance extends InstanceBase {
 					}
 				})
 				.catch((err) => {
-					this.log('error', 'Error from PTZ: ' + String(err))
+					this.log('error', 'Error requesting inital status from PTZ: ' + String(err))
 				})
 		}
 	}
-	storeData(str) {	
+	parseStatus(str) {	
 		if (str[0].substring(0, 3) === 'rER') {
 			if (str[0] === 'rER00') {
 				this.data.error = 'No Errors'
@@ -301,6 +364,7 @@ class PanasonicPTZInstance extends InstanceBase {
 
 		this.data = {
 			debug: false,
+			modelINFO: 'NaN',
 			modelTCP: 'NaN',
 			model: 'Auto',
 			series: 'Auto',
@@ -350,7 +414,8 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.config.debug = this.config.debug || false
 
 		this.updateStatus(InstanceStatus.Connecting)
-		this.getCameraInformation()
+		this.getCameraInfo()
+		this.getCameraStatus()
 		this.init_tcp()
 		this.init_actions() // export actions
 		this.init_presets()
@@ -365,7 +430,8 @@ class PanasonicPTZInstance extends InstanceBase {
 	async configUpdated(config) {
 		this.config = config
 		this.updateStatus(InstanceStatus.Connecting)
-		this.getCameraInformation()
+		this.getCameraInfo()
+		this.getCameraStatus()
 		this.init_tcp()
 		this.init_actions() // export actions
 		this.init_presets()
