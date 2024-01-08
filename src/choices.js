@@ -286,9 +286,6 @@ export const c = {
 	CHOICES_GAIN_HE42: function () {
 		return this.CHOICES_GAIN_HE40
 	},
-	CHOICES_GAIN_CX350: function () {
-		return this.CHOICES_GAIN_CX350
-	},
 	CHOICES_GAIN_OTHER: function () {
 		return this.CHOICES_GAIN_HR140
 	},
