@@ -1,6 +1,14 @@
 import { combineRgb } from '@companion-module/base'
 import { getAndUpdateSeries } from './common.js'
 
+// ########################
+// #### Value Look Ups ####
+// ########################
+const CHOICES_PRESET = []
+for (let i = 0; i < 100; ++i) {
+	CHOICES_PRESET.push({ id: ('0' + (i+1).toString(10)).substr(-2, 2), label: 'Preset ' + (i + 1) })
+}
+
 // ##########################
 // #### Define Feedbacks ####
 // ##########################
@@ -287,7 +295,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.recallModePset = {
 			type: 'boolean',
 			name: 'Preset - Mode A, B, C',
-			description: 'Indicate what preset mode is curently selected on the camera',
+			description: 'Indicate what preset mode is currently selected on the camera',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorRed,
@@ -327,6 +335,27 @@ export function getFeedbackDefinitions(self) {
 						break
 				}
 				return false
+			},
+		}
+		feedbacks.presetCompletion = {
+			type: 'boolean',
+			name: 'Preset Completion Notification',
+			description: 'Indicate if recalled preset is completed',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorOrange,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset Nr.',
+					id: 'val',
+					default: CHOICES_PRESET[0].id,
+					choices: CHOICES_PRESET,
+				},
+			],
+			callback: function (feedback) {
+				return (self.data.lastPresetCompleted == feedback.options.val) ? true : false
 			},
 		}
 	}
