@@ -282,6 +282,10 @@ class PanasonicPTZInstance extends InstanceBase {
 			case 'p0':
 				this.data.power = 'OFF'
 				break
+			case 'DCB':
+			case 'OBR':
+				this.data.colorbar = (str[1] == '1') ? true : false
+				break
 			case 'dA0':
 				this.data.tally = 'OFF'
 				break
@@ -372,6 +376,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			version: 'NaN',
 			error: 'NaN',
 			power: 'NaN',
+			colorbar: null,
 			ins: 'NaN',
 			tally: 'NaN',
 			tally2: 'NaN',

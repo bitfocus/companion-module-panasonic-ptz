@@ -1362,6 +1362,23 @@ export function getActionDefinitions(self) {
 		}
 	}
 
+	if (seriesActions.colorbar) {
+		actions.colorbarOff = {
+			name: 'System - Color Bar Off',
+			options: [],
+			callback: async (action) => {
+				await sendCam(self, 'DCB:0')
+			},
+		}
+		actions.colorbarOn = {
+			name: 'System - Color Bar On',
+			options: [],
+			callback: async (action) => {
+				await sendCam(self, 'DCB:1')
+			},
+		}
+	}
+
 	if (seriesActions.ins) {
 		actions.insPosition = {
 			name: 'System - Installation position',

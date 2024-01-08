@@ -29,6 +29,9 @@ export function setVariables(self) {
 	if (SERIES.variables.power) {
 		variables.push({ variableId: 'power', name: 'Power ON/OFF' })
 	}
+	if (SERIES.variables.colorbar) {
+		variables.push({ variableId: 'colorbar', name: 'Color Bar ENABLED' })
+	}
 	if (SERIES.variables.tally) {
 		variables.push({ variableId: 'tally', name: 'Red Tally ON/OFF' })
 	}
@@ -82,6 +85,7 @@ export function checkVariables(self) {
 		error: self.data.error,
 		ins: self.data.ins,
 		power: self.data.power,
+		colorbar: self.data.colorbar,
 		tally: self.data.tally,
 		tally2: self.data.tally2,
 		OAF: self.data.oaf,
