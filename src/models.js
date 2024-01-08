@@ -831,7 +831,7 @@ export const SERIES_SPECS = [
 			preset: false,
 			speedPset: false,
 			timePset: false,
-			power: true,
+			power: false,
 			tally: true,
 			tally2: true,
 			ins: false,
