@@ -1,4 +1,5 @@
 import { getAndUpdateSeries } from './common.js'
+import { CHOICE_WB_GET } from './choices.js'
 
 // ##########################
 // #### Define Variables ####
@@ -41,6 +42,9 @@ export function setVariables(self) {
 	if (SERIES.variables.OAF) {
 		variables.push({ variableId: 'OAF', name: 'Auto Focus Mode' })
 	}
+	if (SERIES.variables.whiteBalance) {
+		variables.push({ variableId: 'whiteBalance', name: 'White Balance Mode' })
+	}
 	if (SERIES.variables.colorTemperature) {
 		variables.push({ variableId: 'colorTemperature', name: 'Color Temperature' })
 	}
@@ -72,9 +76,12 @@ export function checkVariables(self) {
 		? SERIES.actions.gain.dropdown.find((GAIN) => GAIN.id == self.data.gainValue)
 		: null
 
-
 	const colorTemperature = SERIES.actions.colorTemperature
 		? SERIES.actions.colorTemperature.dropdown.find((colorTemperature) => colorTemperature.id == self.data.colorTemperature)
+		: null
+
+	const whiteBalance = SERIES.actions.whiteBalance
+		? CHOICE_WB_GET.find((whiteBalance) => whiteBalance.id == self.data.whiteBalance)
 		: null
 
 
@@ -90,6 +97,7 @@ export function checkVariables(self) {
 		tally: self.data.tally,
 		tally2: self.data.tally2,
 		OAF: self.data.oaf,
+		whiteBalance: whiteBalance?.label,
 		colorTemperature: colorTemperature?.label,
 		irisMode: self.data.irisMode,
 		gainValue: gainValue?.label,

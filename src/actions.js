@@ -1062,6 +1062,38 @@ export function getActionDefinitions(self) {
 		}
 	}
 
+	if (seriesActions.whiteBalance) {
+		actions.whiteBalanceMode = {
+			name: 'White Balance - Mode',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Select Mode',
+					id: 'val',
+					default: '0',
+					choices: c.CHOICES_WB_SET,
+				},
+			],
+			callback: async (action) => {
+				await sendCam(self, 'OAW:' + action.options.val)
+			},
+		}
+		actions.whiteBalanceExecAWB = {
+			name: 'White Balance - Execute AWC/AWB',
+			options: [],
+			callback: async (action) => {
+				await sendCam(self, 'OWS')
+			},
+		}
+		actions.whiteBalanceExecABB = {
+			name: 'White Balance - Execute ABC/ABB',
+			options: [],
+			callback: async (action) => {
+				await sendCam(self, 'OAS')
+			},
+		}
+	}
+
 	if (seriesActions.colorTemperature) { 
 		actions.colorTemperatureUp = {
 			name: 'Color Temperature Up',
@@ -1256,7 +1288,7 @@ export function getActionDefinitions(self) {
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Time Secconds',
+					label: 'Time Seconds',
 					id: 'speed',
 					default: '001',
 					choices: c.CHOICES_PSTIME(),
