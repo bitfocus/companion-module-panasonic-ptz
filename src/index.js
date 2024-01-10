@@ -299,18 +299,10 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.data.tally = 'ON'
 				break
 			case 'TLR':
-				if (str[1] == '0') {
-					this.data.tally = 'OFF'
-				} else if (str[1] == '1') {
-					this.data.tally = 'ON'
-				}
+				this.data.tally = (str[1] == '1') ? 'ON' : 'OFF'
 				break
 			case 'TLG':
-				if (str[1] == '0') {
-					this.data.tally2 = 'OFF'
-				} else if (str[1] == '1') {
-					this.data.tally2 = 'ON'
-				}
+				this.data.tally2 = (str[1] == '1') ? 'ON' : 'OFF'
 				break
 			case 'iNS0':
 				this.data.ins = 'Desktop'
@@ -319,11 +311,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.data.ins = 'Hanging'
 				break
 			case 'OAF':
-				if (str[1] == '0') {
-					this.data.oaf = 'Manual'
-				} else if (str[1] == '1') {
-					this.data.oaf = 'Auto'
-				}
+				this.data.tally = (str[1] == '1') ? 'Auto' : 'Manual'
 				break
 			case 'OAW':
 				this.data.whiteBalance = str[1];
@@ -341,13 +329,10 @@ class PanasonicPTZInstance extends InstanceBase {
 				break
 			case 'OSE': // All OSE:xx Commands
 				if (str[1] == '71') {
-					// OSE:71:
-					if (str[2] == '0') {
-						this.data.recallModePset = 'Mode A'
-					} else if (str[2] == '1') {
-						this.data.recallModePset = 'Mode B'
-					} else if (str[2] == '2') {
-						this.data.recallModePset = 'Mode C'
+					switch (str[2]) {
+						case '0': this.data.recallModePset = 'Mode A'; break
+						case '1': this.data.recallModePset = 'Mode B'; break
+						case '2': this.data.recallModePset = 'Mode C'; break
 					}
 				}
 				break
