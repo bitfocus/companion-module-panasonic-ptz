@@ -1,5 +1,6 @@
 import { combineRgb } from '@companion-module/base'
 import { getAndUpdateSeries } from './common.js'
+import { CHOICES_WB_GET } from "./choices.js"
 
 // ########################
 // #### Value Look Ups ####
@@ -349,13 +350,37 @@ export function getFeedbackDefinitions(self) {
 				{
 					type: 'dropdown',
 					label: 'Preset Nr.',
-					id: 'val',
+					id: 'option',
 					default: CHOICES_PRESET[0].id,
 					choices: CHOICES_PRESET,
 				},
 			],
 			callback: function (feedback) {
-				return (self.data.lastPresetCompleted == feedback.options.val) ? true : false
+				return (self.data.lastPresetCompleted === feedback.options.option) ? true : false
+			},
+		}
+	}
+
+	if (SERIES.feedbacks.whiteBalance) {
+		feedbacks.whiteBalanceMode = {
+			type: 'boolean',
+			name: 'White Balance - Mode',
+			description: 'Indicates whether the selected white balance mode is currently active',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorRed,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'option',
+					default: CHOICES_WB_GET[0].id,
+					choices: CHOICES_WB_GET,
+				},
+			],
+			callback: function (feedback) {
+				return (self.data.whiteBalance === feedback.options.option) ? true : false
 			},
 		}
 	}

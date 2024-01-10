@@ -676,4 +676,28 @@ export const c = {
 		{ "id": "077", "label": "14000K" },
 		{ "id": "078", "label": "15000K" },
 	],
+
+	// ################################
+	// #### White Balance Look Ups ####
+	// ################################
+	CHOICES_WB_SET: [
+		{ id: '0', label: 'ATW' },
+		{ id: '1', label: 'AWC A' },
+		{ id: '2', label: 'AWC B' },
+		{ id: '4', label: 'Preset 3200K' },
+		{ id: '5', label: 'Preset 5600K' },
+		{ id: '9', label: 'Var' },
+	],
+	CHOICES_WB_GET: [
+		{ id: '0', label: 'ATW' },
+		{ id: '1', label: 'AWC A' },
+		{ id: '2', label: 'AWC B' },
+		{ id: '3', label: 'ATW' },
+		{ id: '4', label: 'Preset 3200K' },
+		{ id: '5', label: 'Preset 5600K' },
+		{ id: '6', label: 'Preset 4500K' },
+		{ id: '7', label: 'Preset 6000K' },	
+		{ id: '8', label: 'Preset 2800K' },
+		{ id: '9', label: 'Var' },
+	],
 }

@@ -76,6 +76,7 @@ export const SERIES_SPECS = [
 			iris: true, // Has Auto Iris (d30 or d31)
 			gainValue: true,
 			preset: true,
+			whiteBalance: true,  // Has White Balance (OAW:x)
 			colorTemperature: false,
 		},
 		feedbacks: {
@@ -86,6 +87,7 @@ export const SERIES_SPECS = [
 			insState: true, // Install position (iNS0 or iNS1)
 			autoFocus: true, // Has Auto Focus (OAF:1 or OAF:0)
 			autoIris: true, // Has Auto Iris (d30 or d31)
+			whiteBalance: true,  // Has White Balance (OAW:x)
 			preset: true,
 		},
 		actions: {
@@ -111,6 +113,7 @@ export const SERIES_SPECS = [
 			tally2: true, // Has Green Tally Light Control (TLG:1 or TLG:0)
 			ins: true, // Has Install Position Control (INSx)
 			sdCard: true, // Has SD Card Recording Control (sdctrl?save=start or sdctrl?save=end)
+			whiteBalance: true,  // Has White Balance Control (OAW:x)
 			colorTemperature: false, // Setting Color temperature OSD:B1:A8h
 		},
 	},
@@ -129,6 +132,7 @@ export const SERIES_SPECS = [
 			iris: true,
 			gainValue: true,
 			preset: true,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 		feedbacks: {
@@ -138,6 +142,7 @@ export const SERIES_SPECS = [
 			insState: true,
 			autoFocus: true,
 			autoIris: true,
+			whiteBalance: true,
 			preset: true,
 		},
 		actions: {
@@ -162,6 +167,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: true,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 	},
@@ -180,6 +186,7 @@ export const SERIES_SPECS = [
 			iris: true,
 			gainValue: true,
 			preset: true,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 		feedbacks: {
@@ -189,6 +196,7 @@ export const SERIES_SPECS = [
 			insState: true,
 			autoFocus: true,
 			autoIris: true,
+			whiteBalance: true,
 			preset: true,
 		},
 		actions: {
@@ -213,6 +221,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: true,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 	},
@@ -231,6 +240,7 @@ export const SERIES_SPECS = [
 			iris: true,
 			gainValue: true,
 			preset: true,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 		feedbacks: {
@@ -240,6 +250,7 @@ export const SERIES_SPECS = [
 			insState: true,
 			autoFocus: true,
 			autoIris: true,
+			whiteBalance: true,
 			preset: true,
 		},
 		actions: {
@@ -264,6 +275,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: true,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 	},
@@ -283,6 +295,7 @@ export const SERIES_SPECS = [
 			iris: true,
 			gainValue: true,
 			preset: true,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 		feedbacks: {
@@ -293,6 +306,7 @@ export const SERIES_SPECS = [
 			insState: true,
 			autoFocus: true,
 			autoIris: true,
+			whiteBalance: true,
 			preset: true,
 		},
 		actions: {
@@ -318,6 +332,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			tally2: true,
 			sdCard: false,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 	},
@@ -336,6 +351,7 @@ export const SERIES_SPECS = [
 			iris: true,
 			gainValue: true,
 			preset: true,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 		feedbacks: {
@@ -345,6 +361,7 @@ export const SERIES_SPECS = [
 			insState: false,
 			autoFocus: false,
 			autoIris: true,
+			whiteBalance: true,
 			preset: true,
 		},
 		actions: {
@@ -369,6 +386,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: false,
 			sdCard: false,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 	},
@@ -387,6 +405,7 @@ export const SERIES_SPECS = [
 			iris: true,
 			gainValue: true,
 			preset: true,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 		feedbacks: {
@@ -396,6 +415,7 @@ export const SERIES_SPECS = [
 			insState: true,
 			autoFocus: true,
 			autoIris: true,
+			whiteBalance: true,
 			preset: true,
 		},
 		actions: {
@@ -420,6 +440,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 	},
@@ -438,6 +459,7 @@ export const SERIES_SPECS = [
 			iris: true,
 			gainValue: true,
 			preset: true,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 		feedbacks: {
@@ -447,6 +469,7 @@ export const SERIES_SPECS = [
 			insState: true,
 			autoFocus: true,
 			autoIris: true,
+			whiteBalance: true,
 			preset: true,
 		},
 		actions: {
@@ -471,6 +494,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 	},
@@ -489,6 +513,7 @@ export const SERIES_SPECS = [
 			iris: true,
 			gainValue: true,
 			preset: true,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 		feedbacks: {
@@ -498,6 +523,7 @@ export const SERIES_SPECS = [
 			insState: true,
 			autoFocus: true,
 			autoIris: true,
+			whiteBalance: true,
 			preset: true,
 		},
 		actions: {
@@ -522,6 +548,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 	},
@@ -540,6 +567,7 @@ export const SERIES_SPECS = [
 			iris: true,
 			gainValue: true,
 			preset: true,
+			whiteBalance: true,
 			colorTemperature: true,
 		},
 		feedbacks: {
@@ -549,6 +577,7 @@ export const SERIES_SPECS = [
 			insState: true,
 			autoFocus: true,
 			autoIris: true,
+			whiteBalance: true,
 			preset: true,
 		},
 		actions: {
@@ -573,7 +602,8 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
-			colorTemperature: { cmd: 'OSD:B1:', dropdown: c.CHOICES_COLOR_TEMPERATURE_HE130},
+			whiteBalance: true,
+			colorTemperature: { cmd: 'OSD:B1:', dropdown: c.CHOICES_COLOR_TEMPERATURE_HE130 },
 		},
 	},
 
@@ -591,6 +621,7 @@ export const SERIES_SPECS = [
 			iris: true,
 			gainValue: true,
 			preset: true,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 		feedbacks: {
@@ -600,6 +631,7 @@ export const SERIES_SPECS = [
 			insState: true,
 			autoFocus: true,
 			autoIris: true,
+			whiteBalance: true,
 			preset: true,
 		},
 		actions: {
@@ -624,6 +656,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 	},
@@ -642,6 +675,7 @@ export const SERIES_SPECS = [
 			iris: true,
 			gainValue: true,
 			preset: true,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 		feedbacks: {
@@ -651,6 +685,7 @@ export const SERIES_SPECS = [
 			insState: true,
 			autoFocus: true,
 			autoIris: true,
+			whiteBalance: true,
 			preset: true,
 		},
 		actions: {
@@ -675,6 +710,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 	},
@@ -693,6 +729,7 @@ export const SERIES_SPECS = [
 			iris: true,
 			gainValue: true,
 			preset: true,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 		feedbacks: {
@@ -702,6 +739,7 @@ export const SERIES_SPECS = [
 			insState: true,
 			autoFocus: false,
 			autoIris: true,
+			whiteBalance: true,
 			preset: true,
 		},
 		actions: {
@@ -726,6 +764,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 	},
@@ -744,6 +783,7 @@ export const SERIES_SPECS = [
 			iris: true,
 			gainValue: true,
 			preset: true,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 		feedbacks: {
@@ -753,6 +793,7 @@ export const SERIES_SPECS = [
 			insState: true,
 			autoFocus: true,
 			autoIris: true,
+			whiteBalance: true,
 			preset: true,
 		},
 		actions: {
@@ -777,6 +818,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 	},
@@ -795,6 +837,7 @@ export const SERIES_SPECS = [
 			OAF: false,
 			iris: false,
 			preset: false,
+			whiteBalance: false,
 			colorTemperature: false,
 		},
 		feedbacks: {
@@ -803,6 +846,7 @@ export const SERIES_SPECS = [
 			insState: false,
 			autoFocus: false,
 			autoIris: false,
+			whiteBalance: true,
 			preset: false,
 		},
 		actions: {
@@ -828,6 +872,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			tally2: true,
 			sdCard: false,
+			whiteBalance: false,
 			colorTemperature: false,
 		},
 	},
@@ -848,6 +893,7 @@ export const SERIES_SPECS = [
 			iris: false,
 			gainValue: false,
 			preset: false,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 		feedbacks: {
@@ -859,6 +905,7 @@ export const SERIES_SPECS = [
 			insState: false,
 			autoFocus: false,
 			autoIris: false,
+			whiteBalance: false,
 			preset: false,			
 		},
 		actions: {
@@ -884,6 +931,7 @@ export const SERIES_SPECS = [
 			tally2: true,
 			ins: false,
 			sdCard: true,
+			whiteBalance: true,
 			colorTemperature: false,
 		},
 	},
