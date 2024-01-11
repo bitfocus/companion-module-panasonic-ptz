@@ -274,20 +274,77 @@ export const c = {
 		{ id: '31', label: '41dB' },
 		{ id: '32', label: '42dB' },
 	],
-	CHOICES_GAIN_HE60: function () {
-		return this.CHOICES_GAIN_HE50
-	},
-	CHOICES_GAIN_UE150: function () {
-		return this.CHOICES_GAIN_HR140
-	},
-	CHOICES_GAIN_UE70: function () {
-		return this.CHOICES_GAIN_HE40
-	},
-	CHOICES_GAIN_HE42: function () {
-		return this.CHOICES_GAIN_HE40
-	},
+	CHOICES_GAIN_UE150: [
+		{ id: '80', label: 'Auto' },
+		{ id: '05', label: '-3dB' },
+		{ id: '06', label: '-2dB' },
+		{ id: '07', label: '-1dB' },
+		{ id: '08', label: '0dB' },
+		{ id: '09', label: '1dB' },
+		{ id: '0A', label: '2dB' },
+		{ id: '0B', label: '3db' },
+		{ id: '0C', label: '4dB' },
+		{ id: '0D', label: '5dB' },
+		{ id: '0E', label: '6dB' },
+		{ id: '0F', label: '7dB' },
+		{ id: '10', label: '8dB' },
+		{ id: '11', label: '9dB' },
+		{ id: '12', label: '10dB' },
+		{ id: '13', label: '11dB' },
+		{ id: '14', label: '12dB' },
+		{ id: '15', label: '13dB' },
+		{ id: '16', label: '14dB' },
+		{ id: '17', label: '15dB' },
+		{ id: '18', label: '16dB' },
+		{ id: '19', label: '17dB' },
+		{ id: '1A', label: '18dB' },
+		{ id: '1B', label: '19dB' },
+		{ id: '1C', label: '20dB' },
+		{ id: '1D', label: '21dB' },
+		{ id: '1E', label: '22dB' },
+		{ id: '1F', label: '23dB' },
+		{ id: '20', label: '24dB' },
+		{ id: '21', label: '25dB' },
+		{ id: '22', label: '26dB' },
+		{ id: '23', label: '27dB' },
+		{ id: '24', label: '28dB' },
+		{ id: '25', label: '29dB' },
+		{ id: '26', label: '30dB' },
+		{ id: '27', label: '31dB' },
+		{ id: '28', label: '32dB' },
+		{ id: '29', label: '33dB' },
+		{ id: '2A', label: '34dB' },
+		{ id: '2B', label: '35dB' },
+		{ id: '2C', label: '36dB' },
+		{ id: '2D', label: '37dB' },
+		{ id: '2E', label: '38dB' },
+		{ id: '2F', label: '39dB' },
+		{ id: '30', label: '40dB' },
+		{ id: '31', label: '41dB' },
+		{ id: '32', label: '42dB' },
+	],
+	CHOICES_GAIN_UE160: [
+		{ id: '80', label: 'Auto' },
+		{ id: '04', label: '-4dB' },
+		{ id: '05', label: '-3dB' },
+		{ id: '06', label: '-2dB' },
+		{ id: '07', label: '-1dB' },
+		{ id: '08', label: '0dB' },
+		{ id: '09', label: '1dB' },
+		{ id: '0A', label: '2dB' },
+		{ id: '0B', label: '3db' },
+		{ id: '0C', label: '4dB' },
+		{ id: '0D', label: '5dB' },
+		{ id: '0E', label: '6dB' },
+		{ id: '0F', label: '7dB' },
+		{ id: '10', label: '8dB' },
+		{ id: '11', label: '9dB' },
+		{ id: '12', label: '10dB' },
+		{ id: '13', label: '11dB' },
+		{ id: '14', label: '12dB' },
+	],
 	CHOICES_GAIN_OTHER: function () {
-		return this.CHOICES_GAIN_HR140
+		return this.CHOICES_GAIN_CX350
 	},
 
 	// ##########################
@@ -414,49 +471,44 @@ export const c = {
 	// ###########################
 	CHOICES_PEDESTAL_HE40: function () {
 		const p = []
-		for (let i = 0; i <= 300; ++i) {
-			p.push({
-				id: ('00' + i.toString(16)).substr(-3, 3).toUpperCase(),
-				label: 'Pedestal ' + ((i - 150) / 15).toPrecision(3),
-			})
+		for (let i = -10; i <= 10; ++i) {
+			p.push({id: ((0x96 + (i * 15)).toString(16)).toUpperCase().padStart(3, '0'), label: 'Pedestal ' + i.toString() })
 		}
 		return p
 	},
 
 	CHOICES_PEDESTAL_HE120: function () {
 		const p = []
-		for (let i = 0; i <= 300; ++i) {
-			p.push({ id: ('00' + i.toString(16)).substr(-3, 3).toUpperCase(), label: 'Pedestal ' + (i - 150) })
+		for (let i = -150; i <= 150; ++i) {
+			p.push({ id: ((0x96 + i).toString(16)).toUpperCase().padStart(3, '0'), label: 'Pedestal ' + i.toString() })
 		}
 		return p
 	},
 
-	CHOICES_PEDESTAL_CX350: function () {
+	CHOICES_PEDESTAL_UE150: function () {
 		const p = []
-		for (let i = 0; i <= 400; ++i) {
-			p.push({ id: ('0' + i.toString(16)).substr(-3, 3).toUpperCase(), label: 'Pedestal ' + (i - 200) })
+		for (let i = -200; i <= 200; ++i) {
+			p.push({ id: ((0x800 + i).toString(16)).toUpperCase().padStart(3, '0'), label: 'Pedestal ' + i.toString() })
 		}
 		return p
 	},
 
-	CHOICES_PEDESTAL_HE42: function () {
-		return this.CHOICES_PEDESTAL_HE40()
+	CHOICES_PEDESTAL_UE20: function () {
+		const p = []
+		for (let i = -10; i <= 10; ++i) {
+			p.push({ id: ((0x800 + i).toString(16)).toUpperCase().padStart(3, '0'), label: 'Pedestal ' + i.toString() })
+		}
+		return p
 	},
-	CHOICES_PEDESTAL_HE50: function () {
-		return this.CHOICES_PEDESTAL_HE40()
+
+	CHOICES_PEDESTAL_UB300: function () {
+		const p = []
+		for (let i = -99; i <= 99; ++i) {
+			p.push({ id: ((0x80 + i).toString(16)).toUpperCase().padStart(2, '0'), label: 'Pedestal ' + i.toString() })
+		}
+		return p
 	},
-	CHOICES_PEDESTAL_HE60: function () {
-		return this.CHOICES_PEDESTAL_HE40()
-	},
-	CHOICES_PEDESTAL_UE70: function () {
-		return this.CHOICES_PEDESTAL_HE40()
-	},
-	CHOICES_PEDESTAL_HE130: function () {
-		return this.CHOICES_PEDESTAL_HE120()
-	},
-	CHOICES_PEDESTAL_HR140: function () {
-		return this.CHOICES_PEDESTAL_HE120()
-	},
+
 	CHOICES_PEDESTAL_OTHER: function () {
 		return this.CHOICES_PEDESTAL_HE120()
 	},
@@ -464,50 +516,35 @@ export const c = {
 	// ###########################
 	// #### ND Filter Look Ups ####
 	// ###########################
-	CHOICES_FILTER_UE70: [
-		{ id: '0', label: 'Through' },
-		{ id: '1', label: '1/4' },
-		{ id: '2', label: '1/16' },
-		{ id: '3', label: '1/64' },
-		{ id: '4', label: '1/8' },
-		{ id: '8', label: 'AUTO' },
+	CHOICES_FILTER_OTHER: [
+		{ id: '0', label: 'Clear (Through)' },
+		{ id: '1', label: '1/4 ND' },
+		{ id: '2', label: '1/16 ND' },
+		{ id: '3', label: '1/64 ND' },
+		{ id: '4', label: '1/8 ND' },
+		{ id: '8', label: 'AUTO ND' },
 	],
 
-	CHOICES_FILTER_HE120: [
-		{ id: '0', label: 'Through' },
-		{ id: '1', label: '1/4' },
-		{ id: '2', label: '1/16' },
-		{ id: '3', label: '1/64' },
+	CHOICES_FILTER_3A: [
+		{ id: '0', label: 'Clear (Through)' },
+		{ id: '1', label: '1/4 ND' },
+		{ id: '2', label: '1/16 ND' },
+		{ id: '3', label: '1/64 ND' },
+		{ id: '8', label: 'AUTO ND' },
 	],
 
-	CHOICES_FILTER_HE130: [
-		{ id: '0', label: 'Through' },
-		{ id: '3', label: '1/64' },
-		{ id: '4', label: '1/8' },
+	CHOICES_FILTER_3: [
+		{ id: '0', label: 'Clear (Through)' },
+		{ id: '1', label: '1/4 ND' },
+		{ id: '2', label: '1/16 ND' },
+		{ id: '3', label: '1/64 ND' },
 	],
 
-	CHOICES_FILTER_UB300: [
-		{ id: '0', label: 'Clear' },
-		{ id: '1', label: '1/4' },
-		{ id: '2', label: '1/16' },
-		{ id: '3', label: '1/64' },
+	CHOICES_FILTER_2: [
+		{ id: '0', label: 'Clear (Through)' },
+		{ id: '3', label: '1/64 ND' },
+		{ id: '4', label: '1/8 ND' },
 	],
-
-	CHOICES_FILTER_UE150: function () {
-		return this.CHOICES_FILTER_HE120
-	},
-	CHOICES_FILTER_HR140: function () {
-		return this.CHOICES_FILTER_HE130
-	},
-	CHOICES_FILTER_HE42: function () {
-		return this.CHOICES_FILTER_UE70
-	},
-	CHOICES_FILTER_CX350: function () {
-		return this.CHOICES_FILTER_HE120
-	},
-	CHOICES_FILTER_OTHER: function () {
-		return this.CHOICES_FILTER_UE70
-	},
 
 	// ###############################
 	// #### Preset Speed Look Ups ####
