@@ -292,19 +292,22 @@ class PanasonicPTZInstance extends InstanceBase {
 			case 'OBR':
 				this.data.colorbar = (str[1] == '1') ? true : false
 				break
-			case 'dA0':
+			case 'dA0': // Legacy (red) Tally Off
 				this.data.tally = 'OFF'
 				break
-			case 'dA1':
+			case 'dA1': // Legacy (red) Tally On
 				this.data.tally = 'ON'
 				break
-			case 'TLR':
+			case 'TLR': // Tally Red
 				this.data.tally = (str[1] == '1') ? 'ON' : 'OFF'
 				break
-			case 'TLG':
+			case 'TLG': // Tally Green
 				this.data.tally2 = (str[1] == '1') ? 'ON' : 'OFF'
 				break
-			case 'iNS0':
+			case 'TLY': // Tally Yellow
+				this.data.tally3 = (str[1] == '1') ? 'ON' : 'OFF'
+				break
+				case 'iNS0':
 				this.data.ins = 'Desktop'
 				break
 			case 'iNS1':
@@ -373,6 +376,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			ins: 'NaN',
 			tally: 'NaN',
 			tally2: 'NaN',
+			tally3: 'NaN',
 			oaf: 'NaN',
 			whiteBalance: null,
 			colorTemperature: 'Unknown',
