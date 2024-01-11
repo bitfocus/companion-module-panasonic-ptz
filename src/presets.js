@@ -7,7 +7,12 @@ export function getPresetDefinitions(self) {
 
 	const colorWhite = combineRgb(255, 255, 255)
 	const colorRed = combineRgb(255, 0, 0)
-	const colorGreen = combineRgb(0, 255, 0)
+	const colorGreen = combineRgb(0, 204, 0)
+	const colorYellow = combineRgb(255, 255, 0)
+	const colorBlue = combineRgb(0, 51, 204)
+	const colorPurple = combineRgb(255, 0, 255)
+	const colorOrange = combineRgb(255, 102, 0)
+	const colorGrey = combineRgb(51, 51, 51)
 	const colorBlack = combineRgb(0, 0, 0)
 
 	const SERIES = getAndUpdateSeries(self)
@@ -2049,31 +2054,53 @@ export function getPresetDefinitions(self) {
 			],
 		}
 
-		for (let recall = 0; recall < 100; recall++) {
-			presets[`recall-preset-${recall}`] = {
+		for (let i = 0; i < 100; i++) {
+			presets[`recall-preset-${i}`] = {
 				type: 'button',
 				category: 'Recall Preset',
-				name: 'Recall Preset ' + parseInt(recall + 1),
+				name: 'Recall Preset ' + (i + 1).toString(),
 				style: {
-					text: 'Recall\\nPRESET\\n' + parseInt(recall + 1),
+					text: 'Recall\\nPRESET\\n' + (i + 1).toString(),
 					size: '14',
 					color: colorWhite,
 					bgcolor: colorBlack,
+				},
+				options: {
+					relativeDelay: true,
 				},
 				steps: [
 					{
 						down: [
 							{
-								actionId: 'recallPset',
+								actionId: 'savePset',
+								delay: 2000,
 								options: {
-									val: ('0' + recall.toString(10).toUpperCase()).substr(-2, 2),
+									val: i.toString(10).padStart(2, '0'),
 								},
 							},
 						],
-						up: [],
+						up: [
+							{
+								actionId: 'recallPset',
+								options: {
+									val: i.toString(10).padStart(2, '0'),
+								},
+							},
+						],
 					},
 				],
-				feedbacks: [],
+				feedbacks: [
+					{
+						feedbackId: 'presetComplete',
+						options: {
+							option: i.toString(10).padStart(2, '0'),
+						},
+						style: {
+							color: colorWhite,
+							bgcolor: colorBlue,
+						},
+					},
+				],
 			}
 		}
 	}

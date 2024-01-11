@@ -3,19 +3,6 @@ import { c } from './choices.js'
 import { getAndUpdateSeries } from './common.js'
 import got from 'got'
 
-// ########################
-// #### Value Look Ups ####
-// ########################
-const CHOICES_IRIS = []
-for (let i = 0; i < 100; ++i) {
-	CHOICES_IRIS.push({ id: ('0' + i.toString(10)).substr(-2, 2), label: 'Iris ' + i })
-}
-
-const CHOICES_PRESET = []
-for (let i = 0; i < 100; ++i) {
-	CHOICES_PRESET.push({ id: ('0' + i.toString(10)).substr(-2, 2), label: 'Preset ' + (i + 1) })
-}
-
 // ######################
 // #### Send Actions ####
 // ######################
@@ -828,12 +815,12 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Iris Up',
 			options: [],
 			callback: async (action) => {
-				if (self.irisIndex == CHOICES_IRIS.length) {
-					self.irisIndex = CHOICES_IRIS.length
-				} else if (self.irisIndex < CHOICES_IRIS.length) {
+				if (self.irisIndex == c.CHOICES_IRIS().length) {
+					self.irisIndex = c.CHOICES_IRIS().length
+				} else if (self.irisIndex < c.CHOICES_IRIS().length) {
 					self.irisIndex++
 				}
-				self.irisVal = CHOICES_IRIS[self.irisIndex].id
+				self.irisVal = c.CHOICES_IRIS()[self.irisIndex].id
 				await sendPTZ(self, 'I' + self.irisVal.toUpperCase())
 			},
 		}
@@ -849,7 +836,7 @@ export function getActionDefinitions(self) {
 				} else if (self.irisIndex > 0) {
 					self.irisIndex--
 				}
-				self.irisVal = CHOICES_IRIS[self.irisIndex].id
+				self.irisVal = c.CHOICES_IRIS()[self.irisIndex].id
 				await sendPTZ(self, 'I' + self.irisVal.toUpperCase())
 			},
 		}
@@ -863,8 +850,8 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Iris setting',
 					id: 'val',
-					default: CHOICES_IRIS[0].id,
-					choices: CHOICES_IRIS,
+					default: c.CHOICES_IRIS()[0].id,
+					choices: c.CHOICES_IRIS(),
 				},
 			],
 			callback: async (action) => {
@@ -1217,16 +1204,14 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Preset Nr.',
 					id: 'val',
-					default: CHOICES_PRESET[0].id,
-					choices: CHOICES_PRESET,
+					default: c.CHOICES_PRESET()[0].id,
+					choices: c.CHOICES_PRESET(),
 				},
 			],
 			callback: async (action) => {
 				await sendPTZ(self, 'M' + action.options.val)
 			},
 		}
-	}
-	if (seriesActions.preset) {
 		actions.recallPset = {
 			name: 'Preset - Recall',
 			options: [
@@ -1234,16 +1219,14 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Preset Nr.',
 					id: 'val',
-					default: CHOICES_PRESET[0].id,
-					choices: CHOICES_PRESET,
+					default: c.CHOICES_PRESET()[0].id,
+					choices: c.CHOICES_PRESET(),
 				},
 			],
 			callback: async (action) => {
 				await sendPTZ(self, 'R' + action.options.val)
 			},
 		}
-	}
-	if (seriesActions.preset) {
 		actions.recallModePset = {
 			name: 'Preset - Mode A, B, C',
 			options: [
@@ -1375,6 +1358,22 @@ export function getActionDefinitions(self) {
 				callback: async (action) => {
 					await sendCam(self, 'TLG:1')
 				},
+			}
+			if (seriesActions.tally3)  {
+				actions.tally3Off = {
+					name: 'System - Yellow Tally Off',
+					options: [],
+					callback: async (action) => {
+						await sendCam(self, 'TLY:0')
+					},
+				}
+				actions.tally3On = {
+					name: 'System - Yellow Tally On',
+					options: [],
+					callback: async (action) => {
+						await sendCam(self, 'TLY:1')
+					},
+				}
 			}
 		} else { // Use legacy PTZ Tally
 			actions.tallyOff = {

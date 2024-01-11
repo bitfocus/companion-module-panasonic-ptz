@@ -108,9 +108,9 @@ export const SERIES_SPECS = [
 			OTAF: true, // Has One Touch Auto Focus Support (OSE:69:1)
 			iris: true, // Has Iris Support (manual and auto) (Ixx)
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_OTHER() }, // Has Gain Support
-			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_OTHER() }, // Has Shutter Support
+			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_OTHER }, // Has Shutter Support
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_OTHER() }, // Has Pedestal Support
-			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_OTHER() }, // Has ND Filter Support
+			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_OTHER }, // Has ND Filter Support
 			preset: true, // Can Save and Recall Presets (Mxxx or Rxxx)
 			speedPset: true, // Has Preset Recall Speed Control (UPVSxx)
 			timePset: true, // Has Preset Recall Time Control (UPVSxx or OSJ:29:xx)
@@ -120,7 +120,7 @@ export const SERIES_SPECS = [
 			tally2: true, // Has Green Tally Light Control (TLG:1 or TLG:0)
 			ins: true, // Has Install Position Control (INSx)
 			sdCard: true, // Has SD Card Recording Control (sdctrl?save=start or sdctrl?save=end)
-			whiteBalance: true,  // Has White Balance Control (OAW:x)
+			whiteBalance: { dropdown: c.CHOICES_WB_SET },  // Has White Balance Control (OAW:x)
 			colorTemperature: false, // Setting Color temperature OSD:B1:A8h
 		},
 	},
@@ -163,7 +163,7 @@ export const SERIES_SPECS = [
 			OTAF: true,
 			iris: true,
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE40 },
-			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE40() },
+			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE40 },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE40() },
 			filter: false,
 			preset: true,
@@ -174,7 +174,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: true,
-			whiteBalance: true,
+			whiteBalance: { dropdown: c.CHOICES_WB_SET },
 			colorTemperature: false,
 		},
 	},
@@ -217,7 +217,7 @@ export const SERIES_SPECS = [
 			OTAF: true,
 			iris: true,
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE40 },
-			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE42() },
+			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE40 },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE40() },
 			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_3A },
 			preset: true,
@@ -228,7 +228,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: true,
-			whiteBalance: true,
+			whiteBalance: { dropdown: c.CHOICES_WB_SET },
 			colorTemperature: false,
 		},
 	},
@@ -271,7 +271,7 @@ export const SERIES_SPECS = [
 			OTAF: true,
 			iris: true,
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE40 },
-			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_UE70() },
+			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE40 },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE40() },
 			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_3A },
 			preset: true,
@@ -282,7 +282,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: true,
-			whiteBalance: true,
+			whiteBalance: { dropdown: c.CHOICES_WB_SET },
 			colorTemperature: false,
 		},
 	},
@@ -327,7 +327,7 @@ export const SERIES_SPECS = [
 			OTAF: true,
 			iris: true,
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_UE150 },
-			shut: false, // TODO: Add it's own shutter "OSJ:06:"
+			shut: { cmd: 'OSJ:06:', dropdown: c.CHOICES_SHUTTER_UE150() },
 			ped: { cmd: 'OSJ:0F:', dropdown: c.CHOICES_PEDESTAL_UE150() },
 			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_3 },
 			preset: true,
@@ -339,7 +339,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			tally2: true,
 			sdCard: false,
-			whiteBalance: true,
+			whiteBalance: { dropdown: c.CHOICES_WB_SET },
 			colorTemperature: false,
 		},
 	},
@@ -386,8 +386,8 @@ export const SERIES_SPECS = [
 			OTAF: true,
 			iris: true,
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_UE160 },
-			shut: false, // TODO: Add it's own shutter "OSJ:06:"
-			ped: false, // TODO: Add it's own Pedestal "OSJ:0F:"
+			shut: { cmd: 'OSJ:06:', dropdown: c.CHOICES_SHUTTER_UE150() },
+			ped: { cmd: 'OSJ:0F:', dropdown: c.CHOICES_PEDESTAL_UE150() },
 			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_3 },
 			preset: true,
 			speedPset: true,
@@ -399,7 +399,7 @@ export const SERIES_SPECS = [
 			tally2: true,
 			tally3: true,
 			sdCard: false,
-			whiteBalance: true,
+			whiteBalance: { dropdown: c.CHOICES_WB_SET },
 			colorTemperature: false,
 		},
 	},
@@ -453,7 +453,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: false,
 			sdCard: false,
-			whiteBalance: true,
+			whiteBalance: { dropdown: c.CHOICES_WB_SET },
 			colorTemperature: false,
 		},
 	},
@@ -496,7 +496,7 @@ export const SERIES_SPECS = [
 			OTAF: true,
 			iris: true,
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE50 },
-			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE50 },
+			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE40 },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE40() },
 			filter: false,
 			preset: true,
@@ -507,7 +507,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
-			whiteBalance: true,
+			whiteBalance: { dropdown: c.CHOICES_WB_SET },
 			colorTemperature: false,
 		},
 	},
@@ -550,7 +550,7 @@ export const SERIES_SPECS = [
 			OTAF: true,
 			iris: true,
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE50 },
-			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE60() },
+			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE40 },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE40() },
 			filter: false,
 			preset: true,
@@ -561,7 +561,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
-			whiteBalance: true,
+			whiteBalance: { dropdown: c.CHOICES_WB_SET },
 			colorTemperature: false,
 		},
 	},
@@ -615,7 +615,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
-			whiteBalance: true,
+			whiteBalance: { dropdown: c.CHOICES_WB_SET },
 			colorTemperature: false,
 		},
 	},
@@ -669,7 +669,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
-			whiteBalance: true,
+			whiteBalance: { dropdown: c.CHOICES_WB_SET },
 			colorTemperature: { cmd: 'OSD:B1:', dropdown: c.CHOICES_COLOR_TEMPERATURE_HE130 },
 		},
 	},
@@ -712,7 +712,7 @@ export const SERIES_SPECS = [
 			OTAF: true,
 			iris: true,
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HR140 },
-			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HR140() },
+			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE130 },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE120() },
 			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_2 },
 			preset: true,
@@ -723,7 +723,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
-			whiteBalance: true,
+			whiteBalance: { dropdown: c.CHOICES_WB_SET },
 			colorTemperature: false,
 		},
 	},
@@ -777,7 +777,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
-			whiteBalance: true,
+			whiteBalance: { dropdown: c.CHOICES_WB_SET },
 			colorTemperature: false,
 		},
 	},
@@ -852,7 +852,7 @@ export const SERIES_SPECS = [
 			iris: false,
 			gainValue: false,
 			preset: false,
-			whiteBalance: true,
+			whiteBalance: false,
 			colorTemperature: false,
 		},
 		feedbacks: {
@@ -890,7 +890,7 @@ export const SERIES_SPECS = [
 			tally2: true,
 			ins: false,
 			sdCard: true,
-			whiteBalance: true,
+			whiteBalance: { dropdown: c.CHOICES_WB_SET },
 			colorTemperature: false,
 		},
 	},

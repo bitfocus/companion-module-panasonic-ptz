@@ -352,6 +352,7 @@ export const c = {
 	// ##########################
 	CHOICES_SHUTTER_OTHER: [
 		{ id: '0', label: 'OFF' },
+		{ id: '1', label: '1/50' },
 		{ id: '2', label: '1/60' },
 		{ id: '3', label: '1/100' },
 		{ id: '4', label: '1/120' },
@@ -367,7 +368,7 @@ export const c = {
 		{ id: 'E', label: '1/25' },
 		{ id: 'F', label: '1/30' },
 	],
-	CHOICES_SHUTTER_HE50: [
+	CHOICES_SHUTTER_HE40: [
 		{ id: '0', label: 'OFF' },
 		{ id: '3', label: '1/100 (59.94Hz) or 1/120 (50Hz)' },
 		{ id: '5', label: '1/250' },
@@ -450,20 +451,12 @@ export const c = {
 		{ id: '11', label: '45.0 deg' },
 	],
 
-	CHOICES_SHUTTER_HE60: function () {
-		return this.CHOICES_SHUTTER_HE50
-	},
-	CHOICES_SHUTTER_HE40: function () {
-		return this.CHOICES_SHUTTER_HE50
-	},
-	CHOICES_SHUTTER_UE70: function () {
-		return this.CHOICES_SHUTTER_HE50
-	},
-	CHOICES_SHUTTER_HE42: function () {
-		return this.CHOICES_SHUTTER_HE50
-	},
-	CHOICES_SHUTTER_HR140: function () {
-		return this.CHOICES_SHUTTER_HE130
+	CHOICES_SHUTTER_UE150: function () {
+		const p = []
+		for (let i = 0x18; i <= 0x2710; ++i) {
+			p.push({ id: (i.toString(16)).toUpperCase().padStart(3, '0'), label: '/' + i.toString() })
+		}
+		return p
 	},
 
 	// ###########################
@@ -737,4 +730,28 @@ export const c = {
 		{ id: '8', label: 'Preset 2800K' },
 		{ id: '9', label: 'Var' },
 	],
+
+	// #########################
+	// #### Preset Look Ups ####
+	// #########################
+	CHOICES_PRESET: function () {
+		const p = []
+		for (let i = 0; i < 100; ++i) {
+			p.push({ id: i.toString(10).padStart(2, '0'), label: 'Preset ' + (i+1).toString() })
+		}
+		return p
+	},
+
+	// #######################
+	// #### Iris Look Ups ####
+	// #######################
+	CHOICES_IRIS: function () {
+		const p = []
+		p.push({ id: '01', label: 'Iris 1 (Close)' })
+		for (let i = 2; i < 99; ++i) {
+			p.push({ id: i.toString(10).padStart(2, '0'), label: 'Iris ' + i.toString() })
+		}
+		p.push({ id: '99', label: 'Iris 99 (Open)' })
+		return p
+	}
 }

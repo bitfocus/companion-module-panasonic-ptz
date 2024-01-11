@@ -1,14 +1,6 @@
 import { combineRgb } from '@companion-module/base'
 import { getAndUpdateSeries } from './common.js'
-import { CHOICES_WB_GET } from "./choices.js"
-
-// ########################
-// #### Value Look Ups ####
-// ########################
-const CHOICES_PRESET = []
-for (let i = 0; i < 100; ++i) {
-	CHOICES_PRESET.push({ id: ('0' + (i+1).toString(10)).substr(-2, 2), label: 'Preset ' + (i + 1) })
-}
+import { c } from './choices.js'
 
 // ##########################
 // #### Define Feedbacks ####
@@ -28,41 +20,15 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.powerState = {
 			type: 'boolean',
 			name: 'System - Power State',
-			description: 'Indicate if Camera is ON or OFF',
+			description: 'Indicates if the camera is currently powered on',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorRed,
 			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Indicate Power State',
-					id: 'option',
-					default: '1',
-					choices: [
-						{ id: '0', label: 'OFF' },
-						{ id: '1', label: 'ON' },
-					],
-				},
-			],
+			options: [],
 			callback: function (feedback) {
-				const opt = feedback.options
-				switch (opt.option) {
-					case '0':
-						if (self.data.power === 'OFF') {
-							return true
-						}
-						break
-					case '1':
-						if (self.data.power === 'ON') {
-							return true
-						}
-						break
-					default:
-						break
-				}
-				return false
-			},
+				return self.data.power === 'ON'
+			}
 		}
 	}
 
@@ -70,7 +36,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.colorbarState = {
 			type: 'boolean',
 			name: 'System - Color Bar State',
-			description: 'Indicates whether the color bar is currently ENABLED on this camera',
+			description: 'Indicates if the color bar is currently enabled on this camera',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorRed,
@@ -86,40 +52,14 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.tallyState = {
 			type: 'boolean',
 			name: 'System - Red Tally State',
-			description: 'Indicate if red Tally is ON or OFF',
+			description: 'Indicates if the red Tally is currently active',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorRed,
 			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Indicate in X State',
-					id: 'option',
-					default: '1',
-					choices: [
-						{ id: '0', label: 'OFF' },
-						{ id: '1', label: 'ON' },
-					],
-				},
-			],
+			options: [],
 			callback: function (feedback) {
-				const opt = feedback.options
-				switch (opt.option) {
-					case '0':
-						if (self.data.tally === 'OFF') {
-							return true
-						}
-						break
-					case '1':
-						if (self.data.tally === 'ON') {
-							return true
-						}
-						break
-					default:
-						break
-				}
-				return false
+				return self.data.tally === 'ON'
 			},
 		}
 	}
@@ -128,40 +68,30 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.tally2State = {
 			type: 'boolean',
 			name: 'System - Green Tally State',
-			description: 'Indicate if green Tally is ON or OFF',
+			description: 'Indicates if the green Tally is currently active',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorGreen,
 			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Indicate in X State',
-					id: 'option',
-					default: '1',
-					choices: [
-						{ id: '0', label: 'OFF' },
-						{ id: '1', label: 'ON' },
-					],
-				},
-			],
+			options: [],
 			callback: function (feedback) {
-				const opt = feedback.options
-				switch (opt.option) {
-					case '0':
-						if (self.data.tally2 === 'OFF') {
-							return true
-						}
-						break
-					case '1':
-						if (self.data.tally2 === 'ON') {
-							return true
-						}
-						break
-					default:
-						break
-				}
-				return false
+				return self.data.tally2 === 'ON'
+			},
+		}
+	}
+
+	if (SERIES.feedbacks.tally3State) {
+		feedbacks.tally3State = {
+			type: 'boolean',
+			name: 'System - Yellow Tally State',
+			description: 'Indicates if the yellow Tally is currently active',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorOrange,
+			},
+			options: [],
+			callback: function (feedback) {
+				return self.data.tally3 === 'ON'
 			},
 		}
 	}
@@ -170,7 +100,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.insState = {
 			type: 'boolean',
 			name: 'System - Install Position',
-			description: 'Indicate if PTZ is on Desktop or Hanging',
+			description: 'Indicates the currently selected mounting position',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorRed,
@@ -178,9 +108,9 @@ export function getFeedbackDefinitions(self) {
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Indicate in X position',
+					label: 'Position',
 					id: 'option',
-					default: '1',
+					default: '0',
 					choices: [
 						{ id: '0', label: 'Desktop' },
 						{ id: '1', label: 'Hanging' },
@@ -200,8 +130,6 @@ export function getFeedbackDefinitions(self) {
 							return true
 						}
 						break
-					default:
-						break
 				}
 				return false
 			},
@@ -212,40 +140,14 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.autoFocus = {
 			type: 'boolean',
 			name: 'Lens - Auto Focus State',
-			description: 'Indicate if Auto focus is ON or OFF',
+			description: 'Indicates if Auto Focus is currently enabled',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorRed,
 			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Indicate in X State',
-					id: 'option',
-					default: '1',
-					choices: [
-						{ id: '0', label: 'Manual' },
-						{ id: '1', label: 'Auto' },
-					],
-				},
-			],
+			options: [],
 			callback: function (feedback) {
-				const opt = feedback.options
-				switch (opt.option) {
-					case '0':
-						if (self.data.oaf === 'Manual') {
-							return true
-						}
-						break
-					case '1':
-						if (self.data.oaf === 'Auto') {
-							return true
-						}
-						break
-					default:
-						break
-				}
-				return false
+				return self.data.oaf === 'Auto'
 			},
 		}
 	}
@@ -254,40 +156,14 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.autoIris = {
 			type: 'boolean',
 			name: 'Lens - Auto Iris State',
-			description: 'Indicate if Auto iris is ON or OFF',
+			description: 'Indicates if Auto Iris is currently enabled',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorRed,
 			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Indicate in X State',
-					id: 'option',
-					default: '1',
-					choices: [
-						{ id: '0', label: 'Manual' },
-						{ id: '1', label: 'Auto' },
-					],
-				},
-			],
+			options: [],
 			callback: function (feedback) {
-				const opt = feedback.options
-				switch (opt.option) {
-					case '0':
-						if (self.data.irisMode === 'Manual') {
-							return true
-						}
-						break
-					case '1':
-						if (self.data.irisMode === 'Auto') {
-							return true
-						}
-						break
-					default:
-						break
-				}
-				return false
+				return self.data.irisMode === 'Auto'
 			},
 		}
 	}
@@ -296,7 +172,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.recallModePset = {
 			type: 'boolean',
 			name: 'Preset - Mode A, B, C',
-			description: 'Indicate what preset mode is currently selected on the camera',
+			description: 'Indicates which preset recall mode is currently selected',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorRed,
@@ -304,7 +180,7 @@ export function getFeedbackDefinitions(self) {
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Select Mode',
+					label: 'Mode',
 					id: 'option',
 					default: '0',
 					choices: [
@@ -338,10 +214,10 @@ export function getFeedbackDefinitions(self) {
 				return false
 			},
 		}
-		feedbacks.presetCompletion = {
+		feedbacks.presetComplete = {
 			type: 'boolean',
 			name: 'Preset - Recall Completion Notification',
-			description: 'Indicate if recalled preset is completed',
+			description: 'Indicates if the last preset recall is completed',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorOrange,
@@ -349,14 +225,14 @@ export function getFeedbackDefinitions(self) {
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Preset Nr.',
+					label: 'Preset',
 					id: 'option',
-					default: CHOICES_PRESET[0].id,
-					choices: CHOICES_PRESET,
+					default: c.CHOICES_PRESET()[0].id,
+					choices: c.CHOICES_PRESET(),
 				},
 			],
 			callback: function (feedback) {
-				return (self.data.lastPresetCompleted === feedback.options.option) ? true : false
+				return self.data.lastPresetCompleted === parseInt(feedback.options.option)
 			},
 		}
 	}
@@ -375,12 +251,12 @@ export function getFeedbackDefinitions(self) {
 					type: 'dropdown',
 					label: 'Mode',
 					id: 'option',
-					default: CHOICES_WB_GET[0].id,
-					choices: CHOICES_WB_GET,
+					default: c.CHOICES_WB_GET[0].id,
+					choices: c.CHOICES_WB_GET,
 				},
 			],
 			callback: function (feedback) {
-				return (self.data.whiteBalance === feedback.options.option) ? true : false
+				return self.data.whiteBalance === feedback.options.option
 			},
 		}
 	}
