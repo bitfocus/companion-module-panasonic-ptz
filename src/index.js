@@ -45,7 +45,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		} catch (err) {
 			this.log('error', 'Error from PTZ on subscribe: ' + String(err))
 
-			this.updateStatus(InstanceStatus.UnknownWarning, 'Subscription unsuccessful')
+			//this.updateStatus(InstanceStatus.UnknownWarning, 'Subscription unsuccessful')
 		}
 	}
 
@@ -185,7 +185,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				.catch((err) => {
 					this.log('error', 'Error checking basic communication and receiving model info from PTZ: ' + String(err))
 
-					this.updateStatus(InstanceStatus.Disconnected)
+					this.updateStatus(InstanceStatus.ConnectionFailure)
 				})
 		}
 	}
@@ -198,7 +198,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			case 'NAME':
 				this.data.modelINFO = str[1]
 				this.log('info', 'Detected Camera Model: ' + this.data.modelINFO)
-				// if a new model is detected or seected, re-initialise all actions, variable and feedbacks
+				// if a new model is detected or selected, re-initialise all actions, variables and feedbacks
 				if (this.data.modelINFO !== this.data.model) {
 					this.init_actions() // export actions
 					this.init_presets()
@@ -254,15 +254,37 @@ class PanasonicPTZInstance extends InstanceBase {
 			}
 		}
 
-		// Store last Preset completed
-		const q = str[0].match(/q(\d\d)/)
-		if (q) {
-			this.data.lastPresetCompleted = parseInt(q[1])+1
+		// Lens Position Information
+		if (str[0].substring(0, 2) === 'ax') {
+			switch (str[0].substring(2, 3)) {
+				case 'z':
+					this.data.zoomPosition = parseInt(str[0].substring(3), 16)
+					break
+				case 'f':
+					this.data.focusPosition = parseInt(str[0].substring(3), 16)
+					break
+				case 'i':
+					this.data.irisPosition = parseInt(str[0].substring(3), 16)
+					break
+			}
+		}
+		if (str[0].substring(0, 3) === 'lPI') {
+			this.data.zoomPosition = parseInt(str[0].substring(3, 6), 16)
+			this.data.focusPosition = parseInt(str[0].substring(6, 9), 16)
+			this.data.irisPosition = parseInt(str[0].substring(9, 12), 16)
 		}
 
-		// Store Firmware Version (not supported for the AK-UB300.)
-		if (str[0].substring(0, 4) === 'qSV3') {
-			this.data.version = str[0].substring(4)
+		if (str[0].substring(0, 1) === 'q') {
+			// Store last Preset completed
+			const q = str[0].match(/q(\d\d)/)
+			if (q) {
+				this.data.lastPresetCompleted = parseInt(q[1])
+			}
+
+			// Store Firmware Version
+			if (str[0].substring(0, 4) === 'qSV3') {
+				this.data.version = str[0].substring(4)
+			}
 		}
 
 		// Store Values from Events
@@ -290,7 +312,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				break
 			case 'DCB':
 			case 'OBR':
-				this.data.colorbar = (str[1] == '1') ? true : false
+				this.data.colorbar = (str[1] == '1') ? 'ON' : 'OFF'
 				break
 			case 'dA0': // Legacy (red) Tally Off
 				this.data.tally = 'OFF'
@@ -307,7 +329,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			case 'TLY': // Tally Yellow
 				this.data.tally3 = (str[1] == '1') ? 'ON' : 'OFF'
 				break
-				case 'iNS0':
+			case 'iNS0':
 				this.data.ins = 'Desktop'
 				break
 			case 'iNS1':
@@ -372,17 +394,20 @@ class PanasonicPTZInstance extends InstanceBase {
 			version: 'NaN',
 			error: 'NaN',
 			power: 'NaN',
-			colorbar: null,
+			colorbar: 'NaN',
 			ins: 'NaN',
 			tally: 'NaN',
 			tally2: 'NaN',
 			tally3: 'NaN',
 			oaf: 'NaN',
-			whiteBalance: null,
+			whiteBalance: 'NaN',
 			colorTemperature: 'Unknown',
 			irisMode: 'NaN',
 			recallModePset: 'NaN',
 			lastPresetCompleted: null,
+			zoomPosition: null,
+			focusPosition: null,
+			irisPosition: null,
 		}
 
 		this.ptSpeed = 25

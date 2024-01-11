@@ -1,5 +1,4 @@
 import { getAndUpdateSeries } from './common.js'
-import { CHOICE_WB_GET } from './choices.js'
 
 // ##########################
 // #### Define Variables ####
@@ -31,7 +30,7 @@ export function setVariables(self) {
 		variables.push({ variableId: 'power', name: 'Power ON/OFF' })
 	}
 	if (SERIES.variables.colorbar) {
-		variables.push({ variableId: 'colorbar', name: 'Color Bar ENABLED' })
+		variables.push({ variableId: 'colorbar', name: 'Color Bar ON/OFF' })
 	}
 	if (SERIES.variables.tally) {
 		variables.push({ variableId: 'tally', name: 'Red Tally ON/OFF' })
@@ -63,6 +62,9 @@ export function setVariables(self) {
 	variables.push({ variableId: 'tSpeedVar', name: 'Tilt Speed' })
 	variables.push({ variableId: 'zSpeedVar', name: 'Zoom Speed' })
 	variables.push({ variableId: 'fSpeedVar', name: 'Focus Speed' })
+	variables.push({ variableId: 'zoomPosition', name: 'Zoom Position' })
+	variables.push({ variableId: 'focusPosition', name: 'Focus Position' })
+	variables.push({ variableId: 'irisPosition', name: 'Iris Position' })
 	return variables
 }
 
@@ -81,7 +83,7 @@ export function checkVariables(self) {
 		: null
 
 	const whiteBalance = SERIES.actions.whiteBalance
-		? CHOICE_WB_GET.find((whiteBalance) => whiteBalance.id == self.data.whiteBalance)
+		? SERIES.actions.whiteBalance.dropdown.find((whiteBalance) => whiteBalance.id == self.data.whiteBalance)
 		: null
 
 
@@ -107,6 +109,9 @@ export function checkVariables(self) {
 		tSpeedVar: self.tSpeed,
 		zSpeedVar: self.zSpeed,
 		fSpeedVar: self.fSpeed,
-		lastPresetCompleted: self.data.lastPresetCompleted,
+		zoomPosition: ((self.data.zoomPosition - 0x555) / 27.30).toPrecision(3) + '%',
+		focusPosition: ((self.data.focusPosition - 0x555) / 27.30).toPrecision(3) + '%',
+		irisPosition: ((self.data.irisPosition - 0x555) / 27.30).toPrecision(3) + '%',
+		lastPresetCompleted: (self.data.lastPresetCompleted + 1).toString(),
 	})
 }
