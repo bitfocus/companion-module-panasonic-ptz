@@ -90,7 +90,7 @@ class PanasonicPTZInstance extends InstanceBase {
 					str_raw = str_raw.split('\r\n') // Split Data in order to remove data before and after command
 					let str = str_raw[1].trim() // remove new line, carage return and so on.
 					if (this.config.debug) {
-						this.log('info', 'Received TCP:' + String(str))
+						this.log('info', 'Received TCP: ' + String(str))
 					}
 					str = str.split(':') // Split Commands and data
 
@@ -340,12 +340,18 @@ class PanasonicPTZInstance extends InstanceBase {
 				break
 			case 'OAW':
 				this.data.whiteBalance = str[1];
-				break;
+				break
+			case 'OIF':
+				this.data.irisF = parseInt(str[1], 16);
+				break
+			case 'OIS':
+				this.data.ois = str[1];
+				break
 			case 'OSD':
 				if (str[1] == 'B1') {
 					this.data.colorTemperature = str[2]
 				}
-				break;
+				break
 			case 'd30':
 				this.data.irisMode = 'Manual'
 				break
@@ -408,6 +414,8 @@ class PanasonicPTZInstance extends InstanceBase {
 			zoomPosition: null,
 			focusPosition: null,
 			irisPosition: null,
+			irisF: null,
+			ois: null,
 		}
 
 		this.ptSpeed = 25
