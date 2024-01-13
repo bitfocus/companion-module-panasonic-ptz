@@ -1452,5 +1452,33 @@ export function getActionDefinitions(self) {
 		}
 	}
 
+	actions.sendCustom = {
+		name: 'Custom - Send Command',
+		options: [
+			{
+				type: 'dropdown',
+				label: 'Custom command destination',
+				id: 'dest',
+				default: '0',
+				choices: [
+					{ id: '0', label: 'Cam' },
+					{ id: '1', label: 'PTZ' },
+				],
+			},
+			{
+				id: 'cmd',
+				type: 'textinput',
+				label: 'Custom Command (without leading #)',
+				default: ''
+			}
+		],
+		callback: async (action) => {
+			switch (action.options.dest) {
+				case '0': await sendCam(self, action.options.cmd); break
+				case '1': await sendPTZ(self, action.options.cmd); break
+			}
+		},
+	}
+
 	return actions
 }

@@ -62,9 +62,13 @@ export function setVariables(self) {
 	variables.push({ variableId: 'tSpeedVar', name: 'Tilt Speed' })
 	variables.push({ variableId: 'zSpeedVar', name: 'Zoom Speed' })
 	variables.push({ variableId: 'fSpeedVar', name: 'Focus Speed' })
-	variables.push({ variableId: 'zoomPosition', name: 'Zoom Position' })
-	variables.push({ variableId: 'focusPosition', name: 'Focus Position' })
-	variables.push({ variableId: 'irisPosition', name: 'Iris Position' })
+	variables.push({ variableId: 'zoomPosition', name: 'Zoom Position %' })
+	variables.push({ variableId: 'focusPosition', name: 'Focus Position %' })
+	variables.push({ variableId: 'irisPosition', name: 'Iris Position %' })
+	variables.push({ variableId: 'zoomPositionBar', name: 'Zoom Position' })
+	variables.push({ variableId: 'focusPositionBar', name: 'Focus Position' })
+	variables.push({ variableId: 'irisPositionBar', name: 'Iris Position' })
+	variables.push({ variableId: 'irisF', name: 'Iris F No' })
 	return variables
 }
 
@@ -86,6 +90,22 @@ export function checkVariables(self) {
 		? SERIES.actions.whiteBalance.dropdown.find((whiteBalance) => whiteBalance.id == self.data.whiteBalance)
 		: null
 
+	const progressBar = (pct, width = 20, start = '', end = '') => {
+		if (pct && pct >= 0 && pct <= 100) {
+			const flr = Math.floor(pct * width / 100)
+			return start + (".").repeat(flr) + ("|") + (".").repeat(width-flr) + end
+			//return start + ("|").repeat(flr).padEnd(width, ".") + end
+		}
+		return '---'
+	}
+
+	const normalizePct = (val, low = 0, high = 100, limit = false) => {
+		if (limit) {
+			val = (val < low) ? low : val
+			val = (val > high) ? high : val
+		}
+		return (val < low || val > high) ? null : (((val - low) / (high - low)) * 100).toFixed(2)
+	}
 
 	self.setVariableValues({
 		series: self.data.series,
@@ -109,9 +129,13 @@ export function checkVariables(self) {
 		tSpeedVar: self.tSpeed,
 		zSpeedVar: self.zSpeed,
 		fSpeedVar: self.fSpeed,
-		zoomPosition: ((self.data.zoomPosition - 0x555) / 27.30).toPrecision(3) + '%',
-		focusPosition: ((self.data.focusPosition - 0x555) / 27.30).toPrecision(3) + '%',
-		irisPosition: ((self.data.irisPosition - 0x555) / 27.30).toPrecision(3) + '%',
+		zoomPosition: normalizePct(self.data.zoomPosition, 0x555, 0xFFF),
+		focusPosition: normalizePct(self.data.focusPosition, 0x555, 0xFFF),
+		irisPosition: normalizePct(self.data.irisPosition, 0x555, 0xFFF),
+		zoomPositionBar: progressBar(normalizePct(self.data.zoomPosition, 0x555, 0xFFF), 14, 'W', 'T'),
+		focusPositionBar: progressBar(normalizePct(self.data.focusPosition, 0x555, 0xFFF), 14, 'N', 'F'),
+		irisPositionBar: progressBar(normalizePct(self.data.irisPosition, 0x555, 0xFFF), 14, 'C', 'O'),
+		irisF: 'F'+(self.data.irisF / 10).toFixed(1),
 		lastPresetCompleted: (self.data.lastPresetCompleted + 1).toString(),
 	})
 }
