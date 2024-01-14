@@ -253,11 +253,25 @@ class PanasonicPTZInstance extends InstanceBase {
 				}
 				break
 			case 'OSD':
-				if(str[1] == 'B1')
-				{
+				if(str[1] == 'B1') {
 					this.data.colorTemperature = str[2];
+				} else if (str[1] == 'BA') {
+					this.data.colorBarType = str[2];
+				} else if (str[1] == 'BE') {
+					this.data.colorBarTitle = str[2];
 				}
-			break;
+				break
+			case 'OSJ':
+				if(str[1] == '27') {
+					this.data.colorBarTone = str[2];
+				}
+				break
+			case 'DCB':
+				this.data.colorBar = str[1];
+				break
+			case 'DCS':
+				this.data.colorBarSetup = str[1];
+				break
 			case 'd30':
 				this.data.irisMode = 'Manual'
 				break
@@ -315,6 +329,11 @@ class PanasonicPTZInstance extends InstanceBase {
 			colorTemperature: 'Unknown',
 			irisMode: 'NaN',
 			recallModePset: 'NaN',
+			colorBar: 'NaN',
+			colorBarSetup: 'NaN',
+			colorBarTitle: 'NaN',
+			colorBarTone: 'NaN',
+			colorBarType: 'Nan',
 		}
 
 		this.ptSpeed = 25
