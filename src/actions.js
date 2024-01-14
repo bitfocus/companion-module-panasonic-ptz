@@ -1404,5 +1404,95 @@ export function getActionDefinitions(self) {
 		}
 	}
 
+	if (seriesActions.colorBars) {
+		actions.colorBarsOn = {
+			name: 'Color Bars - Enable',
+			options: [],
+			callback: async (action) => {
+				await sendCam(self, 'DCB:1');
+			},
+		}
+		actions.colorBarsOff = {
+			name: 'Color Bars - Disable',
+			options: [],
+			callback: async (action) => {
+				await sendCam(self, 'DCB:0');
+			},
+		}
+		if (seriesActions.colorBarsSetup) {
+			actions.colorBarSetupsOn = {
+				name: 'Color Bars - Setup On (7.5IRE)',
+				options: [],
+				callback: async (action) => {
+					await sendCam(self, 'DCS:1');
+				},
+			}
+			actions.colorBarsSetupOff = {
+				name: 'Color Bars - Setup Off (0.0IRE)',
+				options: [],
+				callback: async (action) => {
+					await sendCam(self, 'DCS:0');
+				},
+			}
+		}
+		if (seriesActions.colorBarsTitle) {
+			actions.colorBarsTitleOn = {
+				name: 'Color Bars - Title On',
+				options: [],
+				callback: async (action) => {
+					await sendCam(self, 'OSD:BE:1');
+				},
+			}
+			actions.colorBarsTitleOff = {
+				name: 'Color Bars - Title Off',
+				options: [],
+				callback: async (action) => {
+					await sendCam(self, 'OSD:BE:0');
+				},
+			}
+		}
+		if (seriesActions.colorBarsTone) {
+			actions.colorBarsTone = {
+				name: 'Color Bars - Tone',
+				options: [
+					{
+						type: 'dropdown',
+						label: 'Tone',
+						id: 'tone',
+						default: 0,
+						choices: [
+							{ id: '0h', label: 'Off' },
+							{ id: '1h', label: 'Low' },
+							{ id: '2h', label: 'Normal' },
+						],
+					},
+				],
+				callback: async (action) => {
+					await sendCam(self, 'OSJ:27:' + action.options.tone);
+				},
+			}
+		}
+		if (seriesActions.colorBarsType) {
+			actions.colorBarsType = {
+				name: 'Color Bars - Type',
+				options: [
+					{
+						type: 'dropdown',
+						label: 'Type',
+						id: 'type',
+						default: 1,
+						choices: [
+							{ id: '1', label: 'Type 1' },
+							{ id: '0', label: 'Type 2' },
+						],
+					},
+				],
+				callback: async (action) => {
+					await sendCam(self, 'OSD:BA:' + action.options.type);
+				},
+			}
+		}
+	}
+
 	return actions
 }
