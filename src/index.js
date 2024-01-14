@@ -167,7 +167,7 @@ class PanasonicPTZInstance extends InstanceBase {
 							// remove new line, carage return and so on.
 							const str = line.trim().split(':') // Split Commands and data
 							if (this.config.debug) {
-								this.log('info', 'Recived CMD: ' + String(str))
+								this.log('info', 'Received CMD: ' + String(str))
 							}
 							// Store Data
 							this.storeData(str)
@@ -200,7 +200,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		switch (str[0]) {
 			case 'OID':
 				this.data.modelTCP = str[1]
-				// if a new model is detected or seected, re-initialise all actions, variable and feedbacks
+				// if a new model is detected or selected, re-initialise all actions, variable and feedbacks
 				if (this.data.modelTCP !== this.data.model) {
 					this.init_actions() // export actions
 					this.init_presets()
