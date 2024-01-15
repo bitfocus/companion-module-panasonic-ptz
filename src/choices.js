@@ -58,6 +58,26 @@ export const c = {
 	// #######################
 	// #### Gain Look Ups ####
 	// #######################
+	CHOICES_GAIN_HE40: [
+		{ id: '80', label: 'Auto' },
+		{ id: '08', label: '0dB' },
+		{ id: '0B', label: '3db' },
+		{ id: '0E', label: '6dB' },
+		{ id: '11', label: '9dB' },
+		{ id: '14', label: '12dB' },
+		{ id: '17', label: '15dB' },
+		{ id: '1A', label: '18dB' },
+		{ id: '1D', label: '21dB' },
+		{ id: '20', label: '24dB' },
+		{ id: '23', label: '27dB' },
+		{ id: '26', label: '30dB' },
+		{ id: '29', label: '33dB' },
+		{ id: '2C', label: '36dB' },
+		{ id: '2F', label: '39dB' },
+		{ id: '32', label: '42dB' },
+		{ id: '35', label: '45dB' },
+		{ id: '38', label: '48dB' },
+	],
 	CHOICES_GAIN_HE50: [
 		{ id: '80', label: 'Auto' },
 		{ id: '08', label: '0dB' },
@@ -176,26 +196,6 @@ export const c = {
 		{ id: '31', label: '41dB' },
 		{ id: '32', label: '42dB' },
 	],
-	CHOICES_GAIN_HE40: [
-		{ id: '80', label: 'Auto' },
-		{ id: '08', label: '0dB' },
-		{ id: '0B', label: '3db' },
-		{ id: '0E', label: '6dB' },
-		{ id: '11', label: '9dB' },
-		{ id: '14', label: '12dB' },
-		{ id: '17', label: '15dB' },
-		{ id: '1A', label: '18dB' },
-		{ id: '1D', label: '21dB' },
-		{ id: '20', label: '24dB' },
-		{ id: '23', label: '27dB' },
-		{ id: '26', label: '30dB' },
-		{ id: '29', label: '33dB' },
-		{ id: '2C', label: '36dB' },
-		{ id: '2F', label: '39dB' },
-		{ id: '32', label: '42dB' },
-		{ id: '35', label: '45dB' },
-		{ id: '38', label: '48dB' },
-	],
 	CHOICES_GAIN_UE4: [
 		{ id: '08', label: '0dB' },
 		{ id: '0B', label: '3db' },
@@ -213,20 +213,8 @@ export const c = {
 		{ id: '2F', label: '39dB' },
 		{ id: '32', label: '42dB' },
 	],
-	CHOICES_GAIN_UB300: [
-		{ id: '01', label: 'LOW' },
-		{ id: '04', label: 'MID' },
-		{ id: '08', label: 'HIGH' },
-		{ id: '06', label: 'S.GAIN1' },
-		{ id: '0C', label: 'S.GAIN2' },
-		{ id: '0E', label: 'S.GAIN3' },
-	],
-	CHOICES_GAIN_CX350: [
+	CHOICES_GAIN_UE150: [
 		{ id: '80', label: 'Auto' },
-		{ id: '81', label: 'Manual' },
-		{ id: '02', label: '-6dB' },
-		{ id: '03', label: '-5dB' },
-		{ id: '04', label: '-4dB' },
 		{ id: '05', label: '-3dB' },
 		{ id: '06', label: '-2dB' },
 		{ id: '07', label: '-1dB' },
@@ -274,8 +262,12 @@ export const c = {
 		{ id: '31', label: '41dB' },
 		{ id: '32', label: '42dB' },
 	],
-	CHOICES_GAIN_UE150: [
+	CHOICES_GAIN_CX350: [
 		{ id: '80', label: 'Auto' },
+		{ id: '81', label: 'Manual' },
+		{ id: '02', label: '-6dB' },
+		{ id: '03', label: '-5dB' },
+		{ id: '04', label: '-4dB' },
 		{ id: '05', label: '-3dB' },
 		{ id: '06', label: '-2dB' },
 		{ id: '07', label: '-1dB' },
@@ -342,6 +334,14 @@ export const c = {
 		{ id: '12', label: '10dB' },
 		{ id: '13', label: '11dB' },
 		{ id: '14', label: '12dB' },
+	],
+	CHOICES_GAIN_UB300: [
+		{ id: '01', label: 'LOW' },
+		{ id: '04', label: 'MID' },
+		{ id: '08', label: 'HIGH' },
+		{ id: '06', label: 'S.GAIN1' },
+		{ id: '0C', label: 'S.GAIN2' },
+		{ id: '0E', label: 'S.GAIN3' },
 	],
 	CHOICES_GAIN_OTHER: function () {
 		return this.CHOICES_GAIN_CX350
@@ -450,7 +450,6 @@ export const c = {
 		{ id: '10', label: '90.0 deg' },
 		{ id: '11', label: '45.0 deg' },
 	],
-
 	CHOICES_SHUTTER_UE150: function () {
 		const p = []
 		for (let i = 0x18; i <= 0x2710; ++i) {
@@ -469,7 +468,6 @@ export const c = {
 		}
 		return p
 	},
-
 	CHOICES_PEDESTAL_HE120: function () {
 		const p = []
 		for (let i = -150; i <= 150; ++i) {
@@ -477,7 +475,6 @@ export const c = {
 		}
 		return p
 	},
-
 	CHOICES_PEDESTAL_UE150: function () {
 		const p = []
 		for (let i = -200; i <= 200; ++i) {
@@ -485,7 +482,6 @@ export const c = {
 		}
 		return p
 	},
-
 	CHOICES_PEDESTAL_UE20: function () {
 		const p = []
 		for (let i = -10; i <= 10; ++i) {
@@ -493,7 +489,6 @@ export const c = {
 		}
 		return p
 	},
-
 	CHOICES_PEDESTAL_UB300: function () {
 		const p = []
 		for (let i = -99; i <= 99; ++i) {
@@ -501,14 +496,13 @@ export const c = {
 		}
 		return p
 	},
-
 	CHOICES_PEDESTAL_OTHER: function () {
 		return this.CHOICES_PEDESTAL_HE120()
 	},
 
-	// ###########################
+	// ############################
 	// #### ND Filter Look Ups ####
-	// ###########################
+	// ############################
 	CHOICES_FILTER_OTHER: [
 		{ id: '0', label: 'Clear (Through)' },
 		{ id: '1', label: '1/4 ND' },
@@ -517,7 +511,6 @@ export const c = {
 		{ id: '4', label: '1/8 ND' },
 		{ id: '8', label: 'AUTO ND' },
 	],
-
 	CHOICES_FILTER_3A: [
 		{ id: '0', label: 'Clear (Through)' },
 		{ id: '1', label: '1/4 ND' },
@@ -525,14 +518,12 @@ export const c = {
 		{ id: '3', label: '1/64 ND' },
 		{ id: '8', label: 'AUTO ND' },
 	],
-
 	CHOICES_FILTER_3: [
 		{ id: '0', label: 'Clear (Through)' },
 		{ id: '1', label: '1/4 ND' },
 		{ id: '2', label: '1/16 ND' },
 		{ id: '3', label: '1/64 ND' },
 	],
-
 	CHOICES_FILTER_2: [
 		{ id: '0', label: 'Clear (Through)' },
 		{ id: '3', label: '1/64 ND' },
@@ -574,7 +565,6 @@ export const c = {
 		{ id: 300, label: 'Speed 02' },
 		{ id: 275, label: 'Speed 01 (Slow)' },
 	],
-
 	CHOICES_PSTIME: function () {
 		const p = []
 		for (let i = 1; i <= 99; ++i) {
@@ -583,6 +573,87 @@ export const c = {
 		return p
 	},
 
+	// ####################################
+	// #### Color Temperature Look Ups ####
+	// ####################################
+	CHOICES_COLOR_TEMPERATURE_HE40: [
+		{ "id": "000", "label": "2400K" },
+		{ "id": "001", "label": "2500K" },
+		{ "id": "002", "label": "2600K" },
+		{ "id": "003", "label": "2700K" },
+		{ "id": "004", "label": "2800K" },
+		{ "id": "005", "label": "2900K" },
+		{ "id": "006", "label": "3000K" },
+		{ "id": "007", "label": "3100K" },
+		{ "id": "008", "label": "3200K" },
+		{ "id": "009", "label": "3300K" },
+		{ "id": "00A", "label": "3400K" },
+		{ "id": "00B", "label": "3500K" },
+		{ "id": "00C", "label": "3600K" },
+		{ "id": "00D", "label": "3700K" },
+		{ "id": "00E", "label": "3800K" },
+		{ "id": "00F", "label": "3900K" },
+		{ "id": "010", "label": "4000K" },
+		{ "id": "011", "label": "4100K" },
+		{ "id": "012", "label": "4200K" },
+		{ "id": "013", "label": "4300K" },
+		{ "id": "014", "label": "4400K" },
+		{ "id": "015", "label": "4500K" },
+		{ "id": "016", "label": "4600K" },
+		{ "id": "017", "label": "4700K" },
+		{ "id": "018", "label": "4800K" },
+		{ "id": "019", "label": "4900K" },
+		{ "id": "01A", "label": "5000K" },
+		{ "id": "01B", "label": "5100K" },
+		{ "id": "01C", "label": "5200K" },
+		{ "id": "01D", "label": "5300K" },
+		{ "id": "01E", "label": "5400K" },
+		{ "id": "01F", "label": "5500K" },
+		{ "id": "020", "label": "5600K" },
+		{ "id": "021", "label": "5700K" },
+		{ "id": "022", "label": "5800K" },
+		{ "id": "023", "label": "5900K" },
+		{ "id": "024", "label": "6000K" },
+		{ "id": "025", "label": "6100K" },
+		{ "id": "026", "label": "6200K" },
+		{ "id": "027", "label": "6300K" },
+		{ "id": "028", "label": "6400K" },
+		{ "id": "029", "label": "6500K" },
+		{ "id": "02A", "label": "6600K" },
+		{ "id": "02B", "label": "6700K" },
+		{ "id": "02C", "label": "6800K" },
+		{ "id": "02D", "label": "6900K" },
+		{ "id": "02E", "label": "7000K" },
+		{ "id": "02F", "label": "7100K" },
+		{ "id": "030", "label": "7200K" },
+		{ "id": "031", "label": "7300K" },
+		{ "id": "032", "label": "7400K" },
+		{ "id": "033", "label": "7500K" },
+		{ "id": "034", "label": "7600K" },
+		{ "id": "035", "label": "7700K" },
+		{ "id": "036", "label": "7800K" },
+		{ "id": "037", "label": "7900K" },
+		{ "id": "038", "label": "8000K" },
+		{ "id": "039", "label": "8100K" },
+		{ "id": "03A", "label": "8200K" },
+		{ "id": "03B", "label": "8300K" },
+		{ "id": "03C", "label": "8400K" },
+		{ "id": "03D", "label": "8500K" },
+		{ "id": "03E", "label": "8600K" },
+		{ "id": "03F", "label": "8700K" },
+		{ "id": "040", "label": "8800K" },
+		{ "id": "041", "label": "8900K" },
+		{ "id": "042", "label": "9000K" },
+		{ "id": "043", "label": "9100K" },
+		{ "id": "044", "label": "9200K" },
+		{ "id": "045", "label": "9300K" },
+		{ "id": "046", "label": "9400K" },
+		{ "id": "047", "label": "9500K" },
+		{ "id": "048", "label": "9600K" },
+		{ "id": "049", "label": "9700K" },
+		{ "id": "04A", "label": "9800K" },
+		{ "id": "04B", "label": "9900K" },
+	],
 	CHOICES_COLOR_TEMPERATURE_HE130: [
 		{ "id": "000", "label": "2000K" },
 		{ "id": "001", "label": "2010K" },

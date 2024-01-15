@@ -248,9 +248,9 @@ class PanasonicPTZInstance extends InstanceBase {
 	parseStatus(str) {	
 		if (str[0].substring(0, 3) === 'rER') {
 			if (str[0] === 'rER00') {
-				this.data.error = 'No Errors'
+				this.data.error = 'No Error'
 			} else {
-				this.data.error = str[0]
+				this.data.error = str[0].substring(1)
 			}
 		}
 
@@ -336,7 +336,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.data.ins = 'Hanging'
 				break
 			case 'OAF':
-				this.data.tally = (str[1] == '1') ? 'Auto' : 'Manual'
+				this.data.oaf = (str[1] == '1') ? 'Auto' : 'Manual'
 				break
 			case 'OAW':
 				this.data.whiteBalance = str[1];
@@ -351,6 +351,15 @@ class PanasonicPTZInstance extends InstanceBase {
 				if (str[1] == 'B1') {
 					this.data.colorTemperature = str[2]
 				}
+				break
+			case 'OSI':
+				if (str[1] == '20') {
+					// ToDo: Non-mapped direct K value
+					// this.data.colorTemperature = str[2]
+				}
+				break
+			case 'OSH':
+				this.data.shutter = parseInt(str[1], 16);
 				break
 			case 'd30':
 				this.data.irisMode = 'Manual'
@@ -367,10 +376,44 @@ class PanasonicPTZInstance extends InstanceBase {
 					}
 				}
 				break
-			case 'OGU':
-				this.data.gainValue = str[1].toString().replace('0x', '')
+			case 'OSG':
+				switch (str[1]) {
+					case '39': this.data.redGain = parseInt(str[2], 16); break
+					case '3A': this.data.blueGain = parseInt(str[2], 16); break
+					// UB300 only:
+					case '4C': this.data.redPed = parseInt(str[2], 16); break
+					case '4E': this.data.bluePed = parseInt(str[2], 16); break
+				}
 				break
-			default:
+			case 'OSJ':
+				switch (str[1]) {
+					// ToDo: Non-mapped direct Shutter Step Value
+					// case '06': this.data.shutter = parseInt(str[2], 16); break
+					// ToDo: Non-mapped direct Shutter Synchro Value
+					// case '09': this.data.shutter = parseInt(str[2], 16); break
+					case '0F': this.data.masterPed = parseInt(str[2], 16); break
+				}
+				break
+			case 'OGU':
+				this.data.gainValue = parseInt(str[1], 16)
+				break
+			case 'ORS':
+				this.data.irisMode = (str[1] == '1') ? 'Auto' : 'Manual'
+				break
+			case 'OTD':
+				this.data.masterPed = parseInt(str[1], 16)
+				break
+			case 'ORG':
+				this.data.redGain = parseInt(str[1], 16)
+				break
+			case 'OBG':
+				this.data.blueGain = parseInt(str[1], 16)
+				break
+			case 'ORP':
+				this.data.redPed = parseInt(str[1], 16)
+				break
+			case 'OBP':
+				this.data.bluePed = parseInt(str[1], 16)
 				break
 		}
 	}
@@ -416,6 +459,12 @@ class PanasonicPTZInstance extends InstanceBase {
 			irisPosition: null,
 			irisF: null,
 			ois: null,
+			masterPed: null,
+			redPed: null,
+			bluePed: null,
+			redGain: null,
+			blueGain: null,
+			shutter: null,
 		}
 
 		this.ptSpeed = 25

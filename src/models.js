@@ -140,7 +140,7 @@ export const SERIES_SPECS = [
 			gainValue: true,
 			preset: true,
 			whiteBalance: true,
-			colorTemperature: false,
+			colorTemperature: true,
 		},
 		feedbacks: {
 			powerState: true,
@@ -175,7 +175,7 @@ export const SERIES_SPECS = [
 			ins: true,
 			sdCard: true,
 			whiteBalance: { dropdown: c.CHOICES_WB_SET },
-			colorTemperature: false,
+			colorTemperature: { cmd: 'OSD:B1:', dropdown: c.CHOICES_COLOR_TEMPERATURE_HE40 },
 		},
 	},
 
@@ -194,7 +194,7 @@ export const SERIES_SPECS = [
 			gainValue: true,
 			preset: true,
 			whiteBalance: true,
-			colorTemperature: false,
+			colorTemperature: true,
 		},
 		feedbacks: {
 			powerState: true,
@@ -229,7 +229,7 @@ export const SERIES_SPECS = [
 			ins: true,
 			sdCard: true,
 			whiteBalance: { dropdown: c.CHOICES_WB_SET },
-			colorTemperature: false,
+			colorTemperature: { cmd: 'OSD:B1:', dropdown: c.CHOICES_COLOR_TEMPERATURE_HE40 },
 		},
 	},
 
@@ -248,7 +248,7 @@ export const SERIES_SPECS = [
 			gainValue: true,
 			preset: true,
 			whiteBalance: true,
-			colorTemperature: false,
+			colorTemperature:  true,
 		},
 		feedbacks: {
 			powerState: true,
@@ -283,7 +283,7 @@ export const SERIES_SPECS = [
 			ins: true,
 			sdCard: true,
 			whiteBalance: { dropdown: c.CHOICES_WB_SET },
-			colorTemperature: false,
+			colorTemperature: { cmd: 'OSD:B1:', dropdown: c.CHOICES_COLOR_TEMPERATURE_HE40 },
 		},
 	},
 
@@ -724,7 +724,7 @@ export const SERIES_SPECS = [
 			ins: true,
 			sdCard: false,
 			whiteBalance: { dropdown: c.CHOICES_WB_SET },
-			colorTemperature: false,
+			colorTemperature: { cmd: 'OSD:B1:', dropdown: c.CHOICES_COLOR_TEMPERATURE_HE130 },
 		},
 	},
 
@@ -764,7 +764,7 @@ export const SERIES_SPECS = [
 			fSpeed: true,
 			OAF: false,
 			OTAF: false,
-			iris: true, // Might not work correctly (Auto/Manual should work though)
+			iris: false, // supports only 1 (Auto)
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_UE4 },
 			shut: { cmd: 'OSJ:06:', dropdown: c.CHOICES_SHUTTER_UE4 },
 			ped: false,

@@ -1128,7 +1128,6 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				
 				let id = action.options.val.toUpperCase();
 				let index = seriesActions.colorTemperature.dropdown.findIndex((colorTemperature) => colorTemperature.id == id);
 

@@ -69,6 +69,14 @@ export function setVariables(self) {
 	variables.push({ variableId: 'focusPositionBar', name: 'Focus Position' })
 	variables.push({ variableId: 'irisPositionBar', name: 'Iris Position' })
 	variables.push({ variableId: 'irisF', name: 'Iris F No' })
+	variables.push({ variableId: 'masterPed', name: 'Master Pedestal' })
+	variables.push({ variableId: 'redPed', name: 'Red Pedestal' })
+	variables.push({ variableId: 'bluePed', name: 'Blue Pedestal' })
+	variables.push({ variableId: 'redGain', name: 'Red Gain' })
+	variables.push({ variableId: 'blueGain', name: 'Blue Gain' })
+	variables.push({ variableId: 'shutter', name: 'Shutter Value' })
+	variables.push({ variableId: 'ois', name: 'O.I.S. Mode' })
+
 	return variables
 }
 
@@ -99,12 +107,12 @@ export function checkVariables(self) {
 		return '---'
 	}
 
-	const normalizePct = (val, low = 0, high = 100, limit = false) => {
+	const normalizePct = (val, low = 0, high = 100, limit = false, fractionDigits = 0) => {
 		if (limit) {
 			val = (val < low) ? low : val
 			val = (val > high) ? high : val
 		}
-		return (val < low || val > high) ? null : (((val - low) / (high - low)) * 100).toFixed(2)
+		return (val < low || val > high) ? null : (((val - low) / (high - low)) * 100).toFixed(fractionDigits)
 	}
 
 	self.setVariableValues({
@@ -129,13 +137,20 @@ export function checkVariables(self) {
 		tSpeedVar: self.tSpeed,
 		zSpeedVar: self.zSpeed,
 		fSpeedVar: self.fSpeed,
-		zoomPosition: normalizePct(self.data.zoomPosition, 0x555, 0xFFF),
-		focusPosition: normalizePct(self.data.focusPosition, 0x555, 0xFFF),
-		irisPosition: normalizePct(self.data.irisPosition, 0x555, 0xFFF),
+		zoomPosition: normalizePct(self.data.zoomPosition, 0x555, 0xFFF, false, 1),
+		focusPosition: normalizePct(self.data.focusPosition, 0x555, 0xFFF, false, 0),
+		irisPosition: normalizePct(self.data.irisPosition, 0x555, 0xFFF,false, 0),
 		zoomPositionBar: progressBar(normalizePct(self.data.zoomPosition, 0x555, 0xFFF), 14, 'W', 'T'),
 		focusPositionBar: progressBar(normalizePct(self.data.focusPosition, 0x555, 0xFFF), 14, 'N', 'F'),
 		irisPositionBar: progressBar(normalizePct(self.data.irisPosition, 0x555, 0xFFF), 14, 'C', 'O'),
 		irisF: 'F'+(self.data.irisF / 10).toFixed(1),
+		masterPed: self.data.masterPed,
+		redPed: self.data.redPed,
+		bluePed: self.data.bluePed,
+		redGain: self.data.redGain,
+		blueGain: self.data.blueGain,
 		lastPresetCompleted: (self.data.lastPresetCompleted + 1).toString(),
+		shutter: self.data.shutter,
+		ois: self.data.ois,
 	})
 }
