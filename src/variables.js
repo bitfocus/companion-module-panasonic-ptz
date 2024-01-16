@@ -39,7 +39,7 @@ export function setVariables(self) {
 		variables.push({ variableId: 'tally2', name: 'Green Tally ON/OFF' })
 	}
 	if (SERIES.variables.OAF) {
-		variables.push({ variableId: 'OAF', name: 'Auto Focus Mode' })
+		variables.push({ variableId: 'autoFocus', name: 'Auto Focus Mode' })
 	}
 	if (SERIES.variables.whiteBalance) {
 		variables.push({ variableId: 'whiteBalance', name: 'White Balance Mode' })
@@ -47,11 +47,11 @@ export function setVariables(self) {
 	if (SERIES.variables.colorTemperature) {
 		variables.push({ variableId: 'colorTemperature', name: 'Color Temperature' })
 	}
-	if (SERIES.variables.iris) {
+	if (SERIES.variables.irisMode) {
 		variables.push({ variableId: 'irisMode', name: 'Auto Iris Mode' })
 	}
-	if (SERIES.variables.gainValue) {
-		variables.push({ variableId: 'gainValue', name: 'Gain Value' })
+	if (SERIES.variables.gain) {
+		variables.push({ variableId: 'gain', name: 'Gain Value' })
 	}
 	if (SERIES.variables.preset) {
 		variables.push({ variableId: 'presetMode', name: 'Preset Mode' })
@@ -68,14 +68,15 @@ export function setVariables(self) {
 	variables.push({ variableId: 'zoomPositionBar', name: 'Zoom Position' })
 	variables.push({ variableId: 'focusPositionBar', name: 'Focus Position' })
 	variables.push({ variableId: 'irisPositionBar', name: 'Iris Position' })
-	variables.push({ variableId: 'irisF', name: 'Iris F No' })
+	variables.push({ variableId: 'irisValue', name: 'Iris F No' })
 	variables.push({ variableId: 'masterPed', name: 'Master Pedestal' })
 	variables.push({ variableId: 'redPed', name: 'Red Pedestal' })
 	variables.push({ variableId: 'bluePed', name: 'Blue Pedestal' })
 	variables.push({ variableId: 'redGain', name: 'Red Gain' })
 	variables.push({ variableId: 'blueGain', name: 'Blue Gain' })
-	variables.push({ variableId: 'shutter', name: 'Shutter Value' })
-	variables.push({ variableId: 'ois', name: 'O.I.S. Mode' })
+	variables.push({ variableId: 'shutterMode', name: 'Shutter Mode' })
+	variables.push({ variableId: 'shutterValue', name: 'Shutter Value' })
+	variables.push({ variableId: 'oisMode', name: 'O.I.S. Mode' })
 
 	return variables
 }
@@ -86,8 +87,12 @@ export function setVariables(self) {
 export function checkVariables(self) {
 	const SERIES = getAndUpdateSeries(self)
 
-	const gainValue = SERIES.actions.gain
-		? SERIES.actions.gain.dropdown.find((GAIN) => GAIN.id == self.data.gainValue)
+	const gain = SERIES.actions.gain
+		? SERIES.actions.gain.dropdown.find((GAIN) => GAIN.id == self.data.gain)
+		: null
+
+	const shutter = SERIES.actions.shut
+		? SERIES.actions.shut.dropdown.find((SHUT) => SHUT.id == self.data.shutterMode)
 		: null
 
 	const colorTemperature = SERIES.actions.colorTemperature
@@ -95,7 +100,7 @@ export function checkVariables(self) {
 		: null
 
 	const whiteBalance = SERIES.actions.whiteBalance
-		? SERIES.actions.whiteBalance.dropdown.find((whiteBalance) => whiteBalance.id == self.data.whiteBalance)
+		? SERIES.actions.whiteBalance.dropdown.find((whiteBalance) => whiteBalance.id == self.data.whiteBalanceMode)
 		: null
 
 	const progressBar = (pct, width = 20, start = '', end = '') => {
@@ -115,6 +120,14 @@ export function checkVariables(self) {
 		return (val < low || val > high) ? null : (((val - low) / (high - low)) * 100).toFixed(fractionDigits)
 	}
 
+	const norm = (val, low = 0, high = 100) => {
+		return (val < low || val > high) ? null : (((val - low) / (high - low)) * 2) - 1
+	}
+
+	const normS = (val, low = -100, high = 100) => {
+		return (val < low || val > high) ? null : (((val - low) / (high - low)) * 2) - 1
+	}
+
 	self.setVariableValues({
 		series: self.data.series,
 		model: self.data.model,
@@ -126,11 +139,12 @@ export function checkVariables(self) {
 		colorbar: self.data.colorbar,
 		tally: self.data.tally,
 		tally2: self.data.tally2,
-		OAF: self.data.oaf,
+		autoFocus: self.data.autoFocus,
 		whiteBalance: whiteBalance?.label,
+		//colorTemperature: self.data.colorTemperature,
 		colorTemperature: colorTemperature?.label,
 		irisMode: self.data.irisMode,
-		gainValue: gainValue?.label,
+		gain: gain?.label,
 		presetMode: self.data.recallModePset,
 		ptSpeedVar: self.ptSpeed,
 		pSpeedVar: self.pSpeed,
@@ -143,14 +157,15 @@ export function checkVariables(self) {
 		zoomPositionBar: progressBar(normalizePct(self.data.zoomPosition, 0x555, 0xFFF), 14, 'W', 'T'),
 		focusPositionBar: progressBar(normalizePct(self.data.focusPosition, 0x555, 0xFFF), 14, 'N', 'F'),
 		irisPositionBar: progressBar(normalizePct(self.data.irisPosition, 0x555, 0xFFF), 14, 'C', 'O'),
-		irisF: 'F'+(self.data.irisF / 10).toFixed(1),
+		irisValue: 'F'+(self.data.irisValue / 10).toFixed(1),
 		masterPed: self.data.masterPed,
 		redPed: self.data.redPed,
 		bluePed: self.data.bluePed,
 		redGain: self.data.redGain,
 		blueGain: self.data.blueGain,
 		lastPresetCompleted: (self.data.lastPresetCompleted + 1).toString(),
-		shutter: self.data.shutter,
-		ois: self.data.ois,
+		shutterMode: shutter?.label,
+		shutterValue: self.data.shutterValue,
+		oisMode: self.data.oisMode,
 	})
 }

@@ -79,23 +79,25 @@ export const SERIES_SPECS = [
 			colorbar: true, // Color Bar State (OBR:1 or OBR:0)
 			tally: true, // Red Tally State (DA1/TLR:1 or DA0/TLR:0)
 			tally2: true, // Green Tally State (TLG:1 or TLG:0)
-			OAF: true, // Has Auto Focus (OAF:1 or OAF:0)
-			iris: true, // Has Auto Iris (d30 or d31)
-			gainValue: true,
-			preset: true,
-			whiteBalance: true,  // Has White Balance (OAW:x)
-			colorTemperature: false,
+			tally3: true, // Yellow Tally State (TLY:1 or TLY:0)
+			OAF: true, // Has Auto Focus State (OAF:1 or OAF:0)
+			iris: true, // Has Auto Iris State (d30 or d31)
+			gain: true, // Has Gain State (OGU)
+			preset: true, // Has current/completed Preset State (sXX and qXX)
+			whiteBalance: true,  // Has White Balance Mode State (OAW:x)
+			colorTemperature: true, // Has Color Temperature
 		},
 		feedbacks: {
 			powerState: true, // Power State (p1 or p0)
 			colorbarState: true, // Color Bar State (OBR:1 or OBR:0)
 			tallyState: true, // Red Tally State (dA1/TLR:1 or dA0/TLR:0)
 			tally2State: true, // Green Tally State (TLG:1 or TLG:0)
+			tally3State: true, // Yellow Tally State (TLY:1 or TLY:0)
 			insState: true, // Install position (iNS0 or iNS1)
 			autoFocus: true, // Has Auto Focus (OAF:1 or OAF:0)
 			autoIris: true, // Has Auto Iris (d30 or d31)
 			whiteBalance: true,  // Has White Balance (OAW:x)
-			preset: true,
+			preset: true, // Has current/completed Preset State (sXX and qXX)
 		},
 		actions: {
 			panTilt: true, // Has Pan/Tilt Support (PTSxx)
@@ -110,18 +112,22 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_OTHER() }, // Has Gain Support
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_OTHER }, // Has Shutter Support
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_OTHER() }, // Has Pedestal Support
-			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_OTHER }, // Has ND Filter Support
-			preset: true, // Can Save and Recall Presets (Mxxx or Rxxx)
+			filter: { dropdown: c.CHOICES_FILTER_OTHER }, // Has ND Filter Support
+			preset: true, // Can Save, Recall and Delete Presets (Mxxx, Rxxx and Cxxx)
 			speedPset: true, // Has Preset Recall Speed Control (UPVSxx)
 			timePset: true, // Has Preset Recall Time Control (UPVSxx or OSJ:29:xx)
 			power: true, // Has Power Control (O0 or O1)
 			colorbar: true, // Has Color Bar Control (DCB:1 or DCB:0)
 			tally: true, // Has Red Tally Light Control (DA1/TLR:1 or DA0/TLR:0)
 			tally2: true, // Has Green Tally Light Control (TLG:1 or TLG:0)
+			tally3: true, // Has Yellow Tally Light Control (TLY:1 or TLY:0)
 			ins: true, // Has Install Position Control (INSx)
 			sdCard: true, // Has SD Card Recording Control (sdctrl?save=start or sdctrl?save=end)
+			srtStream: true, // Has SRT (Caller) Streaming Control
+			rtmpStream: true, // Has RTMP (Client) Streaming Control
 			whiteBalance: { dropdown: c.CHOICES_WB_SET },  // Has White Balance Control (OAW:x)
-			colorTemperature: false, // Setting Color temperature OSD:B1:A8h
+			colorTemperature: true, // Has enumerated Color Temperature Control (OSD:B1:xxx)
+			colorTempAdv: true, // Has advanced Color Temperature Control (OSI:20:xxx:0)
 		},
 	},
 
@@ -137,7 +143,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			OAF: true,
 			iris: true,
-			gainValue: true,
+			gain: true,
 			preset: true,
 			whiteBalance: true,
 			colorTemperature: true,
@@ -191,7 +197,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			OAF: true,
 			iris: true,
-			gainValue: true,
+			gain: true,
 			preset: true,
 			whiteBalance: true,
 			colorTemperature: true,
@@ -219,7 +225,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE40 },
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE40 },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE40() },
-			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_3A },
+			filter: { dropdown: c.CHOICES_FILTER_3A },
 			preset: true,
 			speedPset: true,
 			timePset: false,
@@ -245,7 +251,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			OAF: true,
 			iris: true,
-			gainValue: true,
+			gain: true,
 			preset: true,
 			whiteBalance: true,
 			colorTemperature:  true,
@@ -273,7 +279,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE40 },
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE40 },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE40() },
-			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_3A },
+			filter: { dropdown: c.CHOICES_FILTER_3A },
 			preset: true,
 			speedPset: true,
 			timePset: false,
@@ -300,7 +306,7 @@ export const SERIES_SPECS = [
 			tally2: true,
 			OAF: true,
 			iris: true,
-			gainValue: true,
+			gain: true,
 			preset: true,
 			whiteBalance: true,
 			colorTemperature: false,
@@ -327,9 +333,9 @@ export const SERIES_SPECS = [
 			OTAF: true,
 			iris: true,
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_UE150 },
-			shut: { cmd: 'OSJ:06:', dropdown: c.CHOICES_SHUTTER_UE150() },
+			shut: { cmd: 'OSJ:06:', dropdown: c.CHOICES_SHUTTER_UE150 },
 			ped: { cmd: 'OSJ:0F:', dropdown: c.CHOICES_PEDESTAL_UE150() },
-			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_3 },
+			filter: { dropdown: c.CHOICES_FILTER_3 },
 			preset: true,
 			speedPset: true,
 			timePset: true,
@@ -339,8 +345,11 @@ export const SERIES_SPECS = [
 			tally: true,
 			tally2: true,
 			sdCard: false,
+			srtStream: true,
+			rtmpStream: true,
 			whiteBalance: { dropdown: c.CHOICES_WB_SET },
 			colorTemperature: false,
+			colorTempAdv: true,
 		},
 	},
 
@@ -358,7 +367,7 @@ export const SERIES_SPECS = [
 			tally3: true,
 			OAF: true,
 			iris: true,
-			gainValue: true,
+			gain: true,
 			preset: true,
 			whiteBalance: true,
 			colorTemperature: false,
@@ -386,9 +395,9 @@ export const SERIES_SPECS = [
 			OTAF: true,
 			iris: true,
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_UE160 },
-			shut: { cmd: 'OSJ:06:', dropdown: c.CHOICES_SHUTTER_UE150() },
+			shut: { cmd: 'OSJ:06:', dropdown: c.CHOICES_SHUTTER_UE150 },
 			ped: { cmd: 'OSJ:0F:', dropdown: c.CHOICES_PEDESTAL_UE150() },
-			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_3 },
+			filter: { dropdown: c.CHOICES_FILTER_3 },
 			preset: true,
 			speedPset: true,
 			timePset: true,
@@ -416,7 +425,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			OAF: false,
 			iris: true,
-			gainValue: true,
+			gain: true,
 			preset: true,
 			whiteBalance: true,
 			colorTemperature: false,
@@ -470,7 +479,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			OAF: true,
 			iris: true,
-			gainValue: true,
+			gain: true,
 			preset: true,
 			whiteBalance: true,
 			colorTemperature: false,
@@ -524,7 +533,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			OAF: true,
 			iris: true,
-			gainValue: true,
+			gain: true,
 			preset: true,
 			whiteBalance: true,
 			colorTemperature: false,
@@ -578,7 +587,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			OAF: true,
 			iris: true,
-			gainValue: true,
+			gain: true,
 			preset: true,
 			whiteBalance: true,
 			colorTemperature: false,
@@ -606,7 +615,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE120 },
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE120 },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE120() },
-			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_3 },
+			filter: { dropdown: c.CHOICES_FILTER_3 },
 			preset: true,
 			speedPset: true,
 			timePset: false,
@@ -632,7 +641,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			OAF: true,
 			iris: true,
-			gainValue: true,
+			gain: true,
 			preset: true,
 			whiteBalance: true,
 			colorTemperature: true,
@@ -660,7 +669,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE130 },
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE130 },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE120() },
-			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_2 },
+			filter: { dropdown: c.CHOICES_FILTER_2 },
 			preset: true,
 			speedPset: true,
 			timePset: false,
@@ -686,7 +695,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			OAF: true,
 			iris: true,
-			gainValue: true,
+			gain: true,
 			preset: true,
 			whiteBalance: true,
 			colorTemperature: false,
@@ -714,7 +723,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HR140 },
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE130 },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE120() },
-			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_2 },
+			filter: { dropdown: c.CHOICES_FILTER_2 },
 			preset: true,
 			speedPset: true,
 			timePset: false,
@@ -740,7 +749,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			OAF: false,
 			iris: true,
-			gainValue: true,
+			gain: true,
 			preset: true,
 			whiteBalance: true,
 			colorTemperature: false,
@@ -821,7 +830,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGS:', dropdown: c.CHOICES_GAIN_UB300 },
 			shut: { cmd: 'OSG:5D:', dropdown: c.CHOICES_SHUTTER_UB300 },
 			ped: { cmd: 'OSG:4A:', dropdown: c.CHOICES_PEDESTAL_UB300() },
-			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_3 },
+			filter: { dropdown: c.CHOICES_FILTER_3 },
 			preset: false,
 			speedPset: false,
 			timePset: false,
@@ -850,7 +859,7 @@ export const SERIES_SPECS = [
 			tally2: false,
 			OAF: false,
 			iris: false,
-			gainValue: false,
+			gain: false,
 			preset: false,
 			whiteBalance: false,
 			colorTemperature: false,
@@ -880,7 +889,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_CX350 },
 			shut: false,
 			ped: { cmd: 'OSJ:0F:', dropdown: c.CHOICES_PEDESTAL_UE150() },
-			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_3 },
+			filter: { dropdown: c.CHOICES_FILTER_3 },
 			preset: false,
 			speedPset: false,
 			timePset: false,

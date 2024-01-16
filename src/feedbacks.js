@@ -147,7 +147,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function (feedback) {
-				return self.data.oaf === 'Auto'
+				return self.data.autoFocus === 'Auto'
 			},
 		}
 	}
@@ -227,8 +227,8 @@ export function getFeedbackDefinitions(self) {
 					type: 'dropdown',
 					label: 'Preset',
 					id: 'option',
-					default: c.CHOICES_PRESET()[0].id,
-					choices: c.CHOICES_PRESET(),
+					default: c.CHOICES_PRESET[0].id,
+					choices: c.CHOICES_PRESET,
 				},
 			],
 			callback: function (feedback) {

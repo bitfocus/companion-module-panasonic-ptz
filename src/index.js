@@ -155,6 +155,46 @@ class PanasonicPTZInstance extends InstanceBase {
 		if (this.config.host) {
 			const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/getinfo?FILE=1`
 
+			// ToDo:
+			// Basic protocol
+			// /cgi-bin/get_basic
+			// /cgi-bin/model_serial
+
+			// Restart
+			// /cgi-bin/initial?cmd=reset&Randomnum=12345
+
+			// SD Card Recording
+			// /cgi-bin/get_state
+			// /cgi-bin/sdctrl 
+
+			// Stream RTMP
+			// /cgi-bin/get_rtmp_status
+			// /cgi-bin/rtmp_ctrl
+			// /cgi-bin/get_rtmp_param
+
+			// Stream SRT
+			// /cgi-bin/get_srt_status
+			// /cgi-bin/srt_ctrl
+			// /cgi-bin/get_srt_info
+
+			// Stream TS
+			// /cgi-bin/get_ts_status
+			// /cgi-bin/ts_ctrl 
+			// /cgi-bin/get_ts_udp_info
+
+			// Stream RTSP
+			// /cgi-bin/get_rtsp
+
+			// Streaming
+			// /cgi-bin/get_stream_mode
+			// /cgi-bin/set_stream_mode
+
+			// Snapshot
+			// /cgi-bin/view.cgi?action=snapshot
+			
+			// Thumbnails
+			// /cgi-bin/get_preset_thumbnail?preset_number=X
+
 			if (this.config.debug) {
 				this.log('debug', `Sending : ${url}`)
 			}
@@ -289,6 +329,37 @@ class PanasonicPTZInstance extends InstanceBase {
 
 		// Store Values from Events
 		switch (str[0]) {
+			case 'dA0': // Legacy (red) Tally Off
+				this.data.tally = 'OFF'
+				break
+			case 'dA1': // Legacy (red) Tally On
+				this.data.tally = 'ON'
+				break
+			case 'p0':
+				this.data.power = 'OFF'
+				break
+			case 'p1':
+				this.data.power = 'ON'
+				break
+			case 'iNS0':
+				this.data.ins = 'Desktop'
+				break
+			case 'iNS1':
+				this.data.ins = 'Hanging'
+				break
+			case 'd30':
+				this.data.irisMode = 'Manual'
+				break
+			case 'd31':
+				this.data.irisMode = 'Auto'
+				break
+			case 'TITLE':
+				this.data.name = str[1]
+				break
+			case 'DCB':
+			case 'OBR':
+				this.data.colorbar = (str[1] == '1') ? 'ON' : 'OFF'
+				break
 			case 'OID':
 				this.data.modelTCP = str[1]
 				// if a new model is detected or selected, re-initialise all actions, variables and feedbacks
@@ -301,25 +372,6 @@ class PanasonicPTZInstance extends InstanceBase {
 					this.checkFeedbacks()
 				}
 				break
-			case 'TITLE':
-				this.data.name = str[1]
-				break
-			case 'p1':
-				this.data.power = 'ON'
-				break
-			case 'p0':
-				this.data.power = 'OFF'
-				break
-			case 'DCB':
-			case 'OBR':
-				this.data.colorbar = (str[1] == '1') ? 'ON' : 'OFF'
-				break
-			case 'dA0': // Legacy (red) Tally Off
-				this.data.tally = 'OFF'
-				break
-			case 'dA1': // Legacy (red) Tally On
-				this.data.tally = 'ON'
-				break
 			case 'TLR': // Tally Red
 				this.data.tally = (str[1] == '1') ? 'ON' : 'OFF'
 				break
@@ -329,23 +381,17 @@ class PanasonicPTZInstance extends InstanceBase {
 			case 'TLY': // Tally Yellow
 				this.data.tally3 = (str[1] == '1') ? 'ON' : 'OFF'
 				break
-			case 'iNS0':
-				this.data.ins = 'Desktop'
-				break
-			case 'iNS1':
-				this.data.ins = 'Hanging'
-				break
 			case 'OAF':
-				this.data.oaf = (str[1] == '1') ? 'Auto' : 'Manual'
+				this.data.autoFocus = (str[1] == '1') ? 'Auto' : 'Manual'
 				break
 			case 'OAW':
-				this.data.whiteBalance = str[1];
+				this.data.whiteBalanceMode = str[1];
 				break
 			case 'OIF':
-				this.data.irisF = parseInt(str[1], 16);
+				this.data.irisValue = parseInt(str[1], 16);
 				break
 			case 'OIS':
-				this.data.ois = str[1];
+				this.data.oisMode = str[1];
 				break
 			case 'OSD':
 				if (str[1] == 'B1') {
@@ -355,17 +401,11 @@ class PanasonicPTZInstance extends InstanceBase {
 			case 'OSI':
 				if (str[1] == '20') {
 					// ToDo: Non-mapped direct K value
-					// this.data.colorTemperature = str[2]
+					this.data.colorTemperature = parseInt(str[2], 16) // VAR
 				}
 				break
 			case 'OSH':
-				this.data.shutter = parseInt(str[1], 16);
-				break
-			case 'd30':
-				this.data.irisMode = 'Manual'
-				break
-			case 'd31':
-				this.data.irisMode = 'Auto'
+				this.data.shutterMode = parseInt(str[1], 16);
 				break
 			case 'OSE': // All OSE:xx Commands
 				if (str[1] == '71') {
@@ -378,8 +418,8 @@ class PanasonicPTZInstance extends InstanceBase {
 				break
 			case 'OSG':
 				switch (str[1]) {
-					case '39': this.data.redGain = parseInt(str[2], 16); break
-					case '3A': this.data.blueGain = parseInt(str[2], 16); break
+					case '39': this.data.redGain = parseInt(str[2], 16) - 0x800; break
+					case '3A': this.data.blueGain = parseInt(str[2], 16) - 0x800; break
 					// UB300 only:
 					case '4C': this.data.redPed = parseInt(str[2], 16); break
 					case '4E': this.data.bluePed = parseInt(str[2], 16); break
@@ -387,33 +427,36 @@ class PanasonicPTZInstance extends InstanceBase {
 				break
 			case 'OSJ':
 				switch (str[1]) {
-					// ToDo: Non-mapped direct Shutter Step Value
-					// case '06': this.data.shutter = parseInt(str[2], 16); break
-					// ToDo: Non-mapped direct Shutter Synchro Value
-					// case '09': this.data.shutter = parseInt(str[2], 16); break
-					case '0F': this.data.masterPed = parseInt(str[2], 16); break
+					case '03': this.data.shutterMode = parseInt(str[2], 16); break
+					case '06': this.data.shutterValue = parseInt(str[2], 16); break
+					//case '10': this.data.greenPed = parseInt(str[2], 16) - 0x96; break
+					case '0F': this.data.masterPed = parseInt(str[2], 16) - 0x800; break
+					case '4A': this.data.colorTemperature = parseInt(str[2], 16); break // AWB A/B
+					//case '4B': this.data.redGain = parseInt(str[2], 16) - 0x800; break // AWB A/B
+					//case '4C': this.data.blueGain = parseInt(str[2], 16) - 0x800; break // AWB A/B
 				}
 				break
+			case 'OGS':
 			case 'OGU':
-				this.data.gainValue = parseInt(str[1], 16)
+				this.data.gain = str[1].substring(2) // Hex-String
 				break
 			case 'ORS':
 				this.data.irisMode = (str[1] == '1') ? 'Auto' : 'Manual'
 				break
 			case 'OTD':
-				this.data.masterPed = parseInt(str[1], 16)
+				this.data.masterPed = parseInt(str[1], 16) - 0x96
 				break
 			case 'ORG':
-				this.data.redGain = parseInt(str[1], 16)
+				this.data.redGain = parseInt(str[1], 16) - 0x96
 				break
 			case 'OBG':
-				this.data.blueGain = parseInt(str[1], 16)
+				this.data.blueGain = parseInt(str[1], 16) - 0x96
 				break
 			case 'ORP':
-				this.data.redPed = parseInt(str[1], 16)
+				this.data.redPed = parseInt(str[1], 16) - 0x96
 				break
 			case 'OBP':
-				this.data.bluePed = parseInt(str[1], 16)
+				this.data.bluePed = parseInt(str[1], 16) - 0x96
 				break
 		}
 	}
@@ -448,8 +491,8 @@ class PanasonicPTZInstance extends InstanceBase {
 			tally: 'NaN',
 			tally2: 'NaN',
 			tally3: 'NaN',
-			oaf: 'NaN',
-			whiteBalance: 'NaN',
+			autoFocus: 'NaN',
+			whiteBalanceMode: 'NaN',
 			colorTemperature: 'Unknown',
 			irisMode: 'NaN',
 			recallModePset: 'NaN',
@@ -457,14 +500,16 @@ class PanasonicPTZInstance extends InstanceBase {
 			zoomPosition: null,
 			focusPosition: null,
 			irisPosition: null,
-			irisF: null,
-			ois: null,
+			irisValue: null,
+			oisMode: null,
 			masterPed: null,
 			redPed: null,
+			//greenPed: null,
 			bluePed: null,
 			redGain: null,
 			blueGain: null,
-			shutter: null,
+			shutterMode: null,
+			shutterValue: null,
 		}
 
 		this.ptSpeed = 25

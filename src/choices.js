@@ -55,6 +55,108 @@ export const c = {
 		{ id: 0, label: 'Stop' },
 	],
 
+	CHOICES_IRIS: [
+		{ id: "01", label: "Iris 1 (Closed)" },
+		{ id: "02", label: "Iris 2" },
+		{ id: "03", label: "Iris 3" },
+		{ id: "04", label: "Iris 4" },
+		{ id: "05", label: "Iris 5" },
+		{ id: "06", label: "Iris 6" },
+		{ id: "07", label: "Iris 7" },
+		{ id: "08", label: "Iris 8" },
+		{ id: "09", label: "Iris 9" },
+		{ id: "10", label: "Iris 10" },
+		{ id: "11", label: "Iris 11" },
+		{ id: "12", label: "Iris 12" },
+		{ id: "13", label: "Iris 13" },
+		{ id: "14", label: "Iris 14" },
+		{ id: "15", label: "Iris 15" },
+		{ id: "16", label: "Iris 16" },
+		{ id: "17", label: "Iris 17" },
+		{ id: "18", label: "Iris 18" },
+		{ id: "19", label: "Iris 19" },
+		{ id: "20", label: "Iris 20" },
+		{ id: "21", label: "Iris 21" },
+		{ id: "22", label: "Iris 22" },
+		{ id: "23", label: "Iris 23" },
+		{ id: "24", label: "Iris 24" },
+		{ id: "25", label: "Iris 25" },
+		{ id: "26", label: "Iris 26" },
+		{ id: "27", label: "Iris 27" },
+		{ id: "28", label: "Iris 28" },
+		{ id: "29", label: "Iris 29" },
+		{ id: "30", label: "Iris 30" },
+		{ id: "31", label: "Iris 31" },
+		{ id: "32", label: "Iris 32" },
+		{ id: "33", label: "Iris 33" },
+		{ id: "34", label: "Iris 34" },
+		{ id: "35", label: "Iris 35" },
+		{ id: "36", label: "Iris 36" },
+		{ id: "37", label: "Iris 37" },
+		{ id: "38", label: "Iris 38" },
+		{ id: "39", label: "Iris 39" },
+		{ id: "40", label: "Iris 40" },
+		{ id: "41", label: "Iris 41" },
+		{ id: "42", label: "Iris 42" },
+		{ id: "43", label: "Iris 43" },
+		{ id: "44", label: "Iris 44" },
+		{ id: "45", label: "Iris 45" },
+		{ id: "46", label: "Iris 46" },
+		{ id: "47", label: "Iris 47" },
+		{ id: "48", label: "Iris 48" },
+		{ id: "49", label: "Iris 49" },
+		{ id: "50", label: "Iris 50" },
+		{ id: "51", label: "Iris 51" },
+		{ id: "52", label: "Iris 52" },
+		{ id: "53", label: "Iris 53" },
+		{ id: "54", label: "Iris 54" },
+		{ id: "55", label: "Iris 55" },
+		{ id: "56", label: "Iris 56" },
+		{ id: "57", label: "Iris 57" },
+		{ id: "58", label: "Iris 58" },
+		{ id: "59", label: "Iris 59" },
+		{ id: "60", label: "Iris 60" },
+		{ id: "61", label: "Iris 61" },
+		{ id: "62", label: "Iris 62" },
+		{ id: "63", label: "Iris 63" },
+		{ id: "64", label: "Iris 64" },
+		{ id: "65", label: "Iris 65" },
+		{ id: "66", label: "Iris 66" },
+		{ id: "67", label: "Iris 67" },
+		{ id: "68", label: "Iris 68" },
+		{ id: "69", label: "Iris 69" },
+		{ id: "70", label: "Iris 70" },
+		{ id: "71", label: "Iris 71" },
+		{ id: "72", label: "Iris 72" },
+		{ id: "73", label: "Iris 73" },
+		{ id: "74", label: "Iris 74" },
+		{ id: "75", label: "Iris 75" },
+		{ id: "76", label: "Iris 76" },
+		{ id: "77", label: "Iris 77" },
+		{ id: "78", label: "Iris 78" },
+		{ id: "79", label: "Iris 79" },
+		{ id: "80", label: "Iris 80" },
+		{ id: "81", label: "Iris 81" },
+		{ id: "82", label: "Iris 82" },
+		{ id: "83", label: "Iris 83" },
+		{ id: "84", label: "Iris 84" },
+		{ id: "85", label: "Iris 85" },
+		{ id: "86", label: "Iris 86" },
+		{ id: "87", label: "Iris 87" },
+		{ id: "88", label: "Iris 88" },
+		{ id: "89", label: "Iris 89" },
+		{ id: "90", label: "Iris 90" },
+		{ id: "91", label: "Iris 91" },
+		{ id: "92", label: "Iris 92" },
+		{ id: "93", label: "Iris 93" },
+		{ id: "94", label: "Iris 94" },
+		{ id: "95", label: "Iris 95" },
+		{ id: "96", label: "Iris 96" },
+		{ id: "97", label: "Iris 97" },
+		{ id: "98", label: "Iris 98" },
+		{ id: "99", label: "Iris 99 (Open)" },
+	],
+
 	// #######################
 	// #### Gain Look Ups ####
 	// #######################
@@ -450,55 +552,12 @@ export const c = {
 		{ id: '10', label: '90.0 deg' },
 		{ id: '11', label: '45.0 deg' },
 	],
-	CHOICES_SHUTTER_UE150: function () {
-		const p = []
-		for (let i = 0x18; i <= 0x2710; ++i) {
-			p.push({ id: (i.toString(16)).toUpperCase().padStart(3, '0'), label: '/' + i.toString() })
-		}
-		return p
-	},
-
-	// ###########################
-	// #### Pedestal Look Ups ####
-	// ###########################
-	CHOICES_PEDESTAL_HE40: function () {
-		const p = []
-		for (let i = -10; i <= 10; ++i) {
-			p.push({id: ((0x96 + (i * 15)).toString(16)).toUpperCase().padStart(3, '0'), label: 'Pedestal ' + i.toString() })
-		}
-		return p
-	},
-	CHOICES_PEDESTAL_HE120: function () {
-		const p = []
-		for (let i = -150; i <= 150; ++i) {
-			p.push({ id: ((0x96 + i).toString(16)).toUpperCase().padStart(3, '0'), label: 'Pedestal ' + i.toString() })
-		}
-		return p
-	},
-	CHOICES_PEDESTAL_UE150: function () {
-		const p = []
-		for (let i = -200; i <= 200; ++i) {
-			p.push({ id: ((0x800 + i).toString(16)).toUpperCase().padStart(3, '0'), label: 'Pedestal ' + i.toString() })
-		}
-		return p
-	},
-	CHOICES_PEDESTAL_UE20: function () {
-		const p = []
-		for (let i = -10; i <= 10; ++i) {
-			p.push({ id: ((0x800 + i).toString(16)).toUpperCase().padStart(3, '0'), label: 'Pedestal ' + i.toString() })
-		}
-		return p
-	},
-	CHOICES_PEDESTAL_UB300: function () {
-		const p = []
-		for (let i = -99; i <= 99; ++i) {
-			p.push({ id: ((0x80 + i).toString(16)).toUpperCase().padStart(2, '0'), label: 'Pedestal ' + i.toString() })
-		}
-		return p
-	},
-	CHOICES_PEDESTAL_OTHER: function () {
-		return this.CHOICES_PEDESTAL_HE120()
-	},
+	CHOICES_SHUTTER_UE150: [
+		{ id: '0', label: 'OFF' },
+		{ id: '1', label: 'Step' },
+		{ id: '2', label: 'Synchro Scan' },
+		{ id: '3', label: 'ELC' },
+	],
 
 	// ############################
 	// #### ND Filter Look Ups ####
@@ -528,6 +587,37 @@ export const c = {
 		{ id: '0', label: 'Clear (Through)' },
 		{ id: '3', label: '1/64 ND' },
 		{ id: '4', label: '1/8 ND' },
+	],
+
+	// ######################
+	// #### OIS Look Ups ####
+	// ######################
+	CHOICES_OIS_OTHER: [
+		{ id: '0', label: 'OFF' },
+		{ id: '1', label: 'ON' },
+	],
+	CHOICES_OIS_HR140: [
+		{ id: '0', label: 'OFF' },
+		{ id: '1', label: 'OIS' },
+		{ id: '2', label: 'Dynamic I.S. System' },
+	],
+	CHOICES_OIS_UE100: [
+		{ id: '0', label: 'OFF' },
+		{ id: '1', label: 'OIS' },
+		{ id: '2', label: 'Hybrid (STABLE)' },
+		{ id: '3', label: 'Hybrid (PAN/TILT)' },
+	],
+	CHOICES_OIS_UE160: [
+		{ id: '0', label: 'OFF' },
+		{ id: '1', label: 'OIS (STABLE)' },
+		{ id: '2', label: 'OIS (PAN/TILT)' },
+		{ id: '3', label: 'Hybrid (STABLE)' },
+		{ id: '4', label: 'Hybrid (PAN/TILT)' },
+	],
+	CHOICES_OIS_UE80: [
+		{ id: '0', label: 'OFF' },
+		{ id: '1', label: 'OIS (STABLE)' },
+		{ id: '2', label: 'OIS (PAN/TILT)' },
 	],
 
 	// ###############################
@@ -787,7 +877,7 @@ export const c = {
 		{ id: '2', label: 'AWC B' },
 		{ id: '4', label: 'Preset 3200K' },
 		{ id: '5', label: 'Preset 5600K' },
-		{ id: '9', label: 'Var' },
+		{ id: '9', label: 'VAR' },
 	],
 	CHOICES_WB_GET: [
 		{ id: '0', label: 'ATW' },
@@ -799,30 +889,154 @@ export const c = {
 		{ id: '6', label: 'Preset 4500K' },
 		{ id: '7', label: 'Preset 6000K' },	
 		{ id: '8', label: 'Preset 2800K' },
-		{ id: '9', label: 'Var' },
+		{ id: '9', label: 'VAR' },
 	],
 
 	// #########################
 	// #### Preset Look Ups ####
 	// #########################
-	CHOICES_PRESET: function () {
+	CHOICES_PRESET: [
+		{ id: "00", label: "Preset 1" },
+		{ id: "01", label: "Preset 2" },
+		{ id: "02", label: "Preset 3" },
+		{ id: "03", label: "Preset 4" },
+		{ id: "04", label: "Preset 5" },
+		{ id: "05", label: "Preset 6" },
+		{ id: "06", label: "Preset 7" },
+		{ id: "07", label: "Preset 8" },
+		{ id: "08", label: "Preset 9" },
+		{ id: "09", label: "Preset 10" },
+		{ id: "10", label: "Preset 11" },
+		{ id: "11", label: "Preset 12" },
+		{ id: "12", label: "Preset 13" },
+		{ id: "13", label: "Preset 14" },
+		{ id: "14", label: "Preset 15" },
+		{ id: "15", label: "Preset 16" },
+		{ id: "16", label: "Preset 17" },
+		{ id: "17", label: "Preset 18" },
+		{ id: "18", label: "Preset 19" },
+		{ id: "19", label: "Preset 20" },
+		{ id: "20", label: "Preset 21" },
+		{ id: "21", label: "Preset 22" },
+		{ id: "22", label: "Preset 23" },
+		{ id: "23", label: "Preset 24" },
+		{ id: "24", label: "Preset 25" },
+		{ id: "25", label: "Preset 26" },
+		{ id: "26", label: "Preset 27" },
+		{ id: "27", label: "Preset 28" },
+		{ id: "28", label: "Preset 29" },
+		{ id: "29", label: "Preset 30" },
+		{ id: "30", label: "Preset 31" },
+		{ id: "31", label: "Preset 32" },
+		{ id: "32", label: "Preset 33" },
+		{ id: "33", label: "Preset 34" },
+		{ id: "34", label: "Preset 35" },
+		{ id: "35", label: "Preset 36" },
+		{ id: "36", label: "Preset 37" },
+		{ id: "37", label: "Preset 38" },
+		{ id: "38", label: "Preset 39" },
+		{ id: "39", label: "Preset 40" },
+		{ id: "40", label: "Preset 41" },
+		{ id: "41", label: "Preset 42" },
+		{ id: "42", label: "Preset 43" },
+		{ id: "43", label: "Preset 44" },
+		{ id: "44", label: "Preset 45" },
+		{ id: "45", label: "Preset 46" },
+		{ id: "46", label: "Preset 47" },
+		{ id: "47", label: "Preset 48" },
+		{ id: "48", label: "Preset 49" },
+		{ id: "49", label: "Preset 50" },
+		{ id: "50", label: "Preset 51" },
+		{ id: "51", label: "Preset 52" },
+		{ id: "52", label: "Preset 53" },
+		{ id: "53", label: "Preset 54" },
+		{ id: "54", label: "Preset 55" },
+		{ id: "55", label: "Preset 56" },
+		{ id: "56", label: "Preset 57" },
+		{ id: "57", label: "Preset 58" },
+		{ id: "58", label: "Preset 59" },
+		{ id: "59", label: "Preset 60" },
+		{ id: "60", label: "Preset 61" },
+		{ id: "61", label: "Preset 62" },
+		{ id: "62", label: "Preset 63" },
+		{ id: "63", label: "Preset 64" },
+		{ id: "64", label: "Preset 65" },
+		{ id: "65", label: "Preset 66" },
+		{ id: "66", label: "Preset 67" },
+		{ id: "67", label: "Preset 68" },
+		{ id: "68", label: "Preset 69" },
+		{ id: "69", label: "Preset 70" },
+		{ id: "70", label: "Preset 71" },
+		{ id: "71", label: "Preset 72" },
+		{ id: "72", label: "Preset 73" },
+		{ id: "73", label: "Preset 74" },
+		{ id: "74", label: "Preset 75" },
+		{ id: "75", label: "Preset 76" },
+		{ id: "76", label: "Preset 77" },
+		{ id: "77", label: "Preset 78" },
+		{ id: "78", label: "Preset 79" },
+		{ id: "79", label: "Preset 80" },
+		{ id: "80", label: "Preset 81" },
+		{ id: "81", label: "Preset 82" },
+		{ id: "82", label: "Preset 83" },
+		{ id: "83", label: "Preset 84" },
+		{ id: "84", label: "Preset 85" },
+		{ id: "85", label: "Preset 86" },
+		{ id: "86", label: "Preset 87" },
+		{ id: "87", label: "Preset 88" },
+		{ id: "88", label: "Preset 89" },
+		{ id: "89", label: "Preset 90" },
+		{ id: "90", label: "Preset 91" },
+		{ id: "91", label: "Preset 92" },
+		{ id: "92", label: "Preset 93" },
+		{ id: "93", label: "Preset 94" },
+		{ id: "94", label: "Preset 95" },
+		{ id: "95", label: "Preset 96" },
+		{ id: "96", label: "Preset 97" },
+		{ id: "97", label: "Preset 98" },
+		{ id: "98", label: "Preset 99" },
+		{ id: "99", label: "Preset 100" },
+	],
+
+	// ###########################
+	// #### Pedestal Look Ups ####
+	// ###########################
+	CHOICES_PEDESTAL_HE40: function () {
 		const p = []
-		for (let i = 0; i < 100; ++i) {
-			p.push({ id: i.toString(10).padStart(2, '0'), label: 'Preset ' + (i+1).toString() })
+		for (let i = -10; i <= 10; ++i) {
+			p.push({id: ((0x96 + (i * 15)).toString(16)).toUpperCase().padStart(3, '0'), label: 'Pedestal ' + i.toString() })
 		}
 		return p
 	},
-
-	// #######################
-	// #### Iris Look Ups ####
-	// #######################
-	CHOICES_IRIS: function () {
+	CHOICES_PEDESTAL_HE120: function () {
 		const p = []
-		p.push({ id: '01', label: 'Iris 1 (Close)' })
-		for (let i = 2; i < 99; ++i) {
-			p.push({ id: i.toString(10).padStart(2, '0'), label: 'Iris ' + i.toString() })
+		for (let i = -150; i <= 150; ++i) {
+			p.push({ id: ((0x96 + i).toString(16)).toUpperCase().padStart(3, '0'), label: 'Pedestal ' + i.toString() })
 		}
-		p.push({ id: '99', label: 'Iris 99 (Open)' })
 		return p
-	}
+	},
+	CHOICES_PEDESTAL_UE150: function () {
+		const p = []
+		for (let i = -200; i <= 200; ++i) {
+			p.push({ id: ((0x800 + i).toString(16)).toUpperCase().padStart(3, '0'), label: 'Pedestal ' + i.toString() })
+		}
+		return p
+	},
+	CHOICES_PEDESTAL_UE20: function () {
+		const p = []
+		for (let i = -10; i <= 10; ++i) {
+			p.push({ id: ((0x800 + i).toString(16)).toUpperCase().padStart(3, '0'), label: 'Pedestal ' + i.toString() })
+		}
+		return p
+	},
+	CHOICES_PEDESTAL_UB300: function () {
+		const p = []
+		for (let i = -99; i <= 99; ++i) {
+			p.push({ id: ((0x80 + i).toString(16)).toUpperCase().padStart(2, '0'), label: 'Pedestal ' + i.toString() })
+		}
+		return p
+	},
+	CHOICES_PEDESTAL_OTHER: function () {
+		return this.CHOICES_PEDESTAL_HE120()
+	},
 }

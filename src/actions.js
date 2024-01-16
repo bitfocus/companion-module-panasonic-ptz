@@ -104,9 +104,7 @@ export function getActionDefinitions(self) {
 				}
 			},
 		}
-	}
 
-	if (seriesActions.panTilt) {
 		actions.right = {
 			name: 'Pan/Tilt - Pan Right',
 			options: [
@@ -129,9 +127,7 @@ export function getActionDefinitions(self) {
 				}
 			},
 		}
-	}
 
-	if (seriesActions.panTilt) {
 		actions.up = {
 			name: 'Pan/Tilt - Tilt Up',
 			options: [
@@ -154,9 +150,7 @@ export function getActionDefinitions(self) {
 				}
 			},
 		}
-	}
 
-	if (seriesActions.panTilt) {
 		actions.down = {
 			name: 'Pan/Tilt - Tilt Down',
 			options: [
@@ -184,9 +178,7 @@ export function getActionDefinitions(self) {
 				}
 			},
 		}
-	}
 
-	if (seriesActions.panTilt) {
 		actions.upLeft = {
 			name: 'Pan/Tilt - Up Left',
 			options: [
@@ -214,9 +206,7 @@ export function getActionDefinitions(self) {
 				}
 			},
 		}
-	}
 
-	if (seriesActions.panTilt) {
 		actions.upRight = {
 			name: 'Pan/Tilt - Up Right',
 			options: [
@@ -239,9 +229,7 @@ export function getActionDefinitions(self) {
 				}
 			},
 		}
-	}
 
-	if (seriesActions.panTilt) {
 		actions.downLeft = {
 			name: 'Pan/Tilt - Down Left',
 			options: [
@@ -273,9 +261,7 @@ export function getActionDefinitions(self) {
 				}
 			},
 		}
-	}
 
-	if (seriesActions.panTilt) {
 		actions.downRight = {
 			name: 'Pan/Tilt - Down Right',
 			options: [
@@ -303,9 +289,7 @@ export function getActionDefinitions(self) {
 				}
 			},
 		}
-	}
 
-	if (seriesActions.panTilt) {
 		actions.stop = {
 			name: 'Pan/Tilt - Stop',
 			options: [],
@@ -314,9 +298,7 @@ export function getActionDefinitions(self) {
 				if (self.speedChangeEmitter.listenerCount('ptSpeed')) self.speedChangeEmitter.removeAllListeners('ptSpeed')
 			},
 		}
-	}
 
-	if (seriesActions.panTilt) {
 		actions.home = {
 			name: 'Pan/Tilt - Home',
 			options: [],
@@ -389,9 +371,7 @@ export function getActionDefinitions(self) {
 				self.speedChangeEmitter.emit('ptSpeed')
 			},
 		}
-	}
 
-	if (seriesActions.ptSpeed) {
 		actions.ptSpeedU = {
 			name: 'Pan/Tilt - Speed Up',
 			options: [],
@@ -412,9 +392,7 @@ export function getActionDefinitions(self) {
 				self.speedChangeEmitter.emit('ptSpeed')
 			},
 		}
-	}
 
-	if (seriesActions.ptSpeed) {
 		actions.pSpeedU = {
 			name: 'Pan/Tilt - Pan - Speed Up',
 			options: [],
@@ -433,9 +411,7 @@ export function getActionDefinitions(self) {
 				self.speedChangeEmitter.emit('ptSpeed')
 			},
 		}
-	}
 
-	if (seriesActions.ptSpeed) {
 		actions.tSpeedU = {
 			name: 'Pan/Tilt - Tilt - Speed Up',
 			options: [],
@@ -454,9 +430,7 @@ export function getActionDefinitions(self) {
 				self.speedChangeEmitter.emit('ptSpeed')
 			},
 		}
-	}
 
-	if (seriesActions.ptSpeed) {
 		actions.ptSpeedD = {
 			name: 'Pan/Tilt - Speed Down',
 			options: [],
@@ -477,9 +451,7 @@ export function getActionDefinitions(self) {
 				self.speedChangeEmitter.emit('ptSpeed')
 			},
 		}
-	}
 
-	if (seriesActions.ptSpeed) {
 		actions.pSpeedD = {
 			name: 'Pan/Tilt - Pan - Speed Down',
 			options: [],
@@ -498,9 +470,7 @@ export function getActionDefinitions(self) {
 				self.speedChangeEmitter.emit('ptSpeed')
 			},
 		}
-	}
 
-	if (seriesActions.ptSpeed) {
 		actions.tSpeedD = {
 			name: 'Pan/Tilt - Tilt - Speed Down',
 			options: [],
@@ -548,9 +518,7 @@ export function getActionDefinitions(self) {
 				}
 			},
 		}
-	}
 
-	if (seriesActions.zoom) {
 		actions.zoomO = {
 			name: 'Lens - Zoom Out',
 			options: [
@@ -578,9 +546,7 @@ export function getActionDefinitions(self) {
 				}
 			},
 		}
-	}
 
-	if (seriesActions.zoom) {
 		actions.zoomS = {
 			name: 'Lens - Zoom Stop',
 			options: [],
@@ -614,9 +580,7 @@ export function getActionDefinitions(self) {
 				self.speedChangeEmitter.emit('zSpeed')
 			},
 		}
-	}
 
-	if (seriesActions.zSpeed) {
 		actions.zSpeedU = {
 			name: 'Lens - Zoom Speed Up',
 			options: [],
@@ -631,9 +595,7 @@ export function getActionDefinitions(self) {
 				self.speedChangeEmitter.emit('zSpeed')
 			},
 		}
-	}
 
-	if (seriesActions.zSpeed) {
 		actions.zSpeedD = {
 			name: 'Lens - Zoom Speed Down',
 			options: [],
@@ -678,9 +640,7 @@ export function getActionDefinitions(self) {
 				}
 			},
 		}
-	}
 
-	if (seriesActions.focus) {
 		actions.focusF = {
 			name: 'Lens - Focus Far',
 			options: [
@@ -703,9 +663,7 @@ export function getActionDefinitions(self) {
 				}
 			},
 		}
-	}
 
-	if (seriesActions.focus) {
 		actions.focusS = {
 			name: 'Lens - Focus Stop',
 			options: [],
@@ -739,9 +697,7 @@ export function getActionDefinitions(self) {
 				self.speedChangeEmitter.emit('fSpeed')
 			},
 		}
-	}
 
-	if (seriesActions.fSpeed) {
 		actions.fSpeedU = {
 			name: 'Lens - Focus Speed Up',
 			options: [],
@@ -756,9 +712,7 @@ export function getActionDefinitions(self) {
 				self.speedChangeEmitter.emit('fSpeed')
 			},
 		}
-	}
 
-	if (seriesActions.fSpeed) {
 		actions.fSpeedD = {
 			name: 'Lens - Focus Speed Down',
 			options: [],
@@ -777,28 +731,28 @@ export function getActionDefinitions(self) {
 
 	if (seriesActions.OAF) {
 		actions.focusM = {
-			name: 'Lens - Focus Mode (Auto Focus)',
+			name: 'Lens - Focus Mode',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Auto / Manual Focus',
-					id: 'bol',
-					default: 0,
+					id: 'val',
+					default: '0',
 					choices: [
-						{ id: 0, label: 'Auto Focus' },
-						{ id: 1, label: 'Manual Focus' },
+						{ id: '0', label: 'Manual Focus' },
+						{ id: '1', label: 'Auto Focus' },
 					],
 				},
 			],
 			callback: async (action) => {
-				await sendPTZ(self, action.options.bol == 0 ? 'D11' : 'D10')
+				await sendPTZ(self, 'D1' + action.options.val)
 			},
 		}
 	}
 
 	if (seriesActions.OTAF) {
 		actions.focusOTAF = {
-			name: 'Lens - Focus One Touch Auto (OTAF)',
+			name: 'Lens - Focus One-Touch Auto Focus (OTAF)',
 			options: [],
 			callback: async (action) => {
 				await sendCam(self, 'OSE:69:1')
@@ -815,18 +769,16 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Iris Up',
 			options: [],
 			callback: async (action) => {
-				if (self.irisIndex == c.CHOICES_IRIS().length) {
-					self.irisIndex = c.CHOICES_IRIS().length
-				} else if (self.irisIndex < c.CHOICES_IRIS().length) {
+				if (self.irisIndex == c.CHOICES_IRIS.length) {
+					self.irisIndex = c.CHOICES_IRIS.length
+				} else if (self.irisIndex < c.CHOICES_IRIS.length) {
 					self.irisIndex++
 				}
-				self.irisVal = c.CHOICES_IRIS()[self.irisIndex].id
+				self.irisVal = c.CHOICES_IRIS[self.irisIndex].id
 				await sendPTZ(self, 'I' + self.irisVal.toUpperCase())
 			},
 		}
-	}
 
-	if (seriesActions.iris) {
 		actions.irisD = {
 			name: 'Exposure - Iris Down',
 			options: [],
@@ -836,13 +788,11 @@ export function getActionDefinitions(self) {
 				} else if (self.irisIndex > 0) {
 					self.irisIndex--
 				}
-				self.irisVal = c.CHOICES_IRIS()[self.irisIndex].id
+				self.irisVal = c.CHOICES_IRIS[self.irisIndex].id
 				await sendPTZ(self, 'I' + self.irisVal.toUpperCase())
 			},
 		}
-	}
 
-	if (seriesActions.iris) {
 		actions.irisS = {
 			name: 'Exposure - Set Iris',
 			options: [
@@ -850,8 +800,8 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Iris setting',
 					id: 'val',
-					default: c.CHOICES_IRIS()[0].id,
-					choices: c.CHOICES_IRIS(),
+					default: c.CHOICES_IRIS[0].id,
+					choices: c.CHOICES_IRIS,
 				},
 			],
 			callback: async (action) => {
@@ -860,25 +810,22 @@ export function getActionDefinitions(self) {
 				self.irisIndex = action.options.val
 			},
 		}
-	}
-
-	if (seriesActions.iris) {
 		actions.irisM = {
-			name: 'Exposure - Iris Mode (Auto Iris)',
+			name: 'Exposure - Iris Mode',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Auto / Manual Iris',
-					id: 'bol',
-					default: 0,
+					id: 'val',
+					default: '0',
 					choices: [
-						{ id: 0, label: 'Manual Iris' },
-						{ id: 1, label: 'Auto Iris' },
+						{ id: '0', label: 'Manual Iris' },
+						{ id: '1', label: 'Auto Iris' },
 					],
 				},
 			],
 			callback: async (action) => {
-				await sendPTZ(self, action.options.bol == 0 ? 'D30' : 'D31')
+				await sendPTZ(self, 'D3' + action.options.val)
 			},
 		}
 	}
@@ -888,7 +835,7 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Gain Up',
 			options: [],
 			callback: async (action) => {
-				const index = seriesActions.gain.dropdown.findIndex((GAIN) => GAIN.id == self.data.gainValue)
+				const index = seriesActions.gain.dropdown.findIndex((GAIN) => GAIN.id == self.data.gain)
 				if (index !== -1) {
 					self.gainIndex = index
 				}
@@ -903,14 +850,12 @@ export function getActionDefinitions(self) {
 				await sendCam(self, seriesActions.gain.cmd + self.gainVal.toUpperCase())
 			},
 		}
-	}
 
-	if (seriesActions.gain.cmd) {
 		actions.gainD = {
 			name: 'Exposure - Gain Down',
 			options: [],
 			callback: async (action) => {
-				let index = seriesActions.gain.dropdown.findIndex((GAIN) => GAIN.id == self.data.gainValue)
+				let index = seriesActions.gain.dropdown.findIndex((GAIN) => GAIN.id == self.data.gain)
 				if (index !== -1) {
 					self.gainIndex = index
 				}
@@ -925,9 +870,7 @@ export function getActionDefinitions(self) {
 				await sendCam(self, seriesActions.gain.cmd + self.gainVal.toUpperCase())
 			},
 		}
-	}
 
-	if (seriesActions.gain.cmd) {
 		actions.gainS = {
 			name: 'Exposure - Set Gain',
 			options: [
@@ -960,9 +903,7 @@ export function getActionDefinitions(self) {
 				await sendCam(self, seriesActions.shut.cmd + self.shutVal.toUpperCase())
 			},
 		}
-	}
 
-	if (seriesActions.shut.cmd) {
 		actions.shutD = {
 			name: 'Exposure - Shutter Down',
 			options: [],
@@ -977,9 +918,7 @@ export function getActionDefinitions(self) {
 				await sendCam(self, seriesActions.shut.cmd + self.shutVal.toUpperCase())
 			},
 		}
-	}
 
-	if (seriesActions.shut.cmd) {
 		actions.shutS = {
 			name: 'Exposure - Set Shutter',
 			options: [
@@ -1012,9 +951,7 @@ export function getActionDefinitions(self) {
 				await sendCam(self, seriesActions.ped.cmd + self.pedestalVal.toUpperCase())
 			},
 		}
-	}
 
-	if (seriesActions.ped.cmd) {
 		actions.pedD = {
 			name: 'Exposure - Pedestal Down',
 			options: [],
@@ -1029,9 +966,7 @@ export function getActionDefinitions(self) {
 				await sendCam(self, seriesActions.ped.cmd + self.pedestalVal.toUpperCase())
 			},
 		}
-	}
 
-	if (seriesActions.ped.cmd) {
 		actions.pedS = {
 			name: 'Exposure - Set Pedestal',
 			options: [
@@ -1065,6 +1000,7 @@ export function getActionDefinitions(self) {
 				await sendCam(self, 'OAW:' + action.options.val)
 			},
 		}
+
 		actions.whiteBalanceExecAWB = {
 			name: 'White Balance - Execute AWC/AWB',
 			options: [],
@@ -1072,6 +1008,7 @@ export function getActionDefinitions(self) {
 				await sendCam(self, 'OWS')
 			},
 		}
+
 		actions.whiteBalanceExecABB = {
 			name: 'White Balance - Execute ABC/ABB',
 			options: [],
@@ -1083,7 +1020,7 @@ export function getActionDefinitions(self) {
 
 	if (seriesActions.colorTemperature) { 
 		actions.colorTemperatureUp = {
-			name: 'Color Temperature Up',
+			name: 'White Balance - Color Temperature Up',
 			options: [],
 			callback: async (action) => {
 				if (self.colorTemperatureIndex == seriesActions.colorTemperature.dropdown.length) {
@@ -1093,14 +1030,12 @@ export function getActionDefinitions(self) {
 				}
 				self.colorTemperatureValue = seriesActions.colorTemperature.dropdown[self.colorTemperatureIndex].id
 
-				await sendCam(self, seriesActions.colorTemperature.cmd + self.colorTemperatureValue.toUpperCase())
+				await sendCam(self, 'OSD:B1:' + self.colorTemperatureValue.toUpperCase())
 			},
 		}
-	}
-	
-	if (seriesActions.colorTemperature) {
+
 		actions.colorTemperatureDown = {
-			name: 'Color Temperature Down',
+			name: 'White Balance - Color Temperature Down',
 			options: [],
 			callback: async (action) => {
 				if (self.colorTemperatureIndex == 0) {
@@ -1110,14 +1045,12 @@ export function getActionDefinitions(self) {
 				}
 				self.colorTemperatureValue = seriesActions.colorTemperature.dropdown[self.colorTemperatureIndex].id
 
-				await sendCam(self, seriesActions.colorTemperature.cmd + self.colorTemperatureValue.toUpperCase())
+				await sendCam(self, 'OSD:B1:' + self.colorTemperatureValue.toUpperCase())
 			},
 		}
-	}
 
-	if (seriesActions.colorTemperature) {
 		actions.colorTemperatureSet = {
-			name: 'Set Color Temperature',
+			name: 'White Balance - Set Color Temperature',
 			options: [
 				{
 					type: 'dropdown',
@@ -1134,7 +1067,45 @@ export function getActionDefinitions(self) {
 				self.colorTemperatureIndex = index;
 				self.colorTemperatureValue = id;
 
-				await sendCam(self, seriesActions.colorTemperature.cmd + id)
+				await sendCam(self, 'OSD:B1:' + id)
+			},
+		}
+	}
+
+	if (seriesActions.colorTempAdv) { 
+		actions.colorTemperatureUp = {
+			name: 'White Balance - Color Temperature Up',
+			options: [],
+			callback: async (action) => {
+				await sendCam(self, 'OSI:1E:1')
+			},
+		}
+
+		actions.colorTemperatureDown = {
+			name: 'White Balance - Color Temperature Down',
+			options: [],
+			callback: async (action) => {
+				await sendCam(self, 'OSI:1F:1')
+			},
+		}
+
+		actions.colorTemperatureSet = {
+			name: 'White Balance - Set Color Temperature',
+			options: [
+				{
+					id: 'val',
+					type: 'number',
+					label: 'Color Temperature [K]',
+					default: 3200,
+					min: 2000,
+					max: 15000,
+					step: 20,
+					required: true,
+					range: true,
+				},
+			],
+			callback: async (action) => {
+				await sendCam(self, 'OSI:20:' + parseInt(action.options.val).toString(16).toUpperCase().padStart(5, 0) + ':0')
 			},
 		}
 	}
@@ -1151,12 +1122,10 @@ export function getActionDefinitions(self) {
 				}
 				self.filterVal = seriesActions.filter.dropdown[self.filterIndex].id
 
-				await sendCam(self, seriesActions.filter.cmd + self.filterVal)
+				await sendCam(self, 'OFT:' + self.filterVal)
 			},
 		}
-	}
 
-	if (seriesActions.filter.cmd) {
 		actions.filterD = {
 			name: 'Exposure - ND Filter Down',
 			options: [],
@@ -1168,12 +1137,10 @@ export function getActionDefinitions(self) {
 				}
 				self.filterVal = seriesActions.filter.dropdown[self.filterIndex].id
 
-				await sendCam(self, seriesActions.filter.cmd + self.filterVal)
+				await sendCam(self, 'OFT:' + self.filterVal)
 			},
 		}
-	}
 
-	if (seriesActions.filter.cmd) {
 		actions.filterS = {
 			name: 'Exposure - Set ND Filter',
 			options: [
@@ -1186,14 +1153,14 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, seriesActions.filter.dropdown + action.options.val)
+				await sendCam(self, 'OFT:' + action.options.val)
 			},
 		}
 	}
 
-	// #########################
-	// #### Presets Actions ####
-	// #########################
+	// ########################
+	// #### Preset Actions ####
+	// ########################
 
 	if (seriesActions.preset) {
 		actions.savePset = {
@@ -1203,14 +1170,15 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Preset Nr.',
 					id: 'val',
-					default: c.CHOICES_PRESET()[0].id,
-					choices: c.CHOICES_PRESET(),
+					default: c.CHOICES_PRESET[0].id,
+					choices: c.CHOICES_PRESET,
 				},
 			],
 			callback: async (action) => {
 				await sendPTZ(self, 'M' + action.options.val)
 			},
 		}
+
 		actions.recallPset = {
 			name: 'Preset - Recall',
 			options: [
@@ -1218,16 +1186,33 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Preset Nr.',
 					id: 'val',
-					default: c.CHOICES_PRESET()[0].id,
-					choices: c.CHOICES_PRESET(),
+					default: c.CHOICES_PRESET[0].id,
+					choices: c.CHOICES_PRESET,
 				},
 			],
 			callback: async (action) => {
 				await sendPTZ(self, 'R' + action.options.val)
 			},
 		}
+
+		actions.recallPset = {
+			name: 'Preset - Delete',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset Nr.',
+					id: 'val',
+					default: c.CHOICES_PRESET[0].id,
+					choices: c.CHOICES_PRESET,
+				},
+			],
+			callback: async (action) => {
+				await sendPTZ(self, 'C' + action.options.val)
+			},
+		}
+
 		actions.recallModePset = {
-			name: 'Preset - Mode A, B, C',
+			name: 'Preset - Recall Scope',
 			options: [
 				{
 					type: 'dropdown',
@@ -1246,6 +1231,7 @@ export function getActionDefinitions(self) {
 			},
 		}
 	}
+
 	if (seriesActions.speedPset) {
 		actions.speedPset = {
 			name: 'Preset - Drive Speed',
@@ -1263,6 +1249,7 @@ export function getActionDefinitions(self) {
 			},
 		}
 	}
+
 	if (seriesActions.timePset) {
 		actions.timePset = {
 			// TODO: currently only works when in Time mode.
@@ -1316,9 +1303,7 @@ export function getActionDefinitions(self) {
 				await sendPTZ(self, 'O0')
 			},
 		}
-	}
 
-	if (seriesActions.power) {
 		actions.powerOn = {
 			name: 'System - Power On',
 			options: [],
@@ -1400,6 +1385,7 @@ export function getActionDefinitions(self) {
 				await sendCam(self, 'DCB:0')
 			},
 		}
+
 		actions.colorbarOn = {
 			name: 'System - Color Bar On',
 			options: [],
@@ -1451,6 +1437,48 @@ export function getActionDefinitions(self) {
 		}
 	}
 
+	if (seriesActions.srtStream) {
+		actions.srtStreamCtrl = {
+			name: 'Streaming - SRT Stream Control',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'SRT Action (Caller)',
+					id: 'value',
+					default: 'start',
+					choices: [
+						{ id: 'start', label: 'Start Streaming' },
+						{ id: 'stop', label: 'Stop Streaming' },
+					],
+				},
+			],
+			callback: async (action) => {
+				await sendWeb(self, 'srt_ctrl=' + action.options.value)
+			},
+		}
+	}
+
+	if (seriesActions.rtmpStream) {
+		actions.rtmpStreamCtrl = {
+			name: 'Streaming - RTMP Stream Control',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'RTMP Action (Push)',
+					id: 'value',
+					default: 'start',
+					choices: [
+						{ id: 'start', label: 'Start Streaming' },
+						{ id: 'stop', label: 'Stop Streaming' },
+					],
+				},
+			],
+			callback: async (action) => {
+				await sendWeb(self, 'rtmp_ctrl=' + action.options.value)
+			},
+		}
+	}
+
 	actions.sendCustom = {
 		name: 'Custom - Send Command',
 		options: [
@@ -1467,7 +1495,7 @@ export function getActionDefinitions(self) {
 			{
 				id: 'cmd',
 				type: 'textinput',
-				label: 'Custom Command (without leading #)',
+				label: 'Custom Command (without leading # for PTZ commands)',
 				default: ''
 			}
 		],
