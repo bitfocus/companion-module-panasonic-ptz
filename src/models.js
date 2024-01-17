@@ -54,12 +54,12 @@ export const MODELS = [
 // HE40
 // HE42
 // HE50
-// HE60
+// HE60 *** ToDo ***
 // HE120
 // HE130
-// UE20
+// UE20 *** ToDo ***
 // UE70
-// UE80
+// UE80 *** ToDo ***
 // UE150
 // UE160
 // HR140
