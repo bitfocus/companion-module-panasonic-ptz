@@ -1,6 +1,6 @@
 import { combineRgb } from '@companion-module/base'
 import { getAndUpdateSeries } from './common.js'
-import { c } from './choices.js'
+import { e } from './enum.js'
 
 // ##########################
 // #### Define Feedbacks ####
@@ -111,7 +111,7 @@ export function getFeedbackDefinitions(self) {
 					label: 'Position',
 					id: 'option',
 					default: '0',
-					choices: [
+					enum: [
 						{ id: '0', label: 'Desktop' },
 						{ id: '1', label: 'Hanging' },
 					],
@@ -183,7 +183,7 @@ export function getFeedbackDefinitions(self) {
 					label: 'Mode',
 					id: 'option',
 					default: '0',
-					choices: [
+					enum: [
 						{ id: '0', label: 'Mode A - PTZ + Iris + WB/Color' },
 						{ id: '1', label: 'Mode B - PTZ + Iris' },
 						{ id: '2', label: 'Mode C - PTZ only' },
@@ -194,17 +194,17 @@ export function getFeedbackDefinitions(self) {
 				const opt = feedback.options
 				switch (opt.option) {
 					case '0':
-						if (self.data.recallModePset === 'Mode A') {
+						if (self.data.presetRecallMode === 'Mode A') {
 							return true
 						}
 						break
 					case '1':
-						if (self.data.recallModePset === 'Mode B') {
+						if (self.data.presetRecallMode === 'Mode B') {
 							return true
 						}
 						break
 					case '2':
-						if (self.data.recallModePset === 'Mode C') {
+						if (self.data.presetRecallMode === 'Mode C') {
 							return true
 						}
 						break
@@ -227,8 +227,8 @@ export function getFeedbackDefinitions(self) {
 					type: 'dropdown',
 					label: 'Preset',
 					id: 'option',
-					default: c.CHOICES_PRESET[0].id,
-					choices: c.CHOICES_PRESET,
+					default: e.ENUM_PRESET[0].id,
+					enum: e.ENUM_PRESET,
 				},
 			],
 			callback: function (feedback) {
@@ -251,8 +251,8 @@ export function getFeedbackDefinitions(self) {
 					type: 'dropdown',
 					label: 'Mode',
 					id: 'option',
-					default: c.CHOICES_WB_GET[0].id,
-					choices: c.CHOICES_WB_GET,
+					default: e.ENUM_WHITEBALANCE_GET[0].id,
+					enum: e.ENUM_WHITEBALANCE_GET,
 				},
 			],
 			callback: function (feedback) {

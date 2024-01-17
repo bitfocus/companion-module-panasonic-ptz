@@ -21,10 +21,10 @@ export function setVariables(self) {
 		variables.push({ variableId: 'version', name: 'Firmware Version' })
 	}
 	if (SERIES.variables.error) {
-		variables.push({ variableId: 'error', name: 'PTZ Error Codes' })
+		variables.push({ variableId: 'error', name: 'Error Code' })
 	}
 	if (SERIES.variables.ins) {
-		variables.push({ variableId: 'ins', name: 'Install Position' })
+		variables.push({ variableId: 'installMode', name: 'Install Position' })
 	}
 	if (SERIES.variables.power) {
 		variables.push({ variableId: 'power', name: 'Power ON/OFF' })
@@ -38,8 +38,11 @@ export function setVariables(self) {
 	if (SERIES.variables.tally2) {
 		variables.push({ variableId: 'tally2', name: 'Green Tally ON/OFF' })
 	}
+	if (SERIES.variables.tally3) {
+		variables.push({ variableId: 'tally3', name: 'Yellow Tally ON/OFF' })
+	}
 	if (SERIES.variables.OAF) {
-		variables.push({ variableId: 'autoFocus', name: 'Auto Focus Mode' })
+		variables.push({ variableId: 'focusMode', name: 'Focus Mode' })
 	}
 	if (SERIES.variables.whiteBalance) {
 		variables.push({ variableId: 'whiteBalance', name: 'White Balance Mode' })
@@ -48,35 +51,36 @@ export function setVariables(self) {
 		variables.push({ variableId: 'colorTemperature', name: 'Color Temperature' })
 	}
 	if (SERIES.variables.irisMode) {
-		variables.push({ variableId: 'irisMode', name: 'Auto Iris Mode' })
+		variables.push({ variableId: 'irisMode', name: 'Iris Mode' })
 	}
 	if (SERIES.variables.gain) {
-		variables.push({ variableId: 'gain', name: 'Gain Value' })
+		variables.push({ variableId: 'gain', name: 'Gain' })
 	}
 	if (SERIES.variables.preset) {
-		variables.push({ variableId: 'presetMode', name: 'Preset Mode' })
-		variables.push({ variableId: 'lastPresetCompleted', name: 'Last Preset Completed' })
+		variables.push({ variableId: 'presetRecallMode', name: 'Preset Recall Mode' })
+		variables.push({ variableId: 'presetCompleted', name: 'Preset # Completed' })
+		variables.push({ variableId: 'presetSelected', name: 'Preset # Selected' })
 	}
-	variables.push({ variableId: 'ptSpeedVar', name: 'Pan/Tilt Speed' })
-	variables.push({ variableId: 'pSpeedVar', name: 'Pan Speed' })
-	variables.push({ variableId: 'tSpeedVar', name: 'Tilt Speed' })
-	variables.push({ variableId: 'zSpeedVar', name: 'Zoom Speed' })
-	variables.push({ variableId: 'fSpeedVar', name: 'Focus Speed' })
 	variables.push({ variableId: 'zoomPosition', name: 'Zoom Position %' })
 	variables.push({ variableId: 'focusPosition', name: 'Focus Position %' })
 	variables.push({ variableId: 'irisPosition', name: 'Iris Position %' })
 	variables.push({ variableId: 'zoomPositionBar', name: 'Zoom Position' })
 	variables.push({ variableId: 'focusPositionBar', name: 'Focus Position' })
 	variables.push({ variableId: 'irisPositionBar', name: 'Iris Position' })
-	variables.push({ variableId: 'irisValue', name: 'Iris F No' })
 	variables.push({ variableId: 'masterPed', name: 'Master Pedestal' })
 	variables.push({ variableId: 'redPed', name: 'Red Pedestal' })
 	variables.push({ variableId: 'bluePed', name: 'Blue Pedestal' })
 	variables.push({ variableId: 'redGain', name: 'Red Gain' })
 	variables.push({ variableId: 'blueGain', name: 'Blue Gain' })
-	variables.push({ variableId: 'shutterMode', name: 'Shutter Mode' })
-	variables.push({ variableId: 'shutterValue', name: 'Shutter Value' })
-	variables.push({ variableId: 'oisMode', name: 'O.I.S. Mode' })
+	variables.push({ variableId: 'shutter', name: 'Shutter Mode' })
+	variables.push({ variableId: 'ois', name: 'O.I.S.' })
+	variables.push({ variableId: 'iris', name: 'Iris' })
+	variables.push({ variableId: 'shutterStep', name: 'Shutter Step' })
+	variables.push({ variableId: 'ptSpeedVar', name: 'Pan/Tilt Speed' })
+	variables.push({ variableId: 'pSpeedVar', name: 'Pan Speed' })
+	variables.push({ variableId: 'tSpeedVar', name: 'Tilt Speed' })
+	variables.push({ variableId: 'zSpeedVar', name: 'Zoom Speed' })
+	variables.push({ variableId: 'fSpeedVar', name: 'Focus Speed' })
 
 	return variables
 }
@@ -87,20 +91,24 @@ export function setVariables(self) {
 export function checkVariables(self) {
 	const SERIES = getAndUpdateSeries(self)
 
+	const colorTemperature = SERIES.actions.colorTemperature
+		? SERIES.actions.colorTemperature.dropdown.find((CTEMP) => CTEMP.id == self.data.colorTemperature)
+		: null
+
 	const gain = SERIES.actions.gain
 		? SERIES.actions.gain.dropdown.find((GAIN) => GAIN.id == self.data.gain)
 		: null
 
-	const shutter = SERIES.actions.shut
-		? SERIES.actions.shut.dropdown.find((SHUT) => SHUT.id == self.data.shutterMode)
+	const ois = SERIES.actions.ois
+		? SERIES.actions.ois.dropdown.find((OIS) => OIS.id == self.data.ois)
 		: null
 
-	const colorTemperature = SERIES.actions.colorTemperature
-		? SERIES.actions.colorTemperature.dropdown.find((colorTemperature) => colorTemperature.id == self.data.colorTemperature)
+	const shutter = SERIES.actions.shut
+		? SERIES.actions.shut.dropdown.find((SHUTTER) => SHUTTER.id == self.data.shutter)
 		: null
 
 	const whiteBalance = SERIES.actions.whiteBalance
-		? SERIES.actions.whiteBalance.dropdown.find((whiteBalance) => whiteBalance.id == self.data.whiteBalanceMode)
+		? SERIES.actions.whiteBalance.dropdown.find((WB) => WB.id == self.data.whiteBalance)
 		: null
 
 	const progressBar = (pct, width = 20, start = '', end = '') => {
@@ -133,39 +141,49 @@ export function checkVariables(self) {
 		model: self.data.model,
 		name: self.data.name,
 		version: self.data.version,
-		error: self.data.error,
-		ins: self.data.ins,
+
 		power: self.data.power,
 		colorbar: self.data.colorbar,
 		tally: self.data.tally,
 		tally2: self.data.tally2,
-		autoFocus: self.data.autoFocus,
-		whiteBalance: whiteBalance?.label,
-		//colorTemperature: self.data.colorTemperature,
-		colorTemperature: colorTemperature?.label,
+		tally3: self.data.tally3,
+
+		focusMode: self.data.focusMode,
+		installMode: self.data.installMode,
 		irisMode: self.data.irisMode,
+		presetRecallMode: self.data.presetRecallMode,
+
+		presetSelected: (self.data.presetSelectedIdx + 1).toString(),
+		presetCompleted: (self.data.presetCompletedIdx + 1).toString(),
+
+		zoomPosition: normalizePct(self.data.zoomPosition, 0x0, 0xAAA, false, 1),
+		focusPosition: normalizePct(self.data.focusPosition, 0x0, 0xAAA, false),
+		irisPosition: normalizePct(self.data.irisPosition, 0x0, 0xAAA, false),
+		zoomPositionBar: progressBar(normalizePct(self.data.zoomPosition, 0x0, 0xAAA), 14, 'W', 'T'),
+		focusPositionBar: progressBar(normalizePct(self.data.focusPosition, 0x0, 0xAAA), 14, 'N', 'F'),
+		irisPositionBar: progressBar(normalizePct(self.data.irisPosition, 0x0, 0xAAA), 14, 'C', 'O'),
+
+		redGain: self.data.redGainValue,
+		blueGain: self.data.blueGainValue,
+		redPed: self.data.redPedValue,
+		bluePed: self.data.bluePedValue,
+		masterPed: self.data.masterPedValue,
+		
+		error: self.data.errorLabel,
+		iris: self.data.irisLabel,
+		shutterStep: self.data.shutterStepLabel,
+
+		colorTemperature: self.data.colorTempLabel?self.data.colorTempLabel:colorTemperature?.label,
+
 		gain: gain?.label,
-		presetMode: self.data.recallModePset,
+		ois: ois?.label,
+		shutter: shutter?.label,
+		whiteBalance: whiteBalance?.label,
+
 		ptSpeedVar: self.ptSpeed,
 		pSpeedVar: self.pSpeed,
 		tSpeedVar: self.tSpeed,
 		zSpeedVar: self.zSpeed,
 		fSpeedVar: self.fSpeed,
-		zoomPosition: normalizePct(self.data.zoomPosition, 0x555, 0xFFF, false, 1),
-		focusPosition: normalizePct(self.data.focusPosition, 0x555, 0xFFF, false, 0),
-		irisPosition: normalizePct(self.data.irisPosition, 0x555, 0xFFF,false, 0),
-		zoomPositionBar: progressBar(normalizePct(self.data.zoomPosition, 0x555, 0xFFF), 14, 'W', 'T'),
-		focusPositionBar: progressBar(normalizePct(self.data.focusPosition, 0x555, 0xFFF), 14, 'N', 'F'),
-		irisPositionBar: progressBar(normalizePct(self.data.irisPosition, 0x555, 0xFFF), 14, 'C', 'O'),
-		irisValue: 'F'+(self.data.irisValue / 10).toFixed(1),
-		masterPed: self.data.masterPed,
-		redPed: self.data.redPed,
-		bluePed: self.data.bluePed,
-		redGain: self.data.redGain,
-		blueGain: self.data.blueGain,
-		lastPresetCompleted: (self.data.lastPresetCompleted + 1).toString(),
-		shutterMode: shutter?.label,
-		shutterValue: self.data.shutterValue,
-		oisMode: self.data.oisMode,
 	})
 }

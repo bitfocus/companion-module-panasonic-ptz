@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { c } from './choices.js'
+import { e } from './enum.js'
 import { getAndUpdateSeries } from './common.js'
 import got from 'got'
 
@@ -323,7 +323,7 @@ export function getActionDefinitions(self) {
 					label: 'Speed setting',
 					id: 'speed',
 					default: 25,
-					choices: c.CHOICES_SPEED,
+					enum: e.ENUM_SPEED,
 					isVisible: ((options) => options.advanced ? false : true)
 				},
 				{
@@ -331,7 +331,7 @@ export function getActionDefinitions(self) {
 					label: 'Pan speed setting',
 					id: 'pSpeed',
 					default: 25,
-					choices: c.CHOICES_SPEED,
+					enum: e.ENUM_SPEED,
 					isVisible: ((options) => options.advanced ? true : false)
 				},
 				{
@@ -339,26 +339,26 @@ export function getActionDefinitions(self) {
 					label: 'Tilt speed setting',
 					id: 'tSpeed',
 					default: 25,
-					choices: c.CHOICES_SPEED,
+					enum: e.ENUM_SPEED,
 					isVisible: ((options) => options.advanced ? true : false)
 				},
 			],
 			callback: async (action) => {
 				if (action.options.advanced === false) {
-					const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === action.options.speed)
+					const i = e.ENUM_SPEED.findIndex((speed) => speed.id === action.options.speed)
 
 					if (i > -1) self.ptSpeedIndex = i
-					self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
+					self.ptSpeed = e.ENUM_SPEED[self.ptSpeedIndex].id
 					self.pSpeed = self.ptSpeed
 					self.tSpeed = self.ptSpeed
 				} else {
-					const j = c.CHOICES_SPEED.findIndex((speed) => speed.id === action.options.pSpeed)
-					const k = c.CHOICES_SPEED.findIndex((speed) => speed.id === action.options.tSpeed)
+					const j = e.ENUM_SPEED.findIndex((speed) => speed.id === action.options.pSpeed)
+					const k = e.ENUM_SPEED.findIndex((speed) => speed.id === action.options.tSpeed)
 
 					if (j > -1) self.pSpeedIndex = j
 					if (k > -1) self.tSpeedIndex = k
-					self.pSpeed = c.CHOICES_SPEED[self.pSpeedIndex].id
-					self.tSpeed = c.CHOICES_SPEED[self.tSpeedIndex].id
+					self.pSpeed = e.ENUM_SPEED[self.pSpeedIndex].id
+					self.tSpeed = e.ENUM_SPEED[self.tSpeedIndex].id
 					if (self.pSpeed === self.tSpeed) {
 						self.ptSpeed = self.pSpeed
 					}
@@ -376,12 +376,12 @@ export function getActionDefinitions(self) {
 			name: 'Pan/Tilt - Speed Up',
 			options: [],
 			callback: async () => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.ptSpeed)
+				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.ptSpeed)
 				if (i > 0) {
 					self.ptSpeedIndex = i - 1
 				}
 
-				self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
+				self.ptSpeed = e.ENUM_SPEED[self.ptSpeedIndex].id
 				self.pSpeed = self.ptSpeed
 				self.tSpeed = self.ptSpeed
 				self.setVariableValues({
@@ -397,12 +397,12 @@ export function getActionDefinitions(self) {
 			name: 'Pan/Tilt - Pan - Speed Up',
 			options: [],
 			callback: async () => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.pSpeed)
+				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.pSpeed)
 				if (i > 0) {
 					self.pSpeedIndex = i - 1
 				}
 
-				self.pSpeed = c.CHOICES_SPEED[self.pSpeedIndex].id
+				self.pSpeed = e.ENUM_SPEED[self.pSpeedIndex].id
 				if (self.pSpeed === self.tSpeed) self.ptSpeed = self.pSpeed
 				self.setVariableValues({
 					pSpeedVar: self.pSpeed,
@@ -416,12 +416,12 @@ export function getActionDefinitions(self) {
 			name: 'Pan/Tilt - Tilt - Speed Up',
 			options: [],
 			callback: async () => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.tSpeed)
+				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.tSpeed)
 				if (i > 0) {
 					self.tSpeedIndex = i - 1
 				}
 
-				self.tSpeed = c.CHOICES_SPEED[self.tSpeedIndex].id
+				self.tSpeed = e.ENUM_SPEED[self.tSpeedIndex].id
 				if (self.tSpeed === self.pSpeed) self.ptSpeed = self.tSpeed
 				self.setVariableValues({
 					tSpeedVar: self.tSpeed,
@@ -435,12 +435,12 @@ export function getActionDefinitions(self) {
 			name: 'Pan/Tilt - Speed Down',
 			options: [],
 			callback: async () => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.ptSpeed)
+				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.ptSpeed)
 				if (i < 49) {
 					self.ptSpeedIndex = i + 1
 				}
 
-				self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
+				self.ptSpeed = e.ENUM_SPEED[self.ptSpeedIndex].id
 				self.pSpeed = self.ptSpeed
 				self.tSpeed = self.ptSpeed
 				self.setVariableValues({
@@ -456,12 +456,12 @@ export function getActionDefinitions(self) {
 			name: 'Pan/Tilt - Pan - Speed Down',
 			options: [],
 			callback: async () => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.pSpeed)
+				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.pSpeed)
 				if (i < 49) {
 					self.pSpeedIndex = i + 1
 				}
 
-				self.pSpeed = c.CHOICES_SPEED[self.pSpeedIndex].id
+				self.pSpeed = e.ENUM_SPEED[self.pSpeedIndex].id
 				if (self.pSpeed === self.tSpeed) self.ptSpeed = self.pSpeed
 				self.setVariableValues({
 					pSpeedVar: self.pSpeed,
@@ -475,12 +475,12 @@ export function getActionDefinitions(self) {
 			name: 'Pan/Tilt - Tilt - Speed Down',
 			options: [],
 			callback: async () => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.tSpeed)
+				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.tSpeed)
 				if (i < 49) {
 					self.tSpeedIndex = i + 1
 				}
 
-				self.tSpeed = c.CHOICES_SPEED[self.tSpeedIndex].id
+				self.tSpeed = e.ENUM_SPEED[self.tSpeedIndex].id
 				if (self.tSpeed === self.pSpeed) self.ptSpeed = self.tSpeed
 				self.setVariableValues({
 					tSpeedVar: self.tSpeed,
@@ -566,16 +566,16 @@ export function getActionDefinitions(self) {
 					label: 'Speed setting',
 					id: 'speed',
 					default: 25,
-					choices: c.CHOICES_SPEED,
+					enum: e.ENUM_SPEED,
 				},
 			],
 			callback: async (action) => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === action.options.speed)
+				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === action.options.speed)
 				if (i > -1) {
 					self.zSpeedIndex = i
 				}
 
-				self.zSpeed = c.CHOICES_SPEED[self.zSpeedIndex].id
+				self.zSpeed = e.ENUM_SPEED[self.zSpeedIndex].id
 				self.setVariableValues({ zSpeedVar: self.zSpeed })
 				self.speedChangeEmitter.emit('zSpeed')
 			},
@@ -585,12 +585,12 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Zoom Speed Up',
 			options: [],
 			callback: async () => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.zSpeed)
+				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.zSpeed)
 				if (i > 0) {
 					self.zSpeedIndex = i - 1
 				}
 
-				self.zSpeed = c.CHOICES_SPEED[self.zSpeedIndex].id
+				self.zSpeed = e.ENUM_SPEED[self.zSpeedIndex].id
 				self.setVariableValues({ zSpeedVar: self.zSpeed })
 				self.speedChangeEmitter.emit('zSpeed')
 			},
@@ -600,12 +600,12 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Zoom Speed Down',
 			options: [],
 			callback: async () => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.zSpeed)
+				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.zSpeed)
 				if (i < 49) {
 					self.zSpeedIndex = i + 1
 				}
 
-				self.zSpeed = c.CHOICES_SPEED[self.zSpeedIndex].id
+				self.zSpeed = e.ENUM_SPEED[self.zSpeedIndex].id
 				self.setVariableValues({ zSpeedVar: self.zSpeed })
 				self.speedChangeEmitter.emit('zSpeed')
 			},
@@ -683,16 +683,16 @@ export function getActionDefinitions(self) {
 					label: 'Speed setting',
 					id: 'speed',
 					default: 25,
-					choices: c.CHOICES_SPEED,
+					enum: e.ENUM_SPEED,
 				},
 			],
 			callback: async (action) => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === action.options.speed)
+				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === action.options.speed)
 				if (i > -1) {
 					self.fSpeedIndex = i
 				}
 
-				self.fSpeed = c.CHOICES_SPEED[self.fSpeedIndex].id
+				self.fSpeed = e.ENUM_SPEED[self.fSpeedIndex].id
 				self.setVariableValues({ fSpeedVar: self.fSpeed })
 				self.speedChangeEmitter.emit('fSpeed')
 			},
@@ -702,12 +702,12 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Focus Speed Up',
 			options: [],
 			callback: async () => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.fSpeed)
+				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.fSpeed)
 				if (i > 0) {
 					self.fSpeedIndex = i - 1
 				}
 
-				self.fSpeed = c.CHOICES_SPEED[self.fSpeedIndex].id
+				self.fSpeed = e.ENUM_SPEED[self.fSpeedIndex].id
 				self.setVariableValues({ fSpeedVar: self.fSpeed })
 				self.speedChangeEmitter.emit('fSpeed')
 			},
@@ -717,12 +717,12 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Focus Speed Down',
 			options: [],
 			callback: async (action) => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.fSpeed)
+				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.fSpeed)
 				if (i < 49) {
 					self.fSpeedIndex = i + 1
 				}
 
-				self.fSpeed = c.CHOICES_SPEED[self.fSpeedIndex].id
+				self.fSpeed = e.ENUM_SPEED[self.fSpeedIndex].id
 				self.setVariableValues({ fSpeedVar: self.fSpeed })
 				self.speedChangeEmitter.emit('fSpeed')
 			},
@@ -738,7 +738,7 @@ export function getActionDefinitions(self) {
 					label: 'Auto / Manual Focus',
 					id: 'val',
 					default: '0',
-					choices: [
+					enum: [
 						{ id: '0', label: 'Manual Focus' },
 						{ id: '1', label: 'Auto Focus' },
 					],
@@ -752,7 +752,7 @@ export function getActionDefinitions(self) {
 
 	if (seriesActions.OTAF) {
 		actions.focusOTAF = {
-			name: 'Lens - Focus One-Touch Auto Focus (OTAF)',
+			name: 'Lens - Focus Push Auto',
 			options: [],
 			callback: async (action) => {
 				await sendCam(self, 'OSE:69:1')
@@ -769,12 +769,12 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Iris Up',
 			options: [],
 			callback: async (action) => {
-				if (self.irisIndex == c.CHOICES_IRIS.length) {
-					self.irisIndex = c.CHOICES_IRIS.length
-				} else if (self.irisIndex < c.CHOICES_IRIS.length) {
+				if (self.irisIndex == e.ENUM_IRIS.length) {
+					self.irisIndex = e.ENUM_IRIS.length
+				} else if (self.irisIndex < e.ENUM_IRIS.length) {
 					self.irisIndex++
 				}
-				self.irisVal = c.CHOICES_IRIS[self.irisIndex].id
+				self.irisVal = e.ENUM_IRIS[self.irisIndex].id
 				await sendPTZ(self, 'I' + self.irisVal.toUpperCase())
 			},
 		}
@@ -788,7 +788,7 @@ export function getActionDefinitions(self) {
 				} else if (self.irisIndex > 0) {
 					self.irisIndex--
 				}
-				self.irisVal = c.CHOICES_IRIS[self.irisIndex].id
+				self.irisVal = e.ENUM_IRIS[self.irisIndex].id
 				await sendPTZ(self, 'I' + self.irisVal.toUpperCase())
 			},
 		}
@@ -800,8 +800,8 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Iris setting',
 					id: 'val',
-					default: c.CHOICES_IRIS[0].id,
-					choices: c.CHOICES_IRIS,
+					default: e.ENUM_IRIS[0].id,
+					enum: e.ENUM_IRIS,
 				},
 			],
 			callback: async (action) => {
@@ -818,7 +818,7 @@ export function getActionDefinitions(self) {
 					label: 'Auto / Manual Iris',
 					id: 'val',
 					default: '0',
-					choices: [
+					enum: [
 						{ id: '0', label: 'Manual Iris' },
 						{ id: '1', label: 'Auto Iris' },
 					],
@@ -879,7 +879,7 @@ export function getActionDefinitions(self) {
 					label: 'Gain setting',
 					id: 'val',
 					default: seriesActions.gain.dropdown[0].id,
-					choices: seriesActions.gain.dropdown,
+					enum: seriesActions.gain.dropdown,
 				},
 			],
 			callback: async (action) => {
@@ -927,7 +927,7 @@ export function getActionDefinitions(self) {
 					label: 'Shutter setting',
 					id: 'val',
 					default: seriesActions.shut.dropdown[0].id,
-					choices: seriesActions.shut.dropdown,
+					enum: seriesActions.shut.dropdown,
 				},
 			],
 			callback: async (action) => {
@@ -975,7 +975,7 @@ export function getActionDefinitions(self) {
 					label: 'Pedestal setting',
 					id: 'val',
 					default: seriesActions.ped.dropdown[0].id,
-					choices: seriesActions.ped.dropdown,
+					enum: seriesActions.ped.dropdown,
 				},
 			],
 			callback: async (action) => {
@@ -993,7 +993,7 @@ export function getActionDefinitions(self) {
 					label: 'Select Mode',
 					id: 'val',
 					default: '0',
-					choices: c.CHOICES_WB_SET,
+					enum: e.ENUM_WHITEBALANCE_SET,
 				},
 			],
 			callback: async (action) => {
@@ -1057,7 +1057,7 @@ export function getActionDefinitions(self) {
 					label: 'Color Temperature',
 					id: 'val',
 					default: seriesActions.colorTemperature.dropdown[0].id,
-					choices: seriesActions.colorTemperature.dropdown,
+					enum: seriesActions.colorTemperature.dropdown,
 				},
 			],
 			callback: async (action) => {
@@ -1149,7 +1149,7 @@ export function getActionDefinitions(self) {
 					label: 'ND Filter setting',
 					id: 'val',
 					default: seriesActions.filter.dropdown[0].id,
-					choices: seriesActions.filter.dropdown,
+					enum: seriesActions.filter.dropdown,
 				},
 			],
 			callback: async (action) => {
@@ -1170,8 +1170,8 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Preset Nr.',
 					id: 'val',
-					default: c.CHOICES_PRESET[0].id,
-					choices: c.CHOICES_PRESET,
+					default: e.ENUM_PRESET[0].id,
+					enum: e.ENUM_PRESET,
 				},
 			],
 			callback: async (action) => {
@@ -1186,8 +1186,8 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Preset Nr.',
 					id: 'val',
-					default: c.CHOICES_PRESET[0].id,
-					choices: c.CHOICES_PRESET,
+					default: e.ENUM_PRESET[0].id,
+					enum: e.ENUM_PRESET,
 				},
 			],
 			callback: async (action) => {
@@ -1202,8 +1202,8 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Preset Nr.',
 					id: 'val',
-					default: c.CHOICES_PRESET[0].id,
-					choices: c.CHOICES_PRESET,
+					default: e.ENUM_PRESET[0].id,
+					enum: e.ENUM_PRESET,
 				},
 			],
 			callback: async (action) => {
@@ -1219,7 +1219,7 @@ export function getActionDefinitions(self) {
 					label: 'Preset Mode',
 					id: 'val',
 					default: '0',
-					choices: [
+					enum: [
 						{ id: '0', label: 'Mode A - PTZ + Iris + WB/Color' },
 						{ id: '1', label: 'Mode B - PTZ + Iris' },
 						{ id: '2', label: 'Mode C - PTZ only' },
@@ -1241,7 +1241,7 @@ export function getActionDefinitions(self) {
 					label: 'speed setting',
 					id: 'speed',
 					default: 999,
-					choices: c.CHOICES_PSSPEED,
+					enum: e.ENUM_PSSPEED,
 				},
 			],
 			callback: async (action) => {
@@ -1260,7 +1260,7 @@ export function getActionDefinitions(self) {
 					label: 'Time Seconds',
 					id: 'speed',
 					default: '001',
-					choices: c.CHOICES_PSTIME(),
+					enum: e.ENUM_PSTIME(),
 				},
 			],
 			callback: async (action) => {
@@ -1279,7 +1279,7 @@ export function getActionDefinitions(self) {
 					label: 'Select mode',
 					id: 'mode',
 					default: '0',
-					choices: [
+					enum: [
 						{ id: '0', label: 'Speed mode' },
 						{ id: '1', label: 'Time mode' },
 					],
@@ -1404,7 +1404,7 @@ export function getActionDefinitions(self) {
 					label: 'Position',
 					id: 'position',
 					default: 0,
-					choices: [
+					enum: [
 						{ id: '0', label: 'Desktop' },
 						{ id: '1', label: 'Hanging' },
 					],
@@ -1425,7 +1425,7 @@ export function getActionDefinitions(self) {
 					label: 'Option',
 					id: 'value',
 					default: 'start',
-					choices: [
+					enum: [
 						{ id: 'start', label: 'Start Recording' },
 						{ id: 'end', label: 'Stop Recording' },
 					],
@@ -1446,14 +1446,14 @@ export function getActionDefinitions(self) {
 					label: 'SRT Action (Caller)',
 					id: 'value',
 					default: 'start',
-					choices: [
+					enum: [
 						{ id: 'start', label: 'Start Streaming' },
 						{ id: 'stop', label: 'Stop Streaming' },
 					],
 				},
 			],
 			callback: async (action) => {
-				await sendWeb(self, 'srt_ctrl=' + action.options.value)
+				await sendWeb(self, 'srt_ctrl?cmd=' + action.options.value)
 			},
 		}
 	}
@@ -1467,14 +1467,14 @@ export function getActionDefinitions(self) {
 					label: 'RTMP Action (Push)',
 					id: 'value',
 					default: 'start',
-					choices: [
+					enum: [
 						{ id: 'start', label: 'Start Streaming' },
 						{ id: 'stop', label: 'Stop Streaming' },
 					],
 				},
 			],
 			callback: async (action) => {
-				await sendWeb(self, 'rtmp_ctrl=' + action.options.value)
+				await sendWeb(self, 'rtmp_ctrl?cmd=' + action.options.value)
 			},
 		}
 	}
@@ -1487,7 +1487,7 @@ export function getActionDefinitions(self) {
 				label: 'Custom command destination',
 				id: 'dest',
 				default: '0',
-				choices: [
+				enum: [
 					{ id: '0', label: 'Cam' },
 					{ id: '1', label: 'PTZ' },
 				],

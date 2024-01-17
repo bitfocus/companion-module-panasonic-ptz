@@ -287,43 +287,38 @@ class PanasonicPTZInstance extends InstanceBase {
 	}
 	parseStatus(str) {	
 		if (str[0].substring(0, 3) === 'rER') {
-			if (str[0] === 'rER00') {
-				this.data.error = 'No Error'
-			} else {
-				this.data.error = str[0].substring(1)
-			}
+			(str[0] === 'rER00') ? this.data.errorLabel = 'No Error' : this.data.errorLabel = str[0].substring(1)
 		}
 
 		// Lens Position Information
 		if (str[0].substring(0, 2) === 'ax') {
 			switch (str[0].substring(2, 3)) {
-				case 'z':
-					this.data.zoomPosition = parseInt(str[0].substring(3), 16)
-					break
-				case 'f':
-					this.data.focusPosition = parseInt(str[0].substring(3), 16)
-					break
-				case 'i':
-					this.data.irisPosition = parseInt(str[0].substring(3), 16)
-					break
+				case 'z': this.data.zoomPosition = parseInt(str[0].substring(3), 16) - 0x555; break
+				case 'f': this.data.focusPosition = parseInt(str[0].substring(3), 16) - 0x555; break
+				case 'i': this.data.irisPosition = parseInt(str[0].substring(3), 16) - 0x555; break
 			}
 		}
 		if (str[0].substring(0, 3) === 'lPI') {
-			this.data.zoomPosition = parseInt(str[0].substring(3, 6), 16)
-			this.data.focusPosition = parseInt(str[0].substring(6, 9), 16)
-			this.data.irisPosition = parseInt(str[0].substring(9, 12), 16)
+			this.data.zoomPosition = parseInt(str[0].substring(3, 6), 16) - 0x555
+			this.data.focusPosition = parseInt(str[0].substring(6, 9), 16) - 0x555
+			this.data.irisPosition = parseInt(str[0].substring(9, 12), 16) - 0x555
 		}
 
 		if (str[0].substring(0, 1) === 'q') {
-			// Store last Preset completed
 			const q = str[0].match(/q(\d\d)/)
 			if (q) {
-				this.data.lastPresetCompleted = parseInt(q[1])
+				this.data.presetCompletedIdx = parseInt(q[1])
 			}
 
-			// Store Firmware Version
 			if (str[0].substring(0, 4) === 'qSV3') {
 				this.data.version = str[0].substring(4)
+			}
+		}
+
+		if (str[0].substring(0, 1) === 's') {
+			const s = str[0].match(/s(\d\d)/)
+			if (s) {
+				this.data.presetSelectedIdx = parseInt(s[1])
 			}
 		}
 
@@ -342,19 +337,16 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.data.power = 'ON'
 				break
 			case 'iNS0':
-				this.data.ins = 'Desktop'
+				this.data.installMode = 'Desktop'
 				break
 			case 'iNS1':
-				this.data.ins = 'Hanging'
+				this.data.installMode = 'Hanging'
 				break
 			case 'd30':
 				this.data.irisMode = 'Manual'
 				break
 			case 'd31':
 				this.data.irisMode = 'Auto'
-				break
-			case 'TITLE':
-				this.data.name = str[1]
 				break
 			case 'DCB':
 			case 'OBR':
@@ -382,81 +374,83 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.data.tally3 = (str[1] == '1') ? 'ON' : 'OFF'
 				break
 			case 'OAF':
-				this.data.autoFocus = (str[1] == '1') ? 'Auto' : 'Manual'
+				this.data.focusMode = (str[1] == '1') ? 'Auto' : 'Manual'
 				break
 			case 'OAW':
-				this.data.whiteBalanceMode = str[1];
+				this.data.whiteBalance = str[1];
 				break
 			case 'OIF':
-				this.data.irisValue = parseInt(str[1], 16);
+				this.data.irisLabel = (str[1] == 'FF') ? 'CLOSE' : 'F' + (parseInt(str[1], 16) / 10).toFixed(1)
 				break
 			case 'OIS':
-				this.data.oisMode = str[1];
+				this.data.ois = str[1];
 				break
 			case 'OSD':
 				if (str[1] == 'B1') {
-					this.data.colorTemperature = str[2]
+					this.data.colorTemperature = str[2].substring(2)
 				}
 				break
 			case 'OSI':
 				if (str[1] == '20') {
-					// ToDo: Non-mapped direct K value
-					this.data.colorTemperature = parseInt(str[2], 16) // VAR
+					this.data.colorTempLabel = parseInt(str[2], 16).toString() + 'K' // VAR
 				}
 				break
 			case 'OSH':
-				this.data.shutterMode = parseInt(str[1], 16);
+				this.data.shutter = str[1].substring(2)
 				break
-			case 'OSE': // All OSE:xx Commands
+			case 'OSE':
 				if (str[1] == '71') {
 					switch (str[2]) {
-						case '0': this.data.recallModePset = 'Mode A'; break
-						case '1': this.data.recallModePset = 'Mode B'; break
-						case '2': this.data.recallModePset = 'Mode C'; break
+						case '0': this.data.presetRecallMode = 'Mode A'; break
+						case '1': this.data.presetRecallMode = 'Mode B'; break
+						case '2': this.data.presetRecallMode = 'Mode C'; break
 					}
 				}
 				break
 			case 'OSG':
 				switch (str[1]) {
-					case '39': this.data.redGain = parseInt(str[2], 16) - 0x800; break
-					case '3A': this.data.blueGain = parseInt(str[2], 16) - 0x800; break
-					// UB300 only:
-					case '4C': this.data.redPed = parseInt(str[2], 16); break
-					case '4E': this.data.bluePed = parseInt(str[2], 16); break
+					case '39': this.data.redGainValue = parseInt(str[2], 16) - 0x800; break
+					case '3A': this.data.blueGainValue = parseInt(str[2], 16) - 0x800; break
+					case '4C': this.data.redPedValue = parseInt(str[2], 16) - 0x800; break
+					case '4D': this.data.greenPedValue = parseInt(str[2], 16) - 0x800; break
+					case '4E': this.data.bluePedValue = parseInt(str[2], 16) - 0x800; break
 				}
 				break
 			case 'OSJ':
 				switch (str[1]) {
-					case '03': this.data.shutterMode = parseInt(str[2], 16); break
-					case '06': this.data.shutterValue = parseInt(str[2], 16); break
-					//case '10': this.data.greenPed = parseInt(str[2], 16) - 0x96; break
-					case '0F': this.data.masterPed = parseInt(str[2], 16) - 0x800; break
-					case '4A': this.data.colorTemperature = parseInt(str[2], 16); break // AWB A/B
-					//case '4B': this.data.redGain = parseInt(str[2], 16) - 0x800; break // AWB A/B
-					//case '4C': this.data.blueGain = parseInt(str[2], 16) - 0x800; break // AWB A/B
+					case '03': this.data.shutter = str[2].substring(2); break
+					case '06': this.data.shutterStepLabel = '1/' + parseInt(str[2], 16).toString(); break
+					case '10': this.data.greenPedValue = parseInt(str[2], 16) - 0x96; break
+					case '0F': this.data.masterPedValue = parseInt(str[2], 16) - 0x800; break
+					case '4A': this.data.colorTempLabel = parseInt(str[2], 16).toString() + 'K'; break // AWB A/B
+					//case '4B': this.data.redGainValue = parseInt(str[2], 16) - 0x800; break // AWB A/B
+					//case '4C': this.data.blueGainValue = parseInt(str[2], 16) - 0x800; break // AWB A/B
 				}
 				break
 			case 'OGS':
 			case 'OGU':
-				this.data.gain = str[1].substring(2) // Hex-String
+				this.data.gain = str[1].substring(2)
 				break
 			case 'ORS':
 				this.data.irisMode = (str[1] == '1') ? 'Auto' : 'Manual'
 				break
 			case 'OTD':
-				this.data.masterPed = parseInt(str[1], 16) - 0x96
+				this.data.masterPedValue = parseInt(str[1], 16) - 0x96
 				break
 			case 'ORG':
-				this.data.redGain = parseInt(str[1], 16) - 0x96
+				this.data.redGainValue = parseInt(str[1], 16) - 0x96
 				break
 			case 'OBG':
-				this.data.blueGain = parseInt(str[1], 16) - 0x96
+				this.data.blueGainValue = parseInt(str[1], 16) - 0x96
 				break
 			case 'ORP':
-				this.data.redPed = parseInt(str[1], 16) - 0x96
+				this.data.redPedValue = parseInt(str[1], 16) - 0x96
 				break
 			case 'OBP':
-				this.data.bluePed = parseInt(str[1], 16) - 0x96
+				this.data.bluePedValue = parseInt(str[1], 16) - 0x96
+				break
+			case 'TITLE':
+				this.data.name = str[1]
 				break
 		}
 	}
@@ -478,38 +472,56 @@ class PanasonicPTZInstance extends InstanceBase {
 
 		this.data = {
 			debug: false,
-			modelINFO: 'NaN',
-			modelTCP: 'NaN',
+			modelINFO: null,
+			modelTCP: null,
+
 			model: 'Auto',
 			series: 'Auto',
-			name: 'NaN',
-			version: 'NaN',
-			error: 'NaN',
-			power: 'NaN',
-			colorbar: 'NaN',
-			ins: 'NaN',
-			tally: 'NaN',
-			tally2: 'NaN',
-			tally3: 'NaN',
-			autoFocus: 'NaN',
-			whiteBalanceMode: 'NaN',
-			colorTemperature: 'Unknown',
-			irisMode: 'NaN',
-			recallModePset: 'NaN',
-			lastPresetCompleted: null,
-			zoomPosition: null,
+			name: null,
+			version: null,
+
+			// booleans
+			colorbar: null,
+			power: null,
+			tally: null,
+			tally2: null,
+			tally3: null,
+
+			// unresolved enums
+			colorTemperature: null,
+			gain: null,
+			ois: null,
+			shutter: null,
+			whiteBalance: null,
+			
+			// numeric index
+			presetSelectedIdx: null,
+			presetCompletedIdx: null,
+
+			// numeric unsigned value
 			focusPosition: null,
 			irisPosition: null,
-			irisValue: null,
-			oisMode: null,
-			masterPed: null,
-			redPed: null,
-			//greenPed: null,
-			bluePed: null,
-			redGain: null,
-			blueGain: null,
-			shutterMode: null,
-			shutterValue: null,
+			zoomPosition: null,
+			
+			// numeric signed value
+			redGainValue: null,
+			blueGainValue: null,
+			redPedValue: null,
+			bluePedValue: null,
+			greenPedValue: null,
+			masterPedValue: null,
+
+			// decoded enums (as string)
+			focusMode: null,
+			installMode: null,
+			irisMode: null,
+			presetRecallMode: null,
+
+			// other strings
+			colorTempLabel: null,
+			errorLabel: null,
+			irisLabel: null,
+			shutterStepLabel: null,
 		}
 
 		this.ptSpeed = 25

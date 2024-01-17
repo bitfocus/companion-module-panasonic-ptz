@@ -1,4 +1,4 @@
-import { c } from './choices.js'
+import { e } from './enum.js'
 
 export const MODELS = [
 	{ id: 'Auto', series: 'Auto', label: 'Auto Detect' },
@@ -72,20 +72,24 @@ export const SERIES_SPECS = [
 		// Includes all Actions / Variables / Feedbacks
 		id: 'Other',
 		variables: {
-			version: true, // If a camera sends a package every minute with the firmware version (qSV3)
-			error: true, // Camera can return Error messages when actions fail (rER)
-			ins: true, // Install position (iNS0 or iNS1)
-			power: true, // Power State (p1 or p0)
-			colorbar: true, // Color Bar State (OBR:1 or OBR:0)
-			tally: true, // Red Tally State (DA1/TLR:1 or DA0/TLR:0)
-			tally2: true, // Green Tally State (TLG:1 or TLG:0)
-			tally3: true, // Yellow Tally State (TLY:1 or TLY:0)
-			OAF: true, // Has Auto Focus State (OAF:1 or OAF:0)
-			iris: true, // Has Auto Iris State (d30 or d31)
-			gain: true, // Has Gain State (OGU)
-			preset: true, // Has current/completed Preset State (sXX and qXX)
-			whiteBalance: true,  // Has White Balance Mode State (OAW:x)
-			colorTemperature: true, // Has Color Temperature
+			version: true, // If a camera sends a firmware version string every minute (qSV3)
+			error: true, // Camera can return enumerated error messages (rER)
+			ins: true, // Has enumerated Install Position State (iNS1 or iNS0)
+			power: true, // Has enumerated Power State (p1 or p0)
+			colorbar: true, // Has boolean Color Bar State (OBR:1 or OBR:0)
+			tally: true, // Has boolean Red Tally State (DA1/TLR:1 or DA0/TLR:0)
+			tally2: true, // Has boolean Green Tally State (TLG:1 or TLG:0)
+			tally3: true, // Has boolean Yellow Tally State (TLY:1 or TLY:0)
+			OAF: true, // Has boolean Auto Focus State (OAF:1 or OAF:0)
+			iris: true, // Has boolean Auto Iris State (d31 or d30)
+			gain: true, // Has enumerated Gain State (OGU)
+			preset: true, // Has numbered current/completed Preset State (sXX and qXX)
+			whiteBalance: true,  // Has enumerated White Balance Mode State (OAW:x)
+			colorTemperature: true, // Has enumerated Color Temperature State
+			colorTempAdv: true, // Has numbered Color Temperature State
+			colorGain: true, // Has numbered red/blue Gain State
+			colorPedestal: true, // Has numbered red/blue Pedestal State
+			masterPedestal: true, // Has numbered Master Pedestal State
 		},
 		feedbacks: {
 			powerState: true, // Power State (p1 or p0)
@@ -107,12 +111,13 @@ export const SERIES_SPECS = [
 			focus: true, // Has Focus Support (Fxx)
 			fSpeed: true, // Internal Speed Options
 			OAF: true, // Has Auto Focus Support (D10 or D11)
-			OTAF: true, // Has One Touch Auto Focus Support (OSE:69:1)
-			iris: true, // Has Iris Support (manual and auto) (Ixx)
-			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_OTHER() }, // Has Gain Support
-			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_OTHER }, // Has Shutter Support
-			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_OTHER() }, // Has Pedestal Support
-			filter: { dropdown: c.CHOICES_FILTER_OTHER }, // Has ND Filter Support
+			OTAF: true, // Has Push Auto Focus Support (OSE:69:1)
+			iris: true, // Has Iris Mode Support (manual and auto) (Ixx)
+			gain: { dropdown: e.ENUM_GAIN_OTHER() }, // Has Gain Support
+			shut: { dropdown: e.ENUM_SHUTTER_OTHER }, // Has Shutter Support
+			ped: { dropdown: e.ENUM_PEDESTAL_OTHER() }, // Has Pedestal Support
+			filter: { dropdown: e.ENUM_FILTER_OTHER }, // Has ND Filter Support
+			ois: { dropdown: e.ENUM_OIS_OTHER }, // Has Optical Image Stabilisation Control
 			preset: true, // Can Save, Recall and Delete Presets (Mxxx, Rxxx and Cxxx)
 			speedPset: true, // Has Preset Recall Speed Control (UPVSxx)
 			timePset: true, // Has Preset Recall Time Control (UPVSxx or OSJ:29:xx)
@@ -123,10 +128,10 @@ export const SERIES_SPECS = [
 			tally3: true, // Has Yellow Tally Light Control (TLY:1 or TLY:0)
 			ins: true, // Has Install Position Control (INSx)
 			sdCard: true, // Has SD Card Recording Control (sdctrl?save=start or sdctrl?save=end)
-			srtStream: true, // Has SRT (Caller) Streaming Control
-			rtmpStream: true, // Has RTMP (Client) Streaming Control
-			whiteBalance: { dropdown: c.CHOICES_WB_SET },  // Has White Balance Control (OAW:x)
-			colorTemperature: true, // Has enumerated Color Temperature Control (OSD:B1:xxx)
+			srtStream: true, // Has SRT (Caller) Streaming Control (srt_ctrl?cmd=start or srt_ctrl?cmd=stop)
+			rtmpStream: true, // Has RTMP (Client) Streaming Control (rtmp_ctrl?cmd=start or rtmp_ctrl?cmd=stop)
+			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },  // Has White Balance Control (OAW:x)
+			colorTemperature: { dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 }, // Has enumerated Color Temperature Control (OSD:B1:xxx)
 			colorTempAdv: true, // Has advanced Color Temperature Control (OSI:20:xxx:0)
 		},
 	},
@@ -168,10 +173,11 @@ export const SERIES_SPECS = [
 			OAF: true,
 			OTAF: true,
 			iris: true,
-			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE40 },
-			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE40 },
-			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE40() },
+			gain: { cmd: 'OGU:', dropdown: e.ENUM_GAIN_HE40 },
+			shut: { cmd: 'OSH:', dropdown: e.ENUM_SHUTTER_HE40 },
+			ped: { cmd: 'OTP:', dropdown: e.ENUM_PEDESTAL_HE40() },
 			filter: false,
+			ois: { dropdown: e.ENUM_OIS_OTHER },
 			preset: true,
 			speedPset: true,
 			timePset: false,
@@ -180,8 +186,8 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: true,
-			whiteBalance: { dropdown: c.CHOICES_WB_SET },
-			colorTemperature: { cmd: 'OSD:B1:', dropdown: c.CHOICES_COLOR_TEMPERATURE_HE40 },
+			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
+			colorTemperature: { dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 },
 		},
 	},
 
@@ -222,10 +228,11 @@ export const SERIES_SPECS = [
 			OAF: true,
 			OTAF: true,
 			iris: true,
-			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE40 },
-			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE40 },
-			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE40() },
-			filter: { dropdown: c.CHOICES_FILTER_3A },
+			gain: { cmd: 'OGU:', dropdown: e.ENUM_GAIN_HE40 },
+			shut: { cmd: 'OSH:', dropdown: e.ENUM_SHUTTER_HE40 },
+			ped: { cmd: 'OTP:', dropdown: e.ENUM_PEDESTAL_HE40() },
+			filter: { dropdown: e.ENUM_FILTER_3A },
+			ois: { dropdown: e.ENUM_OIS_OTHER },
 			preset: true,
 			speedPset: true,
 			timePset: false,
@@ -234,8 +241,8 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: true,
-			whiteBalance: { dropdown: c.CHOICES_WB_SET },
-			colorTemperature: { cmd: 'OSD:B1:', dropdown: c.CHOICES_COLOR_TEMPERATURE_HE40 },
+			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
+			colorTemperature: { dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 },
 		},
 	},
 
@@ -276,10 +283,11 @@ export const SERIES_SPECS = [
 			OAF: true,
 			OTAF: true,
 			iris: true,
-			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE40 },
-			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE40 },
-			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE40() },
-			filter: { dropdown: c.CHOICES_FILTER_3A },
+			gain: { cmd: 'OGU:', dropdown: e.ENUM_GAIN_HE40 },
+			shut: { cmd: 'OSH:', dropdown: e.ENUM_SHUTTER_HE40 },
+			ped: { cmd: 'OTP:', dropdown: e.ENUM_PEDESTAL_HE40() },
+			filter: { dropdown: e.ENUM_FILTER_3A },
+			ois: { dropdown: e.ENUM_OIS_OTHER },
 			preset: true,
 			speedPset: true,
 			timePset: false,
@@ -288,8 +296,8 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: true,
-			whiteBalance: { dropdown: c.CHOICES_WB_SET },
-			colorTemperature: { cmd: 'OSD:B1:', dropdown: c.CHOICES_COLOR_TEMPERATURE_HE40 },
+			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
+			colorTemperature: { dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 },
 		},
 	},
 
@@ -332,10 +340,11 @@ export const SERIES_SPECS = [
 			OAF: true,
 			OTAF: true,
 			iris: true,
-			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_UE150 },
-			shut: { cmd: 'OSJ:06:', dropdown: c.CHOICES_SHUTTER_UE150 },
-			ped: { cmd: 'OSJ:0F:', dropdown: c.CHOICES_PEDESTAL_UE150() },
-			filter: { dropdown: c.CHOICES_FILTER_3 },
+			gain: { cmd: 'OGU:', dropdown: e.ENUM_GAIN_UE150 },
+			shut: { cmd: 'OSJ:06:', dropdown: e.ENUM_SHUTTER_UE150 },
+			ped: { cmd: 'OSJ:0F:', dropdown: e.ENUM_PEDESTAL_UE150() },
+			filter: { dropdown: e.ENUM_FILTER_3 },
+			ois: { dropdown: e.ENUM_OIS_OTHER },
 			preset: true,
 			speedPset: true,
 			timePset: true,
@@ -347,7 +356,7 @@ export const SERIES_SPECS = [
 			sdCard: false,
 			srtStream: true,
 			rtmpStream: true,
-			whiteBalance: { dropdown: c.CHOICES_WB_SET },
+			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
 			colorTemperature: false,
 			colorTempAdv: true,
 		},
@@ -394,10 +403,11 @@ export const SERIES_SPECS = [
 			OAF: true,
 			OTAF: true,
 			iris: true,
-			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_UE160 },
-			shut: { cmd: 'OSJ:06:', dropdown: c.CHOICES_SHUTTER_UE150 },
-			ped: { cmd: 'OSJ:0F:', dropdown: c.CHOICES_PEDESTAL_UE150() },
-			filter: { dropdown: c.CHOICES_FILTER_3 },
+			gain: { cmd: 'OGU:', dropdown: e.ENUM_GAIN_UE160 },
+			shut: { cmd: 'OSJ:06:', dropdown: e.ENUM_SHUTTER_UE150 },
+			ped: { cmd: 'OSJ:0F:', dropdown: e.ENUM_PEDESTAL_UE150() },
+			filter: { dropdown: e.ENUM_FILTER_3 },
+			ois: { dropdown: e.ENUM_OIS_UE160 },
 			preset: true,
 			speedPset: true,
 			timePset: true,
@@ -408,7 +418,7 @@ export const SERIES_SPECS = [
 			tally2: true,
 			tally3: true,
 			sdCard: false,
-			whiteBalance: { dropdown: c.CHOICES_WB_SET },
+			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
 			colorTemperature: false,
 		},
 	},
@@ -454,6 +464,7 @@ export const SERIES_SPECS = [
 			shut: false,
 			ped: false,
 			filter: false,
+			ois: false,
 			preset: true,
 			speedPset: false,
 			timePset: false,
@@ -462,7 +473,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: false,
 			sdCard: false,
-			whiteBalance: { dropdown: c.CHOICES_WB_SET },
+			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
 			colorTemperature: false,
 		},
 	},
@@ -504,9 +515,10 @@ export const SERIES_SPECS = [
 			OAF: true,
 			OTAF: true,
 			iris: true,
-			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE50 },
-			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE40 },
-			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE40() },
+			gain: { cmd: 'OGU:', dropdown: e.ENUM_GAIN_HE50 },
+			shut: { cmd: 'OSH:', dropdown: e.ENUM_SHUTTER_HE40 },
+			ped: { cmd: 'OTP:', dropdown: e.ENUM_PEDESTAL_HE40() },
+			ois: { dropdown: e.ENUM_OIS_OTHER },
 			filter: false,
 			preset: true,
 			speedPset: true,
@@ -516,7 +528,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
-			whiteBalance: { dropdown: c.CHOICES_WB_SET },
+			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
 			colorTemperature: false,
 		},
 	},
@@ -558,10 +570,11 @@ export const SERIES_SPECS = [
 			OAF: true,
 			OTAF: true,
 			iris: true,
-			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE50 },
-			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE40 },
-			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE40() },
+			gain: { cmd: 'OGU:', dropdown: e.ENUM_GAIN_HE50 },
+			shut: { cmd: 'OSH:', dropdown: e.ENUM_SHUTTER_HE40 },
+			ped: { cmd: 'OTP:', dropdown: e.ENUM_PEDESTAL_HE40() },
 			filter: false,
+			ois: false,
 			preset: true,
 			speedPset: true,
 			timePset: false,
@@ -570,7 +583,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
-			whiteBalance: { dropdown: c.CHOICES_WB_SET },
+			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
 			colorTemperature: false,
 		},
 	},
@@ -612,10 +625,11 @@ export const SERIES_SPECS = [
 			OAF: true,
 			OTAF: true,
 			iris: true,
-			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE120 },
-			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE120 },
-			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE120() },
-			filter: { dropdown: c.CHOICES_FILTER_3 },
+			gain: { cmd: 'OGU:', dropdown: e.ENUM_GAIN_HE120 },
+			shut: { cmd: 'OSH:', dropdown: e.ENUM_SHUTTER_HE120 },
+			ped: { cmd: 'OTP:', dropdown: e.ENUM_PEDESTAL_HE120() },
+			filter: { dropdown: e.ENUM_FILTER_3 },
+			ois: false,
 			preset: true,
 			speedPset: true,
 			timePset: false,
@@ -624,7 +638,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
-			whiteBalance: { dropdown: c.CHOICES_WB_SET },
+			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
 			colorTemperature: false,
 		},
 	},
@@ -666,10 +680,11 @@ export const SERIES_SPECS = [
 			OAF: true,
 			OTAF: true,
 			iris: true,
-			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE130 },
-			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE130 },
-			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE120() },
-			filter: { dropdown: c.CHOICES_FILTER_2 },
+			gain: { cmd: 'OGU:', dropdown: e.ENUM_GAIN_HE130 },
+			shut: { cmd: 'OSH:', dropdown: e.ENUM_SHUTTER_HE130 },
+			ped: { cmd: 'OTP:', dropdown: e.ENUM_PEDESTAL_HE120() },
+			filter: { dropdown: e.ENUM_FILTER_2 },
+			ois: { dropdown: e.ENUM_OIS_OTHER },
 			preset: true,
 			speedPset: true,
 			timePset: false,
@@ -678,8 +693,8 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
-			whiteBalance: { dropdown: c.CHOICES_WB_SET },
-			colorTemperature: { cmd: 'OSD:B1:', dropdown: c.CHOICES_COLOR_TEMPERATURE_HE130 },
+			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
+			colorTemperature: { dropdown: e.ENUM_COLOR_TEMPERATURE_HE130 },
 		},
 	},
 
@@ -720,10 +735,11 @@ export const SERIES_SPECS = [
 			OAF: true,
 			OTAF: true,
 			iris: true,
-			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HR140 },
-			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE130 },
-			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE120() },
-			filter: { dropdown: c.CHOICES_FILTER_2 },
+			gain: { cmd: 'OGU:', dropdown: e.ENUM_GAIN_HR140 },
+			shut: { cmd: 'OSH:', dropdown: e.ENUM_SHUTTER_HE130 },
+			ped: { cmd: 'OTP:', dropdown: e.ENUM_PEDESTAL_HE120() },
+			filter: { dropdown: e.ENUM_FILTER_2 },
+			ois: { dropdown: e.ENUM_OIS_HR140 },
 			preset: true,
 			speedPset: true,
 			timePset: false,
@@ -732,8 +748,8 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
-			whiteBalance: { dropdown: c.CHOICES_WB_SET },
-			colorTemperature: { cmd: 'OSD:B1:', dropdown: c.CHOICES_COLOR_TEMPERATURE_HE130 },
+			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
+			colorTemperature: { dropdown: e.ENUM_COLOR_TEMPERATURE_HE130 },
 		},
 	},
 
@@ -774,10 +790,11 @@ export const SERIES_SPECS = [
 			OAF: false,
 			OTAF: false,
 			iris: false, // supports only 1 (Auto)
-			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_UE4 },
-			shut: { cmd: 'OSJ:06:', dropdown: c.CHOICES_SHUTTER_UE4 },
+			gain: { cmd: 'OGU:', dropdown: e.ENUM_GAIN_UE4 },
+			shut: { cmd: 'OSJ:06:', dropdown: e.ENUM_SHUTTER_UE4 },
 			ped: false,
 			filter: false,
+			ois: false,
 			preset: true,
 			speedPset: false,
 			timePset: false,
@@ -786,7 +803,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
-			whiteBalance: { dropdown: c.CHOICES_WB_SET },
+			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
 			colorTemperature: false,
 		},
 	},
@@ -827,10 +844,11 @@ export const SERIES_SPECS = [
 			OAF: false,
 			OTAF: false,
 			iris: false,
-			gain: { cmd: 'OGS:', dropdown: c.CHOICES_GAIN_UB300 },
-			shut: { cmd: 'OSG:5D:', dropdown: c.CHOICES_SHUTTER_UB300 },
-			ped: { cmd: 'OSG:4A:', dropdown: c.CHOICES_PEDESTAL_UB300() },
-			filter: { dropdown: c.CHOICES_FILTER_3 },
+			gain: { cmd: 'OGS:', dropdown: e.ENUM_GAIN_UB300 },
+			shut: { cmd: 'OSG:5D:', dropdown: e.ENUM_SHUTTER_UB300 },
+			ped: { cmd: 'OSG:4A:', dropdown: e.ENUM_PEDESTAL_UB300() },
+			filter: { dropdown: e.ENUM_FILTER_3 },
+			ois: false,
 			preset: false,
 			speedPset: false,
 			timePset: false,
@@ -886,10 +904,11 @@ export const SERIES_SPECS = [
 			OAF: true,
 			OTAF: true,
 			iris: true,
-			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_CX350 },
+			gain: { cmd: 'OGU:', dropdown: e.ENUM_GAIN_CX350 },
 			shut: false,
-			ped: { cmd: 'OSJ:0F:', dropdown: c.CHOICES_PEDESTAL_UE150() },
-			filter: { dropdown: c.CHOICES_FILTER_3 },
+			ped: { cmd: 'OSJ:0F:', dropdown: e.ENUM_PEDESTAL_UE150() },
+			filter: { dropdown: e.ENUM_FILTER_3 },
+			ois: { dropdown: e.ENUM_OIS_OTHER },
 			preset: false,
 			speedPset: false,
 			timePset: false,
@@ -899,7 +918,7 @@ export const SERIES_SPECS = [
 			tally2: true,
 			ins: false,
 			sdCard: true,
-			whiteBalance: { dropdown: c.CHOICES_WB_SET },
+			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
 			colorTemperature: false,
 		},
 	},

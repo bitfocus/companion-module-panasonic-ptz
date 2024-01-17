@@ -1,8 +1,8 @@
-export const c = {
+export const e = {
 	// ########################
 	// #### Value Look Ups ####
 	// ########################
-	CHOICES_SPEED: [
+	ENUM_SPEED: [
 		{ id: 49, label: 'Speed 49 (Fast)' },
 		{ id: 48, label: 'Speed 48' },
 		{ id: 47, label: 'Speed 47' },
@@ -55,7 +55,7 @@ export const c = {
 		{ id: 0, label: 'Stop' },
 	],
 
-	CHOICES_IRIS: [
+	ENUM_IRIS: [
 		{ id: "01", label: "Iris 1 (Closed)" },
 		{ id: "02", label: "Iris 2" },
 		{ id: "03", label: "Iris 3" },
@@ -160,7 +160,7 @@ export const c = {
 	// #######################
 	// #### Gain Look Ups ####
 	// #######################
-	CHOICES_GAIN_HE40: [
+	ENUM_GAIN_HE40: [
 		{ id: '80', label: 'Auto' },
 		{ id: '08', label: '0dB' },
 		{ id: '0B', label: '3db' },
@@ -180,7 +180,7 @@ export const c = {
 		{ id: '35', label: '45dB' },
 		{ id: '38', label: '48dB' },
 	],
-	CHOICES_GAIN_HE50: [
+	ENUM_GAIN_HE50: [
 		{ id: '80', label: 'Auto' },
 		{ id: '08', label: '0dB' },
 		{ id: '0B', label: '3db' },
@@ -190,7 +190,7 @@ export const c = {
 		{ id: '17', label: '15dB' },
 		{ id: '1A', label: '18dB' },
 	],
-	CHOICES_GAIN_HE120: [
+	ENUM_GAIN_HE120: [
 		{ id: '80', label: 'Auto' },
 		{ id: '08', label: '0dB' },
 		{ id: '09', label: '1dB' },
@@ -212,7 +212,7 @@ export const c = {
 		{ id: '19', label: '17dB' },
 		{ id: '1A', label: '18dB' },
 	],
-	CHOICES_GAIN_HE130: [
+	ENUM_GAIN_HE130: [
 		{ id: '80', label: 'Auto' },
 		{ id: '08', label: '0dB' },
 		{ id: '09', label: '1dB' },
@@ -252,7 +252,7 @@ export const c = {
 		{ id: '2B', label: '35dB' },
 		{ id: '2C', label: '36dB' },
 	],
-	CHOICES_GAIN_HR140: [
+	ENUM_GAIN_HR140: [
 		{ id: '80', label: 'Auto' },
 		{ id: '08', label: '0dB' },
 		{ id: '09', label: '1dB' },
@@ -298,7 +298,7 @@ export const c = {
 		{ id: '31', label: '41dB' },
 		{ id: '32', label: '42dB' },
 	],
-	CHOICES_GAIN_UE4: [
+	ENUM_GAIN_UE4: [
 		{ id: '08', label: '0dB' },
 		{ id: '0B', label: '3db' },
 		{ id: '0E', label: '6dB' },
@@ -315,7 +315,7 @@ export const c = {
 		{ id: '2F', label: '39dB' },
 		{ id: '32', label: '42dB' },
 	],
-	CHOICES_GAIN_UE150: [
+	ENUM_GAIN_UE150: [
 		{ id: '80', label: 'Auto' },
 		{ id: '05', label: '-3dB' },
 		{ id: '06', label: '-2dB' },
@@ -364,7 +364,7 @@ export const c = {
 		{ id: '31', label: '41dB' },
 		{ id: '32', label: '42dB' },
 	],
-	CHOICES_GAIN_CX350: [
+	ENUM_GAIN_CX350: [
 		{ id: '80', label: 'Auto' },
 		{ id: '81', label: 'Manual' },
 		{ id: '02', label: '-6dB' },
@@ -417,7 +417,7 @@ export const c = {
 		{ id: '31', label: '41dB' },
 		{ id: '32', label: '42dB' },
 	],
-	CHOICES_GAIN_UE160: [
+	ENUM_GAIN_UE160: [
 		{ id: '80', label: 'Auto' },
 		{ id: '04', label: '-4dB' },
 		{ id: '05', label: '-3dB' },
@@ -437,7 +437,7 @@ export const c = {
 		{ id: '13', label: '11dB' },
 		{ id: '14', label: '12dB' },
 	],
-	CHOICES_GAIN_UB300: [
+	ENUM_GAIN_UB300: [
 		{ id: '01', label: 'LOW' },
 		{ id: '04', label: 'MID' },
 		{ id: '08', label: 'HIGH' },
@@ -445,14 +445,14 @@ export const c = {
 		{ id: '0C', label: 'S.GAIN2' },
 		{ id: '0E', label: 'S.GAIN3' },
 	],
-	CHOICES_GAIN_OTHER: function () {
-		return this.CHOICES_GAIN_CX350
+	ENUM_GAIN_OTHER: function () {
+		return this.ENUM_GAIN_CX350
 	},
 
 	// ##########################
 	// #### Shutter Look Ups ####
 	// ##########################
-	CHOICES_SHUTTER_OTHER: [
+	ENUM_SHUTTER_OTHER: [
 		{ id: '0', label: 'OFF' },
 		{ id: '1', label: '1/50' },
 		{ id: '2', label: '1/60' },
@@ -470,7 +470,7 @@ export const c = {
 		{ id: 'E', label: '1/25' },
 		{ id: 'F', label: '1/30' },
 	],
-	CHOICES_SHUTTER_HE40: [
+	ENUM_SHUTTER_HE40: [
 		{ id: '0', label: 'OFF' },
 		{ id: '3', label: '1/100 (59.94Hz) or 1/120 (50Hz)' },
 		{ id: '5', label: '1/250' },
@@ -481,7 +481,7 @@ export const c = {
 		{ id: 'A', label: '1/10000' },
 		{ id: 'B', label: 'Syncro Scan' },
 	],
-	CHOICES_SHUTTER_HE120: [
+	ENUM_SHUTTER_HE120: [
 		{ id: '0', label: 'OFF' },
 		{ id: '3', label: '1/100 (59.94Hz) or 1/120 (50Hz)' },
 		{ id: '5', label: '1/250' },
@@ -493,7 +493,7 @@ export const c = {
 		{ id: 'B', label: 'Syncro Scan' },
 		{ id: 'C', label: 'ELC' },
 	],
-	CHOICES_SHUTTER_HE130: [
+	ENUM_SHUTTER_HE130: [
 		{ id: '0', label: 'OFF' },
 		{ id: '2', label: '1/60' },
 		{ id: '3', label: '1/100' },
@@ -510,7 +510,7 @@ export const c = {
 		{ id: 'E', label: '1/25' },
 		{ id: 'F', label: '1/30' },
 	],
-	CHOICES_SHUTTER_UE4: [
+	ENUM_SHUTTER_UE4: [
 		{ id: '0001', label: '1/1' },
 		{ id: '0002', label: '1/2' },
 		{ id: '0005', label: '1/5' },
@@ -532,7 +532,7 @@ export const c = {
 		{ id: '1F40', label: '1/8000' },
 		{ id: '3E80', label: '1/16000' },
 	],
-	CHOICES_SHUTTER_UB300: [
+	ENUM_SHUTTER_UB300: [
 		{ id: '00', label: '1/48' },
 		{ id: '01', label: '1/50' },
 		{ id: '02', label: '1/60' },
@@ -552,7 +552,7 @@ export const c = {
 		{ id: '10', label: '90.0 deg' },
 		{ id: '11', label: '45.0 deg' },
 	],
-	CHOICES_SHUTTER_UE150: [
+	ENUM_SHUTTER_UE150: [
 		{ id: '0', label: 'OFF' },
 		{ id: '1', label: 'Step' },
 		{ id: '2', label: 'Synchro Scan' },
@@ -562,7 +562,7 @@ export const c = {
 	// ############################
 	// #### ND Filter Look Ups ####
 	// ############################
-	CHOICES_FILTER_OTHER: [
+	ENUM_FILTER_OTHER: [
 		{ id: '0', label: 'Clear (Through)' },
 		{ id: '1', label: '1/4 ND' },
 		{ id: '2', label: '1/16 ND' },
@@ -570,20 +570,20 @@ export const c = {
 		{ id: '4', label: '1/8 ND' },
 		{ id: '8', label: 'AUTO ND' },
 	],
-	CHOICES_FILTER_3A: [
+	ENUM_FILTER_3A: [
 		{ id: '0', label: 'Clear (Through)' },
 		{ id: '1', label: '1/4 ND' },
 		{ id: '2', label: '1/16 ND' },
 		{ id: '3', label: '1/64 ND' },
 		{ id: '8', label: 'AUTO ND' },
 	],
-	CHOICES_FILTER_3: [
+	ENUM_FILTER_3: [
 		{ id: '0', label: 'Clear (Through)' },
 		{ id: '1', label: '1/4 ND' },
 		{ id: '2', label: '1/16 ND' },
 		{ id: '3', label: '1/64 ND' },
 	],
-	CHOICES_FILTER_2: [
+	ENUM_FILTER_2: [
 		{ id: '0', label: 'Clear (Through)' },
 		{ id: '3', label: '1/64 ND' },
 		{ id: '4', label: '1/8 ND' },
@@ -592,29 +592,29 @@ export const c = {
 	// ######################
 	// #### OIS Look Ups ####
 	// ######################
-	CHOICES_OIS_OTHER: [
+	ENUM_OIS_OTHER: [
 		{ id: '0', label: 'OFF' },
 		{ id: '1', label: 'ON' },
 	],
-	CHOICES_OIS_HR140: [
+	ENUM_OIS_HR140: [
 		{ id: '0', label: 'OFF' },
 		{ id: '1', label: 'OIS' },
 		{ id: '2', label: 'Dynamic I.S. System' },
 	],
-	CHOICES_OIS_UE100: [
+	ENUM_OIS_UE100: [
 		{ id: '0', label: 'OFF' },
 		{ id: '1', label: 'OIS' },
 		{ id: '2', label: 'Hybrid (STABLE)' },
 		{ id: '3', label: 'Hybrid (PAN/TILT)' },
 	],
-	CHOICES_OIS_UE160: [
+	ENUM_OIS_UE160: [
 		{ id: '0', label: 'OFF' },
 		{ id: '1', label: 'OIS (STABLE)' },
 		{ id: '2', label: 'OIS (PAN/TILT)' },
 		{ id: '3', label: 'Hybrid (STABLE)' },
 		{ id: '4', label: 'Hybrid (PAN/TILT)' },
 	],
-	CHOICES_OIS_UE80: [
+	ENUM_OIS_UE80: [
 		{ id: '0', label: 'OFF' },
 		{ id: '1', label: 'OIS (STABLE)' },
 		{ id: '2', label: 'OIS (PAN/TILT)' },
@@ -623,7 +623,7 @@ export const c = {
 	// ###############################
 	// #### Preset Speed Look Ups ####
 	// ###############################
-	CHOICES_PSSPEED: [
+	ENUM_PSSPEED: [
 		{ id: 999, label: 'Speed 30 (Fast)' },
 		{ id: 975, label: 'Speed 29' },
 		{ id: 950, label: 'Speed 28' },
@@ -655,7 +655,7 @@ export const c = {
 		{ id: 300, label: 'Speed 02' },
 		{ id: 275, label: 'Speed 01 (Slow)' },
 	],
-	CHOICES_PSTIME: function () {
+	ENUM_PSTIME: function () {
 		const p = []
 		for (let i = 1; i <= 99; ++i) {
 			p.push({ id: ('00' + i.toString(16)).substr(-3, 3).toUpperCase(), label: i + ' Sec' })
@@ -666,7 +666,7 @@ export const c = {
 	// ####################################
 	// #### Color Temperature Look Ups ####
 	// ####################################
-	CHOICES_COLOR_TEMPERATURE_HE40: [
+	ENUM_COLOR_TEMPERATURE_HE40: [
 		{ "id": "000", "label": "2400K" },
 		{ "id": "001", "label": "2500K" },
 		{ "id": "002", "label": "2600K" },
@@ -744,7 +744,7 @@ export const c = {
 		{ "id": "04A", "label": "9800K" },
 		{ "id": "04B", "label": "9900K" },
 	],
-	CHOICES_COLOR_TEMPERATURE_HE130: [
+	ENUM_COLOR_TEMPERATURE_HE130: [
 		{ "id": "000", "label": "2000K" },
 		{ "id": "001", "label": "2010K" },
 		{ "id": "002", "label": "2020K" },
@@ -871,7 +871,7 @@ export const c = {
 	// ################################
 	// #### White Balance Look Ups ####
 	// ################################
-	CHOICES_WB_SET: [
+	ENUM_WHITEBALANCE_SET: [
 		{ id: '0', label: 'ATW' },
 		{ id: '1', label: 'AWC A' },
 		{ id: '2', label: 'AWC B' },
@@ -879,7 +879,7 @@ export const c = {
 		{ id: '5', label: 'Preset 5600K' },
 		{ id: '9', label: 'VAR' },
 	],
-	CHOICES_WB_GET: [
+	ENUM_WHITEBALANCE_GET: [
 		{ id: '0', label: 'ATW' },
 		{ id: '1', label: 'AWC A' },
 		{ id: '2', label: 'AWC B' },
@@ -895,7 +895,7 @@ export const c = {
 	// #########################
 	// #### Preset Look Ups ####
 	// #########################
-	CHOICES_PRESET: [
+	ENUM_PRESET: [
 		{ id: "00", label: "Preset 1" },
 		{ id: "01", label: "Preset 2" },
 		{ id: "02", label: "Preset 3" },
@@ -1001,42 +1001,42 @@ export const c = {
 	// ###########################
 	// #### Pedestal Look Ups ####
 	// ###########################
-	CHOICES_PEDESTAL_HE40: function () {
+	ENUM_PEDESTAL_HE40: function () {
 		const p = []
 		for (let i = -10; i <= 10; ++i) {
 			p.push({id: ((0x96 + (i * 15)).toString(16)).toUpperCase().padStart(3, '0'), label: 'Pedestal ' + i.toString() })
 		}
 		return p
 	},
-	CHOICES_PEDESTAL_HE120: function () {
+	ENUM_PEDESTAL_HE120: function () {
 		const p = []
 		for (let i = -150; i <= 150; ++i) {
 			p.push({ id: ((0x96 + i).toString(16)).toUpperCase().padStart(3, '0'), label: 'Pedestal ' + i.toString() })
 		}
 		return p
 	},
-	CHOICES_PEDESTAL_UE150: function () {
+	ENUM_PEDESTAL_UE150: function () {
 		const p = []
 		for (let i = -200; i <= 200; ++i) {
 			p.push({ id: ((0x800 + i).toString(16)).toUpperCase().padStart(3, '0'), label: 'Pedestal ' + i.toString() })
 		}
 		return p
 	},
-	CHOICES_PEDESTAL_UE20: function () {
+	ENUM_PEDESTAL_UE20: function () {
 		const p = []
 		for (let i = -10; i <= 10; ++i) {
 			p.push({ id: ((0x800 + i).toString(16)).toUpperCase().padStart(3, '0'), label: 'Pedestal ' + i.toString() })
 		}
 		return p
 	},
-	CHOICES_PEDESTAL_UB300: function () {
+	ENUM_PEDESTAL_UB300: function () {
 		const p = []
 		for (let i = -99; i <= 99; ++i) {
 			p.push({ id: ((0x80 + i).toString(16)).toUpperCase().padStart(2, '0'), label: 'Pedestal ' + i.toString() })
 		}
 		return p
 	},
-	CHOICES_PEDESTAL_OTHER: function () {
-		return this.CHOICES_PEDESTAL_HE120()
+	ENUM_PEDESTAL_OTHER: function () {
+		return this.ENUM_PEDESTAL_HE120()
 	},
 }
