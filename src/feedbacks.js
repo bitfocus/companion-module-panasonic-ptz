@@ -16,7 +16,7 @@ export function getFeedbackDefinitions(self) {
 	const backgroundColorGreen = combineRgb(0, 255, 0) // Green
 	const backgroundColorOrange = combineRgb(255, 102, 0) // Orange
 
-	if (SERIES.feedbacks.powerState) {
+	if (SERIES.capabilities.power) {
 		feedbacks.powerState = {
 			type: 'boolean',
 			name: 'System - Power State',
@@ -32,7 +32,7 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
-	if (SERIES.feedbacks.colorbarState) {
+	if (SERIES.capabilities.colorbar) {
 		feedbacks.colorbarState = {
 			type: 'boolean',
 			name: 'System - Color Bar State',
@@ -48,7 +48,7 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
-	if (SERIES.feedbacks.tallyState) {
+	if (SERIES.capabilities.tally) {
 		feedbacks.tallyState = {
 			type: 'boolean',
 			name: 'System - Red Tally State',
@@ -64,7 +64,7 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
-	if (SERIES.feedbacks.tally2State) {
+	if (SERIES.capabilities.tally2) {
 		feedbacks.tally2State = {
 			type: 'boolean',
 			name: 'System - Green Tally State',
@@ -80,7 +80,7 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
-	if (SERIES.feedbacks.tally3State) {
+	if (SERIES.capabilities.tally3) {
 		feedbacks.tally3State = {
 			type: 'boolean',
 			name: 'System - Yellow Tally State',
@@ -96,8 +96,8 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
-	if (SERIES.feedbacks.insState) {
-		feedbacks.insState = {
+	if (SERIES.capabilities.install) {
+		feedbacks.installState = {
 			type: 'boolean',
 			name: 'System - Install Position',
 			description: 'Indicates the currently selected mounting position',
@@ -136,7 +136,7 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
-	if (SERIES.feedbacks.autoFocus) {
+	if (SERIES.capabilities.autoFocus) {
 		feedbacks.autoFocus = {
 			type: 'boolean',
 			name: 'Lens - Auto Focus State',
@@ -152,7 +152,7 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
-	if (SERIES.feedbacks.autoIris) {
+	if (SERIES.capabilities.autoIris) {
 		feedbacks.autoIris = {
 			type: 'boolean',
 			name: 'Lens - Auto Iris State',
@@ -168,7 +168,7 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
-	if (SERIES.feedbacks.preset) {
+	if (SERIES.capabilities.preset) {
 		feedbacks.recallModePset = {
 			type: 'boolean',
 			name: 'Preset - Mode A, B, C',
@@ -237,7 +237,7 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
-	if (SERIES.feedbacks.whiteBalance) {
+	if (SERIES.capabilities.whiteBalance) {
 		feedbacks.whiteBalanceMode = {
 			type: 'boolean',
 			name: 'White Balance - Mode',

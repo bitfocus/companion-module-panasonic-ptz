@@ -391,12 +391,16 @@ class PanasonicPTZInstance extends InstanceBase {
 				}
 				break
 			case 'OSI':
-				if (str[1] == '20') {
-					this.data.colorTempLabel = parseInt(str[2], 16).toString() + 'K' // VAR
+				switch (str[1]) {
+					case '20': this.data.colorTempLabel = parseInt(str[2], 16).toString() + 'K'; break; // VAR
+					// case 'D2': this.data.filter = str[2]; break // UB300's additional "Intelligent ND Filter"
 				}
 				break
 			case 'OSH':
 				this.data.shutter = str[1].substring(2)
+				break
+			case 'OFT':
+				this.data.filter = str[1]
 				break
 			case 'OSE':
 				if (str[1] == '71') {
@@ -425,7 +429,21 @@ class PanasonicPTZInstance extends InstanceBase {
 					case '4A': this.data.colorTempLabel = parseInt(str[2], 16).toString() + 'K'; break // AWB A/B
 					//case '4B': this.data.redGainValue = parseInt(str[2], 16) - 0x800; break // AWB A/B
 					//case '4C': this.data.blueGainValue = parseInt(str[2], 16) - 0x800; break // AWB A/B
+					case 'D2': this.data.filter = str[2]; break
 				}
+				break
+			case 'OSL':
+				switch (str[1]) {
+					case 'B6': this.data.autotracking = str[2]; break // Auto Tracking Mode 
+					case 'B7': this.data.autotrackingAngle = str[2]; break // Angle
+					case 'BB':
+						switch (str[2]) {
+							case '0': this.data.autotrackingStatusLabel = 'Not Tracking'; break
+							case '1': this.data.autotrackingStatusLabel = 'Tracking'; break
+							case '2': this.data.autotrackingStatusLabel = 'Lost'; break
+						}
+						break
+					}
 				break
 			case 'OGS':
 			case 'OGU':
@@ -481,6 +499,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			version: null,
 
 			// booleans
+			autotracking: null,
 			colorbar: null,
 			power: null,
 			tally: null,
@@ -489,6 +508,7 @@ class PanasonicPTZInstance extends InstanceBase {
 
 			// unresolved enums
 			colorTemperature: null,
+			filter: null,
 			gain: null,
 			ois: null,
 			shutter: null,
@@ -518,6 +538,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			presetRecallMode: null,
 
 			// other strings
+			autotrackingStatusLabel: null,
 			colorTempLabel: null,
 			errorLabel: null,
 			irisLabel: null,
