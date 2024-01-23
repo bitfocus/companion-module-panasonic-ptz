@@ -507,6 +507,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			tally3: null,
 
 			// unresolved enums
+			autotrackingAngle: null,
 			colorTemperature: null,
 			filter: null,
 			gain: null,
