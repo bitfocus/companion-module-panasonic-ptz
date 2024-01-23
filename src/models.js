@@ -102,7 +102,7 @@ export const SERIES_SPECS = [
 			tally2: true, // Has Green Tally (TLG)
 			tally3: true, // Has Yellow Tally (TLY)
 			tally: true, // Has Red Tally (TLR or DA1/DA0)
-			trackingAuto: true, // Has Autotracking features
+			trackingAuto: true, // Has Autotracking features (OSL:B6 - OSL:C2)
 			version: true, // Camera sends a firmware version string every minute (qSV3)
 			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },  // Has White Balance Modes (OAW)
 			zoom: true, // Has Zoom Control (Zxx)
