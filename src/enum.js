@@ -879,6 +879,16 @@ export const e = {
 		{ id: '5', label: 'Preset 5600K' },
 		{ id: '9', label: 'VAR' },
 	],
+	ENUM_WHITEBALANCE_SET_HE2: [
+		{ id: '0', label: 'ATW' },
+		{ id: '1', label: 'AWC A' },
+		{ id: '2', label: 'AWC B' },
+		{ id: '4', label: 'Preset 3200K' },
+		{ id: '5', label: 'Preset 5600K' },
+		{ id: '6', label: 'Preset 4500K' },
+		{ id: '7', label: 'Preset 6000K' },	
+		{ id: '8', label: 'Preset 2800K' },
+	],
 	ENUM_WHITEBALANCE_GET: [
 		{ id: '0', label: 'ATW' },
 		{ id: '1', label: 'AWC A' },
