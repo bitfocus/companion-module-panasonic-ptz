@@ -73,9 +73,9 @@ export const SERIES_SPECS = [
 		// Includes all Actions / Variables / Feedbacks
 		id: 'Other',
 		capabilities: {
-			colorGain: { cmd: { red: 'ORG', blue: 'OBG' }, offset: 0x1e, limit: 30 }, // Has numbered red/blue Gain (ORG and OBG)
-			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' } }, // Has numbered red/blue Pedestal (ORP or OBP)
-			colorTemp: { dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 }, // Has enumerated Color Temperature Control (OSD:B1)
+			colorGain: { cmd: { red: 'ORP', blue: 'OBP', green: 'OSJ:10' }, offset: 0x96, limit: 150 }, // Has numbered red/blue Gain (ORG and OBG)
+			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 150 }, // Has numbered red/blue Pedestal (ORP or OBP)
+			colorTemp: false, // Has enumerated Color Temperature Control (OSD:B1)
 			colorTempAdv: true, // Has advanced Color Temperature (OSI:20)
 			colorbar: true, // Has Color Bar Control (DCB:1 or DCB:0)
 			error: true, // Camera can return enumerated error messages (rER)
@@ -83,20 +83,20 @@ export const SERIES_SPECS = [
 			focus: true, // Has Focus Control (Fxx)
 			focusAuto: true, // Has Auto Focus (OAF)
 			focusPushAuto: true, // Has Push Auto Focus feature (OSE:69:1)
-			gain: { cmd: 'OGS', dropdown: e.ENUM_GAIN_OTHER() }, // Has Gain (OGS/OGU)
+			gain: { cmd: 'OGS', dropdown: e.ENUM_GAIN_CX350 }, // Has Gain (OGS/OGU)
 			install: true, // Has support for Desktop or Hanging Install Position (iNS1/iNS0)
 			iris: true, // Has Iris Control (Ixx)
 			irisAuto: true, // Has Auto Iris (d31/d30)
 			ois: { dropdown: e.ENUM_OIS_OTHER }, // Has Optical Image Stabilisation Control (OIS)
 			panTilt: true, // Has Pan/Tilt Head support (PTSxx)
-			pedestal: { cmd: 'OSJ:0F', dropdown: e.ENUM_PEDESTAL_OTHER() }, // Has Master Pedestal (OTD, OSJ:0F or OSG:4A)
+			pedestal: { cmd: 'OSJ:0F', offset: 0x800, limit: 200 }, // Has Master Pedestal (OTD, OSJ:0F or OSG:4A)
 			power: true, // Has Power Control (p1/p0 and O1/O0)
 			preset: true, // Has Preset operations (Mxxx, Rxxx and Cxxx) and states (sXX and qXX)
 			presetSpeed: true, // Has Preset Recall Speed Control (UPVSxx)
 			presetTime: true, // Has additional Preset Recall Time Control (UPVSxx and OSJ:29:1)
 			recordSD: true, // Has SD Card Recording Control (sdctrl?save=start or sdctrl?save=end)
-			shutter: { dropdown: e.ENUM_SHUTTER_OTHER }, // Has Shutter Support (OSH)
-			shutterAdv: true, // Has modern shutter mode selection, Inc/Dec step control and numeric state (OSJ:03 - OSJ:06)
+			shutter: false, // Has Shutter Support (OSH)
+			shutterAdv: { dropdown: e.ENUM_SHUTTER_ADV }, // Has modern shutter mode selection, Inc/Dec step control and numeric state (OSJ:03 - OSJ:06)
 			streamRTMP: true, // Has RTMP (Client) Streaming Control (rtmp_ctrl?cmd=start or rtmp_ctrl?cmd=stop)
 			streamSRT: true, // Has SRT (Caller) Streaming Control (srt_ctrl?cmd=start or srt_ctrl?cmd=stop)
 			subscription: true, // Camera supports subscription to TCP-based event notification
@@ -260,7 +260,7 @@ export const SERIES_SPECS = [
 			presetTime: true,
 			recordSD: false,
 			shutter: false,
-			shutterAdv: { dropdown: e.ENUM_SHUTTER_UE150 },
+			shutterAdv: { dropdown: e.ENUM_SHUTTER_ADV },
 			streamRTMP: true,
 			streamSRT: true,
 			subscription: true,
@@ -301,7 +301,7 @@ export const SERIES_SPECS = [
 			presetTime: true,
 			recordSD: false,
 			shutter: false,
-			shutterAdv: { dropdown: e.ENUM_SHUTTER_UE150 },
+			shutterAdv: { dropdown: e.ENUM_SHUTTER_ADV },
 			streamRTMP: true,
 			streamSRT: true,
 			subscription: true,

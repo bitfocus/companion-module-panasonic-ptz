@@ -445,9 +445,6 @@ export const e = {
 		{ id: '0C', label: 'S.GAIN2' },
 		{ id: '0E', label: 'S.GAIN3' },
 	],
-	ENUM_GAIN_OTHER: function () {
-		return this.ENUM_GAIN_CX350
-	},
 
 	// ##########################
 	// #### Shutter Look Ups ####
@@ -552,7 +549,7 @@ export const e = {
 		{ id: '10', label: '90.0 deg' },
 		{ id: '11', label: '45.0 deg' },
 	],
-	ENUM_SHUTTER_UE150: [
+	ENUM_SHUTTER_ADV: [
 		{ id: '0', label: 'OFF' },
 		{ id: '1', label: 'Step' },
 		{ id: '2', label: 'Synchro Scan' },
