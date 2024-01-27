@@ -112,24 +112,10 @@ class PanasonicPTZInstance extends InstanceBase {
 				// Catch uncaught Exception"EADDRINUSE" error that orcures if the port is already in use
 				if (err.code === 'EADDRINUSE') {
 					// self.log('error', "TCP error: " + String(err));
-					this.log(
-						'error',
-						'TCP error: Please use another TCP port, ' +
-							tcpPortSelected +
-							' is already in use'
-					)
-					this.log(
-						'error',
-						'TCP error: The TCP port must be unique between instances'
-					)
-					this.log(
-						'error',
-						'TCP error: Please change it and click apply in ALL PTZ instances'
-					)
-					this.updateStatus(
-						InstanceStatus.UnknownError,
-						'TCP Port in use'
-					)
+					this.log('error', 'TCP error: Please use another TCP port, ' + tcpPortSelected + ' is already in use')
+					this.log('error', 'TCP error: The TCP port must be unique between instances')
+					this.log('error', 'TCP error: Please change it and click apply in ALL PTZ instances')
+					this.updateStatus(InstanceStatus.UnknownError, 'TCP Port in use')
 
 					// Cancel the subscription of info from the PTZ
 					this.unsubscribeTCPEvents(tcpPortSelected).catch(() => null)
@@ -150,25 +136,13 @@ class PanasonicPTZInstance extends InstanceBase {
 				tcpPortSelected = this.server.address().port
 				this.tcpPortSelected = tcpPortSelected
 
-				this.log(
-					'info',
-					'Listening for PTZ updates on localhost:' + tcpPortSelected
-				)
+				this.log('info', 'Listening for PTZ updates on localhost:' + tcpPortSelected)
 
 				// Subscibe to updates from PTZ
 				this.subscribeTCPEvents(tcpPortSelected)
 			} catch (err) {
-				this.log(
-					'error',
-					"Couldn't bind to TCP port " +
-						tcpPortSelected +
-						' on localhost: ' +
-						String(err)
-				)
-				this.updateStatus(
-					InstanceStatus.UnknownError,
-					'TCP Port failure'
-				)
+				this.log('error', "Couldn't bind to TCP port " + tcpPortSelected + ' on localhost: ' + String(err))
+				this.updateStatus(InstanceStatus.UnknownError, 'TCP Port failure')
 			}
 
 			// Catch uncaught Exception errors that orcure
@@ -234,16 +208,13 @@ class PanasonicPTZInstance extends InstanceBase {
 					this.updateStatus(InstanceStatus.Ok)
 
 					if (response.body) {
-						const lines = response.body.split('\r\n') // Split Data in order to remove data before and after command
+						const lines = response.body.trim().split('\r\n') // Split Data in order to remove data before and after command
 
 						for (let line of lines) {
 							// remove new line, carage return and so on.
 							const str = line.trim().split('=') // Split keys and values
 							if (this.config.debug) {
-								this.log(
-									'info',
-									'Received INFO: ' + String(str)
-								)
+								this.log('info', 'Received INFO: ' + String(str))
 							}
 							// Store Data
 							this.parseInfo(str)
@@ -254,12 +225,7 @@ class PanasonicPTZInstance extends InstanceBase {
 					}
 				})
 				.catch((err) => {
-					this.log(
-						'error',
-						'Error checking basic communication and receiving model info from PTZ: ' +
-							String(err)
-					)
-
+					this.log('error', 'Error checking basic communication and receiving model info from PTZ: ' + String(err))
 					this.updateStatus(InstanceStatus.ConnectionFailure)
 				})
 		}
@@ -301,16 +267,13 @@ class PanasonicPTZInstance extends InstanceBase {
 			got.get(url)
 				.then((response) => {
 					if (response.body) {
-						const lines = response.body.split('\r\n') // Split Data in order to remove data before and after command
+						const lines = response.body.trim().split('\r\n') // Split Data in order to remove data before and after command
 
 						for (let line of lines) {
 							// remove new line, carage return and so on.
 							const str = line.trim().split(':') // Split Commands and data
 							if (this.config.debug) {
-								this.log(
-									'info',
-									'Received Status: ' + String(str)
-								)
+								this.log('info', 'Received Status: ' + String(str))
 							}
 							// Store Data
 							this.parseStatus(str)
@@ -321,11 +284,7 @@ class PanasonicPTZInstance extends InstanceBase {
 					}
 				})
 				.catch((err) => {
-					this.log(
-						'error',
-						'Error requesting inital status from PTZ: ' +
-							String(err)
-					)
+					this.log('error', 'Error requesting inital status from PTZ: ' + String(err))
 				})
 		}
 	}
@@ -339,27 +298,15 @@ class PanasonicPTZInstance extends InstanceBase {
 		// Lens Position Information
 		if (str[0].substring(0, 2) === 'ax') {
 			switch (str[0].substring(2, 3)) {
-				case 'z':
-					this.data.zoomPosition =
-						parseInt(str[0].substring(3), 16) - 0x555
-					break
-				case 'f':
-					this.data.focusPosition =
-						parseInt(str[0].substring(3), 16) - 0x555
-					break
-				case 'i':
-					this.data.irisPosition =
-						parseInt(str[0].substring(3), 16) - 0x555
-					break
+				case 'z': this.data.zoomPosition = parseInt(str[0].substring(3), 16) - 0x555; break
+				case 'f': this.data.focusPosition = parseInt(str[0].substring(3), 16) - 0x555; break
+				case 'i': this.data.irisPosition = parseInt(str[0].substring(3), 16) - 0x555; break
 			}
 		}
 		if (str[0].substring(0, 3) === 'lPI') {
-			this.data.zoomPosition =
-				parseInt(str[0].substring(3, 6), 16) - 0x555
-			this.data.focusPosition =
-				parseInt(str[0].substring(6, 9), 16) - 0x555
-			this.data.irisPosition =
-				parseInt(str[0].substring(9, 12), 16) - 0x555
+			this.data.zoomPosition = parseInt(str[0].substring(3, 6), 16) - 0x555
+			this.data.focusPosition = parseInt(str[0].substring(6, 9), 16) - 0x555
+			this.data.irisPosition = parseInt(str[0].substring(9, 12), 16) - 0x555
 		}
 
 		if (str[0].substring(0, 1) === 'q') {
@@ -467,71 +414,38 @@ class PanasonicPTZInstance extends InstanceBase {
 			case 'OSE':
 				if (str[1] == '71') {
 					switch (str[2]) {
-						case '0':
-							this.data.presetRecallMode = 'Mode A'
-							break
-						case '1':
-							this.data.presetRecallMode = 'Mode B'
-							break
-						case '2':
-							this.data.presetRecallMode = 'Mode C'
-							break
+						case '0': this.data.presetRecallMode = 'Mode A'; break
+						case '1': this.data.presetRecallMode = 'Mode B'; break
+						case '2': this.data.presetRecallMode = 'Mode C'; break
 					}
 				}
 				break
 			case 'OSG':
 				switch (str[1]) {
-					case '39':
-						this.data.redGainValue = parseInt(str[2], 16) - 0x800
-						break
-					case '3A':
-						this.data.blueGainValue = parseInt(str[2], 16) - 0x800
-						break
-					case '4C':
-						this.data.redPedValue = parseInt(str[2], 16) - 0x800
-						break
-					case '4D':
-						this.data.greenPedValue = parseInt(str[2], 16) - 0x800
-						break
-					case '4E':
-						this.data.bluePedValue = parseInt(str[2], 16) - 0x800
-						break
+					case '39': this.data.redGainValue = parseInt(str[2], 16) - 0x800; break
+					case '3A': this.data.blueGainValue = parseInt(str[2], 16) - 0x800; break
+					case '4C': this.data.redPedValue = parseInt(str[2], 16) - 0x800; break
+					case '4D': this.data.greenPedValue = parseInt(str[2], 16) - 0x800; break
+					case '4E': this.data.bluePedValue = parseInt(str[2], 16) - 0x800; break
+					//case '5D': this.data.shutterStepLabel = str[2].substring(2); break // UB300 special case
 				}
 				break
 			case 'OSJ':
 				switch (str[1]) {
-					case '03':
-						this.data.shutter = str[2].substring(2)
-						break
-					case '06':
-						this.data.shutterStepLabel =
-							'1/' + parseInt(str[2], 16).toString()
-						break
-					case '10':
-						this.data.greenPedValue = parseInt(str[2], 16) - 0x96
-						break
-					case '0F':
-						this.data.masterPedValue = parseInt(str[2], 16) - 0x800
-						break
-					case '4A':
-						this.data.colorTempLabel =
-							parseInt(str[2], 16).toString() + 'K'
-						break // AWB A/B
+					case '03': this.data.shutter = str[2].substring(2); break
+					case '06': this.data.shutterStepLabel = '1/' + parseInt(str[2], 16).toString(); break
+					case '10': this.data.greenPedValue = parseInt(str[2], 16) - 0x96; break
+					case '0F': this.data.masterPedValue = parseInt(str[2], 16) - 0x800; break
+					case '4A': this.data.colorTempLabel = parseInt(str[2], 16).toString() + 'K'; break // AWB A/B
 					//case '4B': this.data.redGainValue = parseInt(str[2], 16) - 0x800; break // AWB A/B
 					//case '4C': this.data.blueGainValue = parseInt(str[2], 16) - 0x800; break // AWB A/B
-					case 'D2':
-						this.data.filter = str[2]
-						break
+					case 'D2': this.data.filter = str[2]; break
 				}
 				break
 			case 'OSL':
 				switch (str[1]) {
-					case 'B6':
-						this.data.autotracking = str[2]
-						break // Auto Tracking Mode
-					case 'B7':
-						this.data.autotrackingAngle = str[2]
-						break // Angle
+					case 'B6': this.data.autotracking = str[2]; break // Auto Tracking Mode
+					case 'B7': this.data.autotrackingAngle = str[2]; break // Angle
 					case 'BB':
 						switch (str[2]) {
 							case '0': this.data.autotrackingStatusLabel = 'Not Tracking'; break
@@ -665,8 +579,8 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.irisIndex = 50
 		this.filterVal = 0
 		this.filterIndex = 0
-		this.shutVal = 0
-		this.shutIndex = 0
+		this.shutterVal = 0
+		this.shutterIndex = 0
 		this.pedestalVal = '096'
 		this.pedestalIndex = 150
 		this.colorTemperatureValue = '000'

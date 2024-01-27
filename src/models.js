@@ -75,8 +75,7 @@ export const SERIES_SPECS = [
 		capabilities: {
 			colorGain: { cmd: { red: 'ORP', blue: 'OBP', green: 'OSJ:10' }, offset: 0x96, limit: 150 }, // Has numbered red/blue Gain (ORG and OBG)
 			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 150 }, // Has numbered red/blue Pedestal (ORP or OBP)
-			colorTemp: false, // Has enumerated Color Temperature Control (OSD:B1)
-			colorTempAdv: true, // Has advanced Color Temperature (OSI:20)
+			colorTemp: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', val: 'OSI:20', min: 2000, max: 15000 } }, // Has Color Temperature (OSD:B1 or OSI:20)
 			colorbar: true, // Has Color Bar Control (DCB:1 or DCB:0)
 			error: true, // Camera can return enumerated error messages (rER)
 			filter: { dropdown: e.ENUM_FILTER_OTHER }, // Has ND Filter Support (OFT)
@@ -95,8 +94,7 @@ export const SERIES_SPECS = [
 			presetSpeed: true, // Has Preset Recall Speed Control (UPVSxx)
 			presetTime: true, // Has additional Preset Recall Time Control (UPVSxx and OSJ:29:1)
 			recordSD: true, // Has SD Card Recording Control (sdctrl?save=start or sdctrl?save=end)
-			shutter: false, // Has Shutter Support (OSH)
-			shutterAdv: { dropdown: e.ENUM_SHUTTER_ADV }, // Has modern shutter mode selection, Inc/Dec step control and numeric state (OSJ:03 - OSJ:06)
+			shutter: { cmd: 'OSJ:03', inc: 'OSJ:04', dec: 'OSJ:05', dropdown: e.ENUM_SHUTTER_ADV }, // Has Shutter Support (OSH, OSJ:03 - OSJ:06, ...)
 			streamRTMP: true, // Has RTMP (Client) Streaming Control (rtmp_ctrl?cmd=start or rtmp_ctrl?cmd=stop)
 			streamSRT: true, // Has SRT (Caller) Streaming Control (srt_ctrl?cmd=start or srt_ctrl?cmd=stop)
 			subscription: true, // Camera supports subscription to TCP-based event notification
@@ -116,8 +114,7 @@ export const SERIES_SPECS = [
 		capabilities: {
 			colorGain: { cmd: { red: 'ORG', blue: 'OBG' }, offset: 0x1e, limit: 30 },
 			colorPedestal: false,
-			colorTemp: { dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 },
-			colorTempAdv: false,
+			colorTemp: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 } },
 			colorbar: true,
 			error: true,
 			filter: false,
@@ -137,7 +134,6 @@ export const SERIES_SPECS = [
 			presetTime: false,
 			recordSD: true,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE40 },
-			shutterAdv: false,
 			streamRTMP: false,
 			streamSRT: false,
 			subscription: true,
@@ -157,8 +153,7 @@ export const SERIES_SPECS = [
 		capabilities: {
 			colorGain: { cmd: { red: 'ORG', blue: 'OBG' }, offset: 0x1e, limit: 30 },
 			colorPedestal: false,
-			colorTemp: { dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 },
-			colorTempAdv: false,
+			colorTemp: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 } },
 			colorbar: true,
 			error: true,
 			filter: { dropdown: e.ENUM_FILTER_3A },
@@ -178,7 +173,6 @@ export const SERIES_SPECS = [
 			presetTime: false,
 			recordSD: true,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE40 },
-			shutterAdv: false,
 			streamRTMP: false,
 			streamSRT: false,
 			subscription: true,
@@ -198,8 +192,7 @@ export const SERIES_SPECS = [
 		capabilities: {
 			colorGain: { cmd: { red: 'ORG', blue: 'OBG' }, offset: 0x1e, limit: 30 },
 			colorPedestal: false,
-			colorTemp: { dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 },
-			colorTempAdv: false,
+			colorTemp: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 } },
 			colorbar: true,
 			error: true,
 			filter: { dropdown: e.ENUM_FILTER_3A },
@@ -219,7 +212,6 @@ export const SERIES_SPECS = [
 			presetTime: false,
 			recordSD: true,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE40 },
-			shutterAdv: false,
 			streamRTMP: false,
 			streamSRT: false,
 			subscription: true,
@@ -239,8 +231,7 @@ export const SERIES_SPECS = [
 		capabilities: {
 			colorGain: { cmd: { red: 'QSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 200 },
 			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP', green: 'OSJ:10' }, offset: 0x96, limit: 100 },
-			colorTemp: false,
-			colorTempAdv: true,
+			colorTemp: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', val: 'OSI:20', min: 2000, max: 15000 } },
 			colorbar: true,
 			error: true,
 			filter: { dropdown: e.ENUM_FILTER_3 },
@@ -259,8 +250,7 @@ export const SERIES_SPECS = [
 			presetSpeed: true,
 			presetTime: true,
 			recordSD: false,
-			shutter: false,
-			shutterAdv: { dropdown: e.ENUM_SHUTTER_ADV },
+			shutter: { cmd: 'OSJ:03', inc: 'OSJ:04', dec: 'OSJ:05', dropdown: e.ENUM_SHUTTER_ADV },
 			streamRTMP: true,
 			streamSRT: true,
 			subscription: true,
@@ -280,8 +270,7 @@ export const SERIES_SPECS = [
 		capabilities: {
 			colorGain: { cmd: { red: 'OSL:36', blue: 'OSL:38', green: 'OSL:37' }, offset: 0x800, limit: 1000 },
 			colorPedestal: { cmd: { red: 'QSG:4C', blue: 'OSG:4E', green: 'OSG:4D' }, offset: 0x800, limit: 800 },
-			colorTemp: false,
-			colorTempAdv: true,
+			colorTemp: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', val: 'OSI:20', min: 2000, max: 15000 } },
 			colorbar: true,
 			error: true,
 			filter: { dropdown: e.ENUM_FILTER_3 },
@@ -300,8 +289,7 @@ export const SERIES_SPECS = [
 			presetSpeed: true,
 			presetTime: true,
 			recordSD: false,
-			shutter: false,
-			shutterAdv: { dropdown: e.ENUM_SHUTTER_ADV },
+			shutter: { cmd: 'OSJ:03', inc: 'OSJ:04', dec: 'OSJ:05', dropdown: e.ENUM_SHUTTER_ADV },
 			streamRTMP: true,
 			streamSRT: true,
 			subscription: true,
@@ -322,7 +310,6 @@ export const SERIES_SPECS = [
 			colorGain: false,
 			colorPedestal: false,
 			colorTemp: false,
-			colorTempAdv: false,
 			colorbar: true,
 			error: true,
 			filter: false,
@@ -342,7 +329,6 @@ export const SERIES_SPECS = [
 			presetTime: false,
 			recordSD: false,
 			shutter: false,
-			shutterAdv: false,
 			streamRTMP: false,
 			streamSRT: false,
 			subscription: true,
@@ -362,8 +348,7 @@ export const SERIES_SPECS = [
 		capabilities: {
 			colorGain: { cmd: { red: 'ORG', blue: 'OBG' }, offset: 0x1e, limit: 30 },
 			colorPedestal: false,
-			colorTemp: { dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 },
-			colorTempAdv: false,
+			colorTemp: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 } },
 			colorbar: true,
 			error: true,
 			filter: { dropdown: e.ENUM_FILTER_OTHER },
@@ -383,7 +368,6 @@ export const SERIES_SPECS = [
 			presetTime: false,
 			recordSD: false,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE40 },
-			shutterAdv: false,
 			streamRTMP: false,
 			streamSRT: false,
 			subscription: true,
@@ -403,8 +387,7 @@ export const SERIES_SPECS = [
 		capabilities: {
 			colorGain: { cmd: { red: 'ORG', blue: 'OBG' }, offset: 0x1e, limit: 30 },
 			colorPedestal: false,
-			colorTemp: { dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 },
-			colorTempAdv: false,
+			colorTemp: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 } },
 			colorbar: true,
 			error: true,
 			filter: { dropdown: e.ENUM_FILTER_OTHER },
@@ -424,7 +407,6 @@ export const SERIES_SPECS = [
 			presetTime: false,
 			recordSD: false,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE40 },
-			shutterAdv: false,
 			streamRTMP: false,
 			streamSRT: false,
 			subscription: true,
@@ -444,8 +426,7 @@ export const SERIES_SPECS = [
 		capabilities: {
 			colorGain: { cmd: { red: 'ORI', blue: 'OBI' }, offset: 0x96, limit: 150 },
 			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 150 },
-			colorTemp: { dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 },
-			colorTempAdv: false,
+			colorTemp: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 } },
 			colorbar: true,
 			error: true,
 			filter: { dropdown: e.ENUM_FILTER_3 },
@@ -465,7 +446,6 @@ export const SERIES_SPECS = [
 			presetTime: false,
 			recordSD: false,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE120 },
-			shutterAdv: false,
 			streamRTMP: false,
 			streamSRT: false,
 			subscription: true,
@@ -485,8 +465,7 @@ export const SERIES_SPECS = [
 		capabilities: {
 			colorGain: { cmd: { red: 'ORI', blue: 'OBI' }, offset: 0x96, limit: 150 },
 			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 100 },
-			colorTemp: { dropdown: e.ENUM_COLOR_TEMPERATURE_HE130 },
-			colorTempAdv: false,
+			colorTemp: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE130 } },
 			colorbar: true,
 			error: true,
 			filter: { dropdown: e.ENUM_FILTER_2 },
@@ -506,7 +485,6 @@ export const SERIES_SPECS = [
 			presetTime: false,
 			recordSD: false,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE130 },
-			shutterAdv: false,
 			streamRTMP: false,
 			streamSRT: false,
 			subscription: true,
@@ -526,8 +504,7 @@ export const SERIES_SPECS = [
 		capabilities: {
 			colorGain: { cmd: { red: 'ORI', blue: 'OBI' }, offset: 0x96, limit: 150 },
 			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 100 },
-			colorTemp: { dropdown: e.ENUM_COLOR_TEMPERATURE_HE130 },
-			colorTempAdv: false,
+			colorTemp: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE130 } },
 			colorbar: true,
 			error: true,
 			filter: { dropdown: e.ENUM_FILTER_2 },
@@ -547,7 +524,6 @@ export const SERIES_SPECS = [
 			presetTime: false,
 			recordSD: false,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE130 },
-			shutterAdv: false,
 			streamRTMP: false,
 			streamSRT: false,
 			subscription: true,
@@ -568,7 +544,6 @@ export const SERIES_SPECS = [
 			colorGain: false,
 			colorPedestal: false,
 			colorTemp: false,
-			colorTempAdv: false,
 			colorbar: true,
 			error: true,
 			filter: false,
@@ -608,8 +583,7 @@ export const SERIES_SPECS = [
 		capabilities: {
 			colorGain: { cmd: { red: 'QSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 1000 },
 			colorPedestal: { cmd: { red: 'QSG:4C', blue: 'OSG:4E' }, offset: 0x800, limit: 800 },
-			colorTemp: { dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 },
-			colorTempAdv: false,
+			colorTemp: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 } },
 			colorbar: true,
 			error: true,
 			filter: { dropdown: e.ENUM_FILTER_3 },
@@ -628,7 +602,7 @@ export const SERIES_SPECS = [
 			presetSpeed: false,
 			presetTime: false,
 			recordSD: false,
-			shutter: { cmd: 'OSG:5D', dropdown: e.ENUM_SHUTTER_UB300 },
+			shutter: false, // special implementation 'OSG:5D', e.ENUM_SHUTTER_UB300
 			shutterAdv: false,
 			streamRTMP: false,
 			streamSRT: false,
@@ -649,8 +623,7 @@ export const SERIES_SPECS = [
 		capabilities: {
 			colorGain: { cmd: { red: 'QSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 200 },
 			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 100 },
-			colorTemp: false,
-			colorTempAdv: true,
+			colorTemp: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', val: 'OSI:20', min: 2000, max: 15000 } },
 			colorbar: true,
 			error: false,
 			filter: { dropdown: e.ENUM_FILTER_3 },
@@ -669,8 +642,7 @@ export const SERIES_SPECS = [
 			presetSpeed: false,
 			presetTime: false,
 			recordSD: true,
-			shutter: { dropdown: e.ENUM_SHUTTER_OTHER },
-			shutterAdv: false,
+			shutter: false,
 			streamRTMP: true,
 			streamSRT: true,
 			subscription: false,

@@ -1,4 +1,5 @@
 import { getAndUpdateSeries } from './common.js'
+import { e } from './enum.js'
 
 // ##########################
 // #### Define Variables ####
@@ -61,7 +62,7 @@ export function setVariables(self) {
 	if (SERIES.capabilities.shutter) {
 		variables.push({ variableId: 'shutter', name: 'Shutter Mode' })
 	}
-	if (SERIES.capabilities.shutterAdv) {
+	if (SERIES.capabilities.shutter && SERIES.capabilities.shutter.dropdown === e.ENUM_SHUTTER_ADV) {
 		variables.push({ variableId: 'shutterStep', name: 'Shutter Step' })
 	}
 	if (SERIES.capabilities.ois) {
@@ -123,8 +124,8 @@ export function checkVariables(self) {
 		? SERIES.actions.ois.dropdown.find((OIS) => OIS.id == self.data.ois)
 		: null
 
-	const shutter = SERIES.actions.shut
-		? SERIES.actions.shut.dropdown.find((SHUTTER) => SHUTTER.id == self.data.shutter)
+	const shutter = SERIES.actions.shutter
+		? SERIES.actions.shutter.dropdown.find((SHUTTER) => SHUTTER.id == self.data.shutter)
 		: null
 
 	const whiteBalance = SERIES.actions.whiteBalance

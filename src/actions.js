@@ -729,7 +729,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.OAF) {
+	if (seriesCaps.focusAuto) {
 		actions.focusM = {
 			name: 'Lens - Focus Mode',
 			options: [
@@ -750,7 +750,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.OTAF) {
+	if (seriesCaps.focusPushAuto) {
 		actions.focusOTAF = {
 			name: 'Lens - Focus Push Auto',
 			options: [],
@@ -775,7 +775,7 @@ export function getActionDefinitions(self) {
 					self.irisIndex++
 				}
 				self.irisVal = e.ENUM_IRIS[self.irisIndex].id
-				await sendPTZ(self, 'I' + self.irisVal.toUpperCase())
+				await sendPTZ(self, 'I' + self.irisVal)
 			},
 		}
 
@@ -789,7 +789,7 @@ export function getActionDefinitions(self) {
 					self.irisIndex--
 				}
 				self.irisVal = e.ENUM_IRIS[self.irisIndex].id
-				await sendPTZ(self, 'I' + self.irisVal.toUpperCase())
+				await sendPTZ(self, 'I' + self.irisVal)
 			},
 		}
 
@@ -847,7 +847,7 @@ export function getActionDefinitions(self) {
 				}
 				self.gainVal = seriesCaps.gain.dropdown[self.gainIndex].id
 
-				await sendCam(self, seriesCaps.gain.cmd + self.gainVal.toUpperCase())
+				await sendCam(self, seriesCaps.gain.cmd + self.gainVal)
 			},
 		}
 
@@ -867,7 +867,7 @@ export function getActionDefinitions(self) {
 				}
 				self.gainVal = seriesCaps.gain.dropdown[self.gainIndex].id
 
-				await sendCam(self, seriesCaps.gain.cmd + self.gainVal.toUpperCase())
+				await sendCam(self, seriesCaps.gain.cmd + self.gainVal)
 			},
 		}
 
@@ -888,19 +888,23 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.shut.cmd) {
+	if (seriesCaps.shutter) {
 		actions.shutU = {
 			name: 'Exposure - Shutter Up',
 			options: [],
 			callback: async (action) => {
-				if (self.shutIndex == seriesCaps.shut.dropdown.length) {
-					self.shutIndex = seriesCaps.shut.dropdown.length
-				} else if (self.shutIndex < seriesCaps.shut.dropdown.length) {
-					self.shutIndex++
-				}
-				self.shutVal = seriesCaps.shut.dropdown[self.shutIndex].id
+				if (seriesCaps.shutter.inc) {
+					await sendCam(self, seriesCaps.shutter.inc + ':0x01')
+				} else {				
+					if (self.shutterIndex == seriesCaps.shutter.dropdown.length) {
+						self.shutterIndex = seriesCaps.shutter.dropdown.length
+					} else if (self.shutterIndex < seriesCaps.shutter.dropdown.length) {
+						self.shutterIndex++
+					}
+					self.shutterVal = seriesCaps.shutter.dropdown[self.shutterIndex].id
 
-				await sendCam(self, seriesCaps.shut.cmd + self.shutVal.toUpperCase())
+					await sendCam(self, seriesCaps.shutter.cmd + self.shutterVal)
+				}
 			},
 		}
 
@@ -908,31 +912,41 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Shutter Down',
 			options: [],
 			callback: async (action) => {
-				if (self.shutIndex == 0) {
-					self.shutIndex = 0
-				} else if (self.shutIndex > 0) {
-					self.shutIndex--
-				}
-				self.shutVal = seriesCaps.shut.dropdown[self.shutIndex].id
+				if (seriesCaps.shutter.dec) {
+					await sendCam(self, seriesCaps.shutter.dec + ':0x01')
+				} else {
+					if (self.shutterIndex == 0) {
+						self.shutterIndex = 0
+					} else if (self.shutterIndex > 0) {
+						self.shutterIndex--
+					}
+					self.shutterVal = seriesCaps.shutter.dropdown[self.shutterIndex].id
 
-				await sendCam(self, seriesCaps.shut.cmd + self.shutVal.toUpperCase())
+					await sendCam(self, seriesCaps.shutter.cmd + self.shutterVal)
+				}
 			},
 		}
 
-		actions.shutS = {
-			name: 'Exposure - Set Shutter',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Shutter setting',
-					id: 'val',
-					default: seriesCaps.shut.dropdown[0].id,
-					enum: seriesCaps.shut.dropdown,
+		if (seriesCaps.shutter) {
+			actions.shutS = {
+				name: 'Exposure - Set Shutter Mode',
+				options: [
+					{
+						type: 'dropdown',
+						label: 'Shutter setting',
+						id: 'val',
+						default: seriesCaps.shutter.dropdown[0].id,
+						enum: seriesCaps.shutter.dropdown,
+					},
+				],
+				callback: async (action) => {
+					if (seriesCaps.shutter.dropdown === e.ENUM_SHUTTER_ADV) {
+						await sendCam(self, 'OSJ:03:0x' + action.options.val)
+					} else {
+						await sendCam(self, seriesCaps.shutter.cmd + action.options.val)
+					}
 				},
-			],
-			callback: async (action) => {
-				await sendCam(self, seriesCaps.shut.cmd + action.options.val.toUpperCase())
-			},
+			}
 		}
 	}
 
@@ -948,7 +962,7 @@ export function getActionDefinitions(self) {
 				}
 				self.pedestalVal = seriesCaps.pedestal.dropdown[self.pedestalIndex].id
 
-				await sendCam(self, seriesCaps.pedestal.cmd + self.pedestalVal.toUpperCase())
+				await sendCam(self, seriesCaps.pedestal.cmd + self.pedestalVal)
 			},
 		}
 
@@ -963,7 +977,7 @@ export function getActionDefinitions(self) {
 				}
 				self.pedestalVal = seriesCaps.pedestal.dropdown[self.pedestalIndex].id
 
-				await sendCam(self, seriesCaps.pedestal.cmd + self.pedestalVal.toUpperCase())
+				await sendCam(self, seriesCaps.pedestal.cmd + self.pedestalVal)
 			},
 		}
 
@@ -979,7 +993,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, seriesCaps.pedestal.cmd + action.options.val.toUpperCase())
+				await sendCam(self, seriesCaps.pedestal.cmd + action.options.val)
 			},
 		}
 	}
@@ -1018,7 +1032,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.colorTemperature) { 
+	if (seriesCaps.colorTemperature && seriesCaps.colorTemperature.index) { 
 		actions.colorTemperatureUp = {
 			name: 'White Balance - Color Temperature Up',
 			options: [],
@@ -1030,7 +1044,7 @@ export function getActionDefinitions(self) {
 				}
 				self.colorTemperatureValue = seriesCaps.colorTemperature.dropdown[self.colorTemperatureIndex].id
 
-				await sendCam(self, 'OSD:B1:' + self.colorTemperatureValue.toUpperCase())
+				await sendCam(self, seriesCaps.colorTemperature.index.cmd + ':' + self.colorTemperatureValue)
 			},
 		}
 
@@ -1045,7 +1059,7 @@ export function getActionDefinitions(self) {
 				}
 				self.colorTemperatureValue = seriesCaps.colorTemperature.dropdown[self.colorTemperatureIndex].id
 
-				await sendCam(self, 'OSD:B1:' + self.colorTemperatureValue.toUpperCase())
+				await sendCam(self, seriesCaps.colorTemperature.index.cmd + ':' + self.colorTemperatureValue)
 			},
 		}
 
@@ -1061,23 +1075,23 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				let id = action.options.val.toUpperCase();
+				let id = action.options.val;
 				let index = seriesCaps.colorTemperature.dropdown.findIndex((colorTemperature) => colorTemperature.id == id);
 
 				self.colorTemperatureIndex = index;
 				self.colorTemperatureValue = id;
 
-				await sendCam(self, 'OSD:B1:' + id)
+				await sendCam(self, seriesCaps.colorTemperature.index.cmd + ':' + id)
 			},
 		}
 	}
 
-	if (seriesCaps.colorTempAdv) { 
+	if (seriesCaps.colorTemp && seriesCaps.colorTemp.advanced) { 
 		actions.colorTemperatureUp = {
 			name: 'White Balance - Color Temperature Up',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, 'OSI:1E:1')
+				await sendCam(self, seriesCaps.colorTemp.advanced.inc + ':0x1')
 			},
 		}
 
@@ -1085,7 +1099,7 @@ export function getActionDefinitions(self) {
 			name: 'White Balance - Color Temperature Down',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, 'OSI:1F:1')
+				await sendCam(self, seriesCaps.colorTemp.advanced.dec + ':0x1')
 			},
 		}
 
@@ -1097,15 +1111,15 @@ export function getActionDefinitions(self) {
 					type: 'number',
 					label: 'Color Temperature [K]',
 					default: 3200,
-					min: 2000,
-					max: 15000,
+					min: seriesCaps.colorTemp.advanced.min,
+					max: seriesCaps.colorTemp.advanced.max,
 					step: 20,
 					required: true,
 					range: true,
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OSI:20:' + parseInt(action.options.val).toString(16).toUpperCase().padStart(5, 0) + ':0')
+				await sendCam(self, seriesCaps.colorTemp.advanced.val + ':' + parseInt(action.options.val).toString(16).toUpperCase().padStart(5, 0) + ':0')
 			},
 		}
 	}
@@ -1232,61 +1246,45 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.speedPset) {
+	if (seriesCaps.presetSpeed) {
 		actions.speedPset = {
-			name: 'Preset - Drive Speed',
+			name: 'Preset - Set Recall Speed',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'speed setting',
-					id: 'speed',
-					default: 999,
+					label: 'Speed',
+					id: 'val',
+					default: '999',
 					enum: e.ENUM_PSSPEED,
 				},
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'UPVS' + action.options.speed)
+				if (seriesCaps.presetTime) {
+					await sendCam(self, 'OSJ:29:0')
+				}
+				await sendPTZ(self, 'UPVS' + action.options.val)
 			},
 		}
 	}
 
-	if (seriesCaps.timePset) {
+	if (seriesCaps.presetTime) {
 		actions.timePset = {
-			// TODO: currently only works when in Time mode.
-			name: 'Preset - Drive Time',
+			name: 'Preset - Set Recall Time',
 			options: [
 				{
-					type: 'dropdown',
+					id: 'val',
+					type: 'number',
 					label: 'Time Seconds',
-					id: 'speed',
-					default: '001',
-					enum: e.ENUM_PSTIME(),
+					default: 1,
+					min: 1,
+					max: 99,
+					required: true,
+					range: true,
 				},
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'UPVS' + action.options.speed)
-			},
-		}
-	}
-
-	if (seriesCaps.timePset) {
-		actions.modePset = {
-			// TODO: currently only works when in Time mode.
-			name: 'Preset - Drive Speed/Time Mode',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Select mode',
-					id: 'mode',
-					default: '0',
-					enum: [
-						{ id: '0', label: 'Speed mode' },
-						{ id: '1', label: 'Time mode' },
-					],
-				},
-			],
-			callback: async (action) => {
-				await sendCam(self, 'OSJ:29:' + action.options.mode)
+				await sendCam(self, 'OSJ:29:1')
+				await sendPTZ(self, 'UPVS' + parseInt(action.options.val).toString(16).toUpperCase().padStart(3, 0))
 			},
 		}
 	}
@@ -1330,7 +1328,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OSL:B6:' + action.options.value)
+				await sendCam(self, 'OSL:BC:' + action.options.value)
 			},
 		}
 	}
@@ -1441,7 +1439,7 @@ export function getActionDefinitions(self) {
 
 	if (seriesCaps.install) {
 		actions.insPosition = {
-			name: 'System - Installation position',
+			name: 'System - Installation Position',
 			options: [
 				{
 					type: 'dropdown',
@@ -1466,7 +1464,7 @@ export function getActionDefinitions(self) {
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Option',
+					label: 'SD Card Action',
 					id: 'value',
 					default: 'start',
 					enum: [
@@ -1534,6 +1532,7 @@ export function getActionDefinitions(self) {
 				enum: [
 					{ id: '0', label: 'Cam' },
 					{ id: '1', label: 'PTZ' },
+					{ id: '2', label: 'Web' },
 				],
 			},
 			{
@@ -1547,6 +1546,7 @@ export function getActionDefinitions(self) {
 			switch (action.options.dest) {
 				case '0': await sendCam(self, action.options.cmd); break
 				case '1': await sendPTZ(self, action.options.cmd); break
+				case '2': await sendWeb(self, action.options.cmd); break
 			}
 		},
 	}
