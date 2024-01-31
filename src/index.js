@@ -424,6 +424,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				switch (str[1]) {
 					case '39': this.data.redGainValue = parseInt(str[2], 16) - 0x800; break
 					case '3A': this.data.blueGainValue = parseInt(str[2], 16) - 0x800; break
+					case '4A': this.data.masterPedValue = parseInt(str[2], 16) - 0x80; break
 					case '4C': this.data.redPedValue = parseInt(str[2], 16) - 0x800; break
 					case '4D': this.data.greenPedValue = parseInt(str[2], 16) - 0x800; break
 					case '4E': this.data.bluePedValue = parseInt(str[2], 16) - 0x800; break
@@ -535,19 +536,19 @@ class PanasonicPTZInstance extends InstanceBase {
 			presetSelectedIdx: null,
 			presetCompletedIdx: null,
 
-			// numeric unsigned value
+			// numeric unsigned values
 			focusPosition: null,
 			irisPosition: null,
 			irisFollowPosition: null,
 			zoomPosition: null,
 
-			// numeric signed value
-			redGainValue: null,
-			blueGainValue: null,
-			redPedValue: null,
-			bluePedValue: null,
-			greenPedValue: null,
-			masterPedValue: null,
+			// numeric signed values
+			redGainValue: 0,
+			blueGainValue: 0,
+			redPedValue: 0,
+			bluePedValue: 0,
+			greenPedValue: 0,
+			masterPedValue: 0,
 
 			// decoded enums (as string)
 			focusMode: null,

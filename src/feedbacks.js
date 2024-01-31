@@ -20,7 +20,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.powerState = {
 			type: 'boolean',
 			name: 'System - Power State',
-			description: 'Indicates if the camera is currently powered on',
+			description: 'Indicates if the camera is currently fully powered',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorRed,
@@ -36,7 +36,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.colorbarState = {
 			type: 'boolean',
 			name: 'System - Color Bar State',
-			description: 'Indicates if the color bar is currently enabled on this camera',
+			description: 'Indicates if the color bar is currently enabled',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorRed,
@@ -100,7 +100,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.installState = {
 			type: 'boolean',
 			name: 'System - Install Position',
-			description: 'Indicates the currently selected mounting position',
+			description: 'Indicates if the selected mounting position is currently active',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorRed,
@@ -172,7 +172,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.recallModePset = {
 			type: 'boolean',
 			name: 'Preset - Mode A, B, C',
-			description: 'Indicates which preset recall mode is currently selected',
+			description: 'Indicates if the selected preset recall mode is currently active',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorRed,
@@ -214,10 +214,10 @@ export function getFeedbackDefinitions(self) {
 				return false
 			},
 		}
-		feedbacks.presetComplete = {
+		feedbacks.presetActive = {
 			type: 'boolean',
-			name: 'Preset - Recall Completion Notification',
-			description: 'Indicates if the last preset recall is completed',
+			name: 'Preset - Active / Selected',
+			description: 'Indicates if the selected preset is currently active (last selected)',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorOrange,
@@ -232,7 +232,28 @@ export function getFeedbackDefinitions(self) {
 				},
 			],
 			callback: function (feedback) {
-				return self.data.lastPresetCompleted === parseInt(feedback.options.option)
+				return self.data.presetActive === parseInt(feedback.options.option)
+			},
+		}
+		feedbacks.presetComplete = {
+			type: 'boolean',
+			name: 'Preset - Recall Completion Notification',
+			description: 'Indicates if the last recall to the selected preset is completed',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorOrange,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset',
+					id: 'option',
+					default: e.ENUM_PRESET[0].id,
+					enum: e.ENUM_PRESET,
+				},
+			],
+			callback: function (feedback) {
+				return self.data.presetComplete === parseInt(feedback.options.option)
 			},
 		}
 	}

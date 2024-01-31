@@ -1294,22 +1294,19 @@ export function getActionDefinitions(self) {
 	// ##############################
 
 	if (seriesCaps.trackingAuto) {
-		actions.autotrackingMode = {
-			name: 'Auto Tracking Mode',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Mode',
-					id: 'mode',
-					default: 0,
-					enum: [
-						{ id: '0', label: 'Off' },
-						{ id: '1', label: 'On' },
-					],
-				},
-			],
+		actions.autotrackingOff = {
+			name: 'Auto Tracking Mode Off',
+			options: [],
 			callback: async (action) => {
-				await sendCam(self, 'OSL:B6:' + action.options.mode)
+				await sendCam(self, 'OSL:B6:0')
+			},
+		}
+
+		actions.autotrackingOn = {
+			name: 'Auto Tracking Mode On',
+			options: [],
+			callback: async (action) => {
+				await sendCam(self, 'OSL:B6:1')
 			},
 		}
 

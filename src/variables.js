@@ -87,6 +87,7 @@ export function setVariables(self) {
 		variables.push({ variableId: 'iris', name: 'Iris' })
 		variables.push({ variableId: 'irisPosition', name: 'Iris Position %' })
 		variables.push({ variableId: 'irisPositionBar', name: 'Iris Position' })
+		variables.push({ variableId: 'irisFollow', name: 'Iris Follow' })
 	}
 	if (SERIES.capabilities.irisAuto) {
 		variables.push({ variableId: 'irisMode', name: 'Iris Mode' })
@@ -183,6 +184,7 @@ export function checkVariables(self) {
 		zoomPositionBar: progressBar(normalizePct(self.data.zoomPosition, 0x0, 0xAAA), 14, 'W', 'T'),
 		focusPositionBar: progressBar(normalizePct(self.data.focusPosition, 0x0, 0xAAA), 14, 'N', 'F'),
 		irisPositionBar: progressBar(normalizePct(self.data.irisPosition, 0x0, 0xAAA), 14, 'C', 'O'),
+		irisFollowPosition: self.data.irisFollowPosition,
 
 		redGain: self.data.redGainValue,
 		blueGain: self.data.blueGainValue,
