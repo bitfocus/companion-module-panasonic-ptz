@@ -73,8 +73,8 @@ export const SERIES_SPECS = [
 		// Includes all Actions / Variables / Feedbacks
 		id: 'Other',
 		capabilities: {
-			colorGain: { cmd: { red: 'ORP', blue: 'OBP', green: 'OSJ:10' }, offset: 0x96, limit: 150 }, // Has numbered red/blue Gain (ORG and OBG)
-			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 150 }, // Has numbered red/blue Pedestal (ORP or OBP)
+			colorGain: { cmd: { red: 'ORP', blue: 'OBP', green: 'OSJ:10' }, offset: 0x96, limit: 150, step: 1, hexlen: 3 }, // Has numbered red/blue Gain (ORG and OBG)
+			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 150, step: 1, hexlen: 3 }, // Has numbered red/blue Pedestal (ORP or OBP)
 			colorTemp: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', val: 'OSI:20', min: 2000, max: 15000 } }, // Has Color Temperature (OSD:B1 or OSI:20)
 			colorbar: true, // Has Color Bar Control (DCB:1 or DCB:0)
 			error: true, // Camera can return enumerated error messages (rER)
@@ -88,7 +88,7 @@ export const SERIES_SPECS = [
 			irisAuto: true, // Has Auto Iris (d31/d30)
 			ois: { dropdown: e.ENUM_OIS_OTHER }, // Has Optical Image Stabilisation Control (OIS)
 			panTilt: true, // Has Pan/Tilt Head support (PTSxx)
-			pedestal: { cmd: 'OSJ:0F', offset: 0x800, limit: 200 }, // Has Master Pedestal (OTD, OSJ:0F or OSG:4A)
+			pedestal: { cmd: 'OSJ:0F', offset: 0x800, limit: 200, step: 1, hexlen: 3 }, // Has Master Pedestal (OTD, OSJ:0F or OSG:4A)
 			power: true, // Has Power Control (p1/p0 and O1/O0)
 			preset: true, // Has Preset operations (Mxxx, Rxxx and Cxxx) and states (sXX and qXX)
 			presetSpeed: true, // Has Preset Recall Speed Control (UPVSxx)
@@ -112,7 +112,7 @@ export const SERIES_SPECS = [
 		// Specific for the HE40 Series
 		id: 'HE40',
 		capabilities: {
-			colorGain: { cmd: { red: 'ORG', blue: 'OBG' }, offset: 0x1e, limit: 30 },
+			colorGain: { cmd: { red: 'ORG', blue: 'OBG' }, offset: 0x1e, limit: 10, step: 3, hexlen: 2 },
 			colorPedestal: false,
 			colorTemp: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 } },
 			colorbar: true,
@@ -127,7 +127,7 @@ export const SERIES_SPECS = [
 			irisAuto: true,
 			ois: { dropdown: e.ENUM_OIS_OTHER },
 			panTilt: true,
-			pedestal: { cmd: 'OTP', offset: 0x96, limit: 150 },
+			pedestal: { cmd: 'OTP', offset: 0x96, limit: 150, step: 1, hexlen: 3 },
 			power: true,
 			preset: true,
 			presetSpeed: true,
@@ -151,7 +151,7 @@ export const SERIES_SPECS = [
 		// Specific for the HE42 Series
 		id: 'HE42',
 		capabilities: {
-			colorGain: { cmd: { red: 'ORG', blue: 'OBG' }, offset: 0x1e, limit: 30 },
+			colorGain: { cmd: { red: 'ORG', blue: 'OBG' }, offset: 0x1e, limit: 10, step: 3, hexlen: 2 },
 			colorPedestal: false,
 			colorTemp: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 } },
 			colorbar: true,
@@ -166,7 +166,7 @@ export const SERIES_SPECS = [
 			irisAuto: true,
 			ois: { dropdown: e.ENUM_OIS_OTHER },
 			panTilt: true,
-			pedestal: { cmd: 'OTP', offset: 0x96, limit: 150 },
+			pedestal: { cmd: 'OTP', offset: 0x96, limit: 150, step: 1, hexlen: 3 },
 			power: true,
 			preset: true,
 			presetSpeed: true,
@@ -190,7 +190,7 @@ export const SERIES_SPECS = [
 		// Specific for the UE70 Series
 		id: 'UE70',
 		capabilities: {
-			colorGain: { cmd: { red: 'ORG', blue: 'OBG' }, offset: 0x1e, limit: 30 },
+			colorGain: { cmd: { red: 'ORG', blue: 'OBG' }, offset: 0x1e, limit: 10, step: 3, hexlen: 2 },
 			colorPedestal: false,
 			colorTemp: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 } },
 			colorbar: true,
@@ -205,7 +205,7 @@ export const SERIES_SPECS = [
 			irisAuto: false,
 			ois: { dropdown: e.ENUM_OIS_OTHER },
 			panTilt: true,
-			pedestal: { cmd: 'OTP', offset: 0x96, limit: 150 },
+			pedestal: { cmd: 'OTP', offset: 0x96, limit: 150, step: 1, hexlen: 3 },
 			power: true,
 			preset: true,
 			presetSpeed: true,
@@ -229,8 +229,8 @@ export const SERIES_SPECS = [
 		// Specific for the UE150 Series
 		id: 'UE150',
 		capabilities: {
-			colorGain: { cmd: { red: 'QSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 200 },
-			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP', green: 'OSJ:10' }, offset: 0x96, limit: 100 },
+			colorGain: { cmd: { red: 'QSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 200, step: 1, hexlen: 3 },
+			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP', green: 'OSJ:10' }, offset: 0x96, limit: 100, step: 1, hexlen: 3 },
 			colorTemp: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', val: 'OSI:20', min: 2000, max: 15000 } },
 			colorbar: true,
 			error: true,
@@ -244,7 +244,7 @@ export const SERIES_SPECS = [
 			irisAuto: false,
 			ois: { dropdown: e.ENUM_OIS_OTHER },
 			panTilt: true,
-			pedestal: { cmd: 'OSJ:0F', offset: 0x800, limit: 200 },
+			pedestal: { cmd: 'OSJ:0F', offset: 0x800, limit: 200, step: 1, hexlen: 3 },
 			power: true,
 			preset: true,
 			presetSpeed: true,
@@ -268,8 +268,8 @@ export const SERIES_SPECS = [
 		// Specific for the UE160 Series
 		id: 'UE160',
 		capabilities: {
-			colorGain: { cmd: { red: 'OSL:36', blue: 'OSL:38', green: 'OSL:37' }, offset: 0x800, limit: 1000 },
-			colorPedestal: { cmd: { red: 'QSG:4C', blue: 'OSG:4E', green: 'OSG:4D' }, offset: 0x800, limit: 800 },
+			colorGain: { cmd: { red: 'OSL:36', blue: 'OSL:38', green: 'OSL:37' }, offset: 0x800, limit: 1000, step: 1, hexlen: 3 },
+			colorPedestal: { cmd: { red: 'QSG:4C', blue: 'OSG:4E', green: 'OSG:4D' }, offset: 0x800, limit: 800, step: 1, hexlen: 3 },
 			colorTemp: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', val: 'OSI:20', min: 2000, max: 15000 } },
 			colorbar: true,
 			error: true,
@@ -283,7 +283,7 @@ export const SERIES_SPECS = [
 			irisAuto: false,
 			ois: { dropdown: e.ENUM_OIS_UE160 },
 			panTilt: true,
-			pedestal: { cmd: 'OSJ:0F', offset: 0x800, limit: 200 },
+			pedestal: { cmd: 'OSJ:0F', offset: 0x800, limit: 200, step: 1, hexlen: 3 },
 			power: true,
 			preset: true,
 			presetSpeed: true,
@@ -346,7 +346,7 @@ export const SERIES_SPECS = [
 		// Specific for the AW-HE50 Camera
 		id: 'HE50',
 		capabilities: {
-			colorGain: { cmd: { red: 'ORG', blue: 'OBG' }, offset: 0x1e, limit: 30 },
+			colorGain: { cmd: { red: 'ORG', blue: 'OBG' }, offset: 0x1e, limit: 10, step: 3, hexlen: 2 },
 			colorPedestal: false,
 			colorTemp: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 } },
 			colorbar: true,
@@ -361,7 +361,7 @@ export const SERIES_SPECS = [
 			irisAuto: false,
 			ois: false,
 			panTilt: true,
-			pedestal: { cmd: 'OTP', offset: 0x96, limit: 150 },
+			pedestal: { cmd: 'OTP', offset: 0x96, limit: 150, step: 1, hexlen: 3 },
 			power: true,
 			preset: true,
 			presetSpeed: true,
@@ -385,7 +385,7 @@ export const SERIES_SPECS = [
 		// Specific for the AW-HE60 Camera
 		id: 'HE60',
 		capabilities: {
-			colorGain: { cmd: { red: 'ORG', blue: 'OBG' }, offset: 0x1e, limit: 30 },
+			colorGain: { cmd: { red: 'ORG', blue: 'OBG' }, offset: 0x1e, limit: 10, step: 3, hexlen: 2 },
 			colorPedestal: false,
 			colorTemp: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 } },
 			colorbar: true,
@@ -400,7 +400,7 @@ export const SERIES_SPECS = [
 			irisAuto: true,
 			ois: false,
 			panTilt: true,
-			pedestal: { cmd: 'OTP', offset: 0x96, limit: 150 },
+			pedestal: { cmd: 'OTP', offset: 0x96, limit: 150, step: 1, hexlen: 3 },
 			power: true,
 			preset: true,
 			presetSpeed: true,
@@ -424,8 +424,8 @@ export const SERIES_SPECS = [
 		// Specific for the AW-HE120 Camera
 		id: 'HE120',
 		capabilities: {
-			colorGain: { cmd: { red: 'ORI', blue: 'OBI' }, offset: 0x96, limit: 150 },
-			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 150 },
+			colorGain: { cmd: { red: 'ORI', blue: 'OBI' }, offset: 0x96, limit: 150, step: 1, hexlen: 3 },
+			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 150, step: 1, hexlen: 3 },
 			colorTemp: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 } },
 			colorbar: true,
 			error: true,
@@ -439,7 +439,7 @@ export const SERIES_SPECS = [
 			irisAuto: false,
 			ois: false,
 			panTilt: true,
-			pedestal: { cmd: 'OTP', offset: 0x96, limit: 150 },
+			pedestal: { cmd: 'OTP', offset: 0x96, limit: 150, step: 1, hexlen: 3 },
 			power: true,
 			preset: true,
 			presetSpeed: true,
@@ -463,8 +463,8 @@ export const SERIES_SPECS = [
 		// Specific for the AW-HE130 Camera
 		id: 'HE130',
 		capabilities: {
-			colorGain: { cmd: { red: 'ORI', blue: 'OBI' }, offset: 0x96, limit: 150 },
-			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 100 },
+			colorGain: { cmd: { red: 'ORI', blue: 'OBI' }, offset: 0x96, limit: 150, step: 1, hexlen: 3 },
+			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 100, step: 1, hexlen: 3 },
 			colorTemp: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE130 } },
 			colorbar: true,
 			error: true,
@@ -478,7 +478,7 @@ export const SERIES_SPECS = [
 			irisAuto: true,
 			ois: { dropdown: e.ENUM_OIS_OTHER },
 			panTilt: true,
-			pedestal: { cmd: 'OTP', dropdown: e.ENUM_PEDESTAL_HE120() },
+			pedestal: { cmd: 'OTP', offset: 0x96, limit: 150, step: 1, hexlen: 3 },
 			power: true,
 			preset: true,
 			presetSpeed: true,
@@ -502,8 +502,8 @@ export const SERIES_SPECS = [
 		// Specific for the AW-HR140 Camera
 		id: 'HR140',
 		capabilities: {
-			colorGain: { cmd: { red: 'ORI', blue: 'OBI' }, offset: 0x96, limit: 150 },
-			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 100 },
+			colorGain: { cmd: { red: 'ORI', blue: 'OBI' }, offset: 0x96, limit: 150, step: 1, hexlen: 3 },
+			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 100, step: 1, hexlen: 3 },
 			colorTemp: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE130 } },
 			colorbar: true,
 			error: true,
@@ -517,7 +517,7 @@ export const SERIES_SPECS = [
 			irisAuto: true,
 			ois: { dropdown: e.ENUM_OIS_HR140 },
 			panTilt: true,
-			pedestal: { cmd: 'OTP', dropdown: e.ENUM_PEDESTAL_HE120() },
+			pedestal: { cmd: 'OTP', offset: 0x96, limit: 150, step: 1, hexlen: 3 },
 			power: true,
 			preset: true,
 			presetSpeed: true,
@@ -581,8 +581,8 @@ export const SERIES_SPECS = [
 		// Specific for the AK-UB300 Camera
 		id: 'UB300',
 		capabilities: {
-			colorGain: { cmd: { red: 'QSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 1000 },
-			colorPedestal: { cmd: { red: 'QSG:4C', blue: 'OSG:4E' }, offset: 0x800, limit: 800 },
+			colorGain: { cmd: { red: 'QSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 1000, step: 1, hexlen: 3 },
+			colorPedestal: { cmd: { red: 'QSG:4C', blue: 'OSG:4E' }, offset: 0x800, limit: 800, step: 1, hexlen: 3 },
 			colorTemp: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 } },
 			colorbar: true,
 			error: true,
@@ -621,8 +621,8 @@ export const SERIES_SPECS = [
 		// Specific for the AG-CX350/4000 Camera
 		id: 'CX350',
 		capabilities: {
-			colorGain: { cmd: { red: 'QSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 200 },
-			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 100 },
+			colorGain: { cmd: { red: 'QSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 200, step: 1, hexlen: 3 },
+			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 100, step: 1, hexlen: 3 },
 			colorTemp: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', val: 'OSI:20', min: 2000, max: 15000 } },
 			colorbar: true,
 			error: false,
@@ -636,7 +636,7 @@ export const SERIES_SPECS = [
 			irisAuto: true,
 			ois: { dropdown: e.ENUM_OIS_OTHER },
 			panTilt: false,
-			pedestal: { cmd: 'OSJ:0F', offset: 0x800, limit: 200 },
+			pedestal: { cmd: 'OSJ:0F', offset: 0x800, limit: 200, step: 1, hexlen: 3 },
 			power: false,
 			preset: false,
 			presetSpeed: false,

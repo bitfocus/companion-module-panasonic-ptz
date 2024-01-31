@@ -952,48 +952,48 @@ export function getActionDefinitions(self) {
 
 	if (seriesCaps.pedestal.cmd) {
 		actions.pedU = {
-			name: 'Exposure - Pedestal Up',
+			name: 'Exposure - Master Pedestal Up',
 			options: [],
 			callback: async (action) => {
-				if (self.pedestalIndex == seriesCaps.pedestal.dropdown.length) {
-					self.pedestalIndex = seriesCaps.pedestal.dropdown.length
-				} else if (self.pedestalIndex < seriesCaps.pedestal.dropdown.length) {
-					self.pedestalIndex++
+				if (self.data.masterPedValue + seriesCaps.pedestal.step <= seriesCaps.pedestal.limit) {
+					self.data.masterPedValue += seriesCaps.pedestal.step
 				}
-				self.pedestalVal = seriesCaps.pedestal.dropdown[self.pedestalIndex].id
-
-				await sendCam(self, seriesCaps.pedestal.cmd + self.pedestalVal)
+				await sendCam(self, seriesCaps.pedestal.cmd + ':' + (seriesCaps.pedestal.offset +
+					self.data.masterPedValue).toString(16).toUpperCase().padStart(seriesCaps.pedestal.hexlen, 0))
 			},
 		}
 
 		actions.pedD = {
-			name: 'Exposure - Pedestal Down',
+			name: 'Exposure - Master Pedestal Down',
 			options: [],
 			callback: async (action) => {
-				if (self.pedestalIndex == 0) {
-					self.pedestalIndex = 0
-				} else if (self.pedestalIndex > 0) {
-					self.pedestalIndex--
+				if (self.data.masterPedValue - seriesCaps.pedestal.step <= seriesCaps.pedestal.limit) {
+					self.data.masterPedValue -= seriesCaps.pedestal.step
 				}
-				self.pedestalVal = seriesCaps.pedestal.dropdown[self.pedestalIndex].id
-
-				await sendCam(self, seriesCaps.pedestal.cmd + self.pedestalVal)
+				await sendCam(self, seriesCaps.pedestal.cmd + ':' + (seriesCaps.pedestal.offset +
+					self.data.masterPedValue).toString(16).toUpperCase().padStart(seriesCaps.pedestal.hexlen, 0))
 			},
 		}
 
 		actions.pedS = {
-			name: 'Exposure - Set Pedestal',
+			name: 'Exposure - Set Master Pedestal',
 			options: [
 				{
-					type: 'dropdown',
-					label: 'Pedestal setting',
 					id: 'val',
-					default: seriesCaps.pedestal.dropdown[0].id,
-					enum: seriesCaps.pedestal.dropdown,
+					type: 'number',
+					label: 'Level',
+					default: 0,
+					min: -seriesCaps.pedestal.limit,
+					max: +seriesCaps.pedestal.limit,
+					step: seriesCaps.pedestal.step,
+					required: true,
+					range: true,
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, seriesCaps.pedestal.cmd + action.options.val)
+				self.data.masterPedValue = action.options.val
+				await sendCam(self, seriesCaps.pedestal.cmd + ':' + (seriesCaps.pedestal.offset +
+					self.data.masterPedValue).toString(16).toUpperCase().padStart(seriesCaps.pedestal.hexlen, 0))
 			},
 		}
 	}
@@ -1120,6 +1120,198 @@ export function getActionDefinitions(self) {
 			],
 			callback: async (action) => {
 				await sendCam(self, seriesCaps.colorTemp.advanced.val + ':' + parseInt(action.options.val).toString(16).toUpperCase().padStart(5, 0) + ':0')
+			},
+		}
+	}
+
+	if (seriesCaps.colorPedestal && seriesCaps.colorPedestal.cmd.red) {
+		actions.pedRedU = {
+			name: 'Color - Red Pedestal Up',
+			options: [],
+			callback: async (action) => {
+				if (self.data.redPedValue + seriesCaps.colorPedestal.step <= seriesCaps.colorPedestal.limit) {
+					self.data.redPedValue += seriesCaps.colorPedestal.step
+				}
+				await sendCam(self, seriesCaps.colorPedestal.cmd.red + ':' + (seriesCaps.colorPedestal.offset +
+					self.data.redPedValue).toString(16).toUpperCase().padStart(seriesCaps.colorPedestal.hexlen, 0))
+			},
+		}
+
+		actions.pedRedD = {
+			name: 'Color - Red Pedestal Down',
+			options: [],
+			callback: async (action) => {
+				if (self.data.redPedValue - seriesCaps.colorPedestal.step <= seriesCaps.colorPedestal.limit) {
+					self.data.redPedValue -= seriesCaps.colorPedestal.step
+				}
+				await sendCam(self, seriesCaps.colorPedestal.cmd.red + ':' + (seriesCaps.colorPedestal.offset +
+					self.data.redPedValue).toString(16).toUpperCase().padStart(seriesCaps.colorPedestal.hexlen, 0))
+			},
+		}
+
+		actions.pedRedS = {
+			name: 'Color - Set Red Pedestal',
+			options: [
+				{
+					id: 'val',
+					type: 'number',
+					label: 'Level',
+					default: 0,
+					min: -seriesCaps.colorPedestal.limit,
+					max: +seriesCaps.colorPedestal.limit,
+					step: seriesCaps.colorPedestal.step,
+					required: true,
+					range: true,
+				},
+			],
+			callback: async (action) => {
+				self.data.redPedValue = action.options.val
+				await sendCam(self, seriesCaps.colorPedestal.cmd.red + ':' + (seriesCaps.colorPedestal.offset +
+					self.data.redPedValue).toString(16).toUpperCase().padStart(seriesCaps.colorPedestal.hexlen, 0))
+			},
+		}
+	}
+
+	if (seriesCaps.colorPedestal && seriesCaps.colorPedestal.cmd.blue) {
+		actions.pedBlueU = {
+			name: 'Color - Blue Pedestal Up',
+			options: [],
+			callback: async (action) => {
+				if (self.data.bluePedValue + seriesCaps.colorPedestal.step <= seriesCaps.colorPedestal.limit) {
+					self.data.bluePedValue += seriesCaps.colorPedestal.step
+				}
+				await sendCam(self, seriesCaps.colorPedestal.cmd.blue + ':' + (seriesCaps.colorPedestal.offset +
+					self.data.bluePedValue).toString(16).toUpperCase().padStart(seriesCaps.colorPedestal.hexlen, 0))
+			},
+		}
+
+		actions.pedBlueD = {
+			name: 'Color - Blue Pedestal Down',
+			options: [],
+			callback: async (action) => {
+				if (self.data.bluePedValue - seriesCaps.colorPedestal.step <= seriesCaps.colorPedestal.limit) {
+					self.data.bluePedValue -= seriesCaps.colorPedestal.step
+				}
+				await sendCam(self, seriesCaps.colorPedestal.cmd.blue + ':' + (seriesCaps.colorPedestal.offset +
+					self.data.bluePedValue).toString(16).toUpperCase().padStart(seriesCaps.colorPedestal.hexlen, 0))
+			},
+		}
+
+		actions.pedBlueS = {
+			name: 'Color - Set Blue Pedestal',
+			options: [
+				{
+					id: 'val',
+					type: 'number',
+					label: 'Level',
+					default: 0,
+					min: -seriesCaps.colorPedestal.limit,
+					max: +seriesCaps.colorPedestal.limit,
+					step: seriesCaps.colorPedestal.step,
+					requiblue: true,
+					range: true,
+				},
+			],
+			callback: async (action) => {
+				self.data.bluePedValue = action.options.val
+				await sendCam(self, seriesCaps.colorPedestal.cmd.blue + ':' + (seriesCaps.colorPedestal.offset +
+					self.data.bluePedValue).toString(16).toUpperCase().padStart(seriesCaps.colorPedestal.hexlen, 0))
+			},
+		}
+	}
+
+	if (seriesCaps.colorGain && seriesCaps.colorGain.cmd.red) {
+		actions.pedRedU = {
+			name: 'Color - Red Gain Up',
+			options: [],
+			callback: async (action) => {
+				if (self.data.redPedValue + seriesCaps.colorGain.step <= seriesCaps.colorGain.limit) {
+					self.data.redPedValue += seriesCaps.colorGain.step
+				}
+				await sendCam(self, seriesCaps.colorGain.cmd.red + ':' + (seriesCaps.colorGain.offset +
+					self.data.redPedValue).toString(16).toUpperCase().padStart(seriesCaps.colorGain.hexlen, 0))
+			},
+		}
+
+		actions.pedRedD = {
+			name: 'Color - Red Gain Down',
+			options: [],
+			callback: async (action) => {
+				if (self.data.redPedValue - seriesCaps.colorGain.step <= seriesCaps.colorGain.limit) {
+					self.data.redPedValue -= seriesCaps.colorGain.step
+				}
+				await sendCam(self, seriesCaps.colorGain.cmd.red + ':' + (seriesCaps.colorGain.offset +
+					self.data.redPedValue).toString(16).toUpperCase().padStart(seriesCaps.colorGain.hexlen, 0))
+			},
+		}
+
+		actions.pedRedS = {
+			name: 'Color - Set Red Gain',
+			options: [
+				{
+					id: 'val',
+					type: 'number',
+					label: 'Level',
+					default: 0,
+					min: -seriesCaps.colorGain.limit,
+					max: +seriesCaps.colorGain.limit,
+					step: seriesCaps.colorGain.step,
+					required: true,
+					range: true,
+				},
+			],
+			callback: async (action) => {
+				self.data.redPedValue = action.options.val
+				await sendCam(self, seriesCaps.colorGain.cmd.red + ':' + (seriesCaps.colorGain.offset +
+					self.data.redPedValue).toString(16).toUpperCase().padStart(seriesCaps.colorGain.hexlen, 0))
+			},
+		}
+	}
+
+	if (seriesCaps.colorGain && seriesCaps.colorGain.cmd.blue) {
+		actions.pedBlueU = {
+			name: 'Color - Blue Gain Up',
+			options: [],
+			callback: async (action) => {
+				if (self.data.bluePedValue + seriesCaps.colorGain.step <= seriesCaps.colorGain.limit) {
+					self.data.bluePedValue += seriesCaps.colorGain.step
+				}
+				await sendCam(self, seriesCaps.colorGain.cmd.blue + ':' + (seriesCaps.colorGain.offset +
+					self.data.bluePedValue).toString(16).toUpperCase().padStart(seriesCaps.colorGain.hexlen, 0))
+			},
+		}
+
+		actions.pedBlueD = {
+			name: 'Color - Blue Gain Down',
+			options: [],
+			callback: async (action) => {
+				if (self.data.bluePedValue - seriesCaps.colorGain.step <= seriesCaps.colorGain.limit) {
+					self.data.bluePedValue -= seriesCaps.colorGain.step
+				}
+				await sendCam(self, seriesCaps.colorGain.cmd.blue + ':' + (seriesCaps.colorGain.offset +
+					self.data.bluePedValue).toString(16).toUpperCase().padStart(seriesCaps.colorGain.hexlen, 0))
+			},
+		}
+
+		actions.pedBlueS = {
+			name: 'Color - Set Blue Gain',
+			options: [
+				{
+					id: 'val',
+					type: 'number',
+					label: 'Level',
+					default: 0,
+					min: -seriesCaps.colorGain.limit,
+					max: +seriesCaps.colorGain.limit,
+					step: seriesCaps.colorGain.step,
+					requiblue: true,
+					range: true,
+				},
+			],
+			callback: async (action) => {
+				self.data.bluePedValue = action.options.val
+				await sendCam(self, seriesCaps.colorGain.cmd.blue + ':' + (seriesCaps.colorGain.offset +
+					self.data.bluePedValue).toString(16).toUpperCase().padStart(seriesCaps.colorGain.hexlen, 0))
 			},
 		}
 	}
