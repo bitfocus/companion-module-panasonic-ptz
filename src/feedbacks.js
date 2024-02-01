@@ -146,7 +146,7 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
-	if (SERIES.capabilities.autoFocus) {
+	if (SERIES.capabilities.focusAuto) {
 		feedbacks.autoFocus = {
 			type: 'boolean',
 			name: 'Lens - Auto Focus State',
@@ -162,7 +162,7 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
-	if (SERIES.capabilities.autoIris) {
+	if (SERIES.capabilities.irisAuto) {
 		feedbacks.autoIris = {
 			type: 'boolean',
 			name: 'Lens - Auto Iris State',
@@ -181,7 +181,7 @@ export function getFeedbackDefinitions(self) {
 	if (SERIES.capabilities.preset) {
 		feedbacks.recallModePset = {
 			type: 'boolean',
-			name: 'Preset - Mode A, B, C',
+			name: 'Preset - Recall Mode',
 			description: 'Indicates if the selected preset recall mode is currently active',
 			defaultStyle: {
 				color: foregroundColor,

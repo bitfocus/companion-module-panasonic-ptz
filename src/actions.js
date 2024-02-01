@@ -27,7 +27,7 @@ export async function sendPTZ(self, str) {
 						self.log('info', 'Received Response: ' + String(str))
 					}
 					// Store Data
-					self.parseStatus(str)
+					self.parseUpdate(str)
 				}
 
 				self.checkVariables()

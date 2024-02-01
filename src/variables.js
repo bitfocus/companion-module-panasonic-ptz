@@ -87,7 +87,7 @@ export function setVariables(self) {
 		variables.push({ variableId: 'iris', name: 'Iris' })
 		variables.push({ variableId: 'irisPosition', name: 'Iris Position %' })
 		variables.push({ variableId: 'irisPositionBar', name: 'Iris Position' })
-		variables.push({ variableId: 'irisFollow', name: 'Iris Follow' })
+		variables.push({ variableId: 'irisFollowPosition', name: 'Iris Follow Position' })
 	}
 	if (SERIES.capabilities.irisAuto) {
 		variables.push({ variableId: 'irisMode', name: 'Iris Mode' })

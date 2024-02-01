@@ -99,7 +99,7 @@ class PanasonicPTZInstance extends InstanceBase {
 					str = str.split(':') // Split Commands and data
 
 					// Store Data
-					this.parseStatus(str)
+					this.parseUpdate(str)
 
 					// Update Varibles and Feedbacks
 					this.checkVariables()
@@ -271,7 +271,7 @@ class PanasonicPTZInstance extends InstanceBase {
 								this.log('info', 'Received Status: ' + String(str))
 							}
 							// Store Data
-							this.parseStatus(str)
+							this.parseUpdate(str)
 						}
 
 						this.checkVariables()
@@ -354,6 +354,12 @@ class PanasonicPTZInstance extends InstanceBase {
 			case 'iNS1':
 				this.data.installMode = 'Hanging'
 				break
+			case 'd10':
+				this.data.focusMode = 'Manual'
+				break
+			case 'd11':
+				this.data.focusMode = 'Auto'
+				break
 			case 'd30':
 				this.data.irisMode = 'Manual'
 				break
@@ -398,7 +404,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			case 'OSD':
 				switch (str[1]) {
 					case 'B1': this.data.colorTemperature = str[2].substring(2); break
-					case '4F': this.data.irisFollow = parseInt(str[2], 16); break
+					case '4F': this.data.irisFollowPosition = parseInt(str[2], 16); break
 				}
 				break
 			case 'OSI':
