@@ -76,16 +76,16 @@ export const SERIES_SPECS = [
 			colorGain: { cmd: { red: 'ORP', blue: 'OBP', green: 'OSJ:10' }, offset: 0x96, limit: 150, step: 1, hexlen: 3 }, // Has numbered red/blue Gain (ORG and OBG)
 			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 150, step: 1, hexlen: 3 }, // Has numbered red/blue Pedestal (ORP or OBP)
 			colorTemp: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', val: 'OSI:20', min: 2000, max: 15000 } }, // Has Color Temperature (OSD:B1 or OSI:20)
-			colorbar: true, // Has Color Bar Control (DCB:1 or DCB:0)
+			colorbar: true, // Has Color Bar Generator (DCB:1 or DCB:0)
 			error: true, // Camera can return enumerated error messages (rER)
 			filter: { dropdown: e.ENUM_FILTER_OTHER }, // Has ND Filter Support (OFT)
 			focus: true, // Has Focus Control (Fxx)
-			focusAuto: true, // Has Auto Focus (OAF)
+			focusAuto: true, // Has (switchable) Auto Focus (OAF)
 			focusPushAuto: true, // Has Push Auto Focus feature (OSE:69:1)
 			gain: { cmd: 'OGS', dropdown: e.ENUM_GAIN_CX350 }, // Has Gain (OGS/OGU)
 			install: true, // Has support for Desktop or Hanging Install Position (iNS1/iNS0)
 			iris: true, // Has Iris Control (Ixx)
-			irisAuto: true, // Has Auto Iris (d31/d30)
+			irisAuto: true, // Has (switchable) Auto Iris (d31/d30)
 			ois: { dropdown: e.ENUM_OIS_OTHER }, // Has Optical Image Stabilisation Control (OIS)
 			panTilt: true, // Has Pan/Tilt Head support (PTSxx)
 			pedestal: { cmd: 'OSJ:0F', offset: 0x800, limit: 200, step: 1, hexlen: 3 }, // Has Master Pedestal (OTD, OSJ:0F or OSG:4A)
@@ -94,15 +94,16 @@ export const SERIES_SPECS = [
 			presetSpeed: true, // Has Preset Recall Speed Control (UPVSxx)
 			presetTime: true, // Has additional Preset Recall Time Control (UPVSxx and OSJ:29:1)
 			recordSD: true, // Has SD Card Recording Control (sdctrl?save=start or sdctrl?save=end)
+			restart: true, // Has Restart command (initial?cmd=reset)
 			shutter: { cmd: 'OSJ:03', inc: 'OSJ:04', dec: 'OSJ:05', dropdown: e.ENUM_SHUTTER_ADV }, // Has Shutter Support (OSH, OSJ:03 - OSJ:06, ...)
 			streamRTMP: true, // Has RTMP (Client) Streaming Control (rtmp_ctrl?cmd=start or rtmp_ctrl?cmd=stop)
 			streamSRT: true, // Has SRT (Caller) Streaming Control (srt_ctrl?cmd=start or srt_ctrl?cmd=stop)
-			subscription: true, // Camera supports subscription to TCP-based event notification
+			subscription: true, // Camera supports subscription to TCP-based status update notifications
 			tally2: true, // Has Green Tally (TLG)
 			tally3: true, // Has Yellow Tally (TLY)
 			tally: true, // Has Red Tally (TLR or DA1/DA0)
-			trackingAuto: true, // Has Autotracking features (OSL:B6 - OSL:C2)
-			version: true, // Camera sends a firmware version string every minute (qSV3)
+			trackingAuto: true, // Has internal Autotracking features (OSL:B6 - OSL:C2)
+			version: true, // Camera provides software version (from initial getinfo or QSV, OSV)
 			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET }, // Has White Balance Modes (OAW)
 			zoom: true, // Has Zoom Control (Zxx)
 		},
@@ -133,6 +134,7 @@ export const SERIES_SPECS = [
 			presetSpeed: true,
 			presetTime: false,
 			recordSD: true,
+			restart: false,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE40 },
 			streamRTMP: false,
 			streamSRT: false,
@@ -172,8 +174,49 @@ export const SERIES_SPECS = [
 			presetSpeed: true,
 			presetTime: false,
 			recordSD: true,
+			restart: true,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE40 },
 			streamRTMP: false,
+			streamSRT: false,
+			subscription: true,
+			tally2: false,
+			tally3: false,
+			tally: true,
+			trackingAuto: false,
+			version: true,
+			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
+			zoom: true,
+		},
+	},
+
+	{
+		// Specific for the UE20 Series
+		id: 'UE20',
+		capabilities: {
+			colorGain: { cmd: { red: 'QSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 30, step: 1, hexlen: 3 },
+			colorPedestal: false,
+			colorTemp: false,
+			colorbar: true,
+			error: true,
+			filter: false,
+			focus: true,
+			focusAuto: true,
+			focusPushAuto: true,
+			gain: { cmd: 'OGU', dropdown: e.ENUM_GAIN_UE100 },
+			install: true,
+			iris: true,
+			irisAuto: true,
+			ois: false,
+			panTilt: true,
+			pedestal: { cmd: 'OSJ:0F', offset: 0x800, limit: 10, step: 1, hexlen: 3 },
+			power: true,
+			preset: 100,
+			presetSpeed: false,
+			presetTime: false,
+			recordSD: false,
+			restart: true,
+			shutter: { cmd: 'OSJ:03', inc: 'OSJ:04', dec: 'OSJ:05', dropdown: e.ENUM_SHUTTER_ADV_UE20 },
+			streamRTMP: true,
 			streamSRT: false,
 			subscription: true,
 			tally2: false,
@@ -211,6 +254,7 @@ export const SERIES_SPECS = [
 			presetSpeed: true,
 			presetTime: false,
 			recordSD: true,
+			restart: true,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE40 },
 			streamRTMP: false,
 			streamSRT: false,
@@ -250,6 +294,7 @@ export const SERIES_SPECS = [
 			presetSpeed: true,
 			presetTime: true,
 			recordSD: false,
+			restart: true,
 			shutter: { cmd: 'OSJ:03', inc: 'OSJ:04', dec: 'OSJ:05', dropdown: e.ENUM_SHUTTER_ADV },
 			streamRTMP: true,
 			streamSRT: true,
@@ -265,7 +310,7 @@ export const SERIES_SPECS = [
 	},
 
 	{
-		// Specific for the UE160 Series
+		// Specific for the AW-UE160 Camera
 		id: 'UE160',
 		capabilities: {
 			colorGain: { cmd: { red: 'OSL:36', blue: 'OSL:38', green: 'OSL:37' }, offset: 0x800, limit: 1000, step: 1, hexlen: 3 },
@@ -289,6 +334,7 @@ export const SERIES_SPECS = [
 			presetSpeed: true,
 			presetTime: true,
 			recordSD: false,
+			restart: true,
 			shutter: { cmd: 'OSJ:03', inc: 'OSJ:04', dec: 'OSJ:05', dropdown: e.ENUM_SHUTTER_ADV },
 			streamRTMP: true,
 			streamSRT: true,
@@ -297,7 +343,7 @@ export const SERIES_SPECS = [
 			tally3: true,
 			tally: true,
 			trackingAuto: false,
-			version: false,
+			version: true,
 			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
 			zoom: true,
 		},
@@ -328,6 +374,7 @@ export const SERIES_SPECS = [
 			presetSpeed: false,
 			presetTime: false,
 			recordSD: false,
+			restart: false,
 			shutter: false,
 			streamRTMP: false,
 			streamSRT: false,
@@ -367,6 +414,7 @@ export const SERIES_SPECS = [
 			presetSpeed: true,
 			presetTime: false,
 			recordSD: false,
+			restart: false,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE40 },
 			streamRTMP: false,
 			streamSRT: false,
@@ -406,6 +454,7 @@ export const SERIES_SPECS = [
 			presetSpeed: true,
 			presetTime: false,
 			recordSD: false,
+			restart: false,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE40 },
 			streamRTMP: false,
 			streamSRT: false,
@@ -445,6 +494,7 @@ export const SERIES_SPECS = [
 			presetSpeed: true,
 			presetTime: false,
 			recordSD: false,
+			restart: false,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE120 },
 			streamRTMP: false,
 			streamSRT: false,
@@ -484,6 +534,7 @@ export const SERIES_SPECS = [
 			presetSpeed: true,
 			presetTime: false,
 			recordSD: false,
+			restart: true,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE130 },
 			streamRTMP: false,
 			streamSRT: false,
@@ -523,6 +574,7 @@ export const SERIES_SPECS = [
 			presetSpeed: true,
 			presetTime: false,
 			recordSD: false,
+			restart: true,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE130 },
 			streamRTMP: false,
 			streamSRT: false,
@@ -562,8 +614,8 @@ export const SERIES_SPECS = [
 			presetSpeed: false,
 			presetTime: false,
 			recordSD: false,
-			shutter: false,
-			shutterAdv: { dropdown: e.ENUM_SHUTTER_UE4 },
+			restart: true,
+			shutter: { cmd: 'OSJ:03', inc: 'OSJ:04', dec: 'OSJ:05', dropdown: e.ENUM_SHUTTER_ADV_UE4 },
 			streamRTMP: false,
 			streamSRT: false,
 			subscription: true,
@@ -571,7 +623,7 @@ export const SERIES_SPECS = [
 			tally3: false,
 			tally: true,
 			trackingAuto: false,
-			version: false,
+			version: true,
 			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
 			zoom: true,
 		},
@@ -602,8 +654,8 @@ export const SERIES_SPECS = [
 			presetSpeed: false,
 			presetTime: false,
 			recordSD: false,
+			restart: false,
 			shutter: false, // special implementation 'OSG:5D', e.ENUM_SHUTTER_UB300
-			shutterAdv: false,
 			streamRTMP: false,
 			streamSRT: false,
 			subscription: true,
@@ -618,7 +670,7 @@ export const SERIES_SPECS = [
 	},
 
 	{
-		// Specific for the AG-CX350/4000 Camera
+		// Specific for the AG-CX350/4000 Series
 		id: 'CX350',
 		capabilities: {
 			colorGain: { cmd: { red: 'QSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 200, step: 1, hexlen: 3 },
@@ -642,6 +694,7 @@ export const SERIES_SPECS = [
 			presetSpeed: false,
 			presetTime: false,
 			recordSD: true,
+			restart: true,
 			shutter: false,
 			streamRTMP: true,
 			streamSRT: true,
@@ -650,7 +703,7 @@ export const SERIES_SPECS = [
 			tally3: false,
 			tally: true,
 			trackingAuto: false,
-			version: false,
+			version: true,
 			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
 			zoom: true,
 		},

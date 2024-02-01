@@ -155,6 +155,7 @@ class PanasonicPTZInstance extends InstanceBase {
 
 		return this
 	}
+
 	getCameraInfo() {
 		if (this.config.host) {
 			const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/getinfo?FILE=1`
@@ -189,7 +190,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			// Stream RTSP
 			// /cgi-bin/get_rtsp
 
-			// Streaming
+			// Streaming (Encoder Mode AVC/HEVC)
 			// /cgi-bin/get_stream_mode
 			// /cgi-bin/set_stream_mode
 
@@ -230,6 +231,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				})
 		}
 	}
+
 	parseInfo(str) {
 		// Store Values from Events
 		switch (str[0]) {
@@ -238,24 +240,17 @@ class PanasonicPTZInstance extends InstanceBase {
 				break
 			case 'NAME':
 				this.data.modelINFO = str[1]
-				this.log(
-					'info',
-					'Detected Camera Model: ' + this.data.modelINFO
-				)
+				this.log('info', 'Detected Camera Model: ' + this.data.modelINFO)
 				// if a new model is detected or selected, re-initialise all actions, variables and feedbacks
 				if (this.data.modelINFO !== this.data.model) {
-					this.init_actions() // export actions
-					this.init_presets()
-					this.init_variables()
-					this.checkVariables()
-					this.init_feedbacks()
-					this.checkFeedbacks()
+					this.reInitAll()
 				}
 				break
 			default:
 				break
 		}
 	}
+
 	getCameraStatus() {
 		if (this.config.host) {
 			const url = `http://${this.config.host}:${this.config.httpPort}/live/camdata.html`
@@ -288,7 +283,8 @@ class PanasonicPTZInstance extends InstanceBase {
 				})
 		}
 	}
-	parseStatus(str) {
+
+	parseUpdate(str) {
 		if (str[0].substring(0, 3) === 'rER') {
 			str[0] === 'rER00'
 				? (this.data.errorLabel = 'No Error')
@@ -313,10 +309,6 @@ class PanasonicPTZInstance extends InstanceBase {
 			const q = str[0].match(/q(\d\d)/)
 			if (q) {
 				this.data.presetCompletedIdx = parseInt(q[1])
-			}
-
-			if (str[0].substring(0, 4) === 'qSV3') {
-				this.data.version = str[0].substring(4)
 			}
 		}
 
@@ -376,12 +368,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.data.modelTCP = str[1]
 				// if a new model is detected or selected, re-initialise all actions, variables and feedbacks
 				if (this.data.modelTCP !== this.data.model) {
-					this.init_actions() // export actions
-					this.init_presets()
-					this.init_variables()
-					this.checkVariables()
-					this.init_feedbacks()
-					this.checkFeedbacks()
+					this.reInitAll()
 				}
 				break
 			case 'TLR': // Tally Red
@@ -635,6 +622,9 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.getCameraInfo()
 		this.getCameraStatus()
 		this.init_tcp()
+	}
+
+	reInitAll() {
 		this.init_actions() // export actions
 		this.init_presets()
 		this.init_variables()

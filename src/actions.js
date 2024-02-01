@@ -957,11 +957,7 @@ export function getActionDefinitions(self) {
 					},
 				],
 				callback: async (action) => {
-					if (seriesCaps.shutter.dropdown === e.ENUM_SHUTTER_ADV) {
-						await sendCam(self, 'OSJ:03:0x' + action.options.val)
-					} else {
-						await sendCam(self, seriesCaps.shutter.cmd + action.options.val)
-					}
+					await sendCam(self, seriesCaps.shutter.cmd + ':0x' + action.options.val)
 				},
 			}
 		}
@@ -975,7 +971,7 @@ export function getActionDefinitions(self) {
 				if (self.data.masterPedValue + seriesCaps.pedestal.step <= seriesCaps.pedestal.limit) {
 					self.data.masterPedValue += seriesCaps.pedestal.step
 				}
-				await sendCam(self, seriesCaps.pedestal.cmd + ':' + (seriesCaps.pedestal.offset +
+				await sendCam(self, seriesCaps.pedestal.cmd + ':0x' + (seriesCaps.pedestal.offset +
 					self.data.masterPedValue).toString(16).toUpperCase().padStart(seriesCaps.pedestal.hexlen, 0))
 			},
 		}
@@ -987,7 +983,7 @@ export function getActionDefinitions(self) {
 				if (self.data.masterPedValue - seriesCaps.pedestal.step <= seriesCaps.pedestal.limit) {
 					self.data.masterPedValue -= seriesCaps.pedestal.step
 				}
-				await sendCam(self, seriesCaps.pedestal.cmd + ':' + (seriesCaps.pedestal.offset +
+				await sendCam(self, seriesCaps.pedestal.cmd + ':0x' + (seriesCaps.pedestal.offset +
 					self.data.masterPedValue).toString(16).toUpperCase().padStart(seriesCaps.pedestal.hexlen, 0))
 			},
 		}
@@ -1009,7 +1005,7 @@ export function getActionDefinitions(self) {
 			],
 			callback: async (action) => {
 				self.data.masterPedValue = action.options.val
-				await sendCam(self, seriesCaps.pedestal.cmd + ':' + (seriesCaps.pedestal.offset +
+				await sendCam(self, seriesCaps.pedestal.cmd + ':0x' + (seriesCaps.pedestal.offset +
 					self.data.masterPedValue).toString(16).toUpperCase().padStart(seriesCaps.pedestal.hexlen, 0))
 			},
 		}
@@ -1028,7 +1024,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OAW:' + action.options.val)
+				await sendCam(self, 'OAW:' + action.options.val) // no leading 0x!
 			},
 		}
 
@@ -1061,7 +1057,7 @@ export function getActionDefinitions(self) {
 				}
 				self.colorTemperatureValue = seriesCaps.colorTemperature.dropdown[self.colorTemperatureIndex].id
 
-				await sendCam(self, seriesCaps.colorTemperature.index.cmd + ':' + self.colorTemperatureValue)
+				await sendCam(self, seriesCaps.colorTemperature.index.cmd + ':0x' + self.colorTemperatureValue)
 			},
 		}
 
@@ -1076,7 +1072,7 @@ export function getActionDefinitions(self) {
 				}
 				self.colorTemperatureValue = seriesCaps.colorTemperature.dropdown[self.colorTemperatureIndex].id
 
-				await sendCam(self, seriesCaps.colorTemperature.index.cmd + ':' + self.colorTemperatureValue)
+				await sendCam(self, seriesCaps.colorTemperature.index.cmd + ':0x' + self.colorTemperatureValue)
 			},
 		}
 
@@ -1098,7 +1094,7 @@ export function getActionDefinitions(self) {
 				self.colorTemperatureIndex = index;
 				self.colorTemperatureValue = id;
 
-				await sendCam(self, seriesCaps.colorTemperature.index.cmd + ':' + id)
+				await sendCam(self, seriesCaps.colorTemperature.index.cmd + ':0x' + id)
 			},
 		}
 	}
@@ -1136,7 +1132,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, seriesCaps.colorTemp.advanced.val + ':' + parseInt(action.options.val).toString(16).toUpperCase().padStart(5, 0) + ':0')
+				await sendCam(self, seriesCaps.colorTemp.advanced.val + ':0x' + parseInt(action.options.val).toString(16).toUpperCase().padStart(5, 0) + ':0')
 			},
 		}
 	}
@@ -1149,7 +1145,7 @@ export function getActionDefinitions(self) {
 				if (self.data.redPedValue + seriesCaps.colorPedestal.step <= seriesCaps.colorPedestal.limit) {
 					self.data.redPedValue += seriesCaps.colorPedestal.step
 				}
-				await sendCam(self, seriesCaps.colorPedestal.cmd.red + ':' + (seriesCaps.colorPedestal.offset +
+				await sendCam(self, seriesCaps.colorPedestal.cmd.red + ':0x' + (seriesCaps.colorPedestal.offset +
 					self.data.redPedValue).toString(16).toUpperCase().padStart(seriesCaps.colorPedestal.hexlen, 0))
 			},
 		}
@@ -1161,7 +1157,7 @@ export function getActionDefinitions(self) {
 				if (self.data.redPedValue - seriesCaps.colorPedestal.step <= seriesCaps.colorPedestal.limit) {
 					self.data.redPedValue -= seriesCaps.colorPedestal.step
 				}
-				await sendCam(self, seriesCaps.colorPedestal.cmd.red + ':' + (seriesCaps.colorPedestal.offset +
+				await sendCam(self, seriesCaps.colorPedestal.cmd.red + ':0x' + (seriesCaps.colorPedestal.offset +
 					self.data.redPedValue).toString(16).toUpperCase().padStart(seriesCaps.colorPedestal.hexlen, 0))
 			},
 		}
@@ -1183,7 +1179,7 @@ export function getActionDefinitions(self) {
 			],
 			callback: async (action) => {
 				self.data.redPedValue = action.options.val
-				await sendCam(self, seriesCaps.colorPedestal.cmd.red + ':' + (seriesCaps.colorPedestal.offset +
+				await sendCam(self, seriesCaps.colorPedestal.cmd.red + ':0x' + (seriesCaps.colorPedestal.offset +
 					self.data.redPedValue).toString(16).toUpperCase().padStart(seriesCaps.colorPedestal.hexlen, 0))
 			},
 		}
@@ -1197,7 +1193,7 @@ export function getActionDefinitions(self) {
 				if (self.data.bluePedValue + seriesCaps.colorPedestal.step <= seriesCaps.colorPedestal.limit) {
 					self.data.bluePedValue += seriesCaps.colorPedestal.step
 				}
-				await sendCam(self, seriesCaps.colorPedestal.cmd.blue + ':' + (seriesCaps.colorPedestal.offset +
+				await sendCam(self, seriesCaps.colorPedestal.cmd.blue + ':0x' + (seriesCaps.colorPedestal.offset +
 					self.data.bluePedValue).toString(16).toUpperCase().padStart(seriesCaps.colorPedestal.hexlen, 0))
 			},
 		}
@@ -1209,7 +1205,7 @@ export function getActionDefinitions(self) {
 				if (self.data.bluePedValue - seriesCaps.colorPedestal.step <= seriesCaps.colorPedestal.limit) {
 					self.data.bluePedValue -= seriesCaps.colorPedestal.step
 				}
-				await sendCam(self, seriesCaps.colorPedestal.cmd.blue + ':' + (seriesCaps.colorPedestal.offset +
+				await sendCam(self, seriesCaps.colorPedestal.cmd.blue + ':0x' + (seriesCaps.colorPedestal.offset +
 					self.data.bluePedValue).toString(16).toUpperCase().padStart(seriesCaps.colorPedestal.hexlen, 0))
 			},
 		}
@@ -1231,7 +1227,7 @@ export function getActionDefinitions(self) {
 			],
 			callback: async (action) => {
 				self.data.bluePedValue = action.options.val
-				await sendCam(self, seriesCaps.colorPedestal.cmd.blue + ':' + (seriesCaps.colorPedestal.offset +
+				await sendCam(self, seriesCaps.colorPedestal.cmd.blue + ':0x' + (seriesCaps.colorPedestal.offset +
 					self.data.bluePedValue).toString(16).toUpperCase().padStart(seriesCaps.colorPedestal.hexlen, 0))
 			},
 		}
@@ -1245,7 +1241,7 @@ export function getActionDefinitions(self) {
 				if (self.data.redPedValue + seriesCaps.colorGain.step <= seriesCaps.colorGain.limit) {
 					self.data.redPedValue += seriesCaps.colorGain.step
 				}
-				await sendCam(self, seriesCaps.colorGain.cmd.red + ':' + (seriesCaps.colorGain.offset +
+				await sendCam(self, seriesCaps.colorGain.cmd.red + ':0x' + (seriesCaps.colorGain.offset +
 					self.data.redPedValue).toString(16).toUpperCase().padStart(seriesCaps.colorGain.hexlen, 0))
 			},
 		}
@@ -1257,7 +1253,7 @@ export function getActionDefinitions(self) {
 				if (self.data.redPedValue - seriesCaps.colorGain.step <= seriesCaps.colorGain.limit) {
 					self.data.redPedValue -= seriesCaps.colorGain.step
 				}
-				await sendCam(self, seriesCaps.colorGain.cmd.red + ':' + (seriesCaps.colorGain.offset +
+				await sendCam(self, seriesCaps.colorGain.cmd.red + ':0x' + (seriesCaps.colorGain.offset +
 					self.data.redPedValue).toString(16).toUpperCase().padStart(seriesCaps.colorGain.hexlen, 0))
 			},
 		}
@@ -1279,7 +1275,7 @@ export function getActionDefinitions(self) {
 			],
 			callback: async (action) => {
 				self.data.redPedValue = action.options.val
-				await sendCam(self, seriesCaps.colorGain.cmd.red + ':' + (seriesCaps.colorGain.offset +
+				await sendCam(self, seriesCaps.colorGain.cmd.red + ':0x' + (seriesCaps.colorGain.offset +
 					self.data.redPedValue).toString(16).toUpperCase().padStart(seriesCaps.colorGain.hexlen, 0))
 			},
 		}
@@ -1293,7 +1289,7 @@ export function getActionDefinitions(self) {
 				if (self.data.bluePedValue + seriesCaps.colorGain.step <= seriesCaps.colorGain.limit) {
 					self.data.bluePedValue += seriesCaps.colorGain.step
 				}
-				await sendCam(self, seriesCaps.colorGain.cmd.blue + ':' + (seriesCaps.colorGain.offset +
+				await sendCam(self, seriesCaps.colorGain.cmd.blue + ':0x' + (seriesCaps.colorGain.offset +
 					self.data.bluePedValue).toString(16).toUpperCase().padStart(seriesCaps.colorGain.hexlen, 0))
 			},
 		}
@@ -1305,7 +1301,7 @@ export function getActionDefinitions(self) {
 				if (self.data.bluePedValue - seriesCaps.colorGain.step <= seriesCaps.colorGain.limit) {
 					self.data.bluePedValue -= seriesCaps.colorGain.step
 				}
-				await sendCam(self, seriesCaps.colorGain.cmd.blue + ':' + (seriesCaps.colorGain.offset +
+				await sendCam(self, seriesCaps.colorGain.cmd.blue + ':0x' + (seriesCaps.colorGain.offset +
 					self.data.bluePedValue).toString(16).toUpperCase().padStart(seriesCaps.colorGain.hexlen, 0))
 			},
 		}
@@ -1327,7 +1323,7 @@ export function getActionDefinitions(self) {
 			],
 			callback: async (action) => {
 				self.data.bluePedValue = action.options.val
-				await sendCam(self, seriesCaps.colorGain.cmd.blue + ':' + (seriesCaps.colorGain.offset +
+				await sendCam(self, seriesCaps.colorGain.cmd.blue + ':0x' + (seriesCaps.colorGain.offset +
 					self.data.bluePedValue).toString(16).toUpperCase().padStart(seriesCaps.colorGain.hexlen, 0))
 			},
 		}
@@ -1345,7 +1341,7 @@ export function getActionDefinitions(self) {
 				}
 				self.filterVal = seriesCaps.filter.dropdown[self.filterIndex].id
 
-				await sendCam(self, 'OFT:' + self.filterVal)
+				await sendCam(self, 'OFT:' + self.filterVal) // no leading 0x!
 			},
 		}
 
@@ -1360,7 +1356,7 @@ export function getActionDefinitions(self) {
 				}
 				self.filterVal = seriesCaps.filter.dropdown[self.filterIndex].id
 
-				await sendCam(self, 'OFT:' + self.filterVal)
+				await sendCam(self, 'OFT:' + self.filterVal) // no leading 0x!
 			},
 		}
 
@@ -1376,7 +1372,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OFT:' + action.options.val)
+				await sendCam(self, 'OFT:' + action.options.val) // no leading 0x!
 			},
 		}
 	}
@@ -1450,7 +1446,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OSE:71:' + action.options.val)
+				await sendCam(self, 'OSE:71:' + action.options.val) // no leading 0x!
 			},
 		}
 	}
@@ -1471,7 +1467,7 @@ export function getActionDefinitions(self) {
 				if (seriesCaps.presetTime) {
 					await sendCam(self, 'OSJ:29:0')
 				}
-				await sendPTZ(self, 'UPVS' + action.options.val)
+				await sendPTZ(self, 'UPVS' + action.options.val) // no leading 0x!
 			},
 		}
 	}
@@ -1493,7 +1489,7 @@ export function getActionDefinitions(self) {
 			],
 			callback: async (action) => {
 				await sendCam(self, 'OSJ:29:1')
-				await sendPTZ(self, 'UPVS' + parseInt(action.options.val).toString(16).toUpperCase().padStart(3, 0))
+				await sendPTZ(self, 'UPVS' + parseInt(action.options.val).toString(16).toUpperCase().padStart(3, 0)) // no leading 0x!
 			},
 		}
 	}
@@ -1534,7 +1530,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OSL:BC:' + action.options.value)
+				await sendCam(self, 'OSL:BC:' + action.options.value) // no leading 0x!
 			},
 		}
 	}
@@ -1557,6 +1553,16 @@ export function getActionDefinitions(self) {
 			options: [],
 			callback: async (action) => {
 				await sendPTZ(self, 'O1')
+			},
+		}
+	}
+
+	if (seriesCaps.restart) {
+		actions.restart = {
+			name: 'System - Restart Camera',
+			options: [],
+			callback: async (action) => {
+				await sendWeb(self, 'initial?cmd=reset&Randomnum=12345')
 			},
 		}
 	}
