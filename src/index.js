@@ -94,7 +94,7 @@ class PanasonicPTZInstance extends InstanceBase {
 					str_raw = str_raw.split('\r\n') // Split Data in order to remove data before and after command
 					let str = str_raw[1].trim() // remove new line, carage return and so on.
 					if (this.config.debug) {
-						this.log('info', 'Received TCP: ' + String(str))
+						this.log('info', 'Received Update: ' + String(str))
 					}
 					str = str.split(':') // Split Commands and data
 
