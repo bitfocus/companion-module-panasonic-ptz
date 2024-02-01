@@ -149,7 +149,7 @@ export function getFeedbackDefinitions(self) {
 	if (SERIES.capabilities.focusAuto) {
 		feedbacks.autoFocus = {
 			type: 'boolean',
-			name: 'Lens - Auto Focus State',
+			name: 'Lens - Focus Mode Auto',
 			description: 'Indicates if Auto Focus is currently enabled',
 			defaultStyle: {
 				color: foregroundColor,
@@ -157,7 +157,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function (feedback) {
-				return self.data.autoFocus === 'Auto'
+				return self.data.focusMode === 'Auto'
 			},
 		}
 	}
@@ -165,7 +165,7 @@ export function getFeedbackDefinitions(self) {
 	if (SERIES.capabilities.irisAuto) {
 		feedbacks.autoIris = {
 			type: 'boolean',
-			name: 'Lens - Auto Iris State',
+			name: 'Lens - Iris Mode Auto',
 			description: 'Indicates if Auto Iris is currently enabled',
 			defaultStyle: {
 				color: foregroundColor,

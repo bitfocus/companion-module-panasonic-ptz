@@ -90,16 +90,16 @@ class PanasonicPTZInstance extends InstanceBase {
 				// Receive data from the client.
 				socket.on('data', (data) => {
 					// TODO - TCP doesn't guarantee messages will be chunked sensibly. When it doesnt, this logic will break
-					let str_raw = data.toString()
-					str_raw = str_raw.split('\r\n') // Split Data in order to remove data before and after command
-					let str = str_raw[1].trim() // remove new line, carage return and so on.
-					if (this.config.debug) {
-						this.log('info', 'Received Update: ' + String(str))
-					}
-					str = str.split(':') // Split Commands and data
 
-					// Store Data
-					this.parseUpdate(str)
+					// Data layout in buffer: [22 Bytes][2 Bytes][4 Bytes][CR][LF]>>>DATA<<<[CR][LF]*optional Bytes*[24 Bytes]
+					// Convert binary buffer to string, split data in order to remove binary data before and after command
+					const str = data.toString().split('\r\n', 3)[1]
+
+					if (this.config.debug) {
+						this.log('info', 'Received Update: ' + str)
+					}
+
+					this.parseUpdate(str.split(':'))
 
 					// Update Varibles and Feedbacks
 					this.checkVariables()
@@ -266,12 +266,13 @@ class PanasonicPTZInstance extends InstanceBase {
 
 						for (let line of lines) {
 							// remove new line, carage return and so on.
-							const str = line.trim().split(':') // Split Commands and data
+							const str = line.trim() // Split Commands and data
+	
 							if (this.config.debug) {
-								this.log('info', 'Received Status: ' + String(str))
+								this.log('info', 'Received Initial Status: ' + str)
 							}
-							// Store Data
-							this.parseUpdate(str)
+	
+							this.parseUpdate(str.split(':'))
 						}
 
 						this.checkVariables()
@@ -403,7 +404,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				break
 			case 'OSD':
 				switch (str[1]) {
-					case 'B1': this.data.colorTemperature = str[2].substring(2); break
+					case 'B1': this.data.colorTemperature = str[2].replace('0x', ''); break
 					case '4F': this.data.irisFollowPosition = parseInt(str[2], 16); break
 				}
 				break
@@ -414,7 +415,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				}
 				break
 			case 'OSH':
-				this.data.shutter = str[1].substring(2)
+				this.data.shutter = str[1].replace('0x', '')
 				break
 			case 'OFT':
 				this.data.filter = str[1]
@@ -436,12 +437,12 @@ class PanasonicPTZInstance extends InstanceBase {
 					case '4C': this.data.redPedValue = parseInt(str[2], 16) - 0x800; break
 					case '4D': this.data.greenPedValue = parseInt(str[2], 16) - 0x800; break
 					case '4E': this.data.bluePedValue = parseInt(str[2], 16) - 0x800; break
-					//case '5D': this.data.shutterStepLabel = str[2].substring(2); break // UB300 special case
+					//case '5D': this.data.shutterStepLabel = str[2].replace('0x', ''); break // UB300 special case
 				}
 				break
 			case 'OSJ':
 				switch (str[1]) {
-					case '03': this.data.shutter = str[2].substring(2); break
+					case '03': this.data.shutter = str[2].replace('0x', ''); break
 					case '06': this.data.shutterStepLabel = '1/' + parseInt(str[2], 16).toString(); break
 					case '10': this.data.greenPedValue = parseInt(str[2], 16) - 0x96; break
 					case '0F': this.data.masterPedValue = parseInt(str[2], 16) - 0x800; break
@@ -466,12 +467,15 @@ class PanasonicPTZInstance extends InstanceBase {
 				break
 			case 'OGS':
 			case 'OGU':
-				this.data.gain = str[1].substring(2)
+				this.data.gain = str[1].replace('0x', '')
 				break
 			case 'ORS':
 				this.data.irisMode = str[1] == '1' ? 'Auto' : 'Manual'
 				break
 			case 'OTD':
+				this.data.masterPedValue = parseInt(str[1], 16) - 0x1e
+				break
+			case 'OTP':
 				this.data.masterPedValue = parseInt(str[1], 16) - 0x96
 				break
 			case 'ORG':
@@ -612,12 +616,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.getCameraInfo()
 		this.getCameraStatus()
 		this.init_tcp()
-		this.init_actions() // export actions
-		this.init_presets()
-		this.init_variables()
-		this.checkVariables()
-		this.init_feedbacks()
-		this.checkFeedbacks()
+		this.reInitAll()
 
 		this.speedChangeEmitter = new EventEmitter()
 	}

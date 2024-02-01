@@ -48,7 +48,7 @@ export function setVariables(self) {
 	if (SERIES.capabilities.whiteBalance) {
 		variables.push({ variableId: 'whiteBalance', name: 'White Balance Mode' })
 	}
-	if (SERIES.capabilities.colorTemp) {
+	if (SERIES.capabilities.colorTemperature) {
 		variables.push({ variableId: 'colorTemperature', name: 'Color Temperature' })
 	}
 	if (SERIES.capabilities.gain) {
@@ -113,8 +113,8 @@ export function setVariables(self) {
 export function checkVariables(self) {
 	const SERIES = getAndUpdateSeries(self)
 
-	const colorTemperature = SERIES.capabilities.colorTemperature
-		? SERIES.capabilities.colorTemperature.dropdown.find((CTEMP) => CTEMP.id == self.data.colorTemperature)
+	const colorTemperature = SERIES.capabilities.colorTemperature.index
+		? SERIES.capabilities.colorTemperature.index.dropdown.find((CTEMP) => CTEMP.id == self.data.colorTemperature)
 		: null
 
 	const gain = SERIES.capabilities.gain
@@ -181,9 +181,9 @@ export function checkVariables(self) {
 		zoomPosition: normalizePct(self.data.zoomPosition, 0x0, 0xAAA, false, 1),
 		focusPosition: normalizePct(self.data.focusPosition, 0x0, 0xAAA, false),
 		irisPosition: normalizePct(self.data.irisPosition, 0x0, 0xAAA, false),
-		zoomPositionBar: progressBar(normalizePct(self.data.zoomPosition, 0x0, 0xAAA), 14, 'W', 'T'),
-		focusPositionBar: progressBar(normalizePct(self.data.focusPosition, 0x0, 0xAAA), 14, 'N', 'F'),
-		irisPositionBar: progressBar(normalizePct(self.data.irisPosition, 0x0, 0xAAA), 14, 'C', 'O'),
+		zoomPositionBar: progressBar(normalizePct(self.data.zoomPosition, 0x0, 0xAAA), 10, 'W', 'T'),
+		focusPositionBar: progressBar(normalizePct(self.data.focusPosition, 0x0, 0xAAA), 10, 'N', 'F'),
+		irisPositionBar: progressBar(normalizePct(self.data.irisPosition, 0x0, 0xAAA), 10, 'C', 'O'),
 		irisFollowPosition: self.data.irisFollowPosition,
 
 		redGain: self.data.redGainValue,

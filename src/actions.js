@@ -1050,12 +1050,12 @@ export function getActionDefinitions(self) {
 			name: 'White Balance - Color Temperature Up',
 			options: [],
 			callback: async (action) => {
-				if (self.colorTemperatureIndex == seriesCaps.colorTemperature.dropdown.length) {
-					self.colorTemperatureIndex = seriesCaps.colorTemperature.dropdown.length
-				} else if (self.colorTemperatureIndex < seriesCaps.colorTemperature.dropdown.length) {
+				if (self.colorTemperatureIndex == seriesCaps.colorTemperature.index.dropdown.length) {
+					self.colorTemperatureIndex = seriesCaps.colorTemperature.index.dropdown.length
+				} else if (self.colorTemperatureIndex < seriesCaps.colorTemperature.index.dropdown.length) {
 					self.colorTemperatureIndex++
 				}
-				self.colorTemperatureValue = seriesCaps.colorTemperature.dropdown[self.colorTemperatureIndex].id
+				self.colorTemperatureValue = seriesCaps.colorTemperature.index.dropdown[self.colorTemperatureIndex].id
 
 				await sendCam(self, seriesCaps.colorTemperature.index.cmd + ':0x' + self.colorTemperatureValue)
 			},
@@ -1070,7 +1070,7 @@ export function getActionDefinitions(self) {
 				} else if (self.colorTemperatureIndex > 0) {
 					self.colorTemperatureIndex--
 				}
-				self.colorTemperatureValue = seriesCaps.colorTemperature.dropdown[self.colorTemperatureIndex].id
+				self.colorTemperatureValue = seriesCaps.colorTemperature.index.dropdown[self.colorTemperatureIndex].id
 
 				await sendCam(self, seriesCaps.colorTemperature.index.cmd + ':0x' + self.colorTemperatureValue)
 			},
@@ -1083,13 +1083,13 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Color Temperature',
 					id: 'val',
-					default: seriesCaps.colorTemperature.dropdown[0].id,
-					choices: seriesCaps.colorTemperature.dropdown,
+					default: seriesCaps.colorTemperature.index.dropdown[0].id,
+					choices: seriesCaps.colorTemperature.index.dropdown,
 				},
 			],
 			callback: async (action) => {
 				let id = action.options.val;
-				let index = seriesCaps.colorTemperature.dropdown.findIndex((colorTemperature) => colorTemperature.id == id);
+				let index = seriesCaps.colorTemperature.index.dropdown.findIndex((colorTemperature) => colorTemperature.id == id);
 
 				self.colorTemperatureIndex = index;
 				self.colorTemperatureValue = id;
