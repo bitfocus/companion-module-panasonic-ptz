@@ -113,24 +113,24 @@ export function setVariables(self) {
 export function checkVariables(self) {
 	const SERIES = getAndUpdateSeries(self)
 
-	const colorTemperature = SERIES.actions.colorTemperature
-		? SERIES.actions.colorTemperature.dropdown.find((CTEMP) => CTEMP.id == self.data.colorTemperature)
+	const colorTemperature = SERIES.capabilities.colorTemperature
+		? SERIES.capabilities.colorTemperature.dropdown.find((CTEMP) => CTEMP.id == self.data.colorTemperature)
 		: null
 
-	const gain = SERIES.actions.gain
-		? SERIES.actions.gain.dropdown.find((GAIN) => GAIN.id == self.data.gain)
+	const gain = SERIES.capabilities.gain
+		? SERIES.capabilities.gain.dropdown.find((GAIN) => GAIN.id == self.data.gain)
 		: null
 
-	const ois = SERIES.actions.ois
-		? SERIES.actions.ois.dropdown.find((OIS) => OIS.id == self.data.ois)
+	const ois = SERIES.capabilities.ois
+		? SERIES.capabilities.ois.dropdown.find((OIS) => OIS.id == self.data.ois)
 		: null
 
-	const shutter = SERIES.actions.shutter
-		? SERIES.actions.shutter.dropdown.find((SHUTTER) => SHUTTER.id == self.data.shutter)
+	const shutter = SERIES.capabilities.shutter
+		? SERIES.capabilities.shutter.dropdown.find((SHUTTER) => SHUTTER.id == self.data.shutter)
 		: null
 
-	const whiteBalance = SERIES.actions.whiteBalance
-		? SERIES.actions.whiteBalance.dropdown.find((WB) => WB.id == self.data.whiteBalance)
+	const whiteBalance = SERIES.capabilities.whiteBalance
+		? SERIES.capabilities.whiteBalance.dropdown.find((WB) => WB.id == self.data.whiteBalance)
 		: null
 
 	const progressBar = (pct, width = 20, start = '', end = '') => {

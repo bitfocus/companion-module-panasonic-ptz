@@ -17,7 +17,24 @@ export async function sendPTZ(self, str) {
 		try {
 			const response = await got.get(url)
 
-			// console.log("Result from REST:" + result.data);
+			if (response.body) {
+				const lines = response.body.trim().split('\r\n') // Split Data in order to remove data before and after command
+
+				for (let line of lines) {
+					// remove new line, carage return and so on.
+					const str = line.trim().split(':') // Split Commands and data
+					if (self.config.debug) {
+						self.log('info', 'Received Response: ' + String(str))
+					}
+					// Store Data
+					self.parseStatus(str)
+				}
+
+				self.checkVariables()
+				self.checkFeedbacks()
+			}
+
+			//console.log("Result from REST:" + result.data);
 		} catch (err) {
 			throw new Error(`Action failed: ${url}`)
 		}
@@ -323,7 +340,7 @@ export function getActionDefinitions(self) {
 					label: 'Speed setting',
 					id: 'speed',
 					default: 25,
-					enum: e.ENUM_SPEED,
+					choices: e.ENUM_SPEED,
 					isVisible: ((options) => options.advanced ? false : true)
 				},
 				{
@@ -331,7 +348,7 @@ export function getActionDefinitions(self) {
 					label: 'Pan speed setting',
 					id: 'pSpeed',
 					default: 25,
-					enum: e.ENUM_SPEED,
+					choices: e.ENUM_SPEED,
 					isVisible: ((options) => options.advanced ? true : false)
 				},
 				{
@@ -339,7 +356,7 @@ export function getActionDefinitions(self) {
 					label: 'Tilt speed setting',
 					id: 'tSpeed',
 					default: 25,
-					enum: e.ENUM_SPEED,
+					choices: e.ENUM_SPEED,
 					isVisible: ((options) => options.advanced ? true : false)
 				},
 			],
@@ -566,7 +583,7 @@ export function getActionDefinitions(self) {
 					label: 'Speed setting',
 					id: 'speed',
 					default: 25,
-					enum: e.ENUM_SPEED,
+					choices: e.ENUM_SPEED,
 				},
 			],
 			callback: async (action) => {
@@ -683,7 +700,7 @@ export function getActionDefinitions(self) {
 					label: 'Speed setting',
 					id: 'speed',
 					default: 25,
-					enum: e.ENUM_SPEED,
+					choices: e.ENUM_SPEED,
 				},
 			],
 			callback: async (action) => {
@@ -738,7 +755,7 @@ export function getActionDefinitions(self) {
 					label: 'Auto / Manual Focus',
 					id: 'val',
 					default: '0',
-					enum: [
+					choices: [
 						{ id: '0', label: 'Manual Focus' },
 						{ id: '1', label: 'Auto Focus' },
 					],
@@ -801,7 +818,7 @@ export function getActionDefinitions(self) {
 					label: 'Iris setting',
 					id: 'val',
 					default: e.ENUM_IRIS[0].id,
-					enum: e.ENUM_IRIS,
+					choices: e.ENUM_IRIS,
 				},
 			],
 			callback: async (action) => {
@@ -818,7 +835,7 @@ export function getActionDefinitions(self) {
 					label: 'Auto / Manual Iris',
 					id: 'val',
 					default: '0',
-					enum: [
+					choices: [
 						{ id: '0', label: 'Manual Iris' },
 						{ id: '1', label: 'Auto Iris' },
 					],
@@ -879,7 +896,7 @@ export function getActionDefinitions(self) {
 					label: 'Gain setting',
 					id: 'val',
 					default: seriesCaps.gain.dropdown[0].id,
-					enum: seriesCaps.gain.dropdown,
+					choices: seriesCaps.gain.dropdown,
 				},
 			],
 			callback: async (action) => {
@@ -936,7 +953,7 @@ export function getActionDefinitions(self) {
 						label: 'Shutter setting',
 						id: 'val',
 						default: seriesCaps.shutter.dropdown[0].id,
-						enum: seriesCaps.shutter.dropdown,
+						choices: seriesCaps.shutter.dropdown,
 					},
 				],
 				callback: async (action) => {
@@ -1007,7 +1024,7 @@ export function getActionDefinitions(self) {
 					label: 'Select Mode',
 					id: 'val',
 					default: '0',
-					enum: e.ENUM_WHITEBALANCE_SET,
+					choices: e.ENUM_WHITEBALANCE_SET,
 				},
 			],
 			callback: async (action) => {
@@ -1071,7 +1088,7 @@ export function getActionDefinitions(self) {
 					label: 'Color Temperature',
 					id: 'val',
 					default: seriesCaps.colorTemperature.dropdown[0].id,
-					enum: seriesCaps.colorTemperature.dropdown,
+					choices: seriesCaps.colorTemperature.dropdown,
 				},
 			],
 			callback: async (action) => {
@@ -1355,7 +1372,7 @@ export function getActionDefinitions(self) {
 					label: 'ND Filter setting',
 					id: 'val',
 					default: seriesCaps.filter.dropdown[0].id,
-					enum: seriesCaps.filter.dropdown,
+					choices: seriesCaps.filter.dropdown,
 				},
 			],
 			callback: async (action) => {
@@ -1377,7 +1394,7 @@ export function getActionDefinitions(self) {
 					label: 'Preset Nr.',
 					id: 'val',
 					default: e.ENUM_PRESET[0].id,
-					enum: e.ENUM_PRESET,
+					choices: e.ENUM_PRESET,
 				},
 			],
 			callback: async (action) => {
@@ -1393,7 +1410,7 @@ export function getActionDefinitions(self) {
 					label: 'Preset Nr.',
 					id: 'val',
 					default: e.ENUM_PRESET[0].id,
-					enum: e.ENUM_PRESET,
+					choices: e.ENUM_PRESET,
 				},
 			],
 			callback: async (action) => {
@@ -1401,15 +1418,15 @@ export function getActionDefinitions(self) {
 			},
 		}
 
-		actions.recallPset = {
-			name: 'Preset - Delete',
+		actions.clearPset = {
+			name: 'Preset - Clear',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Preset Nr.',
 					id: 'val',
 					default: e.ENUM_PRESET[0].id,
-					enum: e.ENUM_PRESET,
+					choices: e.ENUM_PRESET,
 				},
 			],
 			callback: async (action) => {
@@ -1418,14 +1435,14 @@ export function getActionDefinitions(self) {
 		}
 
 		actions.recallModePset = {
-			name: 'Preset - Recall Scope',
+			name: 'Preset - Set Recall Scope',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Preset Mode',
 					id: 'val',
 					default: '0',
-					enum: [
+					choices: [
 						{ id: '0', label: 'Mode A - PTZ + Iris + WB/Color' },
 						{ id: '1', label: 'Mode B - PTZ + Iris' },
 						{ id: '2', label: 'Mode C - PTZ only' },
@@ -1447,7 +1464,7 @@ export function getActionDefinitions(self) {
 					label: 'Speed',
 					id: 'val',
 					default: '999',
-					enum: e.ENUM_PSSPEED,
+					choices: e.ENUM_PSSPEED,
 				},
 			],
 			callback: async (action) => {
@@ -1510,7 +1527,7 @@ export function getActionDefinitions(self) {
 					label: 'Option',
 					id: 'value',
 					default: 0,
-					enum: [
+					choices: [
 						{ id: '0', label: 'Stop' },
 						{ id: '1', label: 'Start' },
 					],
@@ -1635,7 +1652,7 @@ export function getActionDefinitions(self) {
 					label: 'Position',
 					id: 'position',
 					default: 0,
-					enum: [
+					choices: [
 						{ id: '0', label: 'Desktop' },
 						{ id: '1', label: 'Hanging' },
 					],
@@ -1656,7 +1673,7 @@ export function getActionDefinitions(self) {
 					label: 'SD Card Action',
 					id: 'value',
 					default: 'start',
-					enum: [
+					choices: [
 						{ id: 'start', label: 'Start Recording' },
 						{ id: 'end', label: 'Stop Recording' },
 					],
@@ -1677,7 +1694,7 @@ export function getActionDefinitions(self) {
 					label: 'SRT Action (Caller)',
 					id: 'value',
 					default: 'start',
-					enum: [
+					choices: [
 						{ id: 'start', label: 'Start Streaming' },
 						{ id: 'stop', label: 'Stop Streaming' },
 					],
@@ -1698,7 +1715,7 @@ export function getActionDefinitions(self) {
 					label: 'RTMP Action (Push)',
 					id: 'value',
 					default: 'start',
-					enum: [
+					choices: [
 						{ id: 'start', label: 'Start Streaming' },
 						{ id: 'stop', label: 'Stop Streaming' },
 					],
@@ -1718,7 +1735,7 @@ export function getActionDefinitions(self) {
 				label: 'Custom command destination',
 				id: 'dest',
 				default: '0',
-				enum: [
+				choices: [
 					{ id: '0', label: 'Cam' },
 					{ id: '1', label: 'PTZ' },
 					{ id: '2', label: 'Web' },

@@ -15,6 +15,16 @@ export function getFeedbackDefinitions(self) {
 	const backgroundColorRed = combineRgb(255, 0, 0) // Red
 	const backgroundColorGreen = combineRgb(0, 255, 0) // Green
 	const backgroundColorOrange = combineRgb(255, 102, 0) // Orange
+	const backgroundColorBlue = combineRgb(0, 51, 204)
+	const backgroundColorGrey = combineRgb(51, 51, 51)
+
+	const colorWhite = combineRgb(255, 255, 255)
+	const colorRed = combineRgb(255, 0, 0)
+	const colorGreen = combineRgb(0, 204, 0)
+	const colorYellow = combineRgb(255, 255, 0)
+	const colorPurple = combineRgb(255, 0, 255)
+	const colorOrange = combineRgb(255, 102, 0)
+	const colorBlack = combineRgb(0, 0, 0)
 
 	if (SERIES.capabilities.power) {
 		feedbacks.powerState = {
@@ -43,7 +53,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function (feedback) {
-				return self.data.colorbar
+				return self.data.colorbar === 'ON'
 			},
 		}
 	}
@@ -111,7 +121,7 @@ export function getFeedbackDefinitions(self) {
 					label: 'Position',
 					id: 'option',
 					default: '0',
-					enum: [
+					choices: [
 						{ id: '0', label: 'Desktop' },
 						{ id: '1', label: 'Hanging' },
 					],
@@ -183,7 +193,7 @@ export function getFeedbackDefinitions(self) {
 					label: 'Mode',
 					id: 'option',
 					default: '0',
-					enum: [
+					choices: [
 						{ id: '0', label: 'Mode A - PTZ + Iris + WB/Color' },
 						{ id: '1', label: 'Mode B - PTZ + Iris' },
 						{ id: '2', label: 'Mode C - PTZ only' },
@@ -214,9 +224,9 @@ export function getFeedbackDefinitions(self) {
 				return false
 			},
 		}
-		feedbacks.presetActive = {
+		feedbacks.presetSelected = {
 			type: 'boolean',
-			name: 'Preset - Active / Selected',
+			name: 'Preset - Selected / Active',
 			description: 'Indicates if the selected preset is currently active (last selected)',
 			defaultStyle: {
 				color: foregroundColor,
@@ -228,11 +238,11 @@ export function getFeedbackDefinitions(self) {
 					label: 'Preset',
 					id: 'option',
 					default: e.ENUM_PRESET[0].id,
-					enum: e.ENUM_PRESET,
+					choices: e.ENUM_PRESET,
 				},
 			],
 			callback: function (feedback) {
-				return self.data.presetActive === parseInt(feedback.options.option)
+				return self.data.presetSelectedIdx === parseInt(feedback.options.option)
 			},
 		}
 		feedbacks.presetComplete = {
@@ -241,7 +251,7 @@ export function getFeedbackDefinitions(self) {
 			description: 'Indicates if the last recall to the selected preset is completed',
 			defaultStyle: {
 				color: foregroundColor,
-				bgcolor: backgroundColorOrange,
+				bgcolor: backgroundColorBlue,
 			},
 			options: [
 				{
@@ -249,11 +259,32 @@ export function getFeedbackDefinitions(self) {
 					label: 'Preset',
 					id: 'option',
 					default: e.ENUM_PRESET[0].id,
-					enum: e.ENUM_PRESET,
+					choices: e.ENUM_PRESET,
 				},
 			],
 			callback: function (feedback) {
-				return self.data.presetComplete === parseInt(feedback.options.option)
+				return self.data.presetCompletedIdx === parseInt(feedback.options.option)
+			},
+		}
+		feedbacks.presetMemory = {
+			type: 'boolean',
+			name: 'Preset - Memory State',
+			description: 'Indicates if the selected preset memory slot is used',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorGrey,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset',
+					id: 'option',
+					default: e.ENUM_PRESET[0].id,
+					choices: e.ENUM_PRESET,
+				},
+			],
+			callback: function (feedback) {
+				return self.data.presetEntries[parseInt(feedback.options.option)] == "1"
 			},
 		}
 	}
@@ -273,7 +304,7 @@ export function getFeedbackDefinitions(self) {
 					label: 'Mode',
 					id: 'option',
 					default: e.ENUM_WHITEBALANCE_GET[0].id,
-					enum: e.ENUM_WHITEBALANCE_GET,
+					choices: e.ENUM_WHITEBALANCE_GET,
 				},
 			],
 			callback: function (feedback) {

@@ -327,6 +327,21 @@ class PanasonicPTZInstance extends InstanceBase {
 			}
 		}
 
+		if (str[0].substring(0, 2) === 'pE') {
+			switch (str[0].substring(2, 4)) {
+				case '00': 
+					this.data.presetEntries0 = parseInt(str[0].substring(4), 16).toString(2).padStart(40, 0).split("").reverse()
+					break
+				case '01':
+					this.data.presetEntries1 = parseInt(str[0].substring(4), 16).toString(2).padStart(40, 0).split("").reverse()
+					break
+				case '02':
+					this.data.presetEntries2 = parseInt(str[0].substring(4), 16).toString(2).padStart(20, 0).split("").reverse()
+					break
+			}
+			this.data.presetEntries = this.data.presetEntries0.concat(this.data.presetEntries1.concat(this.data.presetEntries2))
+		}
+
 		// Store Values from Events
 		switch (str[0]) {
 			case 'dA0': // Legacy (red) Tally Off
@@ -562,6 +577,12 @@ class PanasonicPTZInstance extends InstanceBase {
 			errorLabel: null,
 			irisLabel: null,
 			shutterStepLabel: null,
+
+			// arrays
+			presetEntries0: Array(40),
+			presetEntries1: Array(40),
+			presetEntries2: Array(20),
+			presetEntries: Array(100),
 		}
 
 		this.ptSpeed = 25
@@ -582,8 +603,6 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.filterIndex = 0
 		this.shutterVal = 0
 		this.shutterIndex = 0
-		this.pedestalVal = '096'
-		this.pedestalIndex = 150
 		this.colorTemperatureValue = '000'
 		this.colorTemperatureIndex = 0
 		this.tcpPortSelected = 31004

@@ -16,14 +16,14 @@ export function getPresetDefinitions(self) {
 	const colorBlack = combineRgb(0, 0, 0)
 
 	const SERIES = getAndUpdateSeries(self)
-	const seriesActions = SERIES.actions
+	const seriesCapabilities = SERIES.capabilities
 	// console.log(SERIES);
 
 	// ##########################
 	// #### Pan/Tilt Presets ####
 	// ##########################
 
-	if (seriesActions.panTilt) {
+	if (seriesCapabilities.panTilt) {
 		presets['pan-tilt-up'] = {
 			type: 'button',
 			category: 'Pan/Tilt',
@@ -297,7 +297,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.ptSpeed) {
+	if (seriesCapabilities.ptSpeed) {
 		presets['pan-tilt-speed-up'] = {
 			type: 'button',
 			category: 'Pan/Tilt',
@@ -429,7 +429,7 @@ export function getPresetDefinitions(self) {
 	// #### Lens Presets ####
 	// ######################
 
-	if (seriesActions.zoom) {
+	if (seriesCapabilities.zoom) {
 		presets['lens-zoom-in'] = {
 			type: 'button',
 			category: 'Lens',
@@ -489,7 +489,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.zSpeed) {
+	if (seriesCapabilities.zSpeed) {
 		presets['lens-zoom-speed-up'] = {
 			type: 'button',
 			category: 'Lens',
@@ -617,7 +617,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.focus) {
+	if (seriesCapabilities.focus) {
 		presets['lens-focus-near'] = {
 			type: 'button',
 			category: 'Lens',
@@ -677,7 +677,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.fSpeed) {
+	if (seriesCapabilities.fSpeed) {
 		presets['lens-focus-speed-up'] = {
 			type: 'button',
 			category: 'Lens',
@@ -804,7 +804,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.OAF) {
+	if (seriesCapabilities.OAF) {
 		presets['lens-focus-manual'] = {
 			type: 'button',
 			category: 'Lens',
@@ -921,7 +921,7 @@ export function getPresetDefinitions(self) {
 	// #### Exposure Presets ####
 	// ##########################
 
-	if (seriesActions.iris) {
+	if (seriesCapabilities.iris) {
 		presets['exposure-iris-up'] = {
 			type: 'button',
 			category: 'Exposure',
@@ -1045,7 +1045,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.gain.cmd) {
+	if (seriesCapabilities.gain.cmd) {
 		presets['exposure-gain-up'] = {
 			type: 'button',
 			category: 'Exposure',
@@ -1095,7 +1095,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.shut.cmd) {
+	if (seriesCapabilities.shutter.cmd) {
 		presets['exposure-shutter-up'] = {
 			type: 'button',
 			category: 'Exposure',
@@ -1145,7 +1145,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.ped.cmd) {
+	if (seriesCapabilities.pedestal.cmd) {
 		presets['exposure-pedestal-up'] = {
 			type: 'button',
 			category: 'Exposure',
@@ -1195,7 +1195,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.filter.cmd) {
+	if (seriesCapabilities.filter.cmd) {
 		presets['exposure-filter-up'] = {
 			type: 'button',
 			category: 'Exposure',
@@ -1244,13 +1244,13 @@ export function getPresetDefinitions(self) {
 			feedbacks: [],
 		}
 
-		for (const x in seriesActions.filter.dropdown) {
+		for (const x in seriesCapabilities.filter.dropdown) {
 			presets[`exposire-nd-filter-${x}`] = {
 				type: 'button',
 				category: 'Exposure',
-				name: 'ND Filter Set ' + seriesActions.filter.dropdown[x].label,
+				name: 'ND Filter Set ' + seriesCapabilities.filter.dropdown[x].label,
 				style: {
-					text: 'ND FILTER\\nSET\\n' + seriesActions.filter.dropdown[x].label,
+					text: 'ND FILTER\\nSET\\n' + seriesCapabilities.filter.dropdown[x].label,
 					size: '14',
 					color: colorWhite,
 					bgcolor: colorBlack,
@@ -1261,7 +1261,7 @@ export function getPresetDefinitions(self) {
 							{
 								actionId: 'filterS',
 								options: {
-									val: seriesActions.filter.dropdown[x].id,
+									val: seriesCapabilities.filter.dropdown[x].id,
 								},
 							},
 						],
@@ -1277,7 +1277,7 @@ export function getPresetDefinitions(self) {
 	// #### System Presets ####
 	// ########################
 
-	if (seriesActions.power) {
+	if (seriesCapabilities.power) {
 		presets['system-power-off'] = {
 			type: 'button',
 			category: 'System',
@@ -1349,7 +1349,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.colorbar) {
+	if (seriesCapabilities.colorbar) {
 		presets['system-colorbar-off'] = {
 			type: 'button',
 			category: 'System',
@@ -1421,7 +1421,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.tally) {
+	if (seriesCapabilities.tally) {
 		presets['system-tally-off'] = {
 			type: 'button',
 			category: 'System',
@@ -1493,7 +1493,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.tally2) {
+	if (seriesCapabilities.tally2) {
 		presets['system-tally2-off'] = {
 			type: 'button',
 			category: 'System',
@@ -1565,7 +1565,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.ins) {
+	if (seriesCapabilities.ins) {
 		presets['system-ins-desktop'] = {
 			type: 'button',
 			category: 'System',
@@ -1641,7 +1641,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.sdCard) {
+	if (seriesCapabilities.sdCard) {
 		presets['system-sd-card-recording-start'] = {
 			type: 'button',
 			category: 'System',
@@ -1698,7 +1698,7 @@ export function getPresetDefinitions(self) {
 	// #### Load/save Presets ####
 	// ###########################
 
-	if (seriesActions.preset) {
+	if (seriesCapabilities.preset) {
 		for (let save = 0; save < 100; save++) {
 			presets[`save-preset-${save}`] = {
 				type: 'button',
@@ -1728,7 +1728,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.timePset) {
+	if (seriesCapabilities.timePset) {
 		presets['recall-preset-preset-mode-speed'] = {
 			type: 'button',
 			category: 'Recall Preset',
@@ -1782,7 +1782,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.speedPset) {
+	if (seriesCapabilities.speedPset) {
 		presets['recall-preset-speed-high'] = {
 			type: 'button',
 			category: 'Recall Preset',
@@ -1862,7 +1862,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.timePset) {
+	if (seriesCapabilities.timePset) {
 		presets['recall-preset-time-high'] = {
 			type: 'button',
 			category: 'Recall Preset',
@@ -1942,7 +1942,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.preset) {
+	if (seriesCapabilities.preset) {
 		presets['recall-preset-mode-a'] = {
 			type: 'button',
 			category: 'Recall Preset',
