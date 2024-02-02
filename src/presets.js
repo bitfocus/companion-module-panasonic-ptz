@@ -7,23 +7,26 @@ export function getPresetDefinitions(self) {
 
 	const colorWhite = combineRgb(255, 255, 255)
 	const colorRed = combineRgb(255, 0, 0)
-	const colorGreen = combineRgb(0, 204, 0)
-	const colorYellow = combineRgb(255, 255, 0)
-	const colorBlue = combineRgb(0, 51, 204)
-	const colorPurple = combineRgb(255, 0, 255)
 	const colorOrange = combineRgb(255, 102, 0)
+	const colorYellow = combineRgb(255, 255, 0)
+	const colorGreen = combineRgb(0, 255, 0)
+	const colorPurple = combineRgb(255, 0, 255)
+	const colorActiveBlue = combineRgb(0, 51, 204)
+	const colorBlue = combineRgb(0, 51, 204)
+	const colorDarkRed = combineRgb(102, 0, 0)
+	const colorDarkBlue = combineRgb(0, 0, 102)
 	const colorGrey = combineRgb(51, 51, 51)
 	const colorBlack = combineRgb(0, 0, 0)
 
+
 	const SERIES = getAndUpdateSeries(self)
-	const seriesCapabilities = SERIES.capabilities
 	// console.log(SERIES);
 
 	// ##########################
 	// #### Pan/Tilt Presets ####
 	// ##########################
 
-	if (seriesCapabilities.panTilt) {
+	if (SERIES.capabilities.panTilt) {
 		presets['pan-tilt-up'] = {
 			type: 'button',
 			category: 'Pan/Tilt',
@@ -297,7 +300,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesCapabilities.ptSpeed) {
+	if (SERIES.capabilities.ptSpeed) {
 		presets['pan-tilt-speed-up'] = {
 			type: 'button',
 			category: 'Pan/Tilt',
@@ -429,7 +432,7 @@ export function getPresetDefinitions(self) {
 	// #### Lens Presets ####
 	// ######################
 
-	if (seriesCapabilities.zoom) {
+	if (SERIES.capabilities.zoom) {
 		presets['lens-zoom-in'] = {
 			type: 'button',
 			category: 'Lens',
@@ -489,7 +492,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesCapabilities.zSpeed) {
+	if (SERIES.capabilities.zSpeed) {
 		presets['lens-zoom-speed-up'] = {
 			type: 'button',
 			category: 'Lens',
@@ -617,7 +620,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesCapabilities.focus) {
+	if (SERIES.capabilities.focus) {
 		presets['lens-focus-near'] = {
 			type: 'button',
 			category: 'Lens',
@@ -677,7 +680,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesCapabilities.fSpeed) {
+	if (SERIES.capabilities.fSpeed) {
 		presets['lens-focus-speed-up'] = {
 			type: 'button',
 			category: 'Lens',
@@ -804,7 +807,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesCapabilities.OAF) {
+	if (SERIES.capabilities.focusAuto) {
 		presets['lens-focus-manual'] = {
 			type: 'button',
 			category: 'Lens',
@@ -879,12 +882,12 @@ export function getPresetDefinitions(self) {
 			],
 		}
 
-		presets['lens-focus-one-touch'] = {
+		presets['lens-focus-push-auto'] = {
 			type: 'button',
 			category: 'Lens',
-			name: 'One Touch Focus',
+			name: 'Push Auto Focus',
 			style: {
-				text: 'OTAF\\nFOCUS',
+				text: 'PUSH\\nAUTO\\nFOCUS',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -893,7 +896,7 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'focusOTAF',
+							actionId: 'focusPushAuto',
 							options: {
 								bol: 0,
 							},
@@ -902,18 +905,7 @@ export function getPresetDefinitions(self) {
 					up: [],
 				},
 			],
-			feedbacks: [
-				{
-					feedbackId: 'autoFocus',
-					options: {
-						option: '1',
-					},
-					style: {
-						color: colorWhite,
-						bgcolor: colorRed,
-					},
-				},
-			],
+			feedbacks: [],
 		}
 	}
 
@@ -921,7 +913,7 @@ export function getPresetDefinitions(self) {
 	// #### Exposure Presets ####
 	// ##########################
 
-	if (seriesCapabilities.iris) {
+	if (SERIES.capabilities.iris) {
 		presets['exposure-iris-up'] = {
 			type: 'button',
 			category: 'Exposure',
@@ -1045,7 +1037,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesCapabilities.gain.cmd) {
+	if (SERIES.capabilities.gain.cmd) {
 		presets['exposure-gain-up'] = {
 			type: 'button',
 			category: 'Exposure',
@@ -1095,7 +1087,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesCapabilities.shutter.cmd) {
+	if (SERIES.capabilities.shutter.cmd) {
 		presets['exposure-shutter-up'] = {
 			type: 'button',
 			category: 'Exposure',
@@ -1145,7 +1137,41 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesCapabilities.pedestal.cmd) {
+	if (SERIES.capabilities.pedestal.cmd) {
+		presets['exposure-pedestal'] = {
+			type: 'button',
+			category: 'Exposure',
+			name: 'Master Pedestal',
+			style: {
+				text: 'Pedestal\\n$(generic-module:masterPed)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorGrey,
+			},
+			options: {
+				rotaryActions: true
+			},
+			steps: [
+				{
+					down: [],
+					up: [],
+					rotate_left: [
+						{
+							actionId: 'pedD',
+							options: {},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'pedU',
+							options: {},
+						},
+					],
+				},
+			],
+			feedbacks: [],
+		}
+
 		presets['exposure-pedestal-up'] = {
 			type: 'button',
 			category: 'Exposure',
@@ -1195,7 +1221,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesCapabilities.filter.cmd) {
+	if (SERIES.capabilities.filter.cmd) {
 		presets['exposure-filter-up'] = {
 			type: 'button',
 			category: 'Exposure',
@@ -1244,13 +1270,13 @@ export function getPresetDefinitions(self) {
 			feedbacks: [],
 		}
 
-		for (const x in seriesCapabilities.filter.dropdown) {
+		for (const x in SERIES.capabilities.filter.dropdown) {
 			presets[`exposire-nd-filter-${x}`] = {
 				type: 'button',
 				category: 'Exposure',
-				name: 'ND Filter Set ' + seriesCapabilities.filter.dropdown[x].label,
+				name: 'ND Filter Set ' + SERIES.capabilities.filter.dropdown[x].label,
 				style: {
-					text: 'ND FILTER\\nSET\\n' + seriesCapabilities.filter.dropdown[x].label,
+					text: 'ND FILTER\\nSET\\n' + SERIES.capabilities.filter.dropdown[x].label,
 					size: '14',
 					color: colorWhite,
 					bgcolor: colorBlack,
@@ -1261,7 +1287,7 @@ export function getPresetDefinitions(self) {
 							{
 								actionId: 'filterS',
 								options: {
-									val: seriesCapabilities.filter.dropdown[x].id,
+									val: SERIES.capabilities.filter.dropdown[x].id,
 								},
 							},
 						],
@@ -1277,7 +1303,7 @@ export function getPresetDefinitions(self) {
 	// #### System Presets ####
 	// ########################
 
-	if (seriesCapabilities.power) {
+	if (SERIES.capabilities.power) {
 		presets['system-power-off'] = {
 			type: 'button',
 			category: 'System',
@@ -1349,7 +1375,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesCapabilities.colorbar) {
+	if (SERIES.capabilities.colorbar) {
 		presets['system-colorbar-off'] = {
 			type: 'button',
 			category: 'System',
@@ -1421,7 +1447,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesCapabilities.tally) {
+	if (SERIES.capabilities.tally) {
 		presets['system-tally-off'] = {
 			type: 'button',
 			category: 'System',
@@ -1493,7 +1519,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesCapabilities.tally2) {
+	if (SERIES.capabilities.tally2) {
 		presets['system-tally2-off'] = {
 			type: 'button',
 			category: 'System',
@@ -1565,7 +1591,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesCapabilities.ins) {
+	if (SERIES.capabilities.ins) {
 		presets['system-ins-desktop'] = {
 			type: 'button',
 			category: 'System',
@@ -1641,7 +1667,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesCapabilities.sdCard) {
+	if (SERIES.capabilities.recordSD) {
 		presets['system-sd-card-recording-start'] = {
 			type: 'button',
 			category: 'System',
@@ -1694,44 +1720,15 @@ export function getPresetDefinitions(self) {
 			feedbacks: [],
 		}
 	}
-	// ###########################
-	// #### Load/save Presets ####
-	// ###########################
 
-	if (seriesCapabilities.preset) {
-		for (let save = 0; save < 100; save++) {
-			presets[`save-preset-${save}`] = {
-				type: 'button',
-				category: 'Save Preset',
-				name: 'Save Preset ' + parseInt(save + 1),
-				style: {
-					text: 'SAVE\\nPRESET\\n' + parseInt(save + 1),
-					size: '14',
-					color: colorWhite,
-					bgcolor: colorBlack,
-				},
-				steps: [
-					{
-						down: [
-							{
-								actionId: 'savePset',
-								options: {
-									val: ('0' + save.toString(10).toUpperCase()).substr(-2, 2),
-								},
-							},
-						],
-						up: [],
-					},
-				],
-				feedbacks: [],
-			}
-		}
-	}
+	// #################
+	// #### Presets ####
+	// #################
 
-	if (seriesCapabilities.timePset) {
+	if (SERIES.capabilities.presetSpeed && SERIES.capabilities.presetTime) {
 		presets['recall-preset-preset-mode-speed'] = {
 			type: 'button',
-			category: 'Recall Preset',
+			category: 'Preset Memory',
 			name: 'Preset Mode Speed',
 			style: {
 				text: 'PRESET\\nMODE\\nSPEED',
@@ -1757,7 +1754,7 @@ export function getPresetDefinitions(self) {
 
 		presets['recall-preset-preset-mode-time'] = {
 			type: 'button',
-			category: 'Recall Preset',
+			category: 'Preset Memory',
 			name: 'Preset Mode Time',
 			style: {
 				text: 'PRESET\\nMODE\\nTIME',
@@ -1782,10 +1779,10 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesCapabilities.speedPset) {
+	if (SERIES.capabilities.presetSpeed) {
 		presets['recall-preset-speed-high'] = {
 			type: 'button',
-			category: 'Recall Preset',
+			category: 'Preset Memory',
 			name: 'Set Recall Speed High',
 			style: {
 				text: 'RECALL\\nSPEED\\nHIGH',
@@ -1811,7 +1808,7 @@ export function getPresetDefinitions(self) {
 
 		presets['recall-preset-speed-mid'] = {
 			type: 'button',
-			category: 'Recall Preset',
+			category: 'Preset Memory',
 			name: 'Set Recall Speed Mid',
 			style: {
 				text: 'RECALL\\nSPEED\\nMID',
@@ -1837,7 +1834,7 @@ export function getPresetDefinitions(self) {
 
 		presets['recall-preset-speed-low'] = {
 			type: 'button',
-			category: 'Recall Preset',
+			category: 'Preset Memory',
 			name: 'Set Recall Speed Low',
 			style: {
 				text: 'RECALL\\nSPEED\\nLOW',
@@ -1862,10 +1859,10 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesCapabilities.timePset) {
+	if (SERIES.capabilities.presetTime) {
 		presets['recall-preset-time-high'] = {
 			type: 'button',
-			category: 'Recall Preset',
+			category: 'Preset Memory',
 			name: 'Set Recall Time High',
 			style: {
 				text: 'RECALL\\nTIME\\n5 Sec',
@@ -1891,7 +1888,7 @@ export function getPresetDefinitions(self) {
 
 		presets['recall-preset-time-mid'] = {
 			type: 'button',
-			category: 'Recall Preset',
+			category: 'Preset Memory',
 			name: 'Set Recall Time Mid',
 			style: {
 				text: 'RECALL\\nTIME\\n10 Sec',
@@ -1917,7 +1914,7 @@ export function getPresetDefinitions(self) {
 
 		presets['recall-preset-time-low'] = {
 			type: 'button',
-			category: 'Recall Preset',
+			category: 'Preset Memory',
 			name: 'Set Recall Time Low',
 			style: {
 				text: 'RECALL\\nTIME\\n30 Sec',
@@ -1942,10 +1939,10 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (seriesCapabilities.preset) {
+	if (SERIES.capabilities.preset) {
 		presets['recall-preset-mode-a'] = {
 			type: 'button',
-			category: 'Recall Preset',
+			category: 'Preset Memory',
 			name: 'Preset Mode A',
 			style: {
 				text: 'Preset\\nMode A',
@@ -1982,7 +1979,7 @@ export function getPresetDefinitions(self) {
 
 		presets['recall-preset-mode-b'] = {
 			type: 'button',
-			category: 'Recall Preset',
+			category: 'Preset Memory',
 			name: 'Preset Mode B',
 			style: {
 				text: 'Preset\\nMode B',
@@ -2019,7 +2016,7 @@ export function getPresetDefinitions(self) {
 
 		presets['recall-preset-mode-c'] = {
 			type: 'button',
-			category: 'Recall Preset',
+			category: 'Preset Memory',
 			name: 'Preset Mode C',
 			style: {
 				text: 'Preset\\nMode C',
@@ -2057,10 +2054,10 @@ export function getPresetDefinitions(self) {
 		for (let i = 0; i < 100; i++) {
 			presets[`recall-preset-${i}`] = {
 				type: 'button',
-				category: 'Recall Preset',
-				name: 'Recall Preset ' + (i + 1).toString(),
+				category: 'Preset Memory',
+				name: 'Recall (or Store) Preset ' + (i + 1).toString(),
 				style: {
-					text: 'Recall\\nPRESET\\n' + (i + 1).toString(),
+					text: 'PRESET\\n' + (i + 1).toString(),
 					size: '14',
 					color: colorWhite,
 					bgcolor: colorBlack,
@@ -2091,6 +2088,26 @@ export function getPresetDefinitions(self) {
 				],
 				feedbacks: [
 					{
+						feedbackId: 'presetMemory',
+						options: {
+							option: i.toString(10).padStart(2, '0'),
+						},
+						style: {
+							color: colorWhite,
+							bgcolor: colorGrey,
+						},
+					},
+					{
+						feedbackId: 'presetSelected',
+						options: {
+							option: i.toString(10).padStart(2, '0'),
+						},
+						style: {
+							color: colorWhite,
+							bgcolor: colorOrange,
+						},
+					},
+					{
 						feedbackId: 'presetComplete',
 						options: {
 							option: i.toString(10).padStart(2, '0'),
@@ -2102,6 +2119,337 @@ export function getPresetDefinitions(self) {
 					},
 				],
 			}
+		}
+	}
+
+	// ###############################
+	// #### White Balance Presets ####
+	// ###############################
+
+	for (const x in SERIES.capabilities.whiteBalance.dropdown) {
+		presets[`whitebalance-mode-${x}`] = {
+			type: 'button',
+			category: 'White Balance',
+			name: 'White Balance Mode ' + SERIES.capabilities.whiteBalance.dropdown[x].label,
+			style: {
+				text: 'WB MODE\\n' + SERIES.capabilities.whiteBalance.dropdown[x].label,
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'whiteBalanceMode',
+							options: {
+								val: SERIES.capabilities.whiteBalance.dropdown[x].id,
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'whiteBalanceMode',
+					options: {
+						option: SERIES.capabilities.whiteBalance.dropdown[x].id,
+					},
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
+		}
+	}
+
+	if (SERIES.capabilities.colorGain) {
+		presets['whitebalance-color-temp'] = {
+			type: 'button',
+			category: 'White Balance',
+			name: 'Color Temperature',
+			style: {
+				text: 'Temp.\\n$(generic-module:colorTemperature)',
+				size: '14',
+				color: colorBlack,
+				bgcolor: colorWhite,
+			},
+			options: {
+				rotaryActions: true
+			},
+			steps: [
+				{
+					down: [],
+					up: [],
+					rotate_left: [
+						{
+							actionId: 'colorTemperatureDown',
+							options: {},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'colorTemperatureUp',
+							options: {},
+						},
+					],
+				},
+			],
+			feedbacks: [],
+		}
+	}
+
+	if (SERIES.capabilities.colorGain) {
+		presets['whitebalance-red-gain'] = {
+			type: 'button',
+			category: 'White Balance',
+			name: 'Red Gain',
+			style: {
+				text: 'Red Gain\\n$(generic-module:redGain)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorRed,
+			},
+			options: {
+				rotaryActions: true
+			},
+			steps: [
+				{
+					down: [],
+					up: [],
+					rotate_left: [
+						{
+							actionId: 'gainRedD',
+							options: {},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'gainRedU',
+							options: {},
+						},
+					],
+				},
+			],
+			feedbacks: [],
+		}
+
+		presets['whitebalance-blue-gain'] = {
+			type: 'button',
+			category: 'White Balance',
+			name: 'Blue Gain',
+			style: {
+				text: 'Blue Gain\\n$(generic-module:blueGain)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlue,
+			},
+			options: {
+				rotaryActions: true
+			},
+			steps: [
+				{
+					down: [],
+					up: [],
+					rotate_left: [
+						{
+							actionId: 'gainBlueD',
+							options: {},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'gainBlueU',
+							options: {},
+						},
+					],
+				},
+			],
+			feedbacks: [],
+		}
+	}
+
+	if (SERIES.capabilities.colorPedestal) {
+		presets['whitebalance-red-ped'] = {
+			type: 'button',
+			category: 'White Balance',
+			name: 'Red Pedestal',
+			style: {
+				text: 'Red Ped.\\n$(generic-module:redPed)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorDarkRed,
+			},
+			options: {
+				rotaryActions: true
+			},
+			steps: [
+				{
+					down: [],
+					up: [],
+					rotate_left: [
+						{
+							actionId: 'pedRedD',
+							options: {},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'pedRedU',
+							options: {},
+						},
+					],
+				},
+			],
+			feedbacks: [],
+		}
+
+		presets['whitebalance-blue-ped'] = {
+			type: 'button',
+			category: 'White Balance',
+			name: 'Blue Pedestal',
+			style: {
+				text: 'Blue Ped.\\n$(generic-module:bluePed)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorDarkBlue,
+			},
+			options: {
+				rotaryActions: true
+			},
+			steps: [
+				{
+					down: [],
+					up: [],
+					rotate_left: [
+						{
+							actionId: 'pedBlueD',
+							options: {},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'pedBlueU',
+							options: {},
+						},
+					],
+				},
+			],
+			feedbacks: [],
+		}
+	}
+
+	// ###########################
+	// #### Streaming Presets ####
+	// ###########################
+
+	if (SERIES.capabilities.streamRTMP) {
+		presets['streaming-rtmp-start'] = {
+			type: 'button',
+			category: 'Streaming',
+			name: 'RTMP (Client) Streaming Start',
+			style: {
+				text: 'RTMP\\nStreaming\\nStart',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'rtmpStreamCtrl',
+							options: {
+								value: 'start',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [],
+		}
+
+		presets['streaming-rtmp-stop'] = {
+			type: 'button',
+			category: 'Streaming',
+			name: 'RTMP (Client) Streaming Stop',
+			style: {
+				text: 'RTMP\\nStreaming\\nStop',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'rtmpStreamCtrl',
+							options: {
+								value: 'stop',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [],
+		}
+	}
+
+	if (SERIES.capabilities.streamSRT) {
+		presets['streaming-srt-start'] = {
+			type: 'button',
+			category: 'Streaming',
+			name: 'SRT (Caller) Streaming Start',
+			style: {
+				text: 'SRT\\nStreaming\\nStart',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'srtStreamCtrl',
+							options: {
+								value: 'start',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [],
+		}
+
+		presets['streaming-srt-stop'] = {
+			type: 'button',
+			category: 'Streaming',
+			name: 'SRT (Caller) Streaming Stop',
+			style: {
+				text: 'SRT\\nStreaming\\nStop',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'srtStreamCtrl',
+							options: {
+								value: 'stop',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [],
 		}
 	}
 

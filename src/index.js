@@ -164,6 +164,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			// Basic protocol
 			// /cgi-bin/get_basic
 			// /cgi-bin/model_serial
+			// /cgi-bin/get_capability
 
 			// Restart
 			// /cgi-bin/initial?cmd=reset&Randomnum=12345

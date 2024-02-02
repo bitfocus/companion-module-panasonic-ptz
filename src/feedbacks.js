@@ -12,19 +12,12 @@ export function getFeedbackDefinitions(self) {
 	// console.log(SERIES);
 
 	const foregroundColor = combineRgb(255, 255, 255) // White
+	const backgroundColorBlack = combineRgb(0, 0, 0) // Black
 	const backgroundColorRed = combineRgb(255, 0, 0) // Red
 	const backgroundColorGreen = combineRgb(0, 255, 0) // Green
 	const backgroundColorOrange = combineRgb(255, 102, 0) // Orange
 	const backgroundColorBlue = combineRgb(0, 51, 204)
 	const backgroundColorGrey = combineRgb(51, 51, 51)
-
-	const colorWhite = combineRgb(255, 255, 255)
-	const colorRed = combineRgb(255, 0, 0)
-	const colorGreen = combineRgb(0, 204, 0)
-	const colorYellow = combineRgb(255, 255, 0)
-	const colorPurple = combineRgb(255, 0, 255)
-	const colorOrange = combineRgb(255, 102, 0)
-	const colorBlack = combineRgb(0, 0, 0)
 
 	if (SERIES.capabilities.power) {
 		feedbacks.powerState = {

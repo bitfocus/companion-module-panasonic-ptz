@@ -51,8 +51,23 @@ export async function sendCam(self, str) {
 
 		try {
 			const response = await got.get(url)
+			
+			if (response.body) {
+				const lines = response.body.trim().split('\r\n') // Split Data in order to remove data before and after command
 
-			// console.log("Result from REST:" + result.data);
+				for (let line of lines) {
+					// remove new line, carage return and so on.
+					const str = line.trim().split(':') // Split Commands and data
+					if (self.config.debug) {
+						self.log('info', 'Received Response: ' + String(str))
+					}
+					// Store Data
+					self.parseUpdate(str)
+				}
+
+				self.checkVariables()
+				self.checkFeedbacks()
+			}
 		} catch (err) {
 			throw new Error(`Action failed: ${url}`)
 		}
@@ -60,7 +75,7 @@ export async function sendCam(self, str) {
 }
 
 export async function sendWeb(self, str) {
-	// Currently Only for web commands that don't requre Admin rights
+	// Currently Only for web commands that don't require Admin rights
 
 	if (str) {
 		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/${str}`
@@ -87,13 +102,11 @@ export function getActionDefinitions(self) {
 
 	const SERIES = getAndUpdateSeries(self)
 
-	const seriesCaps = SERIES.capabilities
-
 	// ##########################
 	// #### Pan/Tilt Actions ####
 	// ##########################
 
-	if (seriesCaps.panTilt) {
+	if (SERIES.capabilities.panTilt) {
 		actions.left = {
 			name: 'Pan/Tilt - Pan Left',
 			options: [
@@ -325,7 +338,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.ptSpeed) {
+	if (SERIES.capabilities.ptSpeed) {
 		actions.ptSpeedS = {
 			name: 'Pan/Tilt - Speed',
 			options: [
@@ -512,7 +525,7 @@ export function getActionDefinitions(self) {
 	// #### Lens Actions ####
 	// ######################
 
-	if (seriesCaps.zoom) {
+	if (SERIES.capabilities.zoom) {
 		actions.zoomI = {
 			name: 'Lens - Zoom In',
 			options: [
@@ -574,7 +587,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.zSpeed) {
+	if (SERIES.capabilities.zSpeed) {
 		actions.zSpeedS = {
 			name: 'Lens - Zoom Speed',
 			options: [
@@ -629,7 +642,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.focus) {
+	if (SERIES.capabilities.focus) {
 		actions.focusN = {
 			name: 'Lens - Focus Near',
 			options: [
@@ -691,7 +704,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.fSpeed) {
+	if (SERIES.capabilities.fSpeed) {
 		actions.fSpeedS = {
 			name: 'Lens - Focus Speed',
 			options: [
@@ -746,7 +759,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.focusAuto) {
+	if (SERIES.capabilities.focusAuto) {
 		actions.focusM = {
 			name: 'Lens - Focus Mode',
 			options: [
@@ -767,7 +780,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.focusPushAuto) {
+	if (SERIES.capabilities.focusPushAuto) {
 		actions.focusOTAF = {
 			name: 'Lens - Focus Push Auto',
 			options: [],
@@ -781,7 +794,7 @@ export function getActionDefinitions(self) {
 	// #### Exposure Actions ####
 	// ##########################
 
-	if (seriesCaps.iris) {
+	if (SERIES.capabilities.iris) {
 		actions.irisU = {
 			name: 'Exposure - Iris Up',
 			options: [],
@@ -847,24 +860,24 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.gain.cmd) {
+	if (SERIES.capabilities.gain.cmd) {
 		actions.gainU = {
 			name: 'Exposure - Gain Up',
 			options: [],
 			callback: async (action) => {
-				const index = seriesCaps.gain.dropdown.findIndex((GAIN) => GAIN.id == self.data.gain)
+				const index = SERIES.capabilities.gain.dropdown.findIndex((GAIN) => GAIN.id == self.data.gain)
 				if (index !== -1) {
 					self.gainIndex = index
 				}
 
-				if (self.gainIndex == seriesCaps.gain.dropdown.length) {
-					self.gainIndex = seriesCaps.gain.dropdown.length
-				} else if (self.gainIndex < seriesCaps.gain.dropdown.length) {
+				if (self.gainIndex == SERIES.capabilities.gain.dropdown.length) {
+					self.gainIndex = SERIES.capabilities.gain.dropdown.length
+				} else if (self.gainIndex < SERIES.capabilities.gain.dropdown.length) {
 					self.gainIndex++
 				}
-				self.gainVal = seriesCaps.gain.dropdown[self.gainIndex].id
+				self.gainVal = SERIES.capabilities.gain.dropdown[self.gainIndex].id
 
-				await sendCam(self, seriesCaps.gain.cmd + self.gainVal)
+				await sendCam(self, SERIES.capabilities.gain.cmd + self.gainVal)
 			},
 		}
 
@@ -872,7 +885,7 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Gain Down',
 			options: [],
 			callback: async (action) => {
-				let index = seriesCaps.gain.dropdown.findIndex((GAIN) => GAIN.id == self.data.gain)
+				let index = SERIES.capabilities.gain.dropdown.findIndex((GAIN) => GAIN.id == self.data.gain)
 				if (index !== -1) {
 					self.gainIndex = index
 				}
@@ -882,9 +895,9 @@ export function getActionDefinitions(self) {
 				} else if (self.gainIndex > 0) {
 					self.gainIndex--
 				}
-				self.gainVal = seriesCaps.gain.dropdown[self.gainIndex].id
+				self.gainVal = SERIES.capabilities.gain.dropdown[self.gainIndex].id
 
-				await sendCam(self, seriesCaps.gain.cmd + self.gainVal)
+				await sendCam(self, SERIES.capabilities.gain.cmd + self.gainVal)
 			},
 		}
 
@@ -895,32 +908,32 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Gain setting',
 					id: 'val',
-					default: seriesCaps.gain.dropdown[0].id,
-					choices: seriesCaps.gain.dropdown,
+					default: SERIES.capabilities.gain.dropdown[0].id,
+					choices: SERIES.capabilities.gain.dropdown,
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, seriesCaps.gain.cmd + action.options.val)
+				await sendCam(self, SERIES.capabilities.gain.cmd + action.options.val)
 			},
 		}
 	}
 
-	if (seriesCaps.shutter) {
+	if (SERIES.capabilities.shutter) {
 		actions.shutU = {
 			name: 'Exposure - Shutter Up',
 			options: [],
 			callback: async (action) => {
-				if (seriesCaps.shutter.inc) {
-					await sendCam(self, seriesCaps.shutter.inc + ':0x01')
+				if (SERIES.capabilities.shutter.inc) {
+					await sendCam(self, SERIES.capabilities.shutter.inc + ':0x01')
 				} else {				
-					if (self.shutterIndex == seriesCaps.shutter.dropdown.length) {
-						self.shutterIndex = seriesCaps.shutter.dropdown.length
-					} else if (self.shutterIndex < seriesCaps.shutter.dropdown.length) {
+					if (self.shutterIndex == SERIES.capabilities.shutter.dropdown.length) {
+						self.shutterIndex = SERIES.capabilities.shutter.dropdown.length
+					} else if (self.shutterIndex < SERIES.capabilities.shutter.dropdown.length) {
 						self.shutterIndex++
 					}
-					self.shutterVal = seriesCaps.shutter.dropdown[self.shutterIndex].id
+					self.shutterVal = SERIES.capabilities.shutter.dropdown[self.shutterIndex].id
 
-					await sendCam(self, seriesCaps.shutter.cmd + self.shutterVal)
+					await sendCam(self, SERIES.capabilities.shutter.cmd + self.shutterVal)
 				}
 			},
 		}
@@ -929,22 +942,22 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Shutter Down',
 			options: [],
 			callback: async (action) => {
-				if (seriesCaps.shutter.dec) {
-					await sendCam(self, seriesCaps.shutter.dec + ':0x01')
+				if (SERIES.capabilities.shutter.dec) {
+					await sendCam(self, SERIES.capabilities.shutter.dec + ':0x01')
 				} else {
 					if (self.shutterIndex == 0) {
 						self.shutterIndex = 0
 					} else if (self.shutterIndex > 0) {
 						self.shutterIndex--
 					}
-					self.shutterVal = seriesCaps.shutter.dropdown[self.shutterIndex].id
+					self.shutterVal = SERIES.capabilities.shutter.dropdown[self.shutterIndex].id
 
-					await sendCam(self, seriesCaps.shutter.cmd + self.shutterVal)
+					await sendCam(self, SERIES.capabilities.shutter.cmd + self.shutterVal)
 				}
 			},
 		}
 
-		if (seriesCaps.shutter) {
+		if (SERIES.capabilities.shutter) {
 			actions.shutS = {
 				name: 'Exposure - Set Shutter Mode',
 				options: [
@@ -952,27 +965,27 @@ export function getActionDefinitions(self) {
 						type: 'dropdown',
 						label: 'Shutter setting',
 						id: 'val',
-						default: seriesCaps.shutter.dropdown[0].id,
-						choices: seriesCaps.shutter.dropdown,
+						default: SERIES.capabilities.shutter.dropdown[0].id,
+						choices: SERIES.capabilities.shutter.dropdown,
 					},
 				],
 				callback: async (action) => {
-					await sendCam(self, seriesCaps.shutter.cmd + ':0x' + action.options.val)
+					await sendCam(self, SERIES.capabilities.shutter.cmd + ':0x' + action.options.val)
 				},
 			}
 		}
 	}
 
-	if (seriesCaps.pedestal.cmd) {
+	if (SERIES.capabilities.pedestal.cmd) {
 		actions.pedU = {
 			name: 'Exposure - Master Pedestal Up',
 			options: [],
 			callback: async (action) => {
-				if (self.data.masterPedValue + seriesCaps.pedestal.step <= seriesCaps.pedestal.limit) {
-					self.data.masterPedValue += seriesCaps.pedestal.step
+				if (self.data.masterPedValue + SERIES.capabilities.pedestal.step <= SERIES.capabilities.pedestal.limit) {
+					self.data.masterPedValue += SERIES.capabilities.pedestal.step
 				}
-				await sendCam(self, seriesCaps.pedestal.cmd + ':0x' + (seriesCaps.pedestal.offset +
-					self.data.masterPedValue).toString(16).toUpperCase().padStart(seriesCaps.pedestal.hexlen, 0))
+				await sendCam(self, SERIES.capabilities.pedestal.cmd + ':0x' + (SERIES.capabilities.pedestal.offset +
+					self.data.masterPedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.pedestal.hexlen, 0))
 			},
 		}
 
@@ -980,11 +993,11 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Master Pedestal Down',
 			options: [],
 			callback: async (action) => {
-				if (self.data.masterPedValue - seriesCaps.pedestal.step <= seriesCaps.pedestal.limit) {
-					self.data.masterPedValue -= seriesCaps.pedestal.step
+				if (self.data.masterPedValue - SERIES.capabilities.pedestal.step <= SERIES.capabilities.pedestal.limit) {
+					self.data.masterPedValue -= SERIES.capabilities.pedestal.step
 				}
-				await sendCam(self, seriesCaps.pedestal.cmd + ':0x' + (seriesCaps.pedestal.offset +
-					self.data.masterPedValue).toString(16).toUpperCase().padStart(seriesCaps.pedestal.hexlen, 0))
+				await sendCam(self, SERIES.capabilities.pedestal.cmd + ':0x' + (SERIES.capabilities.pedestal.offset +
+					self.data.masterPedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.pedestal.hexlen, 0))
 			},
 		}
 
@@ -996,22 +1009,22 @@ export function getActionDefinitions(self) {
 					type: 'number',
 					label: 'Level',
 					default: 0,
-					min: -seriesCaps.pedestal.limit,
-					max: +seriesCaps.pedestal.limit,
-					step: seriesCaps.pedestal.step,
+					min: -SERIES.capabilities.pedestal.limit,
+					max: +SERIES.capabilities.pedestal.limit,
+					step: SERIES.capabilities.pedestal.step,
 					required: true,
 					range: true,
 				},
 			],
 			callback: async (action) => {
 				self.data.masterPedValue = action.options.val
-				await sendCam(self, seriesCaps.pedestal.cmd + ':0x' + (seriesCaps.pedestal.offset +
-					self.data.masterPedValue).toString(16).toUpperCase().padStart(seriesCaps.pedestal.hexlen, 0))
+				await sendCam(self, SERIES.capabilities.pedestal.cmd + ':0x' + (SERIES.capabilities.pedestal.offset +
+					self.data.masterPedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.pedestal.hexlen, 0))
 			},
 		}
 	}
 
-	if (seriesCaps.whiteBalance) {
+	if (SERIES.capabilities.whiteBalance) {
 		actions.whiteBalanceMode = {
 			name: 'White Balance - Mode',
 			options: [
@@ -1045,19 +1058,19 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.colorTemperature && seriesCaps.colorTemperature.index) { 
+	if (SERIES.capabilities.colorTemperature && SERIES.capabilities.colorTemperature.index) { 
 		actions.colorTemperatureUp = {
 			name: 'White Balance - Color Temperature Up',
 			options: [],
 			callback: async (action) => {
-				if (self.colorTemperatureIndex == seriesCaps.colorTemperature.index.dropdown.length) {
-					self.colorTemperatureIndex = seriesCaps.colorTemperature.index.dropdown.length
-				} else if (self.colorTemperatureIndex < seriesCaps.colorTemperature.index.dropdown.length) {
+				if (self.colorTemperatureIndex == SERIES.capabilities.colorTemperature.index.dropdown.length) {
+					self.colorTemperatureIndex = SERIES.capabilities.colorTemperature.index.dropdown.length
+				} else if (self.colorTemperatureIndex < SERIES.capabilities.colorTemperature.index.dropdown.length) {
 					self.colorTemperatureIndex++
 				}
-				self.colorTemperatureValue = seriesCaps.colorTemperature.index.dropdown[self.colorTemperatureIndex].id
+				self.colorTemperatureValue = SERIES.capabilities.colorTemperature.index.dropdown[self.colorTemperatureIndex].id
 
-				await sendCam(self, seriesCaps.colorTemperature.index.cmd + ':0x' + self.colorTemperatureValue)
+				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':0x' + self.colorTemperatureValue)
 			},
 		}
 
@@ -1070,9 +1083,9 @@ export function getActionDefinitions(self) {
 				} else if (self.colorTemperatureIndex > 0) {
 					self.colorTemperatureIndex--
 				}
-				self.colorTemperatureValue = seriesCaps.colorTemperature.index.dropdown[self.colorTemperatureIndex].id
+				self.colorTemperatureValue = SERIES.capabilities.colorTemperature.index.dropdown[self.colorTemperatureIndex].id
 
-				await sendCam(self, seriesCaps.colorTemperature.index.cmd + ':0x' + self.colorTemperatureValue)
+				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':0x' + self.colorTemperatureValue)
 			},
 		}
 
@@ -1083,28 +1096,28 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Color Temperature',
 					id: 'val',
-					default: seriesCaps.colorTemperature.index.dropdown[0].id,
-					choices: seriesCaps.colorTemperature.index.dropdown,
+					default: SERIES.capabilities.colorTemperature.index.dropdown[0].id,
+					choices: SERIES.capabilities.colorTemperature.index.dropdown,
 				},
 			],
 			callback: async (action) => {
 				let id = action.options.val;
-				let index = seriesCaps.colorTemperature.index.dropdown.findIndex((colorTemperature) => colorTemperature.id == id);
+				let index = SERIES.capabilities.colorTemperature.index.dropdown.findIndex((colorTemperature) => colorTemperature.id == id);
 
 				self.colorTemperatureIndex = index;
 				self.colorTemperatureValue = id;
 
-				await sendCam(self, seriesCaps.colorTemperature.index.cmd + ':0x' + id)
+				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':0x' + id)
 			},
 		}
 	}
 
-	if (seriesCaps.colorTemp && seriesCaps.colorTemp.advanced) { 
+	if (SERIES.capabilities.colorTemp && SERIES.capabilities.colorTemp.advanced) { 
 		actions.colorTemperatureUp = {
 			name: 'White Balance - Color Temperature Up',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, seriesCaps.colorTemp.advanced.inc + ':0x1')
+				await sendCam(self, SERIES.capabilities.colorTemp.advanced.inc + ':0x1')
 			},
 		}
 
@@ -1112,7 +1125,7 @@ export function getActionDefinitions(self) {
 			name: 'White Balance - Color Temperature Down',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, seriesCaps.colorTemp.advanced.dec + ':0x1')
+				await sendCam(self, SERIES.capabilities.colorTemp.advanced.dec + ':0x1')
 			},
 		}
 
@@ -1124,29 +1137,29 @@ export function getActionDefinitions(self) {
 					type: 'number',
 					label: 'Color Temperature [K]',
 					default: 3200,
-					min: seriesCaps.colorTemp.advanced.min,
-					max: seriesCaps.colorTemp.advanced.max,
+					min: SERIES.capabilities.colorTemp.advanced.min,
+					max: SERIES.capabilities.colorTemp.advanced.max,
 					step: 20,
 					required: true,
 					range: true,
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, seriesCaps.colorTemp.advanced.val + ':0x' + parseInt(action.options.val).toString(16).toUpperCase().padStart(5, 0) + ':0')
+				await sendCam(self, SERIES.capabilities.colorTemp.advanced.val + ':0x' + parseInt(action.options.val).toString(16).toUpperCase().padStart(5, 0) + ':0')
 			},
 		}
 	}
 
-	if (seriesCaps.colorPedestal && seriesCaps.colorPedestal.cmd.red) {
+	if (SERIES.capabilities.colorPedestal && SERIES.capabilities.colorPedestal.cmd.red) {
 		actions.pedRedU = {
 			name: 'Color - Red Pedestal Up',
 			options: [],
 			callback: async (action) => {
-				if (self.data.redPedValue + seriesCaps.colorPedestal.step <= seriesCaps.colorPedestal.limit) {
-					self.data.redPedValue += seriesCaps.colorPedestal.step
+				if (self.data.redPedValue + SERIES.capabilities.colorPedestal.step <= SERIES.capabilities.colorPedestal.limit) {
+					self.data.redPedValue += SERIES.capabilities.colorPedestal.step
 				}
-				await sendCam(self, seriesCaps.colorPedestal.cmd.red + ':0x' + (seriesCaps.colorPedestal.offset +
-					self.data.redPedValue).toString(16).toUpperCase().padStart(seriesCaps.colorPedestal.hexlen, 0))
+				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.red + ':0x' + (SERIES.capabilities.colorPedestal.offset +
+					self.data.redPedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorPedestal.hexlen, 0))
 			},
 		}
 
@@ -1154,11 +1167,11 @@ export function getActionDefinitions(self) {
 			name: 'Color - Red Pedestal Down',
 			options: [],
 			callback: async (action) => {
-				if (self.data.redPedValue - seriesCaps.colorPedestal.step <= seriesCaps.colorPedestal.limit) {
-					self.data.redPedValue -= seriesCaps.colorPedestal.step
+				if (self.data.redPedValue - SERIES.capabilities.colorPedestal.step <= SERIES.capabilities.colorPedestal.limit) {
+					self.data.redPedValue -= SERIES.capabilities.colorPedestal.step
 				}
-				await sendCam(self, seriesCaps.colorPedestal.cmd.red + ':0x' + (seriesCaps.colorPedestal.offset +
-					self.data.redPedValue).toString(16).toUpperCase().padStart(seriesCaps.colorPedestal.hexlen, 0))
+				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.red + ':0x' + (SERIES.capabilities.colorPedestal.offset +
+					self.data.redPedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorPedestal.hexlen, 0))
 			},
 		}
 
@@ -1170,31 +1183,31 @@ export function getActionDefinitions(self) {
 					type: 'number',
 					label: 'Level',
 					default: 0,
-					min: -seriesCaps.colorPedestal.limit,
-					max: +seriesCaps.colorPedestal.limit,
-					step: seriesCaps.colorPedestal.step,
+					min: -SERIES.capabilities.colorPedestal.limit,
+					max: +SERIES.capabilities.colorPedestal.limit,
+					step: SERIES.capabilities.colorPedestal.step,
 					required: true,
 					range: true,
 				},
 			],
 			callback: async (action) => {
 				self.data.redPedValue = action.options.val
-				await sendCam(self, seriesCaps.colorPedestal.cmd.red + ':0x' + (seriesCaps.colorPedestal.offset +
-					self.data.redPedValue).toString(16).toUpperCase().padStart(seriesCaps.colorPedestal.hexlen, 0))
+				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.red + ':0x' + (SERIES.capabilities.colorPedestal.offset +
+					self.data.redPedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorPedestal.hexlen, 0))
 			},
 		}
 	}
 
-	if (seriesCaps.colorPedestal && seriesCaps.colorPedestal.cmd.blue) {
+	if (SERIES.capabilities.colorPedestal && SERIES.capabilities.colorPedestal.cmd.blue) {
 		actions.pedBlueU = {
 			name: 'Color - Blue Pedestal Up',
 			options: [],
 			callback: async (action) => {
-				if (self.data.bluePedValue + seriesCaps.colorPedestal.step <= seriesCaps.colorPedestal.limit) {
-					self.data.bluePedValue += seriesCaps.colorPedestal.step
+				if (self.data.bluePedValue + SERIES.capabilities.colorPedestal.step <= SERIES.capabilities.colorPedestal.limit) {
+					self.data.bluePedValue += SERIES.capabilities.colorPedestal.step
 				}
-				await sendCam(self, seriesCaps.colorPedestal.cmd.blue + ':0x' + (seriesCaps.colorPedestal.offset +
-					self.data.bluePedValue).toString(16).toUpperCase().padStart(seriesCaps.colorPedestal.hexlen, 0))
+				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.blue + ':0x' + (SERIES.capabilities.colorPedestal.offset +
+					self.data.bluePedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorPedestal.hexlen, 0))
 			},
 		}
 
@@ -1202,11 +1215,11 @@ export function getActionDefinitions(self) {
 			name: 'Color - Blue Pedestal Down',
 			options: [],
 			callback: async (action) => {
-				if (self.data.bluePedValue - seriesCaps.colorPedestal.step <= seriesCaps.colorPedestal.limit) {
-					self.data.bluePedValue -= seriesCaps.colorPedestal.step
+				if (self.data.bluePedValue - SERIES.capabilities.colorPedestal.step <= SERIES.capabilities.colorPedestal.limit) {
+					self.data.bluePedValue -= SERIES.capabilities.colorPedestal.step
 				}
-				await sendCam(self, seriesCaps.colorPedestal.cmd.blue + ':0x' + (seriesCaps.colorPedestal.offset +
-					self.data.bluePedValue).toString(16).toUpperCase().padStart(seriesCaps.colorPedestal.hexlen, 0))
+				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.blue + ':0x' + (SERIES.capabilities.colorPedestal.offset +
+					self.data.bluePedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorPedestal.hexlen, 0))
 			},
 		}
 
@@ -1218,47 +1231,47 @@ export function getActionDefinitions(self) {
 					type: 'number',
 					label: 'Level',
 					default: 0,
-					min: -seriesCaps.colorPedestal.limit,
-					max: +seriesCaps.colorPedestal.limit,
-					step: seriesCaps.colorPedestal.step,
+					min: -SERIES.capabilities.colorPedestal.limit,
+					max: +SERIES.capabilities.colorPedestal.limit,
+					step: SERIES.capabilities.colorPedestal.step,
 					requiblue: true,
 					range: true,
 				},
 			],
 			callback: async (action) => {
 				self.data.bluePedValue = action.options.val
-				await sendCam(self, seriesCaps.colorPedestal.cmd.blue + ':0x' + (seriesCaps.colorPedestal.offset +
-					self.data.bluePedValue).toString(16).toUpperCase().padStart(seriesCaps.colorPedestal.hexlen, 0))
+				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.blue + ':0x' + (SERIES.capabilities.colorPedestal.offset +
+					self.data.bluePedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorPedestal.hexlen, 0))
 			},
 		}
 	}
 
-	if (seriesCaps.colorGain && seriesCaps.colorGain.cmd.red) {
-		actions.pedRedU = {
+	if (SERIES.capabilities.colorGain && SERIES.capabilities.colorGain.cmd.red) {
+		actions.gainRedU = {
 			name: 'Color - Red Gain Up',
 			options: [],
 			callback: async (action) => {
-				if (self.data.redPedValue + seriesCaps.colorGain.step <= seriesCaps.colorGain.limit) {
-					self.data.redPedValue += seriesCaps.colorGain.step
+				if (self.data.redPedValue + SERIES.capabilities.colorGain.step <= SERIES.capabilities.colorGain.limit) {
+					self.data.redPedValue += SERIES.capabilities.colorGain.step
 				}
-				await sendCam(self, seriesCaps.colorGain.cmd.red + ':0x' + (seriesCaps.colorGain.offset +
-					self.data.redPedValue).toString(16).toUpperCase().padStart(seriesCaps.colorGain.hexlen, 0))
+				await sendCam(self, SERIES.capabilities.colorGain.cmd.red + ':0x' + (SERIES.capabilities.colorGain.offset +
+					self.data.redPedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, 0))
 			},
 		}
 
-		actions.pedRedD = {
+		actions.gainRedD = {
 			name: 'Color - Red Gain Down',
 			options: [],
 			callback: async (action) => {
-				if (self.data.redPedValue - seriesCaps.colorGain.step <= seriesCaps.colorGain.limit) {
-					self.data.redPedValue -= seriesCaps.colorGain.step
+				if (self.data.redPedValue - SERIES.capabilities.colorGain.step <= SERIES.capabilities.colorGain.limit) {
+					self.data.redPedValue -= SERIES.capabilities.colorGain.step
 				}
-				await sendCam(self, seriesCaps.colorGain.cmd.red + ':0x' + (seriesCaps.colorGain.offset +
-					self.data.redPedValue).toString(16).toUpperCase().padStart(seriesCaps.colorGain.hexlen, 0))
+				await sendCam(self, SERIES.capabilities.colorGain.cmd.red + ':0x' + (SERIES.capabilities.colorGain.offset +
+					self.data.redPedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, 0))
 			},
 		}
 
-		actions.pedRedS = {
+		actions.gainRedS = {
 			name: 'Color - Set Red Gain',
 			options: [
 				{
@@ -1266,47 +1279,47 @@ export function getActionDefinitions(self) {
 					type: 'number',
 					label: 'Level',
 					default: 0,
-					min: -seriesCaps.colorGain.limit,
-					max: +seriesCaps.colorGain.limit,
-					step: seriesCaps.colorGain.step,
+					min: -SERIES.capabilities.colorGain.limit,
+					max: +SERIES.capabilities.colorGain.limit,
+					step: SERIES.capabilities.colorGain.step,
 					required: true,
 					range: true,
 				},
 			],
 			callback: async (action) => {
 				self.data.redPedValue = action.options.val
-				await sendCam(self, seriesCaps.colorGain.cmd.red + ':0x' + (seriesCaps.colorGain.offset +
-					self.data.redPedValue).toString(16).toUpperCase().padStart(seriesCaps.colorGain.hexlen, 0))
+				await sendCam(self, SERIES.capabilities.colorGain.cmd.red + ':0x' + (SERIES.capabilities.colorGain.offset +
+					self.data.redPedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, 0))
 			},
 		}
 	}
 
-	if (seriesCaps.colorGain && seriesCaps.colorGain.cmd.blue) {
-		actions.pedBlueU = {
+	if (SERIES.capabilities.colorGain && SERIES.capabilities.colorGain.cmd.blue) {
+		actions.gainBlueU = {
 			name: 'Color - Blue Gain Up',
 			options: [],
 			callback: async (action) => {
-				if (self.data.bluePedValue + seriesCaps.colorGain.step <= seriesCaps.colorGain.limit) {
-					self.data.bluePedValue += seriesCaps.colorGain.step
+				if (self.data.bluePedValue + SERIES.capabilities.colorGain.step <= SERIES.capabilities.colorGain.limit) {
+					self.data.bluePedValue += SERIES.capabilities.colorGain.step
 				}
-				await sendCam(self, seriesCaps.colorGain.cmd.blue + ':0x' + (seriesCaps.colorGain.offset +
-					self.data.bluePedValue).toString(16).toUpperCase().padStart(seriesCaps.colorGain.hexlen, 0))
+				await sendCam(self, SERIES.capabilities.colorGain.cmd.blue + ':0x' + (SERIES.capabilities.colorGain.offset +
+					self.data.bluePedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, 0))
 			},
 		}
 
-		actions.pedBlueD = {
+		actions.gainBlueD = {
 			name: 'Color - Blue Gain Down',
 			options: [],
 			callback: async (action) => {
-				if (self.data.bluePedValue - seriesCaps.colorGain.step <= seriesCaps.colorGain.limit) {
-					self.data.bluePedValue -= seriesCaps.colorGain.step
+				if (self.data.bluePedValue - SERIES.capabilities.colorGain.step <= SERIES.capabilities.colorGain.limit) {
+					self.data.bluePedValue -= SERIES.capabilities.colorGain.step
 				}
-				await sendCam(self, seriesCaps.colorGain.cmd.blue + ':0x' + (seriesCaps.colorGain.offset +
-					self.data.bluePedValue).toString(16).toUpperCase().padStart(seriesCaps.colorGain.hexlen, 0))
+				await sendCam(self, SERIES.capabilities.colorGain.cmd.blue + ':0x' + (SERIES.capabilities.colorGain.offset +
+					self.data.bluePedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, 0))
 			},
 		}
 
-		actions.pedBlueS = {
+		actions.gainBlueS = {
 			name: 'Color - Set Blue Gain',
 			options: [
 				{
@@ -1314,32 +1327,32 @@ export function getActionDefinitions(self) {
 					type: 'number',
 					label: 'Level',
 					default: 0,
-					min: -seriesCaps.colorGain.limit,
-					max: +seriesCaps.colorGain.limit,
-					step: seriesCaps.colorGain.step,
+					min: -SERIES.capabilities.colorGain.limit,
+					max: +SERIES.capabilities.colorGain.limit,
+					step: SERIES.capabilities.colorGain.step,
 					requiblue: true,
 					range: true,
 				},
 			],
 			callback: async (action) => {
 				self.data.bluePedValue = action.options.val
-				await sendCam(self, seriesCaps.colorGain.cmd.blue + ':0x' + (seriesCaps.colorGain.offset +
-					self.data.bluePedValue).toString(16).toUpperCase().padStart(seriesCaps.colorGain.hexlen, 0))
+				await sendCam(self, SERIES.capabilities.colorGain.cmd.blue + ':0x' + (SERIES.capabilities.colorGain.offset +
+					self.data.bluePedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, 0))
 			},
 		}
 	}
 
-	if (seriesCaps.filter.cmd) {
+	if (SERIES.capabilities.filter.cmd) {
 		actions.filterU = {
 			name: 'Exposure - ND Filter Up',
 			options: [],
 			callback: async (action) => {
-				if (self.filterIndex == seriesCaps.filter.dropdown.length) {
-					self.filterIndex = seriesCaps.filter.dropdown.length
-				} else if (self.filterIndex < seriesCaps.filter.dropdown.length) {
+				if (self.filterIndex == SERIES.capabilities.filter.dropdown.length) {
+					self.filterIndex = SERIES.capabilities.filter.dropdown.length
+				} else if (self.filterIndex < SERIES.capabilities.filter.dropdown.length) {
 					self.filterIndex++
 				}
-				self.filterVal = seriesCaps.filter.dropdown[self.filterIndex].id
+				self.filterVal = SERIES.capabilities.filter.dropdown[self.filterIndex].id
 
 				await sendCam(self, 'OFT:' + self.filterVal) // no leading 0x!
 			},
@@ -1354,7 +1367,7 @@ export function getActionDefinitions(self) {
 				} else if (self.filterIndex > 0) {
 					self.filterIndex--
 				}
-				self.filterVal = seriesCaps.filter.dropdown[self.filterIndex].id
+				self.filterVal = SERIES.capabilities.filter.dropdown[self.filterIndex].id
 
 				await sendCam(self, 'OFT:' + self.filterVal) // no leading 0x!
 			},
@@ -1367,8 +1380,8 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'ND Filter setting',
 					id: 'val',
-					default: seriesCaps.filter.dropdown[0].id,
-					choices: seriesCaps.filter.dropdown,
+					default: SERIES.capabilities.filter.dropdown[0].id,
+					choices: SERIES.capabilities.filter.dropdown,
 				},
 			],
 			callback: async (action) => {
@@ -1381,7 +1394,7 @@ export function getActionDefinitions(self) {
 	// #### Preset Actions ####
 	// ########################
 
-	if (seriesCaps.preset) {
+	if (SERIES.capabilities.preset) {
 		actions.savePset = {
 			name: 'Preset - Save',
 			options: [
@@ -1451,7 +1464,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.presetSpeed) {
+	if (SERIES.capabilities.presetSpeed) {
 		actions.speedPset = {
 			name: 'Preset - Set Recall Speed',
 			options: [
@@ -1464,7 +1477,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				if (seriesCaps.presetTime) {
+				if (SERIES.capabilities.presetTime) {
 					await sendCam(self, 'OSJ:29:0')
 				}
 				await sendPTZ(self, 'UPVS' + action.options.val) // no leading 0x!
@@ -1472,7 +1485,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.presetTime) {
+	if (SERIES.capabilities.presetTime) {
 		actions.timePset = {
 			name: 'Preset - Set Recall Time',
 			options: [
@@ -1498,7 +1511,7 @@ export function getActionDefinitions(self) {
 	// #### Autotracking Actions ####
 	// ##############################
 
-	if (seriesCaps.trackingAuto) {
+	if (SERIES.capabilities.trackingAuto) {
 		actions.autotrackingOff = {
 			name: 'Auto Tracking Mode Off',
 			options: [],
@@ -1539,7 +1552,7 @@ export function getActionDefinitions(self) {
 	// #### System Actions ####
 	// ########################
 
-	if (seriesCaps.power) {
+	if (SERIES.capabilities.power) {
 		actions.powerOff = {
 			name: 'System - Power Off',
 			options: [],
@@ -1557,7 +1570,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.restart) {
+	if (SERIES.capabilities.restart) {
 		actions.restart = {
 			name: 'System - Restart Camera',
 			options: [],
@@ -1567,8 +1580,8 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.tally)  {
-		if (seriesCaps.tally2)  {
+	if (SERIES.capabilities.tally)  {
+		if (SERIES.capabilities.tally2)  {
 			actions.tallyOff = {
 				name: 'System - Red Tally Off',
 				options: [],
@@ -1597,7 +1610,7 @@ export function getActionDefinitions(self) {
 					await sendCam(self, 'TLG:1')
 				},
 			}
-			if (seriesCaps.tally3)  {
+			if (SERIES.capabilities.tally3)  {
 				actions.tally3Off = {
 					name: 'System - Yellow Tally Off',
 					options: [],
@@ -1631,7 +1644,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.colorbar) {
+	if (SERIES.capabilities.colorbar) {
 		actions.colorbarOff = {
 			name: 'System - Color Bar Off',
 			options: [],
@@ -1649,7 +1662,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.install) {
+	if (SERIES.capabilities.install) {
 		actions.insPosition = {
 			name: 'System - Installation Position',
 			options: [
@@ -1670,7 +1683,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.recordSD) {
+	if (SERIES.capabilities.recordSD) {
 		actions.sdCardRec = {
 			name: 'System - SD Card Recording',
 			options: [
@@ -1691,7 +1704,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.streamSRT) {
+	if (SERIES.capabilities.streamSRT) {
 		actions.srtStreamCtrl = {
 			name: 'Streaming - SRT Stream Control',
 			options: [
@@ -1712,7 +1725,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesCaps.streamRTMP) {
+	if (SERIES.capabilities.streamRTMP) {
 		actions.rtmpStreamCtrl = {
 			name: 'Streaming - RTMP Stream Control',
 			options: [
