@@ -1376,12 +1376,12 @@ export function getPresetDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.colorbar) {
-		presets['system-colorbar-off'] = {
+		presets['system-colorbar'] = {
 			type: 'button',
 			category: 'System',
-			name: 'Color Bar Off',
+			name: 'Color Bar',
 			style: {
-				text: 'Color Bar\\nOFF',
+				text: 'Color Bar',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -1396,32 +1396,6 @@ export function getPresetDefinitions(self) {
 					],
 					up: [],
 				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'colorbarState',
-					options: {
-						option: '0',
-					},
-					style: {
-						color: colorWhite,
-						bgcolor: colorRed,
-					},
-				},
-			],
-		}
-
-		presets['system-colorbar-on'] = {
-			type: 'button',
-			category: 'System',
-			name: 'Color Bar On',
-			style: {
-				text: 'Color Bar\\nON',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
 				{
 					down: [
 						{
@@ -1448,62 +1422,17 @@ export function getPresetDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.tally) {
-		presets['system-tally-off'] = {
+		presets['system-tally'] = {
 			type: 'button',
 			category: 'System',
-			name: 'Red Tally Off',
+			name: 'Red Tally',
 			style: {
-				text: 'Red Tally\\nOFF',
-				size: '14',
+				text: 'TALLY',
+				size: '18',
 				color: colorWhite,
 				bgcolor: colorBlack,
 			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'tallyOff',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'tallyState',
-					options: {
-						option: '0',
-					},
-					style: {
-						color: colorWhite,
-						bgcolor: colorRed,
-					},
-				},
-			],
-		}
-
-		presets['system-tally-on'] = {
-			type: 'button',
-			category: 'System',
-			name: 'Red Tally On',
-			style: {
-				text: 'Red Tally\\nON',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'tallyOn',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
+			steps: [],
 			feedbacks: [
 				{
 					feedbackId: 'tallyState',
@@ -1520,62 +1449,17 @@ export function getPresetDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.tally2) {
-		presets['system-tally2-off'] = {
+		presets['system-tally2'] = {
 			type: 'button',
 			category: 'System',
-			name: 'Green Tally Off',
+			name: 'Green Tally',
 			style: {
-				text: 'Green Tally\\nOFF',
-				size: '14',
+				text: 'TALLY',
+				size: '18',
 				color: colorWhite,
 				bgcolor: colorBlack,
 			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'tally2Off',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'tally2State',
-					options: {
-						option: '0',
-					},
-					style: {
-						color: colorWhite,
-						bgcolor: colorGreen,
-					},
-				},
-			],
-		}
-
-		presets['system-tally2-on'] = {
-			type: 'button',
-			category: 'System',
-			name: 'Green Tally On',
-			style: {
-				text: 'Green Tally\\nON',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'tally2On',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
+			steps: [],
 			feedbacks: [
 				{
 					feedbackId: 'tally2State',
@@ -1585,6 +1469,33 @@ export function getPresetDefinitions(self) {
 					style: {
 						color: colorWhite,
 						bgcolor: colorGreen,
+					},
+				},
+			],
+		}
+	}
+
+	if (SERIES.capabilities.tally3) {
+		presets['system-tally3'] = {
+			type: 'button',
+			category: 'System',
+			name: 'Yellow Tally',
+			style: {
+				text: 'TALLY',
+				size: '18',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [],
+			feedbacks: [
+				{
+					feedbackId: 'tally3State',
+					options: {
+						option: '1',
+					},
+					style: {
+						color: colorWhite,
+						bgcolor: colorYellow,
 					},
 				},
 			],
@@ -2122,47 +2033,94 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
+	// #####################################
+	// #### Image Stabilization Presets ####
+	// #####################################
+
+	let oissteps = []
+	for (const x in SERIES.capabilities.ois.dropdown) {
+		oissteps.push(
+			{
+				down: [
+					{
+						actionId: 'ois',
+						options: {
+							val: SERIES.capabilities.ois.dropdown[x].id,
+						},
+					},
+				],
+				up: [],
+			},
+		)
+	}
+	presets[`ois-mode`] = {
+		type: 'button',
+		category: 'Image Stabilization',
+		name: 'O.I.S. Mode',
+		style: {
+			text: 'Image Stabilizer\n$(generic-module:ois)',
+			size: '14',
+			color: colorWhite,
+			bgcolor: colorRed,
+		},
+		steps: oissteps,
+		feedbacks: [
+			{
+				feedbackId: 'oisMode',
+				options: {
+					option: SERIES.capabilities.ois.dropdown[0].id,
+				},
+				style: {
+					color: colorWhite,
+					bgcolor: colorBlack,
+				},
+			},
+		],
+	}
+
 	// ###############################
 	// #### White Balance Presets ####
 	// ###############################
 
+	let steps = []
 	for (const x in SERIES.capabilities.whiteBalance.dropdown) {
-		presets[`whitebalance-mode-${x}`] = {
-			type: 'button',
-			category: 'White Balance',
-			name: 'White Balance Mode ' + SERIES.capabilities.whiteBalance.dropdown[x].label,
-			style: {
-				text: 'WB MODE\\n' + SERIES.capabilities.whiteBalance.dropdown[x].label,
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'whiteBalanceMode',
-							options: {
-								val: SERIES.capabilities.whiteBalance.dropdown[x].id,
-							},
+		steps.push(
+			{
+				down: [
+					{
+						actionId: 'whiteBalanceMode',
+						options: {
+							val: SERIES.capabilities.whiteBalance.dropdown[x].id,
 						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'whiteBalanceMode',
-					options: {
-						option: SERIES.capabilities.whiteBalance.dropdown[x].id,
 					},
-					style: {
-						color: colorWhite,
-						bgcolor: colorRed,
-					},
+				],
+				up: [],
+			},
+		)
+	}
+	presets[`whitebalance-mode`] = {
+		type: 'button',
+		category: 'White Balance',
+		name: 'White Balance Mode',
+		style: {
+			text: 'WB MODE\\n$(generic-module:whiteBalance)',
+			size: '14',
+			color: colorWhite,
+			bgcolor: colorBlack,
+		},
+		steps: steps,
+		feedbacks: [
+			{
+				feedbackId: 'whiteBalanceMode',
+				options: {
+					option: SERIES.capabilities.whiteBalance.dropdown[0].id,
 				},
-			],
-		}
+				style: {
+					color: colorWhite,
+					bgcolor: colorRed,
+				},
+			},
+		],
 	}
 
 	if (SERIES.capabilities.colorGain) {

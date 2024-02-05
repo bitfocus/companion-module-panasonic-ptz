@@ -45,8 +45,8 @@ export const ConfigFields = [
 		label: 'Select Your Camera Model',
 		width: 6,
 		default: 'Auto',
-		enum: MODELS,
-		minEnumForSearch: 5,
+		choices: MODELS,
+		minChoicesForSearch: 5,
 	},
 	{
 		type: 'static-text',

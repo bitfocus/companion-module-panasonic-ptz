@@ -17,7 +17,9 @@ export function setVariables(self) {
 
 	variables.push({ variableId: 'series', name: 'Camera Series' })
 	variables.push({ variableId: 'model', name: 'Model of camera' })
-	variables.push({ variableId: 'name', name: 'Name of camera' })
+	variables.push({ variableId: 'mac', name: 'MAC address' })
+	variables.push({ variableId: 'serial', name: 'Serial number' })
+	variables.push({ variableId: 'title', name: 'Title of camera' })
 	if (SERIES.capabilities.version) {
 		variables.push({ variableId: 'version', name: 'Firmware Version' })
 	}
@@ -161,7 +163,9 @@ export function checkVariables(self) {
 	self.setVariableValues({
 		series: self.data.series,
 		model: self.data.model,
-		name: self.data.name,
+		mac: self.data.mac,
+		serial: self.data.serial,
+		title: self.data.title,
 		version: self.data.version,
 
 		power: self.data.power,

@@ -1,14 +1,14 @@
 import { MODELS, SERIES_SPECS } from './models.js'
 
 export function getAndUpdateSeries(self) {
-	// Set the model and series selected, if in auto, dettect what model is connected via TCP
+	// Set the model and series selected, if in auto, detect what model is connected via TCP
 	if (self.config.model === 'Auto') {
 		self.data.model = self.data.modelINFO
 	} else {
 		self.data.model = self.config.model
 	}
 
-	if (self.data.model !== 'NaN') {
+	if (self.data.model !== null) {
 		self.data.series = MODELS.find((MODELS) => MODELS.id == self.data.model).series
 	}
 

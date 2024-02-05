@@ -7,89 +7,95 @@ import got from 'got'
 // #### Send Actions ####
 // ######################
 
-export async function sendPTZ(self, str) {
-	if (str) {
-		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/aw_ptz?cmd=%23${str}&res=1`
+export async function sendPTZ(self, cmd) {
+	if (cmd) {
+		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/aw_ptz?cmd=%23${cmd}&res=1`
 		if (self.config.debug) {
-			self.log('debug', `Sending : ${url}`)
+			self.log('info', `PTZ Request: ${url}`)
 		}
 
 		try {
 			const response = await got.get(url)
 
 			if (response.body) {
-				const lines = response.body.trim().split('\r\n') // Split Data in order to remove data before and after command
+				const str = response.body.trim()
 
-				for (let line of lines) {
-					// remove new line, carage return and so on.
-					const str = line.trim().split(':') // Split Commands and data
-					if (self.config.debug) {
-						self.log('info', 'Received Response: ' + String(str))
-					}
-					// Store Data
-					self.parseUpdate(str)
+				if (self.config.debug) {
+					self.log('info', 'Received PTZ Command Response: ' + str)
 				}
+
+				self.parseUpdate(str.split(':'))
 
 				self.checkVariables()
 				self.checkFeedbacks()
 			}
 
-			//console.log("Result from REST:" + result.data);
 		} catch (err) {
-			throw new Error(`Action failed: ${url}`)
+			throw new Error(`PTZ Action failed: ${url}`)
 		}
 	}
 }
 
-export async function sendCam(self, str) {
-	if (str) {
-		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/aw_cam?cmd=${str}&res=1`
+export async function sendCam(self, cmd) {
+	if (cmd) {
+		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/aw_cam?cmd=${cmd}&res=1`
 
 		if (self.config.debug) {
-			self.log('debug', `Sending : ${url}`)
+			self.log('info', `Cam Request: ${url}`)
 		}
 
 		try {
 			const response = await got.get(url)
 			
 			if (response.body) {
-				const lines = response.body.trim().split('\r\n') // Split Data in order to remove data before and after command
+				const str = response.body.trim()
+
+				if (self.config.debug) {
+					self.log('info', 'Received Cam Command Response: ' + str)
+				}
+
+				self.parseUpdate(str.split(':'))
+
+				self.checkVariables()
+				self.checkFeedbacks()
+			}
+		} catch (err) {
+			throw new Error(`Cam Action failed: ${url}`)
+		}
+	}
+}
+
+export async function sendWeb(self, cmd) {
+	// Currently only for web commands that don't require admin rights
+
+	if (cmd) {
+		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/${cmd}`
+
+		if (self.config.debug) {
+			self.log('debug', `Web Request: ${url}`)
+		}
+
+		try {
+			const response = await got.get(url)
+
+			if (response.body) {
+				const lines = response.body.trim().split('\r\n')
 
 				for (let line of lines) {
-					// remove new line, carage return and so on.
-					const str = line.trim().split(':') // Split Commands and data
+					const str = line.trim()
+
 					if (self.config.debug) {
-						self.log('info', 'Received Response: ' + String(str))
+						self.log('info', 'Received Web Command Response: ' + str)
 					}
-					// Store Data
-					self.parseUpdate(str)
+
+					self.parseWeb(str.split('='), cmd)
 				}
 
 				self.checkVariables()
 				self.checkFeedbacks()
 			}
 		} catch (err) {
-			throw new Error(`Action failed: ${url}`)
-		}
-	}
-}
-
-export async function sendWeb(self, str) {
-	// Currently Only for web commands that don't require Admin rights
-
-	if (str) {
-		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/${str}`
-
-		if (self.config.debug) {
-			self.log('debug', `Sending : ${url}`)
-		}
-
-		try {
-			const response = await got.get(url)
-
-			// console.log("Result from REST:" + result.data);
-		} catch (err) {
-			throw new Error(`Action failed: ${url}`)
+			throw new Error(`Web Action failed: ${url}`)
 		}
 	}
 }

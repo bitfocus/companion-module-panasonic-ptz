@@ -21,7 +21,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/event?connect=stop&my_port=${port}&uid=0`
 
 		if (this.config.debug) {
-			this.log('debug', `Sending : ${url}`)
+			this.log('debug', `Update Notification Unsubcribe Request: ${url}`)
 		}
 
 		try {
@@ -29,7 +29,7 @@ class PanasonicPTZInstance extends InstanceBase {
 
 			this.log('info', 'un-subscribed: ' + url)
 		} catch (err) {
-			this.log('error', 'Error from PTZ on unsubscribe: ' + String(err))
+			this.log('error', 'Error on unsubscribe: ' + String(err))
 		}
 	}
 
@@ -37,7 +37,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/event?connect=start&my_port=${port}&uid=0`
 
 		if (this.config.debug) {
-			this.log('debug', `Sending : ${url}`)
+			this.log('debug', `Update Notification Subscribe Request: ${url}`)
 		}
 
 		try {
@@ -47,7 +47,7 @@ class PanasonicPTZInstance extends InstanceBase {
 
 			this.updateStatus(InstanceStatus.Ok)
 		} catch (err) {
-			this.log('error', 'Error from PTZ on subscribe: ' + String(err))
+			this.log('error', 'Error on subscribe: ' + String(err))
 
 			//this.updateStatus(InstanceStatus.UnknownWarning, 'Subscription unsuccessful')
 		}
@@ -79,7 +79,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				// common error handler
 				socket.on('error', () => {
 					this.clients.splice(this.clients.indexOf(socket), 1)
-					this.log('error', 'PTZ errored/died: ' + socket.name)
+					this.log('error', 'Update notification channel errored/died: ' + socket.name)
 				})
 
 				socket.name = socket.remoteAddress + ':' + socket.remotePort
@@ -202,7 +202,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			// /cgi-bin/get_preset_thumbnail?preset_number=X
 
 			if (this.config.debug) {
-				this.log('debug', `Sending : ${url}`)
+				this.log('info', `getinfo Request : ${url}`)
 			}
 
 			got.get(url)
@@ -210,16 +210,15 @@ class PanasonicPTZInstance extends InstanceBase {
 					this.updateStatus(InstanceStatus.Ok)
 
 					if (response.body) {
-						const lines = response.body.trim().split('\r\n') // Split Data in order to remove data before and after command
+						const lines = response.body.trim().split('\r\n')
 
 						for (let line of lines) {
-							// remove new line, carage return and so on.
-							const str = line.trim().split('=') // Split keys and values
+							const str = line.trim()
 							if (this.config.debug) {
-								this.log('info', 'Received INFO: ' + String(str))
+								this.log('info', 'Received INFO: ' + str)
 							}
-							// Store Data
-							this.parseInfo(str)
+
+							this.parseInfo(str.split('='))
 						}
 
 						this.checkVariables()
@@ -227,7 +226,7 @@ class PanasonicPTZInstance extends InstanceBase {
 					}
 				})
 				.catch((err) => {
-					this.log('error', 'Error checking basic communication and receiving model info from PTZ: ' + String(err))
+					this.log('error', 'Error checking basic communication and receiving model: ' + String(err))
 					this.updateStatus(InstanceStatus.ConnectionFailure)
 				})
 		}
@@ -236,6 +235,12 @@ class PanasonicPTZInstance extends InstanceBase {
 	parseInfo(str) {
 		// Store Values from Events
 		switch (str[0]) {
+			case 'MAC':
+				this.data.mac = str[1]
+				break
+			case 'SERIAL':
+				this.data.serial = str[1]
+				break
 			case 'VERSION':
 				this.data.version = str[1]
 				break
@@ -247,8 +252,6 @@ class PanasonicPTZInstance extends InstanceBase {
 					this.reInitAll()
 				}
 				break
-			default:
-				break
 		}
 	}
 
@@ -257,17 +260,16 @@ class PanasonicPTZInstance extends InstanceBase {
 			const url = `http://${this.config.host}:${this.config.httpPort}/live/camdata.html`
 
 			if (this.config.debug) {
-				this.log('debug', `Sending : ${url}`)
+				this.log('info', `camdata Request: ${url}`)
 			}
 
 			got.get(url)
 				.then((response) => {
 					if (response.body) {
-						const lines = response.body.trim().split('\r\n') // Split Data in order to remove data before and after command
+						const lines = response.body.trim().split('\r\n')
 
 						for (let line of lines) {
-							// remove new line, carage return and so on.
-							const str = line.trim() // Split Commands and data
+							const str = line.trim()
 	
 							if (this.config.debug) {
 								this.log('info', 'Received Initial Status: ' + str)
@@ -287,6 +289,7 @@ class PanasonicPTZInstance extends InstanceBase {
 	}
 
 	parseUpdate(str) {
+		// Store Values from Events
 		if (str[0].substring(0, 3) === 'rER') {
 			str[0] === 'rER00'
 				? (this.data.errorLabel = 'No Error')
@@ -336,7 +339,6 @@ class PanasonicPTZInstance extends InstanceBase {
 			this.data.presetEntries = this.data.presetEntries0.concat(this.data.presetEntries1.concat(this.data.presetEntries2))
 		}
 
-		// Store Values from Events
 		switch (str[0]) {
 			case 'dA0': // Legacy (red) Tally Off
 				this.data.tally = 'OFF'
@@ -498,10 +500,34 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.data.bluePedValue = parseInt(str[1], 16) - 0x96
 				break
 			case 'TITLE':
-				this.data.name = str[1]
+				this.data.title = str[1]
 				break
 		}
 	}
+
+	parseWeb(str, cmd) {
+		switch (cmd) {
+			case 'get_rtmp_status':
+				this.data.streamingRTMP = str[1] == '1'
+				break
+			case 'get_srt_status':
+				this.data.streamingSRT = str[1] == '1'
+				break
+			case 'get_state':
+				switch (str[0]) {
+					case 'rec': this.data.rec = str[1] == 'on'; break
+					case 'rec_counter': this.data.rec_counter = str[1]; break
+				}
+				break
+			case 'get_basic':
+				switch (str[0]) {
+					case 'cam_title': this.data.title = str[1]; break
+				}
+				
+			break
+		}
+	}
+
 	// When module gets deleted
 	async destroy() {
 		// Remove TCP Server and close all connections
@@ -514,6 +540,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			delete this.server
 		}
 	}
+
 	// Initalize module
 	async init(config) {
 		this.config = config
@@ -525,7 +552,10 @@ class PanasonicPTZInstance extends InstanceBase {
 
 			model: 'Auto',
 			series: 'Auto',
-			name: null,
+
+			mac: null,
+			serial: null,
+			title: null,
 			version: null,
 
 			// booleans
@@ -621,6 +651,7 @@ class PanasonicPTZInstance extends InstanceBase {
 
 		this.speedChangeEmitter = new EventEmitter()
 	}
+
 	// Update module after a config change
 	async configUpdated(config) {
 		this.config = config
@@ -650,16 +681,19 @@ class PanasonicPTZInstance extends InstanceBase {
 	init_presets() {
 		this.setPresetDefinitions(getPresetDefinitions(this))
 	}
+
 	// ############################
 	// #### Instance Variables ####
 	// ############################
 	init_variables() {
 		this.setVariableDefinitions(setVariables(this))
 	}
+
 	// Setup Initial Values
 	checkVariables() {
 		checkVariables(this)
 	}
+
 	// ############################
 	// #### Instance Feedbacks ####
 	// ############################

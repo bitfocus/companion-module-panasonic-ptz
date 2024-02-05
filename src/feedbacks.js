@@ -282,6 +282,30 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
+	if (SERIES.capabilities.ois) {
+		feedbacks.oisMode = {
+			type: 'boolean',
+			name: 'Image Stabilization - Mode',
+			description: 'Indicates whether the selected image stabilization mode is currently active',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorRed,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'option',
+					default: SERIES.capabilities.ois.dropdown[0].id,
+					choices: SERIES.capabilities.ois.dropdown,
+				},
+			],
+			callback: function (feedback) {
+				return self.data.ois === feedback.options.option
+			},
+		}
+	}
+
 	if (SERIES.capabilities.whiteBalance) {
 		feedbacks.whiteBalanceMode = {
 			type: 'boolean',
@@ -296,8 +320,8 @@ export function getFeedbackDefinitions(self) {
 					type: 'dropdown',
 					label: 'Mode',
 					id: 'option',
-					default: e.ENUM_WHITEBALANCE_GET[0].id,
-					choices: e.ENUM_WHITEBALANCE_GET,
+					default: SERIES.capabilities.whiteBalance.dropdown[0].id,
+					choices: SERIES.capabilities.whiteBalance.dropdown
 				},
 			],
 			callback: function (feedback) {
