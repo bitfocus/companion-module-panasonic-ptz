@@ -1,4 +1,4 @@
-import { getAndUpdateSeries } from './common.js'
+import { getAndUpdateSeries, getLabel } from './common.js'
 import { e } from './enum.js'
 
 // ##########################
@@ -57,7 +57,7 @@ export function setVariables(self) {
 		variables.push({ variableId: 'gain', name: 'Gain' })
 	}
 	if (SERIES.capabilities.preset) {
-		variables.push({ variableId: 'presetRecallMode', name: 'Preset Recall Mode' })
+		variables.push({ variableId: 'presetScopeMode', name: 'Preset Recall Mode' })
 		variables.push({ variableId: 'presetCompleted', name: 'Preset # Completed' })
 		variables.push({ variableId: 'presetSelected', name: 'Preset # Selected' })
 	}
@@ -105,6 +105,11 @@ export function setVariables(self) {
 		variables.push({ variableId: 'redPed', name: 'Red Pedestal' })
 		variables.push({ variableId: 'bluePed', name: 'Blue Pedestal' })
 	}
+	if (SERIES.capabilities.presetSpeed) {
+		variables.push({ variableId: 'presetSpeed', name: 'Recall Speed' })
+		variables.push({ variableId: 'presetSpeedTable', name: 'Recall Speed Table' })
+		variables.push({ variableId: 'presetSpeedUnit', name: 'Recall Speed Unit' })
+	}
 
 	return variables
 }
@@ -116,24 +121,28 @@ export function checkVariables(self) {
 	const SERIES = getAndUpdateSeries(self)
 
 	const colorTemperature = SERIES.capabilities.colorTemperature.index
-		? SERIES.capabilities.colorTemperature.index.dropdown.find((CTEMP) => CTEMP.id == self.data.colorTemperature)
-		: null
+		? getLabel(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature) : null
 
 	const gain = SERIES.capabilities.gain
-		? SERIES.capabilities.gain.dropdown.find((GAIN) => GAIN.id == self.data.gain)
-		: null
+		? getLabel(SERIES.capabilities.gain.dropdown, self.data.gain) : null
 
 	const ois = SERIES.capabilities.ois
-		? SERIES.capabilities.ois.dropdown.find((OIS) => OIS.id == self.data.ois)
-		: null
+		? getLabel(SERIES.capabilities.ois.dropdown, self.data.ois) : null
+
+	const presetSpeed = SERIES.capabilities.presetSpeed
+		? getLabel(e.ENUM_PSSPEED, self.data.presetSpeed) : null
+
+	const presetSpeedTable = SERIES.capabilities.presetSpeed
+		? getLabel(SERIES.capabilities.presetSpeed.dropdown, self.data.presetSpeedTable) : null
+
+	const presetSpeedUnit = SERIES.capabilities.presetSpeed
+		? getLabel(e.ENUM_PSSPEED_UNIT, self.data.presetSpeedUnit) : null
 
 	const shutter = SERIES.capabilities.shutter
-		? SERIES.capabilities.shutter.dropdown.find((SHUTTER) => SHUTTER.id == self.data.shutter)
-		: null
+		? getLabel(SERIES.capabilities.shutter.dropdown, self.data.shutter) : null
 
 	const whiteBalance = SERIES.capabilities.whiteBalance
-		? SERIES.capabilities.whiteBalance.dropdown.find((WB) => WB.id == self.data.whiteBalance)
-		: null
+		? getLabel(SERIES.capabilities.whiteBalance.dropdown, self.data.whiteBalance) : null
 
 	const progressBar = (pct, width = 20, start = '', end = '') => {
 		if (pct && pct >= 0 && pct <= 100) {
@@ -177,7 +186,7 @@ export function checkVariables(self) {
 		focusMode: self.data.focusMode,
 		installMode: self.data.installMode,
 		irisMode: self.data.irisMode,
-		presetRecallMode: self.data.presetRecallMode,
+		presetScopeMode: self.data.presetScopeMode,
 
 		presetSelected: (self.data.presetSelectedIdx + 1).toString(),
 		presetCompleted: (self.data.presetCompletedIdx + 1).toString(),
@@ -200,12 +209,15 @@ export function checkVariables(self) {
 		iris: self.data.irisLabel,
 		shutterStep: self.data.shutterStepLabel,
 
-		colorTemperature: self.data.colorTempLabel?self.data.colorTempLabel:colorTemperature?.label,
+		colorTemperature: self.data.colorTempLabel?self.data.colorTempLabel:colorTemperature,
 
-		gain: gain?.label,
-		ois: ois?.label,
-		shutter: shutter?.label,
-		whiteBalance: whiteBalance?.label,
+		gain: gain,
+		ois: ois,
+		presetSpeed: presetSpeed,
+		presetSpeedTable: presetSpeedTable,
+		presetSpeedUnit: presetSpeedUnit,
+		shutter: shutter,
+		whiteBalance: whiteBalance,
 
 		ptSpeedVar: self.ptSpeed,
 		pSpeedVar: self.pSpeed,

@@ -339,6 +339,14 @@ class PanasonicPTZInstance extends InstanceBase {
 			this.data.presetEntries = this.data.presetEntries0.concat(this.data.presetEntries1.concat(this.data.presetEntries2))
 		}
 
+		if (str[0].substring(0, 3) === 'pST') {
+			this.data.presetSpeedTable = str[0].substring(3)
+		}
+
+		if (str[0].substring(0, 4) === 'uPVS') {
+			this.data.presetSpeed = str[0].substring(4)
+		}
+
 		switch (str[0]) {
 			case 'dA0': // Legacy (red) Tally Off
 				this.data.tally = 'OFF'
@@ -426,9 +434,9 @@ class PanasonicPTZInstance extends InstanceBase {
 			case 'OSE':
 				if (str[1] == '71') {
 					switch (str[2]) {
-						case '0': this.data.presetRecallMode = 'Mode A'; break
-						case '1': this.data.presetRecallMode = 'Mode B'; break
-						case '2': this.data.presetRecallMode = 'Mode C'; break
+						case '0': this.data.presetScopeMode = 'Mode A'; break
+						case '1': this.data.presetScopeMode = 'Mode B'; break
+						case '2': this.data.presetScopeMode = 'Mode C'; break
 					}
 				}
 				break
@@ -447,8 +455,9 @@ class PanasonicPTZInstance extends InstanceBase {
 				switch (str[1]) {
 					case '03': this.data.shutter = str[2].replace('0x', ''); break
 					case '06': this.data.shutterStepLabel = '1/' + parseInt(str[2], 16).toString(); break
-					case '10': this.data.greenPedValue = parseInt(str[2], 16) - 0x96; break
 					case '0F': this.data.masterPedValue = parseInt(str[2], 16) - 0x800; break
+					case '10': this.data.greenPedValue = parseInt(str[2], 16) - 0x96; break
+					case '29': this.data.presetSpeedUnit = str[2]; break
 					case '4A': this.data.colorTempLabel = parseInt(str[2], 16).toString() + 'K'; break // AWB A/B
 					//case '4B': this.data.redGainValue = parseInt(str[2], 16) - 0x800; break // AWB A/B
 					//case '4C': this.data.blueGainValue = parseInt(str[2], 16) - 0x800; break // AWB A/B
@@ -572,6 +581,9 @@ class PanasonicPTZInstance extends InstanceBase {
 			filter: null,
 			gain: null,
 			ois: null,
+			presetSpeed: null,
+			presetSpeedTable: null,
+			presetSpeedUnit: '0',
 			shutter: null,
 			whiteBalance: null,
 
@@ -597,7 +609,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			focusMode: null,
 			installMode: null,
 			irisMode: null,
-			presetRecallMode: null,
+			presetScopeMode: null,
 
 			// other strings
 			autotrackingStatusLabel: null,

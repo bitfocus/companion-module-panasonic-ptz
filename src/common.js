@@ -20,3 +20,20 @@ export function getAndUpdateSeries(self) {
 
 	return SERIES || SERIES_SPECS.find((SERIES_SPECS) => SERIES_SPECS.id == 'Other')
 }
+
+export function getNext(values, key, step = 1, overrun = true) {
+	const firstIndex = 0
+	const lastIndex = values.length - 1
+	let i = values.findIndex((v) => v.id === key)
+
+	if (i < firstIndex) return values[firstIndex] // case not found
+	if (!overrun) {
+		if (i + step < firstIndex) return values[firstIndex]
+		if (i + step > lastIndex) return values[lastIndex]
+	}
+	return values[(values.length + (step % values.length) + i) % values.length]
+}
+
+export function getLabel(values, key) {
+	return values.find((v) => v.id === key)?.label
+}

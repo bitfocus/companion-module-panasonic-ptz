@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { e } from './enum.js'
-import { getAndUpdateSeries } from './common.js'
+import { getAndUpdateSeries, getNext } from './common.js'
 import got from 'got'
 
 // ######################
@@ -932,14 +932,7 @@ export function getActionDefinitions(self) {
 				if (SERIES.capabilities.shutter.inc) {
 					await sendCam(self, SERIES.capabilities.shutter.inc + ':0x01')
 				} else {				
-					if (self.shutterIndex == SERIES.capabilities.shutter.dropdown.length) {
-						self.shutterIndex = SERIES.capabilities.shutter.dropdown.length
-					} else if (self.shutterIndex < SERIES.capabilities.shutter.dropdown.length) {
-						self.shutterIndex++
-					}
-					self.shutterVal = SERIES.capabilities.shutter.dropdown[self.shutterIndex].id
-
-					await sendCam(self, SERIES.capabilities.shutter.cmd + self.shutterVal)
+					await sendCam(self, SERIES.capabilities.shutter.cmd + ':' + getNext(SERIES.capabilities.shutter.dropdown, self.data.shutter, +1).id) // no leading 0x!
 				}
 			},
 		}
@@ -951,14 +944,7 @@ export function getActionDefinitions(self) {
 				if (SERIES.capabilities.shutter.dec) {
 					await sendCam(self, SERIES.capabilities.shutter.dec + ':0x01')
 				} else {
-					if (self.shutterIndex == 0) {
-						self.shutterIndex = 0
-					} else if (self.shutterIndex > 0) {
-						self.shutterIndex--
-					}
-					self.shutterVal = SERIES.capabilities.shutter.dropdown[self.shutterIndex].id
-
-					await sendCam(self, SERIES.capabilities.shutter.cmd + self.shutterVal)
+					await sendCam(self, SERIES.capabilities.shutter.cmd + ':' + getNext(SERIES.capabilities.shutter.dropdown, self.data.shutter, -1).id) // no leading 0x!
 				}
 			},
 		}
@@ -1240,7 +1226,7 @@ export function getActionDefinitions(self) {
 					min: -SERIES.capabilities.colorPedestal.limit,
 					max: +SERIES.capabilities.colorPedestal.limit,
 					step: SERIES.capabilities.colorPedestal.step,
-					requiblue: true,
+					required: true,
 					range: true,
 				},
 			],
@@ -1336,7 +1322,7 @@ export function getActionDefinitions(self) {
 					min: -SERIES.capabilities.colorGain.limit,
 					max: +SERIES.capabilities.colorGain.limit,
 					step: SERIES.capabilities.colorGain.step,
-					requiblue: true,
+					required: true,
 					range: true,
 				},
 			],
@@ -1353,14 +1339,7 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - ND Filter Up',
 			options: [],
 			callback: async (action) => {
-				if (self.filterIndex == SERIES.capabilities.filter.dropdown.length) {
-					self.filterIndex = SERIES.capabilities.filter.dropdown.length
-				} else if (self.filterIndex < SERIES.capabilities.filter.dropdown.length) {
-					self.filterIndex++
-				}
-				self.filterVal = SERIES.capabilities.filter.dropdown[self.filterIndex].id
-
-				await sendCam(self, 'OFT:' + self.filterVal) // no leading 0x!
+				await sendCam(self, 'OFT:' + getNext(SERIES.capabilities.filter.dropdown, self.data.filter, +1).id) // no leading 0x!
 			},
 		}
 
@@ -1368,14 +1347,7 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - ND Filter Down',
 			options: [],
 			callback: async (action) => {
-				if (self.filterIndex == 0) {
-					self.filterIndex = 0
-				} else if (self.filterIndex > 0) {
-					self.filterIndex--
-				}
-				self.filterVal = SERIES.capabilities.filter.dropdown[self.filterIndex].id
-
-				await sendCam(self, 'OFT:' + self.filterVal) // no leading 0x!
+				await sendCam(self, 'OFT:' + getNext(SERIES.capabilities.filter.dropdown, self.data.filter, -1).id) // no leading 0x!
 			},
 		}
 
@@ -1518,19 +1490,22 @@ export function getActionDefinitions(self) {
 	// ##############################
 
 	if (SERIES.capabilities.trackingAuto) {
-		actions.autotrackingOff = {
-			name: 'Auto Tracking Mode Off',
-			options: [],
+		actions.autotrackingMode = {
+			name: 'Auto Tracking - Mode',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Option',
+					id: 'value',
+					default: 0,
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+					],
+				},
+			],
 			callback: async (action) => {
-				await sendCam(self, 'OSL:B6:0')
-			},
-		}
-
-		actions.autotrackingOn = {
-			name: 'Auto Tracking Mode On',
-			options: [],
-			callback: async (action) => {
-				await sendCam(self, 'OSL:B6:1')
+				await sendCam(self, 'OSL:B6:' + action.options.value) // no leading 0x!
 			},
 		}
 

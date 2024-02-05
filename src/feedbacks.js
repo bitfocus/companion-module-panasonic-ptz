@@ -197,17 +197,17 @@ export function getFeedbackDefinitions(self) {
 				const opt = feedback.options
 				switch (opt.option) {
 					case '0':
-						if (self.data.presetRecallMode === 'Mode A') {
+						if (self.data.presetScopeMode === 'Mode A') {
 							return true
 						}
 						break
 					case '1':
-						if (self.data.presetRecallMode === 'Mode B') {
+						if (self.data.presetScopeMode === 'Mode B') {
 							return true
 						}
 						break
 					case '2':
-						if (self.data.presetRecallMode === 'Mode C') {
+						if (self.data.presetScopeMode === 'Mode C') {
 							return true
 						}
 						break
