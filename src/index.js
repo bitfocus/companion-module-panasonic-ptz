@@ -310,6 +310,10 @@ class PanasonicPTZInstance extends InstanceBase {
 			this.data.irisPosition = parseInt(str[0].substring(9, 12), 16) - 0x555
 		}
 
+		if (str[0].substring(0, 2) === 'iC') {
+			this.data.iris = str[0].substring(2)
+		}
+
 		if (str[0].substring(0, 1) === 'q') {
 			const q = str[0].match(/q(\d\d)/)
 			if (q) {
@@ -408,7 +412,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.data.irisLabel =
 					str[1] == 'FF'
 						? 'CLOSE'
-						: 'F' + (parseInt(str[1], 16) / 10).toFixed(1)
+						: 'F/' + (parseInt(str[1], 16) / 10).toFixed(1)
 				break
 			case 'OIS':
 				this.data.ois = str[1]
@@ -580,6 +584,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			colorTemperature: null,
 			filter: null,
 			gain: null,
+			iris: null,
 			ois: null,
 			presetSpeed: null,
 			presetSpeedTable: null,
@@ -635,16 +640,6 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.zSpeedIndex = 25
 		this.fSpeed = 25
 		this.fSpeedIndex = 25
-		this.gainVal = '08'
-		this.gainIndex = 0
-		this.irisVal = 50
-		this.irisIndex = 50
-		this.filterVal = 0
-		this.filterIndex = 0
-		this.shutterVal = 0
-		this.shutterIndex = 0
-		this.colorTemperatureValue = '000'
-		this.colorTemperatureIndex = 0
 		this.tcpPortSelected = 31004
 		this.tcpPortOld = this.config.tcpPort || 31004
 

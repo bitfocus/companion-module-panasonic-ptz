@@ -805,13 +805,13 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Iris Up',
 			options: [],
 			callback: async (action) => {
-				if (self.irisIndex == e.ENUM_IRIS.length) {
-					self.irisIndex = e.ENUM_IRIS.length
-				} else if (self.irisIndex < e.ENUM_IRIS.length) {
-					self.irisIndex++
+				// await sendPTZ(self, 'I' + getNext(e.ENUM_IRIS, self.data.iris, +1).id) // no leading 0x!
+				if (self.data.irisPosition + 0x1E < 0xAAA) {
+					self.data.irisPosition += 0x1E
+				} else {
+					self.data.irisPosition = 0xAAA
 				}
-				self.irisVal = e.ENUM_IRIS[self.irisIndex].id
-				await sendPTZ(self, 'I' + self.irisVal)
+				await sendPTZ(self, 'AXI' + (0x555 + self.data.irisPosition).toString(16).toUpperCase().padStart(3, 0))
 			},
 		}
 
@@ -819,13 +819,13 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Iris Down',
 			options: [],
 			callback: async (action) => {
-				if (self.irisIndex == 0) {
-					self.irisIndex = 0
-				} else if (self.irisIndex > 0) {
-					self.irisIndex--
+				// await sendPTZ(self, 'I' + getNext(e.ENUM_IRIS, self.data.iris, -1).id) // no leading 0x!
+				if (self.data.irisPosition - 0x1E > 0x000) {
+					self.data.irisPosition -= 0x1E
+				} else {
+					self.data.irisPosition = 0x0
 				}
-				self.irisVal = e.ENUM_IRIS[self.irisIndex].id
-				await sendPTZ(self, 'I' + self.irisVal)
+				await sendPTZ(self, 'AXI' + (0x555 + self.data.irisPosition).toString(16).toUpperCase().padStart(3, 0))
 			},
 		}
 
@@ -842,8 +842,6 @@ export function getActionDefinitions(self) {
 			],
 			callback: async (action) => {
 				await sendPTZ(self, 'I' + action.options.val)
-				self.irisVal = action.options.val
-				self.irisIndex = action.options.val
 			},
 		}
 		actions.irisM = {
@@ -854,10 +852,7 @@ export function getActionDefinitions(self) {
 					label: 'Auto / Manual Iris',
 					id: 'val',
 					default: '0',
-					choices: [
-						{ id: '0', label: 'Manual Iris' },
-						{ id: '1', label: 'Auto Iris' },
-					],
+					choices: e.ENUM_MAN_AUTO,
 				},
 			],
 			callback: async (action) => {
@@ -871,19 +866,7 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Gain Up',
 			options: [],
 			callback: async (action) => {
-				const index = SERIES.capabilities.gain.dropdown.findIndex((GAIN) => GAIN.id == self.data.gain)
-				if (index !== -1) {
-					self.gainIndex = index
-				}
-
-				if (self.gainIndex == SERIES.capabilities.gain.dropdown.length) {
-					self.gainIndex = SERIES.capabilities.gain.dropdown.length
-				} else if (self.gainIndex < SERIES.capabilities.gain.dropdown.length) {
-					self.gainIndex++
-				}
-				self.gainVal = SERIES.capabilities.gain.dropdown[self.gainIndex].id
-
-				await sendCam(self, SERIES.capabilities.gain.cmd + self.gainVal)
+				await sendCam(self, SERIES.capabilities.gain.cmd + ':' + getNext(SERIES.capabilities.gain.dropdown, self.data.gain, +1).id) // no leading 0x!
 			},
 		}
 
@@ -891,19 +874,7 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Gain Down',
 			options: [],
 			callback: async (action) => {
-				let index = SERIES.capabilities.gain.dropdown.findIndex((GAIN) => GAIN.id == self.data.gain)
-				if (index !== -1) {
-					self.gainIndex = index
-				}
-
-				if (self.gainIndex == 0) {
-					self.gainIndex = 0
-				} else if (self.gainIndex > 0) {
-					self.gainIndex--
-				}
-				self.gainVal = SERIES.capabilities.gain.dropdown[self.gainIndex].id
-
-				await sendCam(self, SERIES.capabilities.gain.cmd + self.gainVal)
+				await sendCam(self, SERIES.capabilities.gain.cmd + ':' + getNext(SERIES.capabilities.gain.dropdown, self.data.gain, -1).id) // no leading 0x!
 			},
 		}
 
@@ -919,7 +890,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.gain.cmd + action.options.val)
+				await sendCam(self, SERIES.capabilities.gain.cmd + ':' + action.options.val)
 			},
 		}
 	}
@@ -1055,14 +1026,7 @@ export function getActionDefinitions(self) {
 			name: 'White Balance - Color Temperature Up',
 			options: [],
 			callback: async (action) => {
-				if (self.colorTemperatureIndex == SERIES.capabilities.colorTemperature.index.dropdown.length) {
-					self.colorTemperatureIndex = SERIES.capabilities.colorTemperature.index.dropdown.length
-				} else if (self.colorTemperatureIndex < SERIES.capabilities.colorTemperature.index.dropdown.length) {
-					self.colorTemperatureIndex++
-				}
-				self.colorTemperatureValue = SERIES.capabilities.colorTemperature.index.dropdown[self.colorTemperatureIndex].id
-
-				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':0x' + self.colorTemperatureValue)
+				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':' + getNext(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature, +1).id) // no leading 0x!
 			},
 		}
 
@@ -1070,14 +1034,7 @@ export function getActionDefinitions(self) {
 			name: 'White Balance - Color Temperature Down',
 			options: [],
 			callback: async (action) => {
-				if (self.colorTemperatureIndex == 0) {
-					self.colorTemperatureIndex = 0
-				} else if (self.colorTemperatureIndex > 0) {
-					self.colorTemperatureIndex--
-				}
-				self.colorTemperatureValue = SERIES.capabilities.colorTemperature.index.dropdown[self.colorTemperatureIndex].id
-
-				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':0x' + self.colorTemperatureValue)
+				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':' + getNext(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature, -1).id) // no leading 0x!
 			},
 		}
 
@@ -1093,23 +1050,17 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				let id = action.options.val;
-				let index = SERIES.capabilities.colorTemperature.index.dropdown.findIndex((colorTemperature) => colorTemperature.id == id);
-
-				self.colorTemperatureIndex = index;
-				self.colorTemperatureValue = id;
-
-				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':0x' + id)
+				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':' + action.options.val) // no leading 0x!
 			},
 		}
 	}
 
-	if (SERIES.capabilities.colorTemp && SERIES.capabilities.colorTemp.advanced) { 
+	if (SERIES.capabilities.colorTemperature && SERIES.capabilities.colorTemperature.advanced) { 
 		actions.colorTemperatureUp = {
 			name: 'White Balance - Color Temperature Up',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.colorTemp.advanced.inc + ':0x1')
+				await sendCam(self, SERIES.capabilities.colorTemperature.advanced.inc + ':0x1')
 			},
 		}
 
@@ -1117,7 +1068,7 @@ export function getActionDefinitions(self) {
 			name: 'White Balance - Color Temperature Down',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.colorTemp.advanced.dec + ':0x1')
+				await sendCam(self, SERIES.capabilities.colorTemperature.advanced.dec + ':0x1')
 			},
 		}
 
@@ -1129,15 +1080,15 @@ export function getActionDefinitions(self) {
 					type: 'number',
 					label: 'Color Temperature [K]',
 					default: 3200,
-					min: SERIES.capabilities.colorTemp.advanced.min,
-					max: SERIES.capabilities.colorTemp.advanced.max,
+					min: SERIES.capabilities.colorTemperature.advanced.min,
+					max: SERIES.capabilities.colorTemperature.advanced.max,
 					step: 20,
 					required: true,
 					range: true,
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.colorTemp.advanced.val + ':0x' + parseInt(action.options.val).toString(16).toUpperCase().padStart(5, 0) + ':0')
+				await sendCam(self, SERIES.capabilities.colorTemperature.advanced.val + ':0x' + parseInt(action.options.val).toString(16).toUpperCase().padStart(5, 0) + ':0')
 			},
 		}
 	}
@@ -1449,16 +1400,24 @@ export function getActionDefinitions(self) {
 				{
 					type: 'dropdown',
 					label: 'Speed',
-					id: 'val',
-					default: '999',
+					id: 'speed',
+					default: '000',
 					choices: e.ENUM_PSSPEED,
+				},
+				{
+					type: 'dropdown',
+					label: 'Table',
+					id: 'table',
+					default: '0',
+					choices: SERIES.capabilities.presetSpeed.dropdown,
 				},
 			],
 			callback: async (action) => {
 				if (SERIES.capabilities.presetTime) {
 					await sendCam(self, 'OSJ:29:0')
 				}
-				await sendPTZ(self, 'UPVS' + action.options.val) // no leading 0x!
+				await sendPTZ(self, 'PST' + action.options.table) // no leading 0x!
+				await sendPTZ(self, 'UPVS' + action.options.speed) // no leading 0x!
 			},
 		}
 	}
@@ -1497,11 +1456,8 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Option',
 					id: 'value',
-					default: 0,
-					choices: [
-						{ id: '0', label: 'Off' },
-						{ id: '1', label: 'On' },
-					],
+					default: '0',
+					choices: e.ENUM_OFF_ON,
 				},
 			],
 			callback: async (action) => {
@@ -1516,11 +1472,8 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Option',
 					id: 'value',
-					default: 0,
-					choices: [
-						{ id: '0', label: 'Stop' },
-						{ id: '1', label: 'Start' },
-					],
+					default: '0',
+					choices: e.ENUM_STOP_START,
 				},
 			],
 			callback: async (action) => {
@@ -1563,82 +1516,86 @@ export function getActionDefinitions(self) {
 
 	if (SERIES.capabilities.tally)  {
 		if (SERIES.capabilities.tally2)  {
-			actions.tallyOff = {
-				name: 'System - Red Tally Off',
-				options: [],
+			actions.tally = {
+				name: 'System - Red Tally',
+				options: [
+					{
+						type: 'dropdown',
+						label: 'Option',
+						id: 'value',
+						default: '1',
+						choices: e.ENUM_OFF_ON,
+					},
+				],
 				callback: async (action) => {
-					await sendCam(self, 'TLR:0')
+					await sendCam(self, 'TLR:' + action.options.value) // no leading 0x!
 				},
 			}
-			actions.tallyOn = {
-				name: 'System - Red Tally On',
-				options: [],
+			actions.tally2 = {
+				name: 'System - Green Tally',
+				options: [
+					{
+						type: 'dropdown',
+						label: 'Option',
+						id: 'value',
+						default: '1',
+						choices: e.ENUM_OFF_ON,
+					},
+				],
 				callback: async (action) => {
-					await sendCam(self, 'TLR:1')
-				},
-			}
-			actions.tally2Off = {
-				name: 'System - Green Tally Off',
-				options: [],
-				callback: async (action) => {
-					await sendCam(self, 'TLG:0')
-				},
-			}
-			actions.tally2On = {
-				name: 'System - Green Tally On',
-				options: [],
-				callback: async (action) => {
-					await sendCam(self, 'TLG:1')
+					await sendCam(self, 'TLG:' + action.options.value) // no leading 0x!
 				},
 			}
 			if (SERIES.capabilities.tally3)  {
-				actions.tally3Off = {
-					name: 'System - Yellow Tally Off',
-					options: [],
+				actions.tally3 = {
+					name: 'System - Yellow Tally',
+					options: [
+						{
+							type: 'dropdown',
+							label: 'Option',
+							id: 'value',
+							default: '1',
+							choices: e.ENUM_OFF_ON,
+						},
+					],
 					callback: async (action) => {
-						await sendCam(self, 'TLY:0')
-					},
-				}
-				actions.tally3On = {
-					name: 'System - Yellow Tally On',
-					options: [],
-					callback: async (action) => {
-						await sendCam(self, 'TLY:1')
+						await sendCam(self, 'TLY:' + action.options.value) // no leading 0x!
 					},
 				}
 			}
 		} else { // Use legacy PTZ Tally
-			actions.tallyOff = {
-				name: 'System - Tally Off',
-				options: [],
+			actions.tally = {
+				name: 'System - Tally',
+				options: [
+					{
+						type: 'dropdown',
+						label: 'Option',
+						id: 'value',
+						default: '1',
+						choices: e.ENUM_OFF_ON,
+					},
+				],
 				callback: async (action) => {
-					await sendPTZ(self, 'DA0')
-				},
-			}
-			actions.tallyOn = {
-				name: 'System - Tally On',
-				options: [],
-				callback: async (action) => {
-					await sendPTZ(self, 'DA1')
+					await sendPTZ(self, 'DA' + action.options.value) // no leading 0x!
 				},
 			}
 		}
 	}
 
 	if (SERIES.capabilities.colorbar) {
-		actions.colorbarOff = {
-			name: 'System - Color Bar Off',
-			options: [],
+		actions.colorbar = {
+			name: 'System - Color Bar',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Option',
+					id: 'value',
+					default: '1',
+					choices: e.ENUM_OFF_ON,
+				},
+			],
 			callback: async (action) => {
-				await sendCam(self, 'DCB:0')
-			},
-		}
-
-		actions.colorbarOn = {
-			name: 'System - Color Bar On',
-			options: [],
-			callback: async (action) => {
-				await sendCam(self, 'DCB:1')
+				await sendCam(self, 'DCB' + action.options.value) // no leading 0x!
 			},
 		}
 	}
@@ -1651,7 +1608,7 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Position',
 					id: 'position',
-					default: 0,
+					default: '0',
 					choices: [
 						{ id: '0', label: 'Desktop' },
 						{ id: '1', label: 'Hanging' },

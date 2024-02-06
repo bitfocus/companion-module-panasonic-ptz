@@ -76,18 +76,22 @@ export function setVariables(self) {
 		variables.push({ variableId: 'tSpeedVar', name: 'Tilt Speed' })
 	}
 	if (SERIES.capabilities.zoom) {
-		variables.push({ variableId: 'zoomPosition', name: 'Zoom Position %' })
+		variables.push({ variableId: 'zoomPosition', name: 'Zoom Position' })
+		variables.push({ variableId: 'zoomPositionPct', name: 'Zoom Position %' })
 		variables.push({ variableId: 'zoomPositionBar', name: 'Zoom Position' })
 		variables.push({ variableId: 'zSpeedVar', name: 'Zoom Speed' })
 	}
 	if (SERIES.capabilities.focus) {
-		variables.push({ variableId: 'focusPosition', name: 'Focus Position %' })
+		variables.push({ variableId: 'focusPosition', name: 'Focus Position' })
+		variables.push({ variableId: 'focusPositionPct', name: 'Focus Position %' })
 		variables.push({ variableId: 'focusPositionBar', name: 'Focus Position' })
 		variables.push({ variableId: 'fSpeedVar', name: 'Focus Speed' })
 	}
 	if (SERIES.capabilities.iris) {
 		variables.push({ variableId: 'iris', name: 'Iris' })
-		variables.push({ variableId: 'irisPosition', name: 'Iris Position %' })
+		variables.push({ variableId: 'irisF', name: 'Iris F-Stop' })
+		variables.push({ variableId: 'irisPosition', name: 'Iris Position' })
+		variables.push({ variableId: 'irisPositionPct', name: 'Iris Position %' })
 		variables.push({ variableId: 'irisPositionBar', name: 'Iris Position' })
 		variables.push({ variableId: 'irisFollowPosition', name: 'Iris Follow Position' })
 	}
@@ -125,6 +129,9 @@ export function checkVariables(self) {
 
 	const gain = SERIES.capabilities.gain
 		? getLabel(SERIES.capabilities.gain.dropdown, self.data.gain) : null
+
+	const iris = SERIES.capabilities.iris
+		? getLabel(e.ENUM_IRIS, self.data.iris) : null
 
 	const ois = SERIES.capabilities.ois
 		? getLabel(SERIES.capabilities.ois.dropdown, self.data.ois) : null
@@ -191,13 +198,16 @@ export function checkVariables(self) {
 		presetSelected: (self.data.presetSelectedIdx + 1).toString(),
 		presetCompleted: (self.data.presetCompletedIdx + 1).toString(),
 
-		zoomPosition: normalizePct(self.data.zoomPosition, 0x0, 0xAAA, false, 1),
-		focusPosition: normalizePct(self.data.focusPosition, 0x0, 0xAAA, false),
-		irisPosition: normalizePct(self.data.irisPosition, 0x0, 0xAAA, false),
+		zoomPosition: self.data.zoomPosition,
+		focusPosition: self.data.focusPosition,
+		irisPosition: self.data.irisPosition,
+		irisFollowPosition: self.data.irisFollowPosition,
+		zoomPositionPct: normalizePct(self.data.zoomPosition, 0x0, 0xAAA, false, 1),
+		focusPositionPct: normalizePct(self.data.focusPosition, 0x0, 0xAAA, false),
+		irisPositionPct: normalizePct(self.data.irisPosition, 0x0, 0xAAA, false),
 		zoomPositionBar: progressBar(normalizePct(self.data.zoomPosition, 0x0, 0xAAA), 10, 'W', 'T'),
 		focusPositionBar: progressBar(normalizePct(self.data.focusPosition, 0x0, 0xAAA), 10, 'N', 'F'),
 		irisPositionBar: progressBar(normalizePct(self.data.irisPosition, 0x0, 0xAAA), 10, 'C', 'O'),
-		irisFollowPosition: self.data.irisFollowPosition,
 
 		redGain: self.data.redGainValue,
 		blueGain: self.data.blueGainValue,
@@ -206,12 +216,13 @@ export function checkVariables(self) {
 		masterPed: self.data.masterPedValue,
 		
 		error: self.data.errorLabel,
-		iris: self.data.irisLabel,
+		irisF: self.data.irisLabel,
 		shutterStep: self.data.shutterStepLabel,
 
 		colorTemperature: self.data.colorTempLabel?self.data.colorTempLabel:colorTemperature,
 
 		gain: gain,
+		iris: iris,
 		ois: ois,
 		presetSpeed: presetSpeed,
 		presetSpeedTable: presetSpeedTable,
