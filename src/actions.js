@@ -65,8 +65,8 @@ export async function sendCam(self, cmd) {
 	}
 }
 
+// Currently only for web commands that don't require admin rights
 export async function sendWeb(self, cmd) {
-	// Currently only for web commands that don't require admin rights
 
 	if (cmd) {
 		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/${cmd}`
@@ -996,7 +996,7 @@ export function getActionDefinitions(self) {
 					label: 'Select Mode',
 					id: 'val',
 					default: '0',
-					choices: e.ENUM_WHITEBALANCE_SET,
+					choices: SERIES.capabilities.whiteBalance.dropdown,
 				},
 			],
 			callback: async (action) => {
@@ -1026,7 +1026,8 @@ export function getActionDefinitions(self) {
 			name: 'White Balance - Color Temperature Up',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':' + getNext(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature, +1).id) // no leading 0x!
+				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':' +
+					getNext(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature, +1).id) // no leading 0x!
 			},
 		}
 
@@ -1034,7 +1035,8 @@ export function getActionDefinitions(self) {
 			name: 'White Balance - Color Temperature Down',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':' + getNext(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature, -1).id) // no leading 0x!
+				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':' +
+					getNext(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature, -1).id) // no leading 0x!
 			},
 		}
 
@@ -1088,7 +1090,8 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.colorTemperature.advanced.val + ':0x' + parseInt(action.options.val).toString(16).toUpperCase().padStart(5, 0) + ':0')
+				await sendCam(self, SERIES.capabilities.colorTemperature.advanced.val + ':0x' +
+					parseInt(action.options.val).toString(16).toUpperCase().padStart(5, 0) + ':0')
 			},
 		}
 	}
@@ -1194,11 +1197,11 @@ export function getActionDefinitions(self) {
 			name: 'Color - Red Gain Up',
 			options: [],
 			callback: async (action) => {
-				if (self.data.redPedValue + SERIES.capabilities.colorGain.step <= SERIES.capabilities.colorGain.limit) {
-					self.data.redPedValue += SERIES.capabilities.colorGain.step
+				if (self.data.redGainValue + SERIES.capabilities.colorGain.step <= SERIES.capabilities.colorGain.limit) {
+					self.data.redGainValue += SERIES.capabilities.colorGain.step
 				}
 				await sendCam(self, SERIES.capabilities.colorGain.cmd.red + ':0x' + (SERIES.capabilities.colorGain.offset +
-					self.data.redPedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, 0))
+					self.data.redGainValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, 0))
 			},
 		}
 
@@ -1206,11 +1209,11 @@ export function getActionDefinitions(self) {
 			name: 'Color - Red Gain Down',
 			options: [],
 			callback: async (action) => {
-				if (self.data.redPedValue - SERIES.capabilities.colorGain.step <= SERIES.capabilities.colorGain.limit) {
-					self.data.redPedValue -= SERIES.capabilities.colorGain.step
+				if (self.data.redGainValue - SERIES.capabilities.colorGain.step <= SERIES.capabilities.colorGain.limit) {
+					self.data.redGainValue -= SERIES.capabilities.colorGain.step
 				}
 				await sendCam(self, SERIES.capabilities.colorGain.cmd.red + ':0x' + (SERIES.capabilities.colorGain.offset +
-					self.data.redPedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, 0))
+					self.data.redGainValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, 0))
 			},
 		}
 
@@ -1230,9 +1233,9 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				self.data.redPedValue = action.options.val
+				self.data.redGainValue = action.options.val
 				await sendCam(self, SERIES.capabilities.colorGain.cmd.red + ':0x' + (SERIES.capabilities.colorGain.offset +
-					self.data.redPedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, 0))
+					self.data.redGainValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, 0))
 			},
 		}
 	}
@@ -1242,11 +1245,11 @@ export function getActionDefinitions(self) {
 			name: 'Color - Blue Gain Up',
 			options: [],
 			callback: async (action) => {
-				if (self.data.bluePedValue + SERIES.capabilities.colorGain.step <= SERIES.capabilities.colorGain.limit) {
-					self.data.bluePedValue += SERIES.capabilities.colorGain.step
+				if (self.data.blueGainValue + SERIES.capabilities.colorGain.step <= SERIES.capabilities.colorGain.limit) {
+					self.data.blueGainValue += SERIES.capabilities.colorGain.step
 				}
 				await sendCam(self, SERIES.capabilities.colorGain.cmd.blue + ':0x' + (SERIES.capabilities.colorGain.offset +
-					self.data.bluePedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, 0))
+					self.data.blueGainValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, 0))
 			},
 		}
 
@@ -1254,11 +1257,11 @@ export function getActionDefinitions(self) {
 			name: 'Color - Blue Gain Down',
 			options: [],
 			callback: async (action) => {
-				if (self.data.bluePedValue - SERIES.capabilities.colorGain.step <= SERIES.capabilities.colorGain.limit) {
-					self.data.bluePedValue -= SERIES.capabilities.colorGain.step
+				if (self.data.blueGainValue - SERIES.capabilities.colorGain.step <= SERIES.capabilities.colorGain.limit) {
+					self.data.blueGainValue -= SERIES.capabilities.colorGain.step
 				}
 				await sendCam(self, SERIES.capabilities.colorGain.cmd.blue + ':0x' + (SERIES.capabilities.colorGain.offset +
-					self.data.bluePedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, 0))
+					self.data.blueGainValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, 0))
 			},
 		}
 
@@ -1278,9 +1281,9 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				self.data.bluePedValue = action.options.val
+				self.data.blueGainValue = action.options.val
 				await sendCam(self, SERIES.capabilities.colorGain.cmd.blue + ':0x' + (SERIES.capabilities.colorGain.offset +
-					self.data.bluePedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, 0))
+					self.data.blueGainValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, 0))
 			},
 		}
 	}

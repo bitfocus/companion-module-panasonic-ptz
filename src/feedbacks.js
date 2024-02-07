@@ -277,7 +277,7 @@ export function getFeedbackDefinitions(self) {
 				},
 			],
 			callback: function (feedback) {
-				return self.data.presetEntries[parseInt(feedback.options.option)] == "1"
+				return self.data.presetEntries[parseInt(feedback.options.option)] === '1'
 			},
 		}
 	}

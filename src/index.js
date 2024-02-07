@@ -213,12 +213,31 @@ class PanasonicPTZInstance extends InstanceBase {
 						const lines = response.body.trim().split('\r\n')
 
 						for (let line of lines) {
-							const str = line.trim()
+							let str = line.trim()
 							if (this.config.debug) {
 								this.log('info', 'Received INFO: ' + str)
 							}
 
-							this.parseInfo(str.split('='))
+							str = str.split('=')
+							switch (str[0]) {
+								case 'MAC':
+									this.data.mac = str[1]
+									break
+								case 'SERIAL':
+									this.data.serial = str[1]
+									break
+								case 'VERSION':
+									this.data.version = str[1]
+									break
+								case 'NAME':
+									this.data.modelINFO = str[1]
+									this.log('info', 'Detected Camera Model: ' + this.data.modelINFO)
+									// if a new model is detected or selected, re-initialise all actions, variables and feedbacks
+									if (this.data.modelINFO !== this.data.model) {
+										this.reInitAll()
+									}
+									break
+							}
 						}
 
 						this.checkVariables()
@@ -232,26 +251,41 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 	}
 
-	parseInfo(str) {
-		// Store Values from Events
-		switch (str[0]) {
-			case 'MAC':
-				this.data.mac = str[1]
-				break
-			case 'SERIAL':
-				this.data.serial = str[1]
-				break
-			case 'VERSION':
-				this.data.version = str[1]
-				break
-			case 'NAME':
-				this.data.modelINFO = str[1]
-				this.log('info', 'Detected Camera Model: ' + this.data.modelINFO)
-				// if a new model is detected or selected, re-initialise all actions, variables and feedbacks
-				if (this.data.modelINFO !== this.data.model) {
-					this.reInitAll()
-				}
-				break
+	getCameraTitle() {
+		if (this.config.host) {
+			const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/get_basic`
+
+			if (this.config.debug) {
+				this.log('info', `get_basic Request : ${url}`)
+			}
+
+			got.get(url)
+				.then((response) => {
+					this.updateStatus(InstanceStatus.Ok)
+
+					if (response.body) {
+						const lines = response.body.trim().split('\r\n')
+
+						for (let line of lines) {
+							let str = line.trim()
+							if (this.config.debug) {
+								this.log('info', 'Received BASIC: ' + str)
+							}
+
+							str = str.split('=')
+
+							if (str[0] === 'cam_title') {
+								this.data.title = str[1]
+							}
+						}
+
+						this.checkVariables()
+					}
+				})
+				.catch((err) => {
+					this.log('error', 'Error checking basic communication and receiving title: ' + String(err))
+					this.updateStatus(InstanceStatus.ConnectionFailure)
+				})
 		}
 	}
 
@@ -285,6 +319,131 @@ class PanasonicPTZInstance extends InstanceBase {
 				.catch((err) => {
 					this.log('error', 'Error requesting inital status from PTZ: ' + String(err))
 				})
+		}
+	}
+
+	queryCameraStatus() {
+		const cmdPTZ = [
+			'O', // Power
+			'PE00', // Preset Entry 0
+			'PE01', // Preset Entry 1
+			'PE02', // Preset Entry 2
+			'AXF', // Focus Position Control
+			'AXI', // Iris Position Control
+			'AXZ', // Zoom Position Control
+			'GF', // Request Focus Position
+			'GI', // Request Iris Position
+			'GZ', // Request Zoom Position
+			'D1', // Focus Mode
+			'D3', // Iris Mode
+			'DA', // Tally
+			'INS', // Installation Position
+			'LPC', // Lens Position Information Control
+			'LPI', // Lens Position
+			'PST', // Preset Speed Table
+			'PTD', // Get Pan/Tilt/Zoom/Focus/Iris
+			'PTG', // Get Gain/ColorTemp/Shutter/ND
+			'PTV', // Get Pan/Tilt/Zoom/Focus/Iris
+			'RER', // Latest Error Information
+			'S', // Request Latest Recall Preset No.
+			'TAA', // Tally Infomation
+			'UPVS', // Preset Speed
+		]
+		
+		for (let cmd of cmdPTZ) {
+			this.getPTZ(cmd)
+		}
+	}
+
+	getPTZ(cmd) {
+		if (cmd) {
+			const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/aw_ptz?cmd=%23${cmd}&res=1`
+			if (this.config.debug) {
+				this.log('info', `PTZ Request: ${url}`)
+			}
+	
+			try {
+				const response = got.get(url)
+	
+				if (response.body) {
+					const str = response.body.trim()
+	
+					if (this.config.debug) {
+						this.log('info', 'Received PTZ Command Response: ' + str)
+					}
+	
+					this.parseUpdate(str.split(':'))
+	
+					this.checkVariables()
+					this.checkFeedbacks()
+				}
+	
+			} catch (err) {
+				throw new Error(`PTZ Action failed: ${url}`)
+			}
+		}
+	}
+	
+	getCam(cmd) {
+		if (cmd) {
+			const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/aw_cam?cmd=${cmd}&res=1`
+	
+			if (this.config.debug) {
+				this.log('info', `Cam Request: ${url}`)
+			}
+	
+			try {
+				const response = got.get(url)
+				
+				if (response.body) {
+					const str = response.body.trim()
+	
+					if (this.config.debug) {
+						this.log('info', 'Received Cam Command Response: ' + str)
+					}
+	
+					this.parseUpdate(str.split(':'))
+	
+					this.checkVariables()
+					this.checkFeedbacks()
+				}
+			} catch (err) {
+				throw new Error(`Cam Action failed: ${url}`)
+			}
+		}
+	}
+	
+	// Currently only for web commands that don't require admin rights
+	sendWeb(cmd) {
+		if (cmd) {
+			const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/${cmd}`
+	
+			if (this.config.debug) {
+				this.log('debug', `Web Request: ${url}`)
+			}
+	
+			try {
+				const response = got.get(url)
+	
+				if (response.body) {
+					const lines = response.body.trim().split('\r\n')
+	
+					for (let line of lines) {
+						const str = line.trim()
+	
+						if (this.config.debug) {
+							this.log('info', 'Received Web Command Response: ' + str)
+						}
+	
+						this.parseWeb(str.split('='), cmd)
+					}
+	
+					this.checkVariables()
+					this.checkFeedbacks()
+				}
+			} catch (err) {
+				throw new Error(`Web Action failed: ${url}`)
+			}
 		}
 	}
 
@@ -384,7 +543,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				break
 			case 'DCB':
 			case 'OBR':
-				this.data.colorbar = str[1] == '1' ? 'ON' : 'OFF'
+				this.data.colorbar = str[1] === '1' ? 'ON' : 'OFF'
 				break
 			case 'OID':
 				this.data.modelTCP = str[1]
@@ -394,23 +553,23 @@ class PanasonicPTZInstance extends InstanceBase {
 				}
 				break
 			case 'TLR': // Tally Red
-				this.data.tally = str[1] == '1' ? 'ON' : 'OFF'
+				this.data.tally = str[1] === '1' ? 'ON' : 'OFF'
 				break
 			case 'TLG': // Tally Green
-				this.data.tally2 = str[1] == '1' ? 'ON' : 'OFF'
+				this.data.tally2 = str[1] === '1' ? 'ON' : 'OFF'
 				break
 			case 'TLY': // Tally Yellow
-				this.data.tally3 = str[1] == '1' ? 'ON' : 'OFF'
+				this.data.tally3 = str[1] === '1' ? 'ON' : 'OFF'
 				break
 			case 'OAF':
-				this.data.focusMode = str[1] == '1' ? 'Auto' : 'Manual'
+				this.data.focusMode = str[1] === '1' ? 'Auto' : 'Manual'
 				break
 			case 'OAW':
 				this.data.whiteBalance = str[1]
 				break
 			case 'OIF':
 				this.data.irisLabel =
-					str[1] == 'FF'
+					str[1] === 'FF'
 						? 'CLOSE'
 						: 'F/' + (parseInt(str[1], 16) / 10).toFixed(1)
 				break
@@ -436,7 +595,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.data.filter = str[1]
 				break
 			case 'OSE':
-				if (str[1] == '71') {
+				if (str[1] === '71') {
 					switch (str[2]) {
 						case '0': this.data.presetScopeMode = 'Mode A'; break
 						case '1': this.data.presetScopeMode = 'Mode B'; break
@@ -486,7 +645,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.data.gain = str[1].replace('0x', '')
 				break
 			case 'ORS':
-				this.data.irisMode = str[1] == '1' ? 'Auto' : 'Manual'
+				this.data.irisMode = str[1] === '1' ? 'Auto' : 'Manual'
 				break
 			case 'OTD':
 				this.data.masterPedValue = parseInt(str[1], 16) - 0x1e
@@ -521,23 +680,17 @@ class PanasonicPTZInstance extends InstanceBase {
 	parseWeb(str, cmd) {
 		switch (cmd) {
 			case 'get_rtmp_status':
-				this.data.streamingRTMP = str[1] == '1'
+				this.data.streamingRTMP = str[1] === '1'
 				break
 			case 'get_srt_status':
-				this.data.streamingSRT = str[1] == '1'
+				this.data.streamingSRT = str[1] === '1'
 				break
 			case 'get_state':
 				switch (str[0]) {
-					case 'rec': this.data.rec = str[1] == 'on'; break
+					case 'rec': this.data.rec = str[1] === 'on'; break
 					case 'rec_counter': this.data.rec_counter = str[1]; break
 				}
 				break
-			case 'get_basic':
-				switch (str[0]) {
-					case 'cam_title': this.data.title = str[1]; break
-				}
-				
-			break
 		}
 	}
 
@@ -652,7 +805,9 @@ class PanasonicPTZInstance extends InstanceBase {
 
 		this.updateStatus(InstanceStatus.Connecting)
 		this.getCameraInfo()
+		this.getCameraTitle()
 		this.getCameraStatus()
+		this.queryCameraStatus()
 		this.init_tcp()
 		this.reInitAll()
 
@@ -664,6 +819,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.config = config
 		this.updateStatus(InstanceStatus.Connecting)
 		this.getCameraInfo()
+		this.getCameraTitle()
 		this.getCameraStatus()
 		this.init_tcp()
 	}

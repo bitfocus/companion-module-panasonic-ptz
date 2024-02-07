@@ -193,7 +193,7 @@ export const SERIES_SPECS = [
 		// Specific for the UE20 Series
 		id: 'UE20',
 		capabilities: {
-			colorGain: { cmd: { red: 'QSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 30, step: 1, hexlen: 3 },
+			colorGain: { cmd: { red: 'OSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 30, step: 1, hexlen: 3 },
 			colorPedestal: false,
 			colorTemperature: false,
 			colorbar: true,
@@ -273,7 +273,7 @@ export const SERIES_SPECS = [
 		// Specific for the UE150 Series
 		id: 'UE150',
 		capabilities: {
-			colorGain: { cmd: { red: 'QSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 200, step: 1, hexlen: 3 },
+			colorGain: { cmd: { red: 'OSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 200, step: 1, hexlen: 3 },
 			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP', green: 'OSJ:10' }, offset: 0x96, limit: 100, step: 1, hexlen: 3 },
 			colorTemperature: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', val: 'OSI:20', min: 2000, max: 15000 } },
 			colorbar: true,
@@ -314,7 +314,7 @@ export const SERIES_SPECS = [
 		id: 'UE160',
 		capabilities: {
 			colorGain: { cmd: { red: 'OSL:36', blue: 'OSL:38', green: 'OSL:37' }, offset: 0x800, limit: 1000, step: 1, hexlen: 3 },
-			colorPedestal: { cmd: { red: 'QSG:4C', blue: 'OSG:4E', green: 'OSG:4D' }, offset: 0x800, limit: 800, step: 1, hexlen: 3 },
+			colorPedestal: { cmd: { red: 'OSG:4C', blue: 'OSG:4E', green: 'OSG:4D' }, offset: 0x800, limit: 800, step: 1, hexlen: 3 },
 			colorTemperature: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', val: 'OSI:20', min: 2000, max: 15000 } },
 			colorbar: true,
 			error: true,
@@ -633,8 +633,8 @@ export const SERIES_SPECS = [
 		// Specific for the AK-UB300 Camera
 		id: 'UB300',
 		capabilities: {
-			colorGain: { cmd: { red: 'QSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 1000, step: 1, hexlen: 3 },
-			colorPedestal: { cmd: { red: 'QSG:4C', blue: 'OSG:4E' }, offset: 0x800, limit: 800, step: 1, hexlen: 3 },
+			colorGain: { cmd: { red: 'OSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 1000, step: 1, hexlen: 3 },
+			colorPedestal: { cmd: { red: 'OSG:4C', blue: 'OSG:4E' }, offset: 0x800, limit: 800, step: 1, hexlen: 3 },
 			colorTemperature: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 } },
 			colorbar: true,
 			error: true,
@@ -673,11 +673,11 @@ export const SERIES_SPECS = [
 		// Specific for the AG-CX350/4000 Series
 		id: 'CX350',
 		capabilities: {
-			colorGain: { cmd: { red: 'QSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 200, step: 1, hexlen: 3 },
+			colorGain: { cmd: { red: 'OSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 200, step: 1, hexlen: 3 },
 			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 100, step: 1, hexlen: 3 },
 			colorTemperature: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', val: 'OSI:20', min: 2000, max: 15000 } },
 			colorbar: true,
-			error: false,
+			error: true,
 			filter: { dropdown: e.ENUM_FILTER_3 },
 			focus: true,
 			focusAuto: true,
@@ -694,17 +694,17 @@ export const SERIES_SPECS = [
 			presetSpeed: false,
 			presetTime: false,
 			recordSD: true,
-			restart: true,
+			restart: false,
 			shutter: false,
 			streamRTMP: true,
 			streamSRT: true,
 			subscription: false,
 			tally2: true,
-			tally3: false,
+			tally3: true,
 			tally: true,
 			trackingAuto: false,
 			version: true,
-			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
+			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET_CX350 },
 			zoom: true,
 		},
 	},
