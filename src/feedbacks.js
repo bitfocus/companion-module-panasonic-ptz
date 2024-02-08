@@ -330,5 +330,53 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
+	if (SERIES.capabilities.recordSD) {
+		feedbacks.recState = {
+			type: 'boolean',
+			name: 'Recording - State',
+			description: 'Indicates if currently recording on camera',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorRed,
+			},
+			options: [],
+			callback: function (feedback) {
+				return self.data.recording === 'ON'
+			},
+		}
+	}
+
+	if (SERIES.capabilities.streamRTMP) {
+		feedbacks.streamStateRTMP = {
+			type: 'boolean',
+			name: 'Streaming - RTMP Client State',
+			description: 'Indicates if streaming in RTMP Client Mode is currently active',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorRed,
+			},
+			options: [],
+			callback: function (feedback) {
+				return self.data.streamRTMP
+			},
+		}
+	}
+
+	if (SERIES.capabilities.streamSRT) {
+		feedbacks.streamStateSRT = {
+			type: 'boolean',
+			name: 'Streaming - SRT Caller State',
+			description: 'Indicates if streaming in SRT Caller Mode is currently active',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorRed,
+			},
+			options: [],
+			callback: function (feedback) {
+				return self.data.streamSRT
+			},
+		}
+	}
+
 	return feedbacks
 }

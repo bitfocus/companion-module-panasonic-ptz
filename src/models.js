@@ -73,9 +73,9 @@ export const SERIES_SPECS = [
 		// Includes all Actions / Variables / Feedbacks
 		id: 'Other',
 		capabilities: {
-			colorGain: { cmd: { red: 'ORP', blue: 'OBP', green: 'OSJ:10' }, offset: 0x96, limit: 150, step: 1, hexlen: 3 }, // Has numbered red/blue Gain (ORG and OBG)
+			colorGain: { cmd: { red: 'ORI', blue: 'OBI', green: 'OSJ:10' }, offset: 0x96, limit: 150, step: 1, hexlen: 3 }, // Has numbered red/blue Gain (ORG and OBG)
 			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 150, step: 1, hexlen: 3 }, // Has numbered red/blue Pedestal (ORP or OBP)
-			colorTemperature: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', val: 'OSI:20', min: 2000, max: 15000 } }, // Has Color Temperature (OSD:B1 or OSI:20)
+			colorTemperature: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', set: 'OSI:20', min: 2000, max: 15000 } }, // Has Color Temperature (OSD:B1 or OSI:20)
 			colorbar: true, // Has Color Bar Generator (DCB:1 or DCB:0)
 			error: true, // Camera can return enumerated error messages (rER)
 			filter: { dropdown: e.ENUM_FILTER_OTHER }, // Has ND Filter Support (OFT)
@@ -275,7 +275,7 @@ export const SERIES_SPECS = [
 		capabilities: {
 			colorGain: { cmd: { red: 'OSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 200, step: 1, hexlen: 3 },
 			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP', green: 'OSJ:10' }, offset: 0x96, limit: 100, step: 1, hexlen: 3 },
-			colorTemperature: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', val: 'OSI:20', min: 2000, max: 15000 } },
+			colorTemperature: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', set: 'OSI:20', min: 2000, max: 15000 } },
 			colorbar: true,
 			error: true,
 			filter: { dropdown: e.ENUM_FILTER_3 },
@@ -315,7 +315,7 @@ export const SERIES_SPECS = [
 		capabilities: {
 			colorGain: { cmd: { red: 'OSL:36', blue: 'OSL:38', green: 'OSL:37' }, offset: 0x800, limit: 1000, step: 1, hexlen: 3 },
 			colorPedestal: { cmd: { red: 'OSG:4C', blue: 'OSG:4E', green: 'OSG:4D' }, offset: 0x800, limit: 800, step: 1, hexlen: 3 },
-			colorTemperature: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', val: 'OSI:20', min: 2000, max: 15000 } },
+			colorTemperature: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', set: 'OSI:20', min: 2000, max: 15000 } },
 			colorbar: true,
 			error: true,
 			filter: { dropdown: e.ENUM_FILTER_3 },
@@ -635,7 +635,7 @@ export const SERIES_SPECS = [
 		capabilities: {
 			colorGain: { cmd: { red: 'OSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 1000, step: 1, hexlen: 3 },
 			colorPedestal: { cmd: { red: 'OSG:4C', blue: 'OSG:4E' }, offset: 0x800, limit: 800, step: 1, hexlen: 3 },
-			colorTemperature: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 } },
+			colorTemperature: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F' } },
 			colorbar: true,
 			error: true,
 			filter: { dropdown: e.ENUM_FILTER_3 },
@@ -675,9 +675,9 @@ export const SERIES_SPECS = [
 		capabilities: {
 			colorGain: { cmd: { red: 'OSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 200, step: 1, hexlen: 3 },
 			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 100, step: 1, hexlen: 3 },
-			colorTemperature: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', val: 'OSI:20', min: 2000, max: 15000 } },
+			colorTemperature: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', set: 'OSI:20', min: 2000, max: 15000 } },
 			colorbar: true,
-			error: true,
+			error: false,
 			filter: { dropdown: e.ENUM_FILTER_3 },
 			focus: true,
 			focusAuto: true,
@@ -700,7 +700,7 @@ export const SERIES_SPECS = [
 			streamSRT: true,
 			subscription: false,
 			tally2: true,
-			tally3: true,
+			tally3: false,
 			tally: true,
 			trackingAuto: false,
 			version: true,

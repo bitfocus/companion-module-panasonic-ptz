@@ -324,35 +324,112 @@ class PanasonicPTZInstance extends InstanceBase {
 
 	queryCameraStatus() {
 		const cmdPTZ = [
-			'O', // Power
-			'PE00', // Preset Entry 0
-			'PE01', // Preset Entry 1
-			'PE02', // Preset Entry 2
-			'AXF', // Focus Position Control
-			'AXI', // Iris Position Control
-			'AXZ', // Zoom Position Control
-			'GF', // Request Focus Position
-			'GI', // Request Iris Position
-			'GZ', // Request Zoom Position
-			'D1', // Focus Mode
-			'D3', // Iris Mode
-			'DA', // Tally
-			'INS', // Installation Position
-			'LPC', // Lens Position Information Control
-			'LPI', // Lens Position
-			'PST', // Preset Speed Table
-			'PTD', // Get Pan/Tilt/Zoom/Focus/Iris
-			'PTG', // Get Gain/ColorTemp/Shutter/ND
-			'PTV', // Get Pan/Tilt/Zoom/Focus/Iris
-			'RER', // Latest Error Information
-			'S', // Request Latest Recall Preset No.
-			'TAA', // Tally Infomation
-			'UPVS', // Preset Speed
+			//'O', // Power*
+			//'PE00', // Preset Entry 0
+			//'PE01', // Preset Entry 1
+			//'PE02', // Preset Entry 2
+			//'AXF', // Focus Position Control*
+			//'AXI', // Iris Position Control*
+			//'AXZ', // Zoom Position Control
+			'GF', // Request Focus Position*
+			'GI', // Request Iris Position (+Mode)*
+			'GZ', // Request Zoom Position*
+			'I', // Iris Position*
+			//'D1', // Focus Mode*
+			//'D3', // Iris Mode*
+			//'DA', // Tally*
+			//'INS', // Installation Position
+			//'LPC', // Lens Position Information Control
+			//'LPI', // Lens Position
+			//'PST', // Preset Speed Table
+			//'PTD', // Get Pan/Tilt/Zoom/Focus/Iris
+			//'PTG', // Get Gain/ColorTemp/Shutter/ND
+			//'PTV', // Get Pan/Tilt/Zoom/Focus/Iris
+			//'RER', // Latest Error Information
+			//'S', // Request Latest Recall Preset No.
+			//'TAA', // Tally Infomation
+			//'UPVS', // Preset Speed
 		]
 		
+		const cmdCam = [
+			'QAF', // Focus Mode*
+			'QAW', // White Balance Mode*
+			'QBR', // Color Bar*
+			//'QBI', // B Gain*
+			'QBP', // B Pedestal*
+			//'QGB', // B Gain
+			//'QBD', // B Pedestal
+			'QFT', // ND Filter*
+			//'QGS', // Gain Select (UB300 only)
+			'QGU', // Gain*
+			'QID', // Model Number*
+			//'QIF', // Request Iris F No.
+			'QIS', // OIS*
+			//'QRI', // R Gain*
+			'QRP', // R Pedestal*
+			//'QGR', // R Gain
+			//'QRD', // R Pedestal
+			'QRS', // Iris Mode*
+			//'QRV', // Iris Control*
+			//'QSH', // Shutter
+			//'QSV', // Software Version
+			//'QTD', // T Pedestal
+			//'QTP', // T Pedestal
+			'QLR', // R-Tally Control*
+			'QLG', // G-Tally Control*
+			//'QLY', // Y-Tally Control
+			'QSD:4F', // Iris Follow*
+			//'QSD:B1', // Color Temperature
+			//'QSE:71', // Preset Scope
+			'QSG:39', // R Gain*
+			'QSG:3A', // B Gain*
+			//'QSG:4A', // Master Pedestal (UB300 only)
+			//'QSG:4C', // R Pedestal (UB300 only)
+			//'QSG:4D', // G Pedestal (UB160 only) 
+			//'QSG:4E', // B Pedestal (UB300 only)
+			//'QSG:59', // Shutter SW
+			//'QSG:5A', // Shutter Mode
+			//'QSG:5D', // Shutter Speed (UB300 only)
+			//'QSI:18', // Request Zoom/Focus/Iris Position
+			//'QSI:19:0', // Software Version, System Version (UB300 only)
+			'QSI:20', // Color Temperature*
+			//'QSJ:03', // Shutter Mode
+			//'QSJ:06', // Shutter Step Value
+			//'QSJ:09', // Shutter Synchro Value
+			'QSJ:0F', // Master Pedestal*
+			'QSJ:10', // G Pedestal*
+			//'QSJ:29', // Preset Speed Unit
+			//'QSJ:5C', // Camera Title
+			//'QSJ:D2', // ND Filter Status
+			//'QSL:2A', // ATW
+			//'QSL:2B', // White Balance Mode
+			//'QSL:8B', // O.I.S.
+			//'QSL:8C', // O.I.S. Mode
+			//'QSL:99', // System Version
+			//'QSL:B6', // Auto Tracking Mode
+			//'QSL:B7', // Angle
+			//'QSL:BB', // Tracking Status
+			//'QSL:BC', // Tracking Start/Stop
+		]
+		
+		const cmdWeb = [
+			'get_state',
+			'get_rtmp_status',
+			'get_srt_status',
+		]
+
 		for (let cmd of cmdPTZ) {
 			this.getPTZ(cmd)
 		}
+		for (let cmd of cmdCam) {
+			this.getCam(cmd)
+		}
+		for (let cmd of cmdWeb) {
+			this.getWeb(cmd)
+		}
+
+		this.checkVariables()
+		this.checkFeedbacks()
 	}
 
 	getPTZ(cmd) {
@@ -361,26 +438,25 @@ class PanasonicPTZInstance extends InstanceBase {
 			if (this.config.debug) {
 				this.log('info', `PTZ Request: ${url}`)
 			}
-	
-			try {
-				const response = got.get(url)
-	
+
+			got.get(url)
+			.then((response) => {
 				if (response.body) {
 					const str = response.body.trim()
 	
 					if (this.config.debug) {
-						this.log('info', 'Received PTZ Command Response: ' + str)
+						this.log('info', 'Received PTZ query response: ' + str)
 					}
 	
 					this.parseUpdate(str.split(':'))
-	
+
 					this.checkVariables()
 					this.checkFeedbacks()
 				}
-	
-			} catch (err) {
-				throw new Error(`PTZ Action failed: ${url}`)
-			}
+			})
+			.catch((err) => {
+				this.log('error', 'Error requesting status from PTZ: ' + String(err))
+			})
 		}
 	}
 	
@@ -392,42 +468,41 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.log('info', `Cam Request: ${url}`)
 			}
 	
-			try {
-				const response = got.get(url)
-				
+			got.get(url)
+			.then((response) => {
 				if (response.body) {
 					const str = response.body.trim()
 	
 					if (this.config.debug) {
-						this.log('info', 'Received Cam Command Response: ' + str)
+						this.log('info', 'Received Cam query response: ' + str)
 					}
 	
 					this.parseUpdate(str.split(':'))
-	
+
 					this.checkVariables()
 					this.checkFeedbacks()
 				}
-			} catch (err) {
-				throw new Error(`Cam Action failed: ${url}`)
-			}
+			})
+			.catch((err) => {
+				this.log('error', 'Error requesting status from Cam: ' + String(err))
+			})
 		}
 	}
 	
 	// Currently only for web commands that don't require admin rights
-	sendWeb(cmd) {
+	getWeb(cmd) {
 		if (cmd) {
 			const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/${cmd}`
 	
 			if (this.config.debug) {
-				this.log('debug', `Web Request: ${url}`)
+				this.log('info', `Web Request: ${url}`)
 			}
 	
-			try {
-				const response = got.get(url)
-	
+			got.get(url)
+			.then((response) => {
 				if (response.body) {
 					const lines = response.body.trim().split('\r\n')
-	
+
 					for (let line of lines) {
 						const str = line.trim()
 	
@@ -437,13 +512,14 @@ class PanasonicPTZInstance extends InstanceBase {
 	
 						this.parseWeb(str.split('='), cmd)
 					}
-	
+
 					this.checkVariables()
 					this.checkFeedbacks()
 				}
-			} catch (err) {
-				throw new Error(`Web Action failed: ${url}`)
-			}
+			})
+			.catch((err) => {
+				this.log('error', 'Error requesting status from Web: ' + String(err))
+			})
 		}
 	}
 
@@ -455,7 +531,17 @@ class PanasonicPTZInstance extends InstanceBase {
 				: (this.data.errorLabel = str[0].substring(1))
 		}
 
-		// Lens Position Information
+		if (str[0].substring(0, 1) === 'g') {
+			switch (str[0].substring(1, 2)) {
+				// ToDo: handle "---" on power off
+				case 'z': this.data.zoomPosition = parseInt(str[0].substring(2, 5), 16) - 0x555; break
+				case 'f': this.data.focusPosition = parseInt(str[0].substring(2, 5), 16) - 0x555; break
+				case 'i':
+					this.data.irisPosition = parseInt(str[0].substring(2, 5), 16) - 0x555
+					this.data.irisMode = str[0].substring(5, 6) === '1' ? 'Auto' : 'Manual'
+					break
+			}
+		}
 		if (str[0].substring(0, 2) === 'ax') {
 			switch (str[0].substring(2, 3)) {
 				case 'z': this.data.zoomPosition = parseInt(str[0].substring(3), 16) - 0x555; break
@@ -552,13 +638,16 @@ class PanasonicPTZInstance extends InstanceBase {
 					this.reInitAll()
 				}
 				break
-			case 'TLR': // Tally Red
+			case 'OLR':
+			case 'TLR':
 				this.data.tally = str[1] === '1' ? 'ON' : 'OFF'
 				break
-			case 'TLG': // Tally Green
+			case 'OLG':
+			case 'TLG':
 				this.data.tally2 = str[1] === '1' ? 'ON' : 'OFF'
 				break
-			case 'TLY': // Tally Yellow
+			case 'OLY':
+			case 'TLY':
 				this.data.tally3 = str[1] === '1' ? 'ON' : 'OFF'
 				break
 			case 'OAF':
@@ -584,7 +673,12 @@ class PanasonicPTZInstance extends InstanceBase {
 				break
 			case 'OSI':
 				switch (str[1]) {
-					case '20': this.data.colorTempLabel = parseInt(str[2], 16).toString() + 'K'; break // VAR
+					case '18':
+						this.data.zoomPosition = parseInt(str[2], 16) - 0x555
+						this.data.focusPosition = parseInt(str[3], 16) - 0x555
+						this.data.irisPosition = parseInt(str[4], 16) - 0x555
+						break
+					case '20': this.data.colorTempLabel = parseInt(str[2].substring(0, 5), 16).toString() + 'K'; break // VAR
 					// case 'D2': this.data.filter = str[2]; break // UB300's additional "Intelligent ND Filter"
 				}
 				break
@@ -642,7 +736,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				break
 			case 'OGS':
 			case 'OGU':
-				this.data.gain = str[1].replace('0x', '')
+				this.data.gain = str[1].replace('0x', '').padStart(2, '0')
 				break
 			case 'ORS':
 				this.data.irisMode = str[1] === '1' ? 'Auto' : 'Manual'
@@ -680,15 +774,15 @@ class PanasonicPTZInstance extends InstanceBase {
 	parseWeb(str, cmd) {
 		switch (cmd) {
 			case 'get_rtmp_status':
-				this.data.streamingRTMP = str[1] === '1'
+				this.data.rtmp = str[1] === '1'
 				break
 			case 'get_srt_status':
-				this.data.streamingSRT = str[1] === '1'
+				this.data.srt = str[1] === '1'
 				break
 			case 'get_state':
 				switch (str[0]) {
-					case 'rec': this.data.rec = str[1] === 'on'; break
-					case 'rec_counter': this.data.rec_counter = str[1]; break
+					case 'rec': this.data.recording = str[1].toUpperCase(); break
+					case 'rec_counter': this.data.recordingTime = str[1]; break
 				}
 				break
 		}
@@ -728,6 +822,9 @@ class PanasonicPTZInstance extends InstanceBase {
 			autotracking: null,
 			colorbar: null,
 			power: null,
+			recording: null,
+			rtmp: null,
+			srt: null,
 			tally: null,
 			tally2: null,
 			tally3: null,
@@ -775,6 +872,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			errorLabel: null,
 			irisLabel: null,
 			shutterStepLabel: null,
+			recordingTime: null,
 
 			// arrays
 			presetEntries0: Array(40),
@@ -821,6 +919,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.getCameraInfo()
 		this.getCameraTitle()
 		this.getCameraStatus()
+		this.queryCameraStatus()
 		this.init_tcp()
 	}
 

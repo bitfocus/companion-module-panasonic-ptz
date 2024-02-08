@@ -37,12 +37,12 @@ export function setVariables(self) {
 	}
 	if (SERIES.capabilities.tally) {
 		variables.push({ variableId: 'tally', name: 'Red Tally Status' })
-	}
-	if (SERIES.capabilities.tally2) {
-		variables.push({ variableId: 'tally2', name: 'Green Tally Status' })
-	}
-	if (SERIES.capabilities.tally3) {
-		variables.push({ variableId: 'tally3', name: 'Yellow Tally Status' })
+		if (SERIES.capabilities.tally2) {
+			variables.push({ variableId: 'tally2', name: 'Green Tally Status' })
+			if (SERIES.capabilities.tally3) {
+				variables.push({ variableId: 'tally3', name: 'Yellow Tally Status' })
+			}
+		}
 	}
 	if (SERIES.capabilities.focusAuto) {
 		variables.push({ variableId: 'focusMode', name: 'Focus Mode' })
@@ -113,6 +113,16 @@ export function setVariables(self) {
 		variables.push({ variableId: 'presetSpeed', name: 'Recall Speed' })
 		variables.push({ variableId: 'presetSpeedTable', name: 'Recall Speed Table' })
 		variables.push({ variableId: 'presetSpeedUnit', name: 'Recall Speed Unit' })
+	}
+	if (SERIES.capabilities.recordSD) {
+		variables.push({ variableId: 'recording', name: 'Recording' })
+		variables.push({ variableId: 'recordingTime', name: 'Recording Time' })
+	}
+	if (SERIES.capabilities.streamRTMP) {
+		variables.push({ variableId: 'streamingRTMP', name: 'RTMP Client Status' })
+	}
+	if (SERIES.capabilities.streamSRT) {
+		variables.push({ variableId: 'streamingSRT', name: 'SRT Caller Status' })
 	}
 
 	return variables
@@ -186,6 +196,10 @@ export function checkVariables(self) {
 
 		power: self.data.power,
 		colorbar: self.data.colorbar,
+		recording: self.data.recording,
+		recordingTime: self.data.recordingTime,
+		streamingRTMP: self.data.rtmp,
+		streamingSRT: self.data.srt,
 		tally: self.data.tally,
 		tally2: self.data.tally2,
 		tally3: self.data.tally3,
