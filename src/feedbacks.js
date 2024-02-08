@@ -185,36 +185,12 @@ export function getFeedbackDefinitions(self) {
 					type: 'dropdown',
 					label: 'Mode',
 					id: 'option',
-					default: '0',
-					choices: [
-						{ id: '0', label: 'Mode A - PTZ + Iris + WB/Color' },
-						{ id: '1', label: 'Mode B - PTZ + Iris' },
-						{ id: '2', label: 'Mode C - PTZ only' },
-					],
+					default: e.ENUM_PRESET_SCOPE[0].id,
+					choices: e.ENUM_PRESET_SCOPE,
 				},
 			],
 			callback: function (feedback) {
-				const opt = feedback.options
-				switch (opt.option) {
-					case '0':
-						if (self.data.presetScopeMode === 'Mode A') {
-							return true
-						}
-						break
-					case '1':
-						if (self.data.presetScopeMode === 'Mode B') {
-							return true
-						}
-						break
-					case '2':
-						if (self.data.presetScopeMode === 'Mode C') {
-							return true
-						}
-						break
-					default:
-						break
-				}
-				return false
+				return self.data.presetScope === feedback.options.option
 			},
 		}
 		feedbacks.presetSelected = {
@@ -302,6 +278,78 @@ export function getFeedbackDefinitions(self) {
 			],
 			callback: function (feedback) {
 				return self.data.ois === feedback.options.option
+			},
+		}
+	}
+
+	if (SERIES.capabilities.filter) {
+		feedbacks.filterMode = {
+			type: 'boolean',
+			name: 'Exposure - ND Filter',
+			description: 'Indicates whether the selected ND filter is currently active',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorRed,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Filter',
+					id: 'option',
+					default: SERIES.capabilities.filter.dropdown[0].id,
+					choices: SERIES.capabilities.filter.dropdown,
+				},
+			],
+			callback: function (feedback) {
+				return self.data.filter === feedback.options.option
+			},
+		}
+	}
+
+	if (SERIES.capabilities.gain) {
+		feedbacks.gainMode = {
+			type: 'boolean',
+			name: 'Exposure - Gain Mode',
+			description: 'Indicates whether the selected gain mode is currently active',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorRed,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'option',
+					default: SERIES.capabilities.gain.dropdown[0].id,
+					choices: SERIES.capabilities.gain.dropdown,
+				},
+			],
+			callback: function (feedback) {
+				return self.data.gain === feedback.options.option
+			},
+		}
+	}
+
+	if (SERIES.capabilities.shutter) {
+		feedbacks.shutterMode = {
+			type: 'boolean',
+			name: 'Exposure - Shutter Mode',
+			description: 'Indicates whether the selected shutter mode is currently active',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorRed,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'option',
+					default: SERIES.capabilities.shutter.dropdown[0].id,
+					choices: SERIES.capabilities.shutter.dropdown,
+				},
+			],
+			callback: function (feedback) {
+				return self.data.shutter === feedback.options.option
 			},
 		}
 	}

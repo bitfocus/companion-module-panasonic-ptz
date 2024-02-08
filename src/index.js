@@ -690,11 +690,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				break
 			case 'OSE':
 				if (str[1] === '71') {
-					switch (str[2]) {
-						case '0': this.data.presetScopeMode = 'Mode A'; break
-						case '1': this.data.presetScopeMode = 'Mode B'; break
-						case '2': this.data.presetScopeMode = 'Mode C'; break
-					}
+					this.data.presetScope = str[2]
 				}
 				break
 			case 'OSG':
@@ -836,6 +832,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			gain: null,
 			iris: null,
 			ois: null,
+			presetScope: null,
 			presetSpeed: null,
 			presetSpeedTable: null,
 			presetSpeedUnit: '0',
@@ -864,7 +861,6 @@ class PanasonicPTZInstance extends InstanceBase {
 			focusMode: null,
 			installMode: null,
 			irisMode: null,
-			presetScopeMode: null,
 
 			// other strings
 			autotrackingStatusLabel: null,

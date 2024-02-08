@@ -805,7 +805,7 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Iris Up',
 			options: [],
 			callback: async (action) => {
-				// await sendPTZ(self, 'I' + getNext(e.ENUM_IRIS, self.data.iris, +1).id) // no leading 0x!
+				// await sendPTZ(self, 'I' + getNext(e.ENUM_IRIS, self.data.iris, +1).id)
 				if (self.data.irisPosition + 0x1E < 0xAAA) {
 					self.data.irisPosition += 0x1E
 				} else {
@@ -819,7 +819,7 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Iris Down',
 			options: [],
 			callback: async (action) => {
-				// await sendPTZ(self, 'I' + getNext(e.ENUM_IRIS, self.data.iris, -1).id) // no leading 0x!
+				// await sendPTZ(self, 'I' + getNext(e.ENUM_IRIS, self.data.iris, -1).id)
 				if (self.data.irisPosition - 0x1E > 0x000) {
 					self.data.irisPosition -= 0x1E
 				} else {
@@ -866,7 +866,7 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Gain Up',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.gain.cmd + ':' + getNext(SERIES.capabilities.gain.dropdown, self.data.gain, +1).id) // no leading 0x!
+				await sendCam(self, SERIES.capabilities.gain.cmd + ':' + getNext(SERIES.capabilities.gain.dropdown, self.data.gain, +1).id)
 			},
 		}
 
@@ -874,7 +874,7 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Gain Down',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.gain.cmd + ':' + getNext(SERIES.capabilities.gain.dropdown, self.data.gain, -1).id) // no leading 0x!
+				await sendCam(self, SERIES.capabilities.gain.cmd + ':' + getNext(SERIES.capabilities.gain.dropdown, self.data.gain, -1).id)
 			},
 		}
 
@@ -903,7 +903,7 @@ export function getActionDefinitions(self) {
 				if (SERIES.capabilities.shutter.inc) {
 					await sendCam(self, SERIES.capabilities.shutter.inc + ':0x01')
 				} else {				
-					await sendCam(self, SERIES.capabilities.shutter.cmd + ':' + getNext(SERIES.capabilities.shutter.dropdown, self.data.shutter, +1).id) // no leading 0x!
+					await sendCam(self, SERIES.capabilities.shutter.cmd + ':' + getNext(SERIES.capabilities.shutter.dropdown, self.data.shutter, +1).id)
 				}
 			},
 		}
@@ -915,7 +915,7 @@ export function getActionDefinitions(self) {
 				if (SERIES.capabilities.shutter.dec) {
 					await sendCam(self, SERIES.capabilities.shutter.dec + ':0x01')
 				} else {
-					await sendCam(self, SERIES.capabilities.shutter.cmd + ':' + getNext(SERIES.capabilities.shutter.dropdown, self.data.shutter, -1).id) // no leading 0x!
+					await sendCam(self, SERIES.capabilities.shutter.cmd + ':' + getNext(SERIES.capabilities.shutter.dropdown, self.data.shutter, -1).id)
 				}
 			},
 		}
@@ -1000,7 +1000,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OAW:' + action.options.val) // no leading 0x!
+				await sendCam(self, 'OAW:' + action.options.val)
 			},
 		}
 
@@ -1027,7 +1027,7 @@ export function getActionDefinitions(self) {
 			options: [],
 			callback: async (action) => {
 				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':' +
-					getNext(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature, +1).id) // no leading 0x!
+					getNext(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature, +1).id)
 			},
 		}
 
@@ -1036,7 +1036,7 @@ export function getActionDefinitions(self) {
 			options: [],
 			callback: async (action) => {
 				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':' +
-					getNext(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature, -1).id) // no leading 0x!
+					getNext(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature, -1).id)
 			},
 		}
 
@@ -1052,7 +1052,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':' + action.options.val) // no leading 0x!
+				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':' + action.options.val)
 			},
 		}
 	}
@@ -1290,12 +1290,12 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (SERIES.capabilities.filter.cmd) {
+	if (SERIES.capabilities.filter) {
 		actions.filterU = {
 			name: 'Exposure - ND Filter Up',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, 'OFT:' + getNext(SERIES.capabilities.filter.dropdown, self.data.filter, +1).id) // no leading 0x!
+				await sendCam(self, 'OFT:' + getNext(SERIES.capabilities.filter.dropdown, self.data.filter, +1).id)
 			},
 		}
 
@@ -1303,7 +1303,7 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - ND Filter Down',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, 'OFT:' + getNext(SERIES.capabilities.filter.dropdown, self.data.filter, -1).id) // no leading 0x!
+				await sendCam(self, 'OFT:' + getNext(SERIES.capabilities.filter.dropdown, self.data.filter, -1).id)
 			},
 		}
 
@@ -1319,7 +1319,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OFT:' + action.options.val) // no leading 0x!
+				await sendCam(self, 'OFT:' + action.options.val)
 			},
 		}
 	}
@@ -1382,18 +1382,14 @@ export function getActionDefinitions(self) {
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Preset Mode',
+					label: 'Preset Recall Scope',
 					id: 'val',
-					default: '0',
-					choices: [
-						{ id: '0', label: 'Mode A - PTZ + Iris + WB/Color' },
-						{ id: '1', label: 'Mode B - PTZ + Iris' },
-						{ id: '2', label: 'Mode C - PTZ only' },
-					],
+					default: e.ENUM_PRESET_SCOPE[0].id,
+					choices: e.ENUM_PRESET_SCOPE,
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OSE:71:' + action.options.val) // no leading 0x!
+				await sendCam(self, 'OSE:71:' + action.options.val)
 			},
 		}
 	}
@@ -1421,8 +1417,8 @@ export function getActionDefinitions(self) {
 				if (SERIES.capabilities.presetTime) {
 					await sendCam(self, 'OSJ:29:0')
 				}
-				await sendPTZ(self, 'PST' + action.options.table) // no leading 0x!
-				await sendPTZ(self, 'UPVS' + action.options.speed) // no leading 0x!
+				await sendPTZ(self, 'PST' + action.options.table)
+				await sendPTZ(self, 'UPVS' + action.options.speed)
 			},
 		}
 	}
@@ -1444,7 +1440,7 @@ export function getActionDefinitions(self) {
 			],
 			callback: async (action) => {
 				await sendCam(self, 'OSJ:29:1')
-				await sendPTZ(self, 'UPVS' + parseInt(action.options.val).toString(16).toUpperCase().padStart(3, '0')) // no leading 0x!
+				await sendPTZ(self, 'UPVS' + parseInt(action.options.val).toString(16).toUpperCase().padStart(3, '0'))
 			},
 		}
 	}
@@ -1466,7 +1462,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OSL:B6:' + action.options.value) // no leading 0x!
+				await sendCam(self, 'OSL:B6:' + action.options.value)
 			},
 		}
 
@@ -1482,7 +1478,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OSL:BC:' + action.options.value) // no leading 0x!
+				await sendCam(self, 'OSL:BC:' + action.options.value)
 			},
 		}
 	}
@@ -1533,7 +1529,7 @@ export function getActionDefinitions(self) {
 					},
 				],
 				callback: async (action) => {
-					await sendCam(self, 'TLR:' + action.options.value) // no leading 0x!
+					await sendCam(self, 'TLR:' + action.options.value)
 				},
 			}
 			actions.tally2 = {
@@ -1548,7 +1544,7 @@ export function getActionDefinitions(self) {
 					},
 				],
 				callback: async (action) => {
-					await sendCam(self, 'TLG:' + action.options.value) // no leading 0x!
+					await sendCam(self, 'TLG:' + action.options.value)
 				},
 			}
 			if (SERIES.capabilities.tally3)  {
@@ -1564,7 +1560,7 @@ export function getActionDefinitions(self) {
 						},
 					],
 					callback: async (action) => {
-						await sendCam(self, 'TLY:' + action.options.value) // no leading 0x!
+						await sendCam(self, 'TLY:' + action.options.value)
 					},
 				}
 			}
@@ -1581,7 +1577,7 @@ export function getActionDefinitions(self) {
 					},
 				],
 				callback: async (action) => {
-					await sendPTZ(self, 'DA' + action.options.value) // no leading 0x!
+					await sendPTZ(self, 'DA' + action.options.value)
 				},
 			}
 		}
@@ -1600,7 +1596,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'DCB' + action.options.value) // no leading 0x!
+				await sendCam(self, 'DCB' + action.options.value)
 			},
 		}
 	}

@@ -53,11 +53,14 @@ export function setVariables(self) {
 	if (SERIES.capabilities.colorTemperature) {
 		variables.push({ variableId: 'colorTemperature', name: 'Color Temperature' })
 	}
+	if (SERIES.capabilities.filter) {
+		variables.push({ variableId: 'filter', name: 'ND Filter' })
+	}
 	if (SERIES.capabilities.gain) {
 		variables.push({ variableId: 'gain', name: 'Gain' })
 	}
 	if (SERIES.capabilities.preset) {
-		variables.push({ variableId: 'presetScopeMode', name: 'Preset Recall Mode' })
+		variables.push({ variableId: 'presetScope', name: 'Preset Recall Scope' })
 		variables.push({ variableId: 'presetCompleted', name: 'Preset # Completed' })
 		variables.push({ variableId: 'presetSelected', name: 'Preset # Selected' })
 	}
@@ -137,6 +140,9 @@ export function checkVariables(self) {
 	const colorTemperature = SERIES.capabilities.colorTemperature.index
 		? getLabel(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature) : null
 
+	const filter = SERIES.capabilities.filter
+	? getLabel(SERIES.capabilities.filter.dropdown, self.data.filter) : null
+
 	const gain = SERIES.capabilities.gain
 		? getLabel(SERIES.capabilities.gain.dropdown, self.data.gain) : null
 
@@ -146,6 +152,9 @@ export function checkVariables(self) {
 	const ois = SERIES.capabilities.ois
 		? getLabel(SERIES.capabilities.ois.dropdown, self.data.ois) : null
 
+	const presetScope = SERIES.capabilities.preset
+		? getLabel(e.ENUM_PRESET_SCOPE, self.data.presetScope) : null
+	
 	const presetSpeed = SERIES.capabilities.presetSpeed
 		? getLabel(e.ENUM_PSSPEED, self.data.presetSpeed) : null
 
@@ -207,7 +216,6 @@ export function checkVariables(self) {
 		focusMode: self.data.focusMode,
 		installMode: self.data.installMode,
 		irisMode: self.data.irisMode,
-		presetScopeMode: self.data.presetScopeMode,
 
 		presetSelected: (self.data.presetSelectedIdx + 1).toString(),
 		presetCompleted: (self.data.presetCompletedIdx + 1).toString(),
@@ -235,9 +243,11 @@ export function checkVariables(self) {
 
 		colorTemperature: self.data.colorTempLabel?self.data.colorTempLabel:colorTemperature,
 
+		filter: filter,
 		gain: gain,
 		iris: iris,
 		ois: ois,
+		presetScope: presetScope,
 		presetSpeed: presetSpeed,
 		presetSpeedTable: presetSpeedTable,
 		presetSpeedUnit: presetSpeedUnit,
