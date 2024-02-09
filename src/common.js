@@ -34,6 +34,21 @@ export function getNext(values, key, step = 1, overrun = true) {
 	return values[(values.length + (step % values.length) + i) % values.length]
 }
 
+export function getNextValue(value, min, max, step = 1) {
+	let v = value += step
+	if (v > max) {
+		v = max
+	}
+	if (v < min) {
+		v = min
+	}	
+	return v
+}
+
 export function getLabel(values, key) {
 	return values.find((v) => v.id === key)?.label
+}
+
+export function toHexString(value, length) {
+	return parseInt(value).toString(16).toUpperCase().padStart(length, '0')
 }

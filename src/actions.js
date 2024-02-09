@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { e } from './enum.js'
-import { getAndUpdateSeries, getNext } from './common.js'
+import { getAndUpdateSeries, getNext, getNextValue, toHexString } from './common.js'
 import got from 'got'
 
 // ######################
@@ -100,6 +100,14 @@ export async function sendWeb(self, cmd) {
 	}
 }
 
+function speedCmd(speed) {
+	return speed.toString().padStart(2, '0')
+}
+
+function speedCmdPT(speedPan, speedTilt) {
+	return 'PTS' + speedCmd(speedPan) + speedCmd(speedTilt)
+}
+
 // ##########################
 // #### Instance Actions ####
 // ##########################
@@ -107,6 +115,11 @@ export function getActionDefinitions(self) {
 	const actions = {}
 
 	const SERIES = getAndUpdateSeries(self)
+
+	const SPEED_OFFSET = 50
+	const SPEED_MIN = 0
+	const SPEED_MAX = 49
+	const SPEED_DEFAULT = 25
 
 	// ##########################
 	// #### Pan/Tilt Actions ####
@@ -124,17 +137,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				let n = parseInt(50 - self.ptSpeed)
-				let string = '' + (n < 10 ? '0' + n : n)
-
-				await sendPTZ(self, 'PTS' + string + '50')
+				await sendPTZ(self, speedCmdPT(SPEED_OFFSET - self.ptSpeed, SPEED_OFFSET))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							n = parseInt(50 - self.ptSpeed)
-							string = '' + (n < 10 ? '0' + n : n)
-							await sendPTZ(self, 'PTS' + string + '50')
+							await sendPTZ(self, speedCmdPT(SPEED_OFFSET - self.ptSpeed, SPEED_OFFSET))
 						})
 					)
 				}
@@ -152,12 +160,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + '50')
+				await sendPTZ(self, speedCmdPT(SPEED_OFFSET + self.ptSpeed, SPEED_OFFSET))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + '50')
+							await sendPTZ(self, speedCmdPT(SPEED_OFFSET + self.ptSpeed, SPEED_OFFSET))
 						})
 					)
 				}
@@ -175,12 +183,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'PTS50' + parseInt(50 + self.ptSpeed))
+				await sendPTZ(self, speedCmdPT(SPEED_OFFSET, SPEED_OFFSET + self.ptSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await sendPTZ(self, 'PTS50' + parseInt(50 + self.ptSpeed))
+							await sendPTZ(self, speedCmdPT(SPEED_OFFSET, SPEED_OFFSET + self.ptSpeed))
 						})
 					)
 				}
@@ -198,17 +206,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				let n = parseInt(50 - self.ptSpeed)
-				let string = '' + (n < 10 ? '0' + n : n)
-
-				await sendPTZ(self, 'PTS50' + string)
+				await sendPTZ(self, speedCmdPT(SPEED_OFFSET, SPEED_OFFSET - self.ptSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							n = parseInt(50 - self.ptSpeed)
-							string = '' + (n < 10 ? '0' + n : n)
-							await sendPTZ(self, 'PTS50' + string)
+							await sendPTZ(self, speedCmdPT(SPEED_OFFSET, SPEED_OFFSET - self.ptSpeed))
 						})
 					)
 				}
@@ -226,17 +229,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				let n = parseInt(50 - self.pSpeed)
-				let string = '' + (n < 10 ? '0' + n : n)
-
-				await sendPTZ(self, 'PTS' + string + parseInt(50 + self.tSpeed))
+				await sendPTZ(self, speedCmdPT(SPEED_OFFSET - self.pSpeed, SPEED_OFFSET + self.tSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							n = parseInt(50 - self.pSpeed)
-							string = '' + (n < 10 ? '0' + n : n)
-							await sendPTZ(self, 'PTS' + string + parseInt(50 + self.tSpeed))
+							await sendPTZ(self, speedCmdPT(SPEED_OFFSET - self.pSpeed, SPEED_OFFSET + self.tSpeed))
 						})
 					)
 				}
@@ -254,12 +252,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'PTS' + parseInt(50 + self.pSpeed) + parseInt(50 + self.tSpeed))
+				await sendPTZ(self, speedCmdPT(SPEED_OFFSET + self.pSpeed, SPEED_OFFSET + self.tSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await sendPTZ(self, 'PTS' + parseInt(50 + self.pSpeed) + parseInt(50 + self.tSpeed))
+							await sendPTZ(self, speedCmdPT(SPEED_OFFSET + self.pSpeed, SPEED_OFFSET + self.tSpeedy))
 						})
 					)
 				}
@@ -277,21 +275,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				let np = parseInt(50 - self.pSpeed)
-				let nt = parseInt(50 - self.tSpeed)
-				let pString = '' + (np < 10 ? '0' + np : np)
-				let tString = '' + (nt < 10 ? '0' + nt : nt)
-
-				await sendPTZ(self, 'PTS' + pString + tString)
+				await sendPTZ(self, speedCmdPT(SPEED_OFFSET - self.pSpeed, SPEED_OFFSET - self.tSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							np = parseInt(50 - self.pSpeed)
-							nt = parseInt(50 - self.tSpeed)
-							pString = '' + (np < 10 ? '0' + np : np)
-							tString = '' + (nt < 10 ? '0' + nt : nt)
-							await sendPTZ(self, 'PTS' + pString + tString)
+							await sendPTZ(self, speedCmdPT(SPEED_OFFSET - self.pSpeed, SPEED_OFFSET - self.tSpeed))
 						})
 					)
 				}
@@ -309,17 +298,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				let n = parseInt(50 - self.tSpeed)
-				let string = '' + (n < 10 ? '0' + n : n)
-
-				await sendPTZ(self, 'PTS' + parseInt(50 + self.pSpeed) + string)
+				await sendPTZ(self, speedCmdPT(SPEED_OFFSET + self.pSpeed, SPEED_OFFSET - self.tSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							n = parseInt(50 - self.tSpeed)
-							string = '' + (n < 10 ? '0' + n : n)
-							await sendPTZ(self, 'PTS' + parseInt(50 + self.pSpeed) + string)
+							await sendPTZ(self, speedCmdPT(SPEED_OFFSET + self.pSpeed, SPEED_OFFSET - self.tSpeed))
 						})
 					)
 				}
@@ -330,23 +314,21 @@ export function getActionDefinitions(self) {
 			name: 'Pan/Tilt - Stop',
 			options: [],
 			callback: async (action) => {
-				await sendPTZ(self, 'PTS5050')
+				await sendPTZ(self, speedCmdPT(SPEED_OFFSET, SPEED_OFFSET))
 				if (self.speedChangeEmitter.listenerCount('ptSpeed')) self.speedChangeEmitter.removeAllListeners('ptSpeed')
 			},
 		}
 
 		actions.home = {
-			name: 'Pan/Tilt - Home',
+			name: 'Pan/Tilt - Home Position',
 			options: [],
 			callback: async (action) => {
 				await sendPTZ(self, 'APC7FFF7FFF')
 			},
 		}
-	}
 
-	if (SERIES.capabilities.ptSpeed) {
 		actions.ptSpeedS = {
-			name: 'Pan/Tilt - Speed',
+			name: 'Pan/Tilt - Speed Set',
 			options: [
 				{
 					type: 'checkbox',
@@ -355,49 +337,48 @@ export function getActionDefinitions(self) {
 					default: false,
 				},
 				{
-					type: 'dropdown',
+					type: 'number',
 					label: 'Speed setting',
 					id: 'speed',
-					default: 25,
-					choices: e.ENUM_SPEED,
+					default: SPEED_DEFAULT,
+					min: SPEED_MIN,
+					max: SPEED_MAX,
+					required: true,
+					range: true,
 					isVisible: ((options) => options.advanced ? false : true)
 				},
 				{
-					type: 'dropdown',
+					type: 'number',
 					label: 'Pan speed setting',
 					id: 'pSpeed',
-					default: 25,
-					choices: e.ENUM_SPEED,
+					default: SPEED_DEFAULT,
+					min: SPEED_MIN,
+					max: SPEED_MAX,
+					required: true,
+					range: true,
 					isVisible: ((options) => options.advanced ? true : false)
 				},
 				{
-					type: 'dropdown',
+					type: 'number',
 					label: 'Tilt speed setting',
 					id: 'tSpeed',
-					default: 25,
-					choices: e.ENUM_SPEED,
+					default: SPEED_DEFAULT,
+					min: SPEED_MIN,
+					max: SPEED_MAX,
+					required: true,
+					range: true,
 					isVisible: ((options) => options.advanced ? true : false)
 				},
 			],
 			callback: async (action) => {
 				if (action.options.advanced === false) {
-					const i = e.ENUM_SPEED.findIndex((speed) => speed.id === action.options.speed)
-
-					if (i > -1) self.ptSpeedIndex = i
-					self.ptSpeed = e.ENUM_SPEED[self.ptSpeedIndex].id
+					self.ptSpeed = action.options.speed
 					self.pSpeed = self.ptSpeed
 					self.tSpeed = self.ptSpeed
 				} else {
-					const j = e.ENUM_SPEED.findIndex((speed) => speed.id === action.options.pSpeed)
-					const k = e.ENUM_SPEED.findIndex((speed) => speed.id === action.options.tSpeed)
-
-					if (j > -1) self.pSpeedIndex = j
-					if (k > -1) self.tSpeedIndex = k
-					self.pSpeed = e.ENUM_SPEED[self.pSpeedIndex].id
-					self.tSpeed = e.ENUM_SPEED[self.tSpeedIndex].id
-					if (self.pSpeed === self.tSpeed) {
-						self.ptSpeed = self.pSpeed
-					}
+					self.pSpeed = action.options.pSpeed
+					self.tSpeed = action.options.tSpeed
+					if (self.pSpeed === self.tSpeed) self.ptSpeed = self.pSpeed
 				}
 				self.setVariableValues({
 					ptSpeedVar: self.ptSpeed,
@@ -412,12 +393,7 @@ export function getActionDefinitions(self) {
 			name: 'Pan/Tilt - Speed Up',
 			options: [],
 			callback: async () => {
-				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.ptSpeed)
-				if (i > 0) {
-					self.ptSpeedIndex = i - 1
-				}
-
-				self.ptSpeed = e.ENUM_SPEED[self.ptSpeedIndex].id
+				self.ptSpeed = getNextValue(self.ptSpeed, SPEED_MIN, SPEED_MAX, +1)
 				self.pSpeed = self.ptSpeed
 				self.tSpeed = self.ptSpeed
 				self.setVariableValues({
@@ -433,12 +409,7 @@ export function getActionDefinitions(self) {
 			name: 'Pan/Tilt - Pan - Speed Up',
 			options: [],
 			callback: async () => {
-				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.pSpeed)
-				if (i > 0) {
-					self.pSpeedIndex = i - 1
-				}
-
-				self.pSpeed = e.ENUM_SPEED[self.pSpeedIndex].id
+				self.pSpeed = getNextValue(self.pSpeed, SPEED_MIN, SPEED_MAX, +1)
 				if (self.pSpeed === self.tSpeed) self.ptSpeed = self.pSpeed
 				self.setVariableValues({
 					pSpeedVar: self.pSpeed,
@@ -452,12 +423,7 @@ export function getActionDefinitions(self) {
 			name: 'Pan/Tilt - Tilt - Speed Up',
 			options: [],
 			callback: async () => {
-				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.tSpeed)
-				if (i > 0) {
-					self.tSpeedIndex = i - 1
-				}
-
-				self.tSpeed = e.ENUM_SPEED[self.tSpeedIndex].id
+				self.tSpeed = getNextValue(self.tSpeed, SPEED_MIN, SPEED_MAX, +1)
 				if (self.tSpeed === self.pSpeed) self.ptSpeed = self.tSpeed
 				self.setVariableValues({
 					tSpeedVar: self.tSpeed,
@@ -471,12 +437,7 @@ export function getActionDefinitions(self) {
 			name: 'Pan/Tilt - Speed Down',
 			options: [],
 			callback: async () => {
-				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.ptSpeed)
-				if (i < 49) {
-					self.ptSpeedIndex = i + 1
-				}
-
-				self.ptSpeed = e.ENUM_SPEED[self.ptSpeedIndex].id
+				self.ptSpeed = getNextValue(self.ptSpeed, SPEED_MIN, SPEED_MAX, -1)
 				self.pSpeed = self.ptSpeed
 				self.tSpeed = self.ptSpeed
 				self.setVariableValues({
@@ -492,12 +453,7 @@ export function getActionDefinitions(self) {
 			name: 'Pan/Tilt - Pan - Speed Down',
 			options: [],
 			callback: async () => {
-				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.pSpeed)
-				if (i < 49) {
-					self.pSpeedIndex = i + 1
-				}
-
-				self.pSpeed = e.ENUM_SPEED[self.pSpeedIndex].id
+				self.pSpeed = getNextValue(self.pSpeed, SPEED_MIN, SPEED_MAX, -1)
 				if (self.pSpeed === self.tSpeed) self.ptSpeed = self.pSpeed
 				self.setVariableValues({
 					pSpeedVar: self.pSpeed,
@@ -511,12 +467,7 @@ export function getActionDefinitions(self) {
 			name: 'Pan/Tilt - Tilt - Speed Down',
 			options: [],
 			callback: async () => {
-				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.tSpeed)
-				if (i < 49) {
-					self.tSpeedIndex = i + 1
-				}
-
-				self.tSpeed = e.ENUM_SPEED[self.tSpeedIndex].id
+				self.tSpeed = getNextValue(self.tSpeed, SPEED_MIN, SPEED_MAX, -1)
 				if (self.tSpeed === self.pSpeed) self.ptSpeed = self.tSpeed
 				self.setVariableValues({
 					tSpeedVar: self.tSpeed,
@@ -543,12 +494,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'Z' + parseInt(50 + self.zSpeed))
+				await sendPTZ(self, 'Z' + speedCmd(SPEED_OFFSET + self.zSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('zSpeed').then(
 						self.speedChangeEmitter.on('zSpeed', async () => {
-							await sendPTZ(self, 'Z' + parseInt(50 + self.zSpeed))
+							await sendPTZ(self, 'Z' + speedCmd(SPEED_OFFSET + self.zSpeed))
 						})
 					)
 				}
@@ -566,17 +517,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				let n = parseInt(50 - self.zSpeed)
-				let string = '' + (n < 10 ? '0' + n : n)
-
-				await sendPTZ(self, 'Z' + string)
+				await sendPTZ(self, 'Z' + speedCmd(SPEED_OFFSET - self.zSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('zSpeed').then(
 						self.speedChangeEmitter.on('zSpeed', async () => {
-							n = parseInt(50 - self.zSpeed)
-							string = '' + (n < 10 ? '0' + n : n)
-							await sendPTZ(self, 'Z' + string)
+							await sendPTZ(self, 'Z' + speedCmd(SPEED_OFFSET - self.zSpeed))
 						})
 					)
 				}
@@ -587,31 +533,27 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Zoom Stop',
 			options: [],
 			callback: async (action) => {
-				await sendPTZ(self, 'Z50')
+				await sendPTZ(self, 'Z' + speedCmd(SPEED_OFFSET))
 				if (self.speedChangeEmitter.listenerCount('zSpeed')) self.speedChangeEmitter.removeAllListeners('zSpeed')
 			},
 		}
-	}
 
-	if (SERIES.capabilities.zSpeed) {
 		actions.zSpeedS = {
-			name: 'Lens - Zoom Speed',
+			name: 'Lens - Zoom Speed Set',
 			options: [
 				{
-					type: 'dropdown',
+					id: 'val',
+					type: 'number',
 					label: 'Speed setting',
-					id: 'speed',
-					default: 25,
-					choices: e.ENUM_SPEED,
+					default: SPEED_DEFAULT,
+					min: SPEED_MIN,
+					max: SPEED_MAX,
+					required: true,
+					range: true,
 				},
 			],
 			callback: async (action) => {
-				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === action.options.speed)
-				if (i > -1) {
-					self.zSpeedIndex = i
-				}
-
-				self.zSpeed = e.ENUM_SPEED[self.zSpeedIndex].id
+				self.zSpeed = action.options.val
 				self.setVariableValues({ zSpeedVar: self.zSpeed })
 				self.speedChangeEmitter.emit('zSpeed')
 			},
@@ -621,12 +563,7 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Zoom Speed Up',
 			options: [],
 			callback: async () => {
-				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.zSpeed)
-				if (i > 0) {
-					self.zSpeedIndex = i - 1
-				}
-
-				self.zSpeed = e.ENUM_SPEED[self.zSpeedIndex].id
+				self.zSpeed = getNextValue(self.zSpeed, SPEED_MIN, SPEED_MAX, +1)
 				self.setVariableValues({ zSpeedVar: self.zSpeed })
 				self.speedChangeEmitter.emit('zSpeed')
 			},
@@ -636,12 +573,7 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Zoom Speed Down',
 			options: [],
 			callback: async () => {
-				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.zSpeed)
-				if (i < 49) {
-					self.zSpeedIndex = i + 1
-				}
-
-				self.zSpeed = e.ENUM_SPEED[self.zSpeedIndex].id
+				self.zSpeed = getNextValue(self.zSpeed, SPEED_MIN, SPEED_MAX, +1)
 				self.setVariableValues({ zSpeedVar: self.zSpeed })
 				self.speedChangeEmitter.emit('zSpeed')
 			},
@@ -660,17 +592,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				let n = parseInt(50 - self.fSpeed)
-				let string = '' + (n < 10 ? '0' + n : n)
-
-				await sendPTZ(self, 'F' + string)
+				await sendPTZ(self, 'F' + speedCmd(SPEED_OFFSET - self.fSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('fSpeed').then(
 						self.speedChangeEmitter.on('fSpeed', async () => {
-							n = parseInt(50 - self.fSpeed)
-							string = '' + (n < 10 ? '0' + n : n)
-							await sendPTZ(self, 'F' + string)
+							await sendPTZ(self, 'F' + speedCmd(SPEED_OFFSET - self.fSpeed))
 						})
 					)
 				}
@@ -688,12 +615,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'F' + parseInt(50 + self.fSpeed))
+				await sendPTZ(self, 'F' + speedCmd(SPEED_OFFSET + self.fSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('fSpeed').then(
 						self.speedChangeEmitter.on('fSpeed', async () => {
-							await sendPTZ(self, 'F' + parseInt(50 + self.fSpeed))
+							await sendPTZ(self, 'F' + speedCmd(SPEED_OFFSET + self.fSpeed))
 						})
 					)
 				}
@@ -704,31 +631,27 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Focus Stop',
 			options: [],
 			callback: async (action) => {
-				await sendPTZ(self, 'F50')
+				await sendPTZ(self, 'F' + speedCmd(SPEED_OFFSET))
 				if (self.speedChangeEmitter.listenerCount('fSpeed')) self.speedChangeEmitter.removeAllListeners('fSpeed')
 			},
 		}
-	}
 
-	if (SERIES.capabilities.fSpeed) {
 		actions.fSpeedS = {
-			name: 'Lens - Focus Speed',
+			name: 'Lens - Focus Speed Set',
 			options: [
 				{
-					type: 'dropdown',
-					label: 'Speed setting',
-					id: 'speed',
-					default: 25,
-					choices: e.ENUM_SPEED,
+					id: 'val',
+					type: 'number',
+					label: 'Speed',
+					default: SPEED_DEFAULT,
+					min: SPEED_MIN,
+					max: SPEED_MAX,
+					required: true,
+					range: true,
 				},
 			],
 			callback: async (action) => {
-				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === action.options.speed)
-				if (i > -1) {
-					self.fSpeedIndex = i
-				}
-
-				self.fSpeed = e.ENUM_SPEED[self.fSpeedIndex].id
+				self.fSpeed = action.options.val
 				self.setVariableValues({ fSpeedVar: self.fSpeed })
 				self.speedChangeEmitter.emit('fSpeed')
 			},
@@ -738,12 +661,7 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Focus Speed Up',
 			options: [],
 			callback: async () => {
-				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.fSpeed)
-				if (i > 0) {
-					self.fSpeedIndex = i - 1
-				}
-
-				self.fSpeed = e.ENUM_SPEED[self.fSpeedIndex].id
+				self.fSpeed = getNextValue(self.fSpeed, SPEED_MIN, SPEED_MAX, +1)
 				self.setVariableValues({ fSpeedVar: self.fSpeed })
 				self.speedChangeEmitter.emit('fSpeed')
 			},
@@ -753,12 +671,7 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Focus Speed Down',
 			options: [],
 			callback: async (action) => {
-				const i = e.ENUM_SPEED.findIndex((speed) => speed.id === self.fSpeed)
-				if (i < 49) {
-					self.fSpeedIndex = i + 1
-				}
-
-				self.fSpeed = e.ENUM_SPEED[self.fSpeedIndex].id
+				self.fSpeed = getNextValue(self.fSpeed, SPEED_MIN, SPEED_MAX, -1)
 				self.setVariableValues({ fSpeedVar: self.fSpeed })
 				self.speedChangeEmitter.emit('fSpeed')
 			},
@@ -773,15 +686,12 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Auto / Manual Focus',
 					id: 'val',
-					default: '0',
-					choices: [
-						{ id: '0', label: 'Manual Focus' },
-						{ id: '1', label: 'Auto Focus' },
-					],
+					default: e.ENUM_MAN_AUTO[0].id,
+					choices: e.ENUM_MAN_AUTO,
 				},
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'D1' + action.options.val)
+				await sendCam(self, 'OAF:' + action.options.val)
 			},
 		}
 	}
@@ -806,12 +716,7 @@ export function getActionDefinitions(self) {
 			options: [],
 			callback: async (action) => {
 				// await sendPTZ(self, 'I' + getNext(e.ENUM_IRIS, self.data.iris, +1).id)
-				if (self.data.irisPosition + 0x1E < 0xAAA) {
-					self.data.irisPosition += 0x1E
-				} else {
-					self.data.irisPosition = 0xAAA
-				}
-				await sendPTZ(self, 'AXI' + (0x555 + self.data.irisPosition).toString(16).toUpperCase().padStart(3, '0'))
+				await sendPTZ(self, 'AXI' + toHexString(0x555 + getNextValue(self.data.irisPosition, 0x0, 0xAAA, +0x1E), 3))
 			},
 		}
 
@@ -820,30 +725,30 @@ export function getActionDefinitions(self) {
 			options: [],
 			callback: async (action) => {
 				// await sendPTZ(self, 'I' + getNext(e.ENUM_IRIS, self.data.iris, -1).id)
-				if (self.data.irisPosition - 0x1E > 0x000) {
-					self.data.irisPosition -= 0x1E
-				} else {
-					self.data.irisPosition = 0x0
-				}
-				await sendPTZ(self, 'AXI' + (0x555 + self.data.irisPosition).toString(16).toUpperCase().padStart(3, '0'))
+				await sendPTZ(self, 'AXI' + toHexString(0x555 + getNextValue(self.data.irisPosition, 0x0, 0xAAA, -0x1E), 3))
 			},
 		}
 
 		actions.irisS = {
-			name: 'Exposure - Set Iris',
+			name: 'Exposure - Iris Set',
 			options: [
 				{
-					type: 'dropdown',
-					label: 'Iris setting',
 					id: 'val',
-					default: e.ENUM_IRIS[0].id,
-					choices: e.ENUM_IRIS,
+					type: 'number',
+					label: 'Iris setting',
+					default: 0x555,
+					min: 0x0,
+					max: 0xAAA,
+					step: 0x1E,
+					required: true,
+					range: true,
 				},
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'I' + action.options.val)
+				await sendPTZ(self, 'AXI' + toHexString(0x555 + action.options.val, 3))
 			},
 		}
+
 		actions.irisM = {
 			name: 'Exposure - Iris Mode',
 			options: [
@@ -851,12 +756,12 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Auto / Manual Iris',
 					id: 'val',
-					default: '0',
+					default: e.ENUM_MAN_AUTO[0].id,
 					choices: e.ENUM_MAN_AUTO,
 				},
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'D3' + action.options.val)
+				await sendCam(self, 'ORS:' + action.options.val)
 			},
 		}
 	}
@@ -879,7 +784,7 @@ export function getActionDefinitions(self) {
 		}
 
 		actions.gainS = {
-			name: 'Exposure - Set Gain',
+			name: 'Exposure - Gain Set',
 			options: [
 				{
 					type: 'dropdown',
@@ -922,7 +827,7 @@ export function getActionDefinitions(self) {
 
 		if (SERIES.capabilities.shutter) {
 			actions.shutS = {
-				name: 'Exposure - Set Shutter Mode',
+				name: 'Exposure - Shutter Mode Set',
 				options: [
 					{
 						type: 'dropdown',
@@ -944,28 +849,28 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Master Pedestal Up',
 			options: [],
 			callback: async (action) => {
-				if (self.data.masterPedValue + SERIES.capabilities.pedestal.step <= SERIES.capabilities.pedestal.limit) {
-					self.data.masterPedValue += SERIES.capabilities.pedestal.step
-				}
-				await sendCam(self, SERIES.capabilities.pedestal.cmd + ':' + (SERIES.capabilities.pedestal.offset +
-					self.data.masterPedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.pedestal.hexlen, '0'))
-			},
+				const val = getNextValue(self.data.masterPedValue,
+					-SERIES.capabilities.pedestal.limit, +SERIES.capabilities.pedestal.limit,
+					+SERIES.capabilities.pedestal.step)
+				await sendCam(self, SERIES.capabilities.pedestal.cmd + ':' +
+					toHexString(SERIES.capabilities.pedestal.offset + val, SERIES.capabilities.pedestal.hexlen))
+			},			
 		}
 
 		actions.pedD = {
 			name: 'Exposure - Master Pedestal Down',
 			options: [],
 			callback: async (action) => {
-				if (self.data.masterPedValue - SERIES.capabilities.pedestal.step <= SERIES.capabilities.pedestal.limit) {
-					self.data.masterPedValue -= SERIES.capabilities.pedestal.step
-				}
-				await sendCam(self, SERIES.capabilities.pedestal.cmd + ':' + (SERIES.capabilities.pedestal.offset +
-					self.data.masterPedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.pedestal.hexlen, '0'))
-			},
+				const val = getNextValue(self.data.masterPedValue,
+					-SERIES.capabilities.pedestal.limit, +SERIES.capabilities.pedestal.limit,
+					-SERIES.capabilities.pedestal.step)
+				await sendCam(self, SERIES.capabilities.pedestal.cmd + ':' +
+					toHexString(SERIES.capabilities.pedestal.offset + val, SERIES.capabilities.pedestal.hexlen))
+			},	
 		}
 
 		actions.pedS = {
-			name: 'Exposure - Set Master Pedestal',
+			name: 'Exposure - Master Pedestal Set',
 			options: [
 				{
 					id: 'val',
@@ -980,9 +885,8 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				self.data.masterPedValue = action.options.val
-				await sendCam(self, SERIES.capabilities.pedestal.cmd + ':' + (SERIES.capabilities.pedestal.offset +
-					self.data.masterPedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.pedestal.hexlen, '0'))
+				await sendCam(self, SERIES.capabilities.pedestal.cmd + ':' +
+					toHexString(SERIES.capabilities.pedestal.offset + action.options.val, SERIES.capabilities.pedestal.hexlen))
 			},
 		}
 	}
@@ -995,7 +899,7 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Select Mode',
 					id: 'val',
-					default: '0',
+					default: SERIES.capabilities.whiteBalance.dropdown[0].id,
 					choices: SERIES.capabilities.whiteBalance.dropdown,
 				},
 			],
@@ -1041,7 +945,7 @@ export function getActionDefinitions(self) {
 		}
 
 		actions.colorTemperatureSet = {
-			name: 'White Balance - Set Color Temperature',
+			name: 'White Balance - Color Temperature Set',
 			options: [
 				{
 					type: 'dropdown',
@@ -1076,7 +980,7 @@ export function getActionDefinitions(self) {
 
 		if (SERIES.capabilities.colorTemperature.advanced.set) {
 			actions.colorTemperatureSet = {
-				name: 'White Balance - Set Color Temperature',
+				name: 'White Balance - Color Temperature Set',
 				options: [
 					{
 						id: 'val',
@@ -1092,7 +996,7 @@ export function getActionDefinitions(self) {
 				],
 				callback: async (action) => {
 					await sendCam(self, SERIES.capabilities.colorTemperature.advanced.set + ':' +
-						parseInt(action.options.val).toString(16).toUpperCase().padStart(5, '0') + ':0')
+						toHexString(action.options.val, 5) + ':0')
 				},
 			}
 		}
@@ -1103,11 +1007,11 @@ export function getActionDefinitions(self) {
 			name: 'Color - Red Pedestal Up',
 			options: [],
 			callback: async (action) => {
-				if (self.data.redPedValue + SERIES.capabilities.colorPedestal.step <= SERIES.capabilities.colorPedestal.limit) {
-					self.data.redPedValue += SERIES.capabilities.colorPedestal.step
-				}
-				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.red + ':' + (SERIES.capabilities.colorPedestal.offset +
-					self.data.redPedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorPedestal.hexlen, '0'))
+				const val = getNextValue(self.data.redPedValue,
+					-SERIES.capabilities.colorPedestal.limit, +SERIES.capabilities.colorPedestal.limit,
+					+SERIES.capabilities.colorPedestal.step)
+				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.red + ':' +
+					toHexString(SERIES.capabilities.colorPedestal.offset + val, SERIES.capabilities.colorPedestal.hexlen))
 			},
 		}
 
@@ -1115,16 +1019,16 @@ export function getActionDefinitions(self) {
 			name: 'Color - Red Pedestal Down',
 			options: [],
 			callback: async (action) => {
-				if (self.data.redPedValue - SERIES.capabilities.colorPedestal.step <= SERIES.capabilities.colorPedestal.limit) {
-					self.data.redPedValue -= SERIES.capabilities.colorPedestal.step
-				}
-				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.red + ':' + (SERIES.capabilities.colorPedestal.offset +
-					self.data.redPedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorPedestal.hexlen, '0'))
+				const val = getNextValue(self.data.redPedValue,
+					-SERIES.capabilities.colorPedestal.limit, +SERIES.capabilities.colorPedestal.limit,
+					-SERIES.capabilities.colorPedestal.step)
+				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.red + ':' +
+					toHexString(SERIES.capabilities.colorPedestal.offset + val, SERIES.capabilities.colorPedestal.hexlen))
 			},
 		}
 
 		actions.pedRedS = {
-			name: 'Color - Set Red Pedestal',
+			name: 'Color - Red Pedestal Set',
 			options: [
 				{
 					id: 'val',
@@ -1139,9 +1043,8 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				self.data.redPedValue = action.options.val
-				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.red + ':' + (SERIES.capabilities.colorPedestal.offset +
-					self.data.redPedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorPedestal.hexlen, '0'))
+				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.red + ':' +
+					toHexString(SERIES.capabilities.colorPedestal.offset + action.options.val, SERIES.capabilities.colorPedestal.hexlen))
 			},
 		}
 	}
@@ -1151,11 +1054,11 @@ export function getActionDefinitions(self) {
 			name: 'Color - Blue Pedestal Up',
 			options: [],
 			callback: async (action) => {
-				if (self.data.bluePedValue + SERIES.capabilities.colorPedestal.step <= SERIES.capabilities.colorPedestal.limit) {
-					self.data.bluePedValue += SERIES.capabilities.colorPedestal.step
-				}
-				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.blue + ':' + (SERIES.capabilities.colorPedestal.offset +
-					self.data.bluePedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorPedestal.hexlen, '0'))
+				const val = getNextValue(self.data.bluePedValue,
+					-SERIES.capabilities.colorPedestal.limit, +SERIES.capabilities.colorPedestal.limit,
+					+SERIES.capabilities.colorPedestal.step)
+				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.blue + ':' +
+					toHexString(SERIES.capabilities.colorPedestal.offset + val, SERIES.capabilities.colorPedestal.hexlen))
 			},
 		}
 
@@ -1163,16 +1066,16 @@ export function getActionDefinitions(self) {
 			name: 'Color - Blue Pedestal Down',
 			options: [],
 			callback: async (action) => {
-				if (self.data.bluePedValue - SERIES.capabilities.colorPedestal.step <= SERIES.capabilities.colorPedestal.limit) {
-					self.data.bluePedValue -= SERIES.capabilities.colorPedestal.step
-				}
-				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.blue + ':' + (SERIES.capabilities.colorPedestal.offset +
-					self.data.bluePedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorPedestal.hexlen, '0'))
+				const val = getNextValue(self.data.bluePedValue,
+					-SERIES.capabilities.colorPedestal.limit, +SERIES.capabilities.colorPedestal.limit,
+					-SERIES.capabilities.colorPedestal.step)
+				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.blue + ':' +
+					toHexString(SERIES.capabilities.colorPedestal.offset + val, SERIES.capabilities.colorPedestal.hexlen))
 			},
 		}
 
 		actions.pedBlueS = {
-			name: 'Color - Set Blue Pedestal',
+			name: 'Color - Blue Pedestal Set',
 			options: [
 				{
 					id: 'val',
@@ -1187,9 +1090,8 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				self.data.bluePedValue = action.options.val
-				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.blue + ':' + (SERIES.capabilities.colorPedestal.offset +
-					self.data.bluePedValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorPedestal.hexlen, '0'))
+				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.blue + ':' +
+					toHexString(SERIES.capabilities.colorPedestal.offset + action.options.val, SERIES.capabilities.colorPedestal.hexlen))
 			},
 		}
 	}
@@ -1199,11 +1101,11 @@ export function getActionDefinitions(self) {
 			name: 'Color - Red Gain Up',
 			options: [],
 			callback: async (action) => {
-				if (self.data.redGainValue + SERIES.capabilities.colorGain.step <= SERIES.capabilities.colorGain.limit) {
-					self.data.redGainValue += SERIES.capabilities.colorGain.step
-				}
-				await sendCam(self, SERIES.capabilities.colorGain.cmd.red + ':' + (SERIES.capabilities.colorGain.offset +
-					self.data.redGainValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, '0'))
+				const val = getNextValue(self.data.redGainValue,
+					-SERIES.capabilities.colorGain.limit, +SERIES.capabilities.colorGain.limit,
+					+SERIES.capabilities.colorGain.step)
+				await sendCam(self, SERIES.capabilities.colorGain.cmd.red + ':' +
+					toHexString(SERIES.capabilities.colorGain.offset + val, SERIES.capabilities.colorGain.hexlen))
 			},
 		}
 
@@ -1211,16 +1113,16 @@ export function getActionDefinitions(self) {
 			name: 'Color - Red Gain Down',
 			options: [],
 			callback: async (action) => {
-				if (self.data.redGainValue - SERIES.capabilities.colorGain.step <= SERIES.capabilities.colorGain.limit) {
-					self.data.redGainValue -= SERIES.capabilities.colorGain.step
-				}
-				await sendCam(self, SERIES.capabilities.colorGain.cmd.red + ':' + (SERIES.capabilities.colorGain.offset +
-					self.data.redGainValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, '0'))
+				const val = getNextValue(self.data.redGainValue,
+					-SERIES.capabilities.colorGain.limit, +SERIES.capabilities.colorGain.limit,
+					-SERIES.capabilities.colorGain.step)
+				await sendCam(self, SERIES.capabilities.colorGain.cmd.red + ':' +
+					toHexString(SERIES.capabilities.colorGain.offset + val, SERIES.capabilities.colorGain.hexlen))
 			},
 		}
 
 		actions.gainRedS = {
-			name: 'Color - Set Red Gain',
+			name: 'Color - Red Gain Set',
 			options: [
 				{
 					id: 'val',
@@ -1235,9 +1137,8 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				self.data.redGainValue = action.options.val
-				await sendCam(self, SERIES.capabilities.colorGain.cmd.red + ':' + (SERIES.capabilities.colorGain.offset +
-					self.data.redGainValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, '0'))
+				await sendCam(self, SERIES.capabilities.colorGain.cmd.red + ':' +
+					toHexString(SERIES.capabilities.colorGain.offset + action.options.val, SERIES.capabilities.colorGain.hexlen))
 			},
 		}
 	}
@@ -1247,11 +1148,11 @@ export function getActionDefinitions(self) {
 			name: 'Color - Blue Gain Up',
 			options: [],
 			callback: async (action) => {
-				if (self.data.blueGainValue + SERIES.capabilities.colorGain.step <= SERIES.capabilities.colorGain.limit) {
-					self.data.blueGainValue += SERIES.capabilities.colorGain.step
-				}
-				await sendCam(self, SERIES.capabilities.colorGain.cmd.blue + ':' + (SERIES.capabilities.colorGain.offset +
-					self.data.blueGainValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, '0'))
+				const val = getNextValue(self.data.blueGainValue,
+					-SERIES.capabilities.colorGain.limit, +SERIES.capabilities.colorGain.limit,
+					+SERIES.capabilities.colorGain.step)
+				await sendCam(self, SERIES.capabilities.colorGain.cmd.blue + ':' +
+					toHexString(SERIES.capabilities.colorGain.offset + val, SERIES.capabilities.colorGain.hexlen))
 			},
 		}
 
@@ -1259,16 +1160,16 @@ export function getActionDefinitions(self) {
 			name: 'Color - Blue Gain Down',
 			options: [],
 			callback: async (action) => {
-				if (self.data.blueGainValue - SERIES.capabilities.colorGain.step <= SERIES.capabilities.colorGain.limit) {
-					self.data.blueGainValue -= SERIES.capabilities.colorGain.step
-				}
-				await sendCam(self, SERIES.capabilities.colorGain.cmd.blue + ':' + (SERIES.capabilities.colorGain.offset +
-					self.data.blueGainValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, '0'))
+				const val = getNextValue(self.data.blueGainValue,
+					-SERIES.capabilities.colorGain.limit, +SERIES.capabilities.colorGain.limit,
+					-SERIES.capabilities.colorGain.step)
+				await sendCam(self, SERIES.capabilities.colorGain.cmd.blue + ':' +
+					toHexString(SERIES.capabilities.colorGain.offset + val, SERIES.capabilities.colorGain.hexlen))
 			},
 		}
 
 		actions.gainBlueS = {
-			name: 'Color - Set Blue Gain',
+			name: 'Color - Blue Gain Set',
 			options: [
 				{
 					id: 'val',
@@ -1283,9 +1184,8 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				self.data.blueGainValue = action.options.val
-				await sendCam(self, SERIES.capabilities.colorGain.cmd.blue + ':' + (SERIES.capabilities.colorGain.offset +
-					self.data.blueGainValue).toString(16).toUpperCase().padStart(SERIES.capabilities.colorGain.hexlen, '0'))
+				await sendCam(self, SERIES.capabilities.colorGain.cmd.blue + ':' +
+				toHexString(SERIES.capabilities.colorGain.offset + action.options.val, SERIES.capabilities.colorGain.hexlen))
 			},
 		}
 	}
@@ -1308,7 +1208,7 @@ export function getActionDefinitions(self) {
 		}
 
 		actions.filterS = {
-			name: 'Exposure - Set ND Filter',
+			name: 'Exposure - ND Filter Set',
 			options: [
 				{
 					type: 'dropdown',
@@ -1378,7 +1278,7 @@ export function getActionDefinitions(self) {
 		}
 
 		actions.recallModePset = {
-			name: 'Preset - Set Recall Scope',
+			name: 'Preset - Recall Scope Set',
 			options: [
 				{
 					type: 'dropdown',
@@ -1396,20 +1296,20 @@ export function getActionDefinitions(self) {
 
 	if (SERIES.capabilities.presetSpeed) {
 		actions.speedPset = {
-			name: 'Preset - Set Recall Speed',
+			name: 'Preset - Recall Speed Set',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Speed',
 					id: 'speed',
-					default: '000',
+					default: e.ENUM_PSSPEED[0].id,
 					choices: e.ENUM_PSSPEED,
 				},
 				{
 					type: 'dropdown',
 					label: 'Table',
 					id: 'table',
-					default: '0',
+					default: SERIES.capabilities.presetSpeed.dropdown[0].id,
 					choices: SERIES.capabilities.presetSpeed.dropdown,
 				},
 			],
@@ -1425,7 +1325,7 @@ export function getActionDefinitions(self) {
 
 	if (SERIES.capabilities.presetTime) {
 		actions.timePset = {
-			name: 'Preset - Set Recall Time',
+			name: 'Preset - Recall Time Set',
 			options: [
 				{
 					id: 'val',
@@ -1440,7 +1340,7 @@ export function getActionDefinitions(self) {
 			],
 			callback: async (action) => {
 				await sendCam(self, 'OSJ:29:1')
-				await sendPTZ(self, 'UPVS' + parseInt(action.options.val).toString(16).toUpperCase().padStart(3, '0'))
+				await sendPTZ(self, 'UPVS' + toHexString(action.options.val, 3))
 			},
 		}
 	}
@@ -1456,13 +1356,13 @@ export function getActionDefinitions(self) {
 				{
 					type: 'dropdown',
 					label: 'Option',
-					id: 'value',
-					default: '0',
+					id: 'val',
+					default: e.ENUM_OFF_ON[1].id,
 					choices: e.ENUM_OFF_ON,
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OSL:B6:' + action.options.value)
+				await sendCam(self, 'OSL:B6:' + action.options.val)
 			},
 		}
 
@@ -1472,13 +1372,13 @@ export function getActionDefinitions(self) {
 				{
 					type: 'dropdown',
 					label: 'Option',
-					id: 'value',
-					default: '0',
+					id: 'val',
+					default: e.ENUM_STOP_START[1].id,
 					choices: e.ENUM_STOP_START,
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OSL:BC:' + action.options.value)
+				await sendCam(self, 'OSL:BC:' + action.options.val)
 			},
 		}
 	}
@@ -1515,21 +1415,21 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (SERIES.capabilities.tally)  {
-		if (SERIES.capabilities.tally2)  {
+	if (SERIES.capabilities.tally) {
+		if (SERIES.capabilities.tally2) {
 			actions.tally = {
 				name: 'System - Red Tally',
 				options: [
 					{
 						type: 'dropdown',
 						label: 'Option',
-						id: 'value',
-						default: '1',
+						id: 'val',
+						default: e.ENUM_OFF_ON[1].id,
 						choices: e.ENUM_OFF_ON,
 					},
 				],
 				callback: async (action) => {
-					await sendCam(self, 'TLR:' + action.options.value)
+					await sendCam(self, 'TLR:' + action.options.val)
 				},
 			}
 			actions.tally2 = {
@@ -1538,29 +1438,29 @@ export function getActionDefinitions(self) {
 					{
 						type: 'dropdown',
 						label: 'Option',
-						id: 'value',
-						default: '1',
+						id: 'val',
+						default: e.ENUM_OFF_ON[1].id,
 						choices: e.ENUM_OFF_ON,
 					},
 				],
 				callback: async (action) => {
-					await sendCam(self, 'TLG:' + action.options.value)
+					await sendCam(self, 'TLG:' + action.options.val)
 				},
 			}
-			if (SERIES.capabilities.tally3)  {
+			if (SERIES.capabilities.tally3) {
 				actions.tally3 = {
 					name: 'System - Yellow Tally',
 					options: [
 						{
 							type: 'dropdown',
 							label: 'Option',
-							id: 'value',
-							default: '1',
+							id: 'val',
+							default: e.ENUM_OFF_ON[1].id,
 							choices: e.ENUM_OFF_ON,
 						},
 					],
 					callback: async (action) => {
-						await sendCam(self, 'TLY:' + action.options.value)
+						await sendCam(self, 'TLY:' + action.options.val)
 					},
 				}
 			}
@@ -1571,13 +1471,13 @@ export function getActionDefinitions(self) {
 					{
 						type: 'dropdown',
 						label: 'Option',
-						id: 'value',
-						default: '1',
+						id: 'val',
+						default: e.ENUM_OFF_ON[1].id,
 						choices: e.ENUM_OFF_ON,
 					},
 				],
 				callback: async (action) => {
-					await sendPTZ(self, 'DA' + action.options.value)
+					await sendPTZ(self, 'DA' + action.options.val)
 				},
 			}
 		}
@@ -1590,13 +1490,13 @@ export function getActionDefinitions(self) {
 				{
 					type: 'dropdown',
 					label: 'Option',
-					id: 'value',
-					default: '1',
+					id: 'val',
+					default: e.ENUM_OFF_ON[1].id,
 					choices: e.ENUM_OFF_ON,
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'DCB' + action.options.value)
+				await sendCam(self, 'DCB' + action.options.val)
 			},
 		}
 	}
@@ -1608,16 +1508,13 @@ export function getActionDefinitions(self) {
 				{
 					type: 'dropdown',
 					label: 'Position',
-					id: 'position',
-					default: '0',
-					choices: [
-						{ id: '0', label: 'Desktop' },
-						{ id: '1', label: 'Hanging' },
-					],
+					id: 'val',
+					default: e.ENUM_INSTALL_POSITION[0].id,
+					choices: e.ENUM_INSTALL_POSITION,
 				},
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'INS' + action.options.position)
+				await sendPTZ(self, 'INS' + action.options.val)
 			},
 		}
 	}
@@ -1629,7 +1526,7 @@ export function getActionDefinitions(self) {
 				{
 					type: 'dropdown',
 					label: 'SD Card Action',
-					id: 'value',
+					id: 'val',
 					default: 'start',
 					choices: [
 						{ id: 'start', label: 'Start Recording' },
@@ -1638,7 +1535,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendWeb(self, 'sdctrl?save=' + action.options.value)
+				await sendWeb(self, 'sdctrl?save=' + action.options.val)
 			},
 		}
 	}
@@ -1650,7 +1547,7 @@ export function getActionDefinitions(self) {
 				{
 					type: 'dropdown',
 					label: 'SRT Action (Caller)',
-					id: 'value',
+					id: 'val',
 					default: 'start',
 					choices: [
 						{ id: 'start', label: 'Start Streaming' },
@@ -1659,7 +1556,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendWeb(self, 'srt_ctrl?cmd=' + action.options.value)
+				await sendWeb(self, 'srt_ctrl?cmd=' + action.options.val)
 			},
 		}
 	}
@@ -1671,7 +1568,7 @@ export function getActionDefinitions(self) {
 				{
 					type: 'dropdown',
 					label: 'RTMP Action (Push)',
-					id: 'value',
+					id: 'val',
 					default: 'start',
 					choices: [
 						{ id: 'start', label: 'Start Streaming' },
@@ -1680,7 +1577,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendWeb(self, 'rtmp_ctrl?cmd=' + action.options.value)
+				await sendWeb(self, 'rtmp_ctrl?cmd=' + action.options.val)
 			},
 		}
 	}

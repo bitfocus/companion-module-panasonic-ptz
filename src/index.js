@@ -334,7 +334,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			'GF', // Request Focus Position*
 			'GI', // Request Iris Position (+Mode)*
 			'GZ', // Request Zoom Position*
-			'I', // Iris Position*
+			'I', // Iris Position (1-99)*
 			//'D1', // Focus Mode*
 			//'D3', // Iris Mode*
 			//'DA', // Tally*
@@ -370,7 +370,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			//'QGR', // R Gain
 			//'QRD', // R Pedestal
 			'QRS', // Iris Mode*
-			//'QRV', // Iris Control*
+			//'QRV', // Iris Control (0x0-0x3FF)*
 			//'QSH', // Shutter
 			//'QSV', // Software Version
 			//'QTD', // T Pedestal
