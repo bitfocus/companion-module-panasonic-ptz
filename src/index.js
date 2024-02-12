@@ -379,13 +379,13 @@ class PanasonicPTZInstance extends InstanceBase {
 			'QLG', // G-Tally Control*
 			//'QLY', // Y-Tally Control
 			'QSD:4F', // Iris Follow*
-			//'QSD:B1', // Color Temperature
+			//'QSD:B1', // Color Temperature (enumerated)
 			//'QSE:71', // Preset Scope
 			'QSG:39', // R Gain*
 			'QSG:3A', // B Gain*
 			//'QSG:4A', // Master Pedestal (UB300 only)
 			//'QSG:4C', // R Pedestal (UB300 only)
-			//'QSG:4D', // G Pedestal (UB160 only) 
+			//'QSG:4D', // G Pedestal (UE160 only) 
 			//'QSG:4E', // B Pedestal (UB300 only)
 			//'QSG:59', // Shutter SW
 			//'QSG:5A', // Shutter Mode
@@ -538,7 +538,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				case 'f': this.data.focusPosition = parseInt(str[0].substring(2, 5), 16) - 0x555; break
 				case 'i':
 					this.data.irisPosition = parseInt(str[0].substring(2, 5), 16) - 0x555
-					this.data.irisMode = str[0].substring(5, 6) === '1' ? 'Auto' : 'Manual'
+					this.data.irisMode = str[0].substring(5, 6)
 					break
 			}
 		}
@@ -610,22 +610,22 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.data.power = 'ON'
 				break
 			case 'iNS0':
-				this.data.installMode = 'Desktop'
+				this.data.installMode = '0'
 				break
 			case 'iNS1':
-				this.data.installMode = 'Hanging'
+				this.data.installMode = '1'
 				break
 			case 'd10':
-				this.data.focusMode = 'Manual'
+				this.data.focusMode = '0'
 				break
 			case 'd11':
-				this.data.focusMode = 'Auto'
+				this.data.focusMode = '1'
 				break
 			case 'd30':
-				this.data.irisMode = 'Manual'
+				this.data.irisMode = '0'
 				break
 			case 'd31':
-				this.data.irisMode = 'Auto'
+				this.data.irisMode = '1'
 				break
 			case 'DCB':
 			case 'OBR':
@@ -651,7 +651,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.data.tally3 = str[1] === '1' ? 'ON' : 'OFF'
 				break
 			case 'OAF':
-				this.data.focusMode = str[1] === '1' ? 'Auto' : 'Manual'
+				this.data.focusMode = str[1]
 				break
 			case 'OAW':
 				this.data.whiteBalance = str[1]
@@ -735,7 +735,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.data.gain = str[1].replace('0x', '').padStart(2, '0')
 				break
 			case 'ORS':
-				this.data.irisMode = str[1] === '1' ? 'Auto' : 'Manual'
+				this.data.irisMode = str[1]
 				break
 			case 'OTD':
 				this.data.masterPedValue = parseInt(str[1], 16) - 0x1e
@@ -829,8 +829,11 @@ class PanasonicPTZInstance extends InstanceBase {
 			autotrackingAngle: null,
 			colorTemperature: null,
 			filter: null,
+			focusMode: null,
 			gain: null,
+			installMode: null,
 			iris: null,
+			irisMode: null,
 			ois: null,
 			presetScope: null,
 			presetSpeed: null,
@@ -857,11 +860,6 @@ class PanasonicPTZInstance extends InstanceBase {
 			greenPedValue: 0,
 			masterPedValue: 0,
 
-			// decoded enums (as string)
-			focusMode: null,
-			installMode: null,
-			irisMode: null,
-
 			// other strings
 			autotrackingStatusLabel: null,
 			colorTempLabel: null,
@@ -878,15 +876,10 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 
 		this.ptSpeed = 25
-		this.ptSpeedIndex = 25
 		this.pSpeed = 25
-		this.pSpeedIndex = 25
 		this.tSpeed = 25
-		this.tSpeedIndex = 25
 		this.zSpeed = 25
-		this.zSpeedIndex = 25
 		this.fSpeed = 25
-		this.fSpeedIndex = 25
 		this.tcpPortSelected = 31004
 		this.tcpPortOld = this.config.tcpPort || 31004
 

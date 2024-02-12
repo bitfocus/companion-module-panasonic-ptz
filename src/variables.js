@@ -115,6 +115,8 @@ export function setVariables(self) {
 	if (SERIES.capabilities.presetSpeed) {
 		variables.push({ variableId: 'presetSpeed', name: 'Recall Speed' })
 		variables.push({ variableId: 'presetSpeedTable', name: 'Recall Speed Table' })
+	}
+	if (SERIES.capabilities.presetTime) {
 		variables.push({ variableId: 'presetSpeedUnit', name: 'Recall Speed Unit' })
 	}
 	if (SERIES.capabilities.recordSD) {
@@ -141,13 +143,22 @@ export function checkVariables(self) {
 		? getLabel(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature) : null
 
 	const filter = SERIES.capabilities.filter
-	? getLabel(SERIES.capabilities.filter.dropdown, self.data.filter) : null
+		? getLabel(SERIES.capabilities.filter.dropdown, self.data.filter) : null
+
+	const focusMode = SERIES.capabilities.focusAuto
+		? getLabel(e.ENUM_MAN_AUTO, self.data.focusMode) : null
 
 	const gain = SERIES.capabilities.gain
 		? getLabel(SERIES.capabilities.gain.dropdown, self.data.gain) : null
 
+	const installMode = SERIES.capabilities.install
+		? getLabel(e.ENUM_INSTALL_POSITION, self.data.installMode) : null
+
 	const iris = SERIES.capabilities.iris
 		? getLabel(e.ENUM_IRIS, self.data.iris) : null
+
+	const irisMode = SERIES.capabilities.irisAuto
+		? getLabel(e.ENUM_MAN_AUTO, self.data.irisMode) : null
 
 	const ois = SERIES.capabilities.ois
 		? getLabel(SERIES.capabilities.ois.dropdown, self.data.ois) : null
@@ -161,7 +172,7 @@ export function checkVariables(self) {
 	const presetSpeedTable = SERIES.capabilities.presetSpeed
 		? getLabel(SERIES.capabilities.presetSpeed.dropdown, self.data.presetSpeedTable) : null
 
-	const presetSpeedUnit = SERIES.capabilities.presetSpeed
+	const presetSpeedUnit = SERIES.capabilities.presetTime
 		? getLabel(e.ENUM_PSSPEED_UNIT, self.data.presetSpeedUnit) : null
 
 	const shutter = SERIES.capabilities.shutter
@@ -213,10 +224,6 @@ export function checkVariables(self) {
 		tally2: self.data.tally2,
 		tally3: self.data.tally3,
 
-		focusMode: self.data.focusMode,
-		installMode: self.data.installMode,
-		irisMode: self.data.irisMode,
-
 		presetSelected: (self.data.presetSelectedIdx + 1).toString(),
 		presetCompleted: (self.data.presetCompletedIdx + 1).toString(),
 
@@ -244,8 +251,11 @@ export function checkVariables(self) {
 		colorTemperature: self.data.colorTempLabel?self.data.colorTempLabel:colorTemperature,
 
 		filter: filter,
+		focusMode: focusMode,
 		gain: gain,
+		installMode: installMode,
 		iris: iris,
+		irisMode: irisMode,
 		ois: ois,
 		presetScope: presetScope,
 		presetSpeed: presetSpeed,

@@ -113,28 +113,12 @@ export function getFeedbackDefinitions(self) {
 					type: 'dropdown',
 					label: 'Position',
 					id: 'option',
-					default: '0',
-					choices: [
-						{ id: '0', label: 'Desktop' },
-						{ id: '1', label: 'Hanging' },
-					],
+					default: e.ENUM_INSTALL_POSITION[0].id,
+					choices: e.ENUM_INSTALL_POSITION,
 				},
 			],
 			callback: function (feedback) {
-				const opt = feedback.options
-				switch (opt.option) {
-					case '0':
-						if (self.data.ins === 'Desktop') {
-							return true
-						}
-						break
-					case '1':
-						if (self.data.ins === 'Hanging') {
-							return true
-						}
-						break
-				}
-				return false
+				return self.data.installMode === feedback.options.option
 			},
 		}
 	}
@@ -150,7 +134,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function (feedback) {
-				return self.data.focusMode === 'Auto'
+				return self.data.focusMode === '1'
 			},
 		}
 	}
@@ -166,7 +150,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function (feedback) {
-				return self.data.irisMode === 'Auto'
+				return self.data.irisMode === '1'
 			},
 		}
 	}
