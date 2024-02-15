@@ -26,7 +26,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 
 		try {
-			await got.get(url, { timeout: { request: 250 } } )
+			await got.get(url, { timeout: { request: 1000 } } )
 
 			this.log('info', 'un-subscribed: ' + url)
 		} catch (err) {
@@ -42,7 +42,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 
 		try {
-			await got.get(url, { timeout: { request: 250 } } )
+			await got.get(url, { timeout: { request: 1000 } } )
 
 			this.log('info', 'subscribed: ' + url)
 
@@ -75,14 +75,14 @@ class PanasonicPTZInstance extends InstanceBase {
 				// When the client requests to end the TCP connection with the server, the server ends the connection.
 				socket.on('end', () => {
 					this.clients.splice(this.clients.indexOf(socket), 1)
-					this.updateStatus(InstanceStatus.Disconnected)
+					//this.updateStatus(InstanceStatus.Disconnected)
 				})
 
 				// common error handler
 				socket.on('error', () => {
 					this.clients.splice(this.clients.indexOf(socket), 1)
 					this.log('error', 'Update notification channel errored/died: ' + socket.name)
-					this.updateStatus(InstanceStatus.Disconnected)
+					//this.updateStatus(InstanceStatus.Disconnected)
 				})
 
 				socket.name = socket.remoteAddress + ':' + socket.remotePort
@@ -168,7 +168,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			}
 
 			try {
-				const response = await got.get(url, { timeout: { request: 250 } } )
+				const response = await got.get(url, { timeout: { request: 1000 } } )
 				if (response.body) {
 					const lines = response.body.trim().split('\r\n')
 
@@ -221,7 +221,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			}
 
 			try {
-				const response = await got.get(url, { timeout: { request: 250 } } )
+				const response = await got.get(url, { timeout: { request: 1000 } } )
 				if (response.body) {
 					const lines = response.body.trim().split('\r\n')
 
@@ -258,7 +258,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			}
 
 			try {
-				const response = await got.get(url, { timeout: { request: 250 } } )
+				const response = await got.get(url, { timeout: { request: 1000 } } )
 				if (response.body) {
 					const lines = response.body.trim().split('\r\n')
 
@@ -443,7 +443,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.log('info', `PTZ Request: ${url}`)
 			}
 
-			got.get(url, { timeout: { request: 250 } } )
+			got.get(url, { timeout: { request: 1000 } } )
 			.then((response) => {
 				if (response.body) {
 					const str = response.body.trim()
@@ -472,7 +472,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.log('info', `Cam Request: ${url}`)
 			}
 	
-			got.get(url, { timeout: { request: 250 } } )
+			got.get(url, { timeout: { request: 1000 } } )
 			.then((response) => {
 				if (response.body) {
 					const str = response.body.trim()
@@ -502,7 +502,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.log('info', `Web Request: ${url}`)
 			}
 	
-			got.get(url, { timeout: { request: 250 } } )
+			got.get(url, { timeout: { request: 1000 } } )
 			.then((response) => {
 				if (response.body) {
 					const lines = response.body.trim().split('\r\n')
