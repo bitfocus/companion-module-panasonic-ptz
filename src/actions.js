@@ -8,95 +8,88 @@ import got from 'got'
 // ######################
 
 export async function sendPTZ(self, cmd) {
-	if (cmd) {
-		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/aw_ptz?cmd=%23${cmd}&res=1`
-		if (self.config.debug) {
-			self.log('info', `PTZ Request: ${url}`)
-		}
+	const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/aw_ptz?cmd=%23${cmd}&res=1`
+	if (self.config.debug) {
+		self.log('info', `PTZ Request: ${url}`)
+	}
 
-		try {
-			const response = await got.get(url)
+	try {
+		const response = await got.get(url)
 
-			if (response.body) {
-				const str = response.body.trim()
+		if (response.body) {
+			const str = response.body.trim()
 
-				if (self.config.debug) {
-					self.log('info', 'Received PTZ Command Response: ' + str)
-				}
-
-				self.parseUpdate(str.split(':'))
-
-				self.checkVariables()
-				self.checkFeedbacks()
+			if (self.config.debug) {
+				self.log('info', 'Received PTZ Command Response: ' + str)
 			}
 
-		} catch (err) {
-			throw new Error(`PTZ Action failed: ${url}`)
+			self.parseUpdate(str.split(':'))
+
+			self.checkVariables()
+			self.checkFeedbacks()
 		}
+
+	} catch (err) {
+		throw new Error(`PTZ Action failed: ${url}`)
 	}
 }
 
 export async function sendCam(self, cmd) {
-	if (cmd) {
-		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/aw_cam?cmd=${cmd}&res=1`
+	const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/aw_cam?cmd=${cmd}&res=1`
 
-		if (self.config.debug) {
-			self.log('info', `Cam Request: ${url}`)
-		}
+	if (self.config.debug) {
+		self.log('info', `Cam Request: ${url}`)
+	}
 
-		try {
-			const response = await got.get(url)
-			
-			if (response.body) {
-				const str = response.body.trim()
+	try {
+		const response = await got.get(url)
+		
+		if (response.body) {
+			const str = response.body.trim()
 
-				if (self.config.debug) {
-					self.log('info', 'Received Cam Command Response: ' + str)
-				}
-
-				self.parseUpdate(str.split(':'))
-
-				self.checkVariables()
-				self.checkFeedbacks()
+			if (self.config.debug) {
+				self.log('info', 'Received Cam Command Response: ' + str)
 			}
-		} catch (err) {
-			throw new Error(`Cam Action failed: ${url}`)
+
+			self.parseUpdate(str.split(':'))
+
+			self.checkVariables()
+			self.checkFeedbacks()
 		}
+	} catch (err) {
+		throw new Error(`Cam Action failed: ${url}`)
 	}
 }
 
 // Currently only for web commands that don't require admin rights
 export async function sendWeb(self, cmd) {
+	const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/${cmd}`
 
-	if (cmd) {
-		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/${cmd}`
+	if (self.config.debug) {
+		self.log('info', `Web Request: ${url}`)
+	}
 
-		if (self.config.debug) {
-			self.log('info', `Web Request: ${url}`)
-		}
+	try {
+		const response = await got.get(url)
 
-		try {
-			const response = await got.get(url)
+		if (response.body) {
+			const lines = response.body.trim().split('\r\n')
 
-			if (response.body) {
-				const lines = response.body.trim().split('\r\n')
+			for (let line of lines) {
+				const str = line.trim()
 
-				for (let line of lines) {
-					const str = line.trim()
-
-					if (self.config.debug) {
-						self.log('info', 'Received Web Command Response: ' + str)
-					}
-
-					self.parseWeb(str.split('='), cmd)
+				if (self.config.debug) {
+					self.log('info', 'Received Web Command Response: ' + str)
 				}
 
-				self.checkVariables()
-				self.checkFeedbacks()
+				self.parseWeb(str.split('='), cmd)
 			}
-		} catch (err) {
-			throw new Error(`Web Action failed: ${url}`)
+
+			self.checkVariables()
+			self.checkFeedbacks()
 		}
+	} catch (err) {
+		throw new Error(`Web Action failed: ${url}`)
 	}
 }
 
@@ -1314,10 +1307,10 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				if (SERIES.capabilities.presetTime) {
-					await sendCam(self, 'OSJ:29:0')
-				}
-				await sendPTZ(self, 'PST' + action.options.table)
+				const r = parseInt(action.options.speed, 16)
+				const s = r < 0x001 || r > 0x063
+				if (SERIES.capabilities.presetTime) await sendCam(self, 'OSJ:29:' + (s?'0':'1'))
+				if (s) await sendPTZ(self, 'PST' + action.options.table)
 				await sendPTZ(self, 'UPVS' + action.options.speed)
 			},
 		}
@@ -1405,15 +1398,19 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (SERIES.capabilities.restart) {
+	//ToDo: POST with Admin auth
+	/*
+ 	if (SERIES.capabilities.restart) {
 		actions.restart = {
 			name: 'System - Restart Camera',
 			options: [],
 			callback: async (action) => {
-				await sendWeb(self, 'initial?cmd=reset&Randomnum=12345')
+				//ToDo: POST with Admin auth
+				await sendWeb(self, 'initial?cmd=reset&Randomnum=0123456789ABCDEF')
 			},
 		}
 	}
+	*/
 
 	if (SERIES.capabilities.tally) {
 		if (SERIES.capabilities.tally2) {
@@ -1496,7 +1493,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'DCB' + action.options.val)
+				await sendCam(self, 'DCB:' + action.options.val)
 			},
 		}
 	}

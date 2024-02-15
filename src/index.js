@@ -12,6 +12,7 @@ import { ConfigFields } from './config.js'
 import * as net from 'net'
 import got from 'got'
 import EventEmitter from 'events'
+import { getAndUpdateSeries } from './common.js'
 
 // ########################
 // #### Instance setup ####
@@ -25,7 +26,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 
 		try {
-			await got.get(url)
+			await got.get(url, { timeout: { request: 250 } } )
 
 			this.log('info', 'un-subscribed: ' + url)
 		} catch (err) {
@@ -41,15 +42,15 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 
 		try {
-			await got.get(url)
+			await got.get(url, { timeout: { request: 250 } } )
 
 			this.log('info', 'subscribed: ' + url)
 
 			this.updateStatus(InstanceStatus.Ok)
 		} catch (err) {
 			this.log('error', 'Error on subscribe: ' + String(err))
-
-			//this.updateStatus(InstanceStatus.UnknownWarning, 'Subscription unsuccessful')
+			
+			this.updateStatus(InstanceStatus.UnknownWarning, 'Update subscription failed')
 		}
 	}
 
@@ -74,12 +75,14 @@ class PanasonicPTZInstance extends InstanceBase {
 				// When the client requests to end the TCP connection with the server, the server ends the connection.
 				socket.on('end', () => {
 					this.clients.splice(this.clients.indexOf(socket), 1)
+					this.updateStatus(InstanceStatus.Disconnected)
 				})
 
 				// common error handler
 				socket.on('error', () => {
 					this.clients.splice(this.clients.indexOf(socket), 1)
 					this.log('error', 'Update notification channel errored/died: ' + socket.name)
+					this.updateStatus(InstanceStatus.Disconnected)
 				})
 
 				socket.name = socket.remoteAddress + ':' + socket.remotePort
@@ -120,7 +123,7 @@ class PanasonicPTZInstance extends InstanceBase {
 					// Cancel the subscription of info from the PTZ
 					this.unsubscribeTCPEvents(tcpPortSelected).catch(() => null)
 				} else {
-					this.log('error', 'TCP error: ' + String(err))
+					this.log('error', 'TCP server error: ' + String(err))
 				}
 			})
 
@@ -156,102 +159,60 @@ class PanasonicPTZInstance extends InstanceBase {
 		return this
 	}
 
-	getCameraInfo() {
+	async getCameraInfo() {
 		if (this.config.host) {
 			const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/getinfo?FILE=1`
-
-			// ToDo:
-			// Basic protocol
-			// /cgi-bin/get_basic
-			// /cgi-bin/model_serial
-			// /cgi-bin/get_capability
-
-			// Restart
-			// /cgi-bin/initial?cmd=reset&Randomnum=12345
-
-			// SD Card Recording
-			// /cgi-bin/get_state
-			// /cgi-bin/sdctrl
-
-			// Stream RTMP
-			// /cgi-bin/get_rtmp_status
-			// /cgi-bin/rtmp_ctrl
-			// /cgi-bin/get_rtmp_param
-
-			// Stream SRT
-			// /cgi-bin/get_srt_status
-			// /cgi-bin/srt_ctrl
-			// /cgi-bin/get_srt_info
-
-			// Stream TS
-			// /cgi-bin/get_ts_status
-			// /cgi-bin/ts_ctrl
-			// /cgi-bin/get_ts_udp_info
-
-			// Stream RTSP
-			// /cgi-bin/get_rtsp
-
-			// Streaming (Encoder Mode AVC/HEVC)
-			// /cgi-bin/get_stream_mode
-			// /cgi-bin/set_stream_mode
-
-			// Snapshot
-			// /cgi-bin/view.cgi?action=snapshot
-
-			// Thumbnails
-			// /cgi-bin/get_preset_thumbnail?preset_number=X
 
 			if (this.config.debug) {
 				this.log('info', `getinfo Request : ${url}`)
 			}
 
-			got.get(url)
-				.then((response) => {
-					this.updateStatus(InstanceStatus.Ok)
+			try {
+				const response = await got.get(url, { timeout: { request: 250 } } )
+				if (response.body) {
+					const lines = response.body.trim().split('\r\n')
 
-					if (response.body) {
-						const lines = response.body.trim().split('\r\n')
-
-						for (let line of lines) {
-							let str = line.trim()
-							if (this.config.debug) {
-								this.log('info', 'Received INFO: ' + str)
-							}
-
-							str = str.split('=')
-							switch (str[0]) {
-								case 'MAC':
-									this.data.mac = str[1]
-									break
-								case 'SERIAL':
-									this.data.serial = str[1]
-									break
-								case 'VERSION':
-									this.data.version = str[1]
-									break
-								case 'NAME':
-									this.data.modelINFO = str[1]
-									this.log('info', 'Detected Camera Model: ' + this.data.modelINFO)
-									// if a new model is detected or selected, re-initialise all actions, variables and feedbacks
-									if (this.data.modelINFO !== this.data.model) {
-										this.reInitAll()
-									}
-									break
-							}
+					for (let line of lines) {
+						let str = line.trim()
+						if (this.config.debug) {
+							this.log('info', 'Received INFO: ' + str)
 						}
 
-						this.checkVariables()
-						this.checkFeedbacks()
+						str = str.split('=')
+						switch (str[0]) {
+							case 'MAC':
+								this.data.mac = str[1]
+								break
+							case 'SERIAL':
+								this.data.serial = str[1]
+								break
+							case 'VERSION':
+								this.data.version = str[1]
+								break
+							case 'NAME':
+								this.data.modelINFO = str[1]
+								this.log('info', 'Detected Camera Model: ' + this.data.modelINFO)
+								// if a new model is detected or selected, re-initialise all actions, variables and feedbacks
+								if (this.data.modelINFO !== this.data.model) {
+									this.reInitAll()
+								}
+								break
+						}
 					}
-				})
-				.catch((err) => {
-					this.log('error', 'Error checking basic communication and receiving model: ' + String(err))
-					this.updateStatus(InstanceStatus.ConnectionFailure)
-				})
+
+					this.checkVariables()
+					this.checkFeedbacks()
+
+					this.updateStatus(InstanceStatus.Ok)
+				}
+			} catch (err) {
+				this.updateStatus(InstanceStatus.ConnectionFailure)
+				this.log('error', 'Error checking basic communication and receiving model: ' + String(err))
+			}
 		}
 	}
 
-	getCameraTitle() {
+	async getCameraTitle() {
 		if (this.config.host) {
 			const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/get_basic`
 
@@ -259,37 +220,36 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.log('info', `get_basic Request : ${url}`)
 			}
 
-			got.get(url)
-				.then((response) => {
-					this.updateStatus(InstanceStatus.Ok)
+			try {
+				const response = await got.get(url, { timeout: { request: 250 } } )
+				if (response.body) {
+					const lines = response.body.trim().split('\r\n')
 
-					if (response.body) {
-						const lines = response.body.trim().split('\r\n')
-
-						for (let line of lines) {
-							let str = line.trim()
-							if (this.config.debug) {
-								this.log('info', 'Received BASIC: ' + str)
-							}
-
-							str = str.split('=')
-
-							if (str[0] === 'cam_title') {
-								this.data.title = str[1]
-							}
+					for (let line of lines) {
+						let str = line.trim()
+						if (this.config.debug) {
+							this.log('info', 'Received BASIC: ' + str)
 						}
 
-						this.checkVariables()
+						str = str.split('=')
+
+						if (str[0] === 'cam_title') {
+							this.data.title = str[1]
+						}
 					}
-				})
-				.catch((err) => {
-					this.log('error', 'Error checking basic communication and receiving title: ' + String(err))
-					this.updateStatus(InstanceStatus.ConnectionFailure)
-				})
+
+					this.checkVariables()
+
+					this.updateStatus(InstanceStatus.Ok)
+				}
+			} catch (err) {
+				this.updateStatus(InstanceStatus.ConnectionFailure)
+				this.log('error', 'Error checking basic communication and receiving title: ' + String(err))
+			}
 		}
 	}
 
-	getCameraStatus() {
+	async getCameraStatus() {
 		if (this.config.host) {
 			const url = `http://${this.config.host}:${this.config.httpPort}/live/camdata.html`
 
@@ -297,139 +257,183 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.log('info', `camdata Request: ${url}`)
 			}
 
-			got.get(url)
-				.then((response) => {
-					if (response.body) {
-						const lines = response.body.trim().split('\r\n')
+			try {
+				const response = await got.get(url, { timeout: { request: 250 } } )
+				if (response.body) {
+					const lines = response.body.trim().split('\r\n')
 
-						for (let line of lines) {
-							const str = line.trim()
-	
-							if (this.config.debug) {
-								this.log('info', 'Received Initial Status: ' + str)
-							}
-	
-							this.parseUpdate(str.split(':'))
+					for (let line of lines) {
+						const str = line.trim()
+
+						if (this.config.debug) {
+							this.log('info', 'Received Initial Status: ' + str)
 						}
 
-						this.checkVariables()
-						this.checkFeedbacks()
+						this.parseUpdate(str.split(':'))
 					}
-				})
-				.catch((err) => {
-					this.log('error', 'Error requesting inital status from PTZ: ' + String(err))
-				})
+
+					this.checkVariables()
+					this.checkFeedbacks()
+
+					this.updateStatus(InstanceStatus.Ok)
+				}
+			}
+			catch (err) {
+				this.log('error', 'Error requesting inital status from PTZ: ' + String(err))
+			}
 		}
 	}
 
 	queryCameraStatus() {
-		const cmdPTZ = [
-			//'O', // Power*
-			//'PE00', // Preset Entry 0
-			//'PE01', // Preset Entry 1
-			//'PE02', // Preset Entry 2
-			//'AXF', // Focus Position Control*
-			//'AXI', // Iris Position Control*
-			//'AXZ', // Zoom Position Control
-			'GF', // Request Focus Position*
-			'GI', // Request Iris Position (+Mode)*
-			'GZ', // Request Zoom Position*
-			'I', // Iris Position (1-99)*
-			//'D1', // Focus Mode*
-			//'D3', // Iris Mode*
-			//'DA', // Tally*
-			//'INS', // Installation Position
-			//'LPC', // Lens Position Information Control
-			//'LPI', // Lens Position
-			//'PST', // Preset Speed Table
-			//'PTD', // Get Pan/Tilt/Zoom/Focus/Iris
-			//'PTG', // Get Gain/ColorTemp/Shutter/ND
-			//'PTV', // Get Pan/Tilt/Zoom/Focus/Iris
-			//'RER', // Latest Error Information
-			//'S', // Request Latest Recall Preset No.
-			//'TAA', // Tally Infomation
-			//'UPVS', // Preset Speed
-		]
-		
-		const cmdCam = [
-			'QAF', // Focus Mode*
-			'QAW', // White Balance Mode*
-			'QBR', // Color Bar*
-			//'QBI', // B Gain*
-			'QBP', // B Pedestal*
-			//'QGB', // B Gain
-			//'QBD', // B Pedestal
-			'QFT', // ND Filter*
-			//'QGS', // Gain Select (UB300 only)
-			'QGU', // Gain*
-			'QID', // Model Number*
-			//'QIF', // Request Iris F No.
-			'QIS', // OIS*
-			//'QRI', // R Gain*
-			'QRP', // R Pedestal*
-			//'QGR', // R Gain
-			//'QRD', // R Pedestal
-			'QRS', // Iris Mode*
-			//'QRV', // Iris Control (0x0-0x3FF)*
-			//'QSH', // Shutter
-			//'QSV', // Software Version
-			//'QTD', // T Pedestal
-			//'QTP', // T Pedestal
-			'QLR', // R-Tally Control*
-			'QLG', // G-Tally Control*
-			//'QLY', // Y-Tally Control
-			'QSD:4F', // Iris Follow*
-			//'QSD:B1', // Color Temperature (enumerated)
-			//'QSE:71', // Preset Scope
-			'QSG:39', // R Gain*
-			'QSG:3A', // B Gain*
-			//'QSG:4A', // Master Pedestal (UB300 only)
-			//'QSG:4C', // R Pedestal (UB300 only)
-			//'QSG:4D', // G Pedestal (UE160 only) 
-			//'QSG:4E', // B Pedestal (UB300 only)
-			//'QSG:59', // Shutter SW
-			//'QSG:5A', // Shutter Mode
-			//'QSG:5D', // Shutter Speed (UB300 only)
-			//'QSI:18', // Request Zoom/Focus/Iris Position
-			//'QSI:19:0', // Software Version, System Version (UB300 only)
-			'QSI:20', // Color Temperature*
-			//'QSJ:03', // Shutter Mode
-			//'QSJ:06', // Shutter Step Value
-			//'QSJ:09', // Shutter Synchro Value
-			'QSJ:0F', // Master Pedestal*
-			'QSJ:10', // G Pedestal*
-			//'QSJ:29', // Preset Speed Unit
-			//'QSJ:5C', // Camera Title
-			//'QSJ:D2', // ND Filter Status
-			//'QSL:2A', // ATW
-			//'QSL:2B', // White Balance Mode
-			//'QSL:8B', // O.I.S.
-			//'QSL:8C', // O.I.S. Mode
-			//'QSL:99', // System Version
-			//'QSL:B6', // Auto Tracking Mode
-			//'QSL:B7', // Angle
-			//'QSL:BB', // Tracking Status
-			//'QSL:BC', // Tracking Start/Stop
-		]
-		
-		const cmdWeb = [
-			'get_state',
-			'get_rtmp_status',
-			'get_srt_status',
-		]
+		// Basic protocol
+		// /cgi-bin/get_basic
+		// /cgi-bin/model_serial
+		// /cgi-bin/get_capability
 
-		for (let cmd of cmdPTZ) {
-			this.getPTZ(cmd)
-		}
-		for (let cmd of cmdCam) {
-			this.getCam(cmd)
-		}
-		for (let cmd of cmdWeb) {
-			this.getWeb(cmd)
+		// Restart
+		// /cgi-bin/initial?cmd=reset&Randomnum=12345
+
+		// SD Card Recording
+		// /cgi-bin/get_state
+		// /cgi-bin/sdctrl
+
+		// Stream RTMP
+		// /cgi-bin/get_rtmp_status
+		// /cgi-bin/rtmp_ctrl
+		// /cgi-bin/get_rtmp_param
+
+		// Stream SRT
+		// /cgi-bin/get_srt_status
+		// /cgi-bin/srt_ctrl
+		// /cgi-bin/get_srt_info
+
+		// Stream TS
+		// /cgi-bin/get_ts_status
+		// /cgi-bin/ts_ctrl
+		// /cgi-bin/get_ts_udp_info
+
+		// Stream RTSP
+		// /cgi-bin/get_rtsp
+
+		// Streaming (Encoder Mode AVC/HEVC)
+		// /cgi-bin/get_stream_mode
+		// /cgi-bin/set_stream_mode
+
+		// Snapshot
+		// /cgi-bin/view.cgi?action=snapshot
+
+		// Thumbnails
+		// /cgi-bin/get_preset_thumbnail?preset_number=X
+
+		const poll = {
+			ptz: [
+				//'O', // Power*
+				//'PE00', // Preset Entry 0
+				//'PE01', // Preset Entry 1
+				//'PE02', // Preset Entry 2
+				//'AXF', // Focus Position Control*
+				//'AXI', // Iris Position Control*
+				//'AXZ', // Zoom Position Control
+				'GF', // Request Focus Position*
+				'GI', // Request Iris Position (+Mode)*
+				'GZ', // Request Zoom Position*
+				'I', // Iris Position (1-99)*
+				//'D1', // Focus Mode*
+				//'D3', // Iris Mode*
+				//'DA', // Tally*
+				//'INS', // Installation Position
+				//'LPC', // Lens Position Information Control
+				//'LPI', // Lens Position
+				//'PST', // Preset Speed Table
+				//'PTD', // Get Pan/Tilt/Zoom/Focus/Iris
+				//'PTG', // Get Gain/ColorTemp/Shutter/ND
+				//'PTV', // Get Pan/Tilt/Zoom/Focus/Iris
+				//'RER', // Latest Error Information
+				//'S', // Request Latest Recall Preset No.
+				//'TAA', // Tally Infomation
+				//'UPVS', // Preset Speed
+			],
+			cam: [
+				'QAF', // Focus Mode*
+				'QAW', // White Balance Mode*
+				'QBR', // Color Bar*
+				//'QBI', // B Gain*
+				'QBP', // B Pedestal*
+				//'QGB', // B Gain
+				//'QBD', // B Pedestal
+				'QFT', // ND Filter*
+				//'QGS', // Gain Select (UB300 only)
+				'QGU', // Gain*
+				'QID', // Model Number*
+				//'QIF', // Request Iris F No.
+				'QIS', // OIS*
+				//'QRI', // R Gain*
+				'QRP', // R Pedestal*
+				//'QGR', // R Gain
+				//'QRD', // R Pedestal
+				'QRS', // Iris Mode*
+				//'QRV', // Iris Control (0x0-0x3FF)*
+				//'QSH', // Shutter
+				//'QSV', // Software Version
+				//'QTD', // T Pedestal
+				//'QTP', // T Pedestal
+				'QLR', // R-Tally Control*
+				'QLG', // G-Tally Control*
+				//'QLY', // Y-Tally Control
+				'QSD:4F', // Iris Follow*
+				//'QSD:B1', // Color Temperature (enumerated)
+				//'QSE:71', // Preset Scope
+				'QSG:39', // R Gain*
+				'QSG:3A', // B Gain*
+				//'QSG:4A', // Master Pedestal (UB300 only)
+				//'QSG:4C', // R Pedestal (UB300 only)
+				//'QSG:4D', // G Pedestal (UE160 only) 
+				//'QSG:4E', // B Pedestal (UB300 only)
+				//'QSG:59', // Shutter SW
+				//'QSG:5A', // Shutter Mode
+				//'QSG:5D', // Shutter Speed (UB300 only)
+				//'QSI:18', // Request Zoom/Focus/Iris Position
+				//'QSI:19:0', // Software Version, System Version (UB300 only)
+				'QSI:20', // Color Temperature*
+				//'QSJ:03', // Shutter Mode
+				//'QSJ:06', // Shutter Step Value
+				//'QSJ:09', // Shutter Synchro Value
+				'QSJ:0F', // Master Pedestal*
+				'QSJ:10', // G Pedestal*
+				//'QSJ:29', // Preset Speed Unit
+				//'QSJ:5C', // Camera Title
+				//'QSJ:D2', // ND Filter Status
+				//'QSL:2A', // ATW
+				//'QSL:2B', // White Balance Mode
+				//'QSL:8B', // O.I.S.
+				//'QSL:8C', // O.I.S. Mode
+				//'QSL:99', // System Version
+				//'QSL:B6', // Auto Tracking Mode
+				//'QSL:B7', // Angle
+				//'QSL:BB', // Tracking Status
+				//'QSL:BC', // Tracking Start/Stop
+			],
+			web: [
+				'get_state',
+				'get_rtmp_status',
+				'get_srt_status',
+				'get_ts_status',
+			]
 		}
 
-		this.checkVariables()
-		this.checkFeedbacks()
+		const SERIES = getAndUpdateSeries(this)
+
+		if (SERIES.capabilities.poll) {
+			if (SERIES.capabilities.poll.ptz) {
+				for (let cmd of SERIES.capabilities.poll.ptz) this.getPTZ(cmd)
+			}
+			if (SERIES.capabilities.poll.cam) {
+				for (let cmd of SERIES.capabilities.poll.cam) this.getCam(cmd)
+			}
+			if (SERIES.capabilities.poll.web) {
+				for (let cmd of SERIES.capabilities.poll.web) this.getWeb(cmd)
+			}
+		}
 	}
 
 	getPTZ(cmd) {
@@ -439,7 +443,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.log('info', `PTZ Request: ${url}`)
 			}
 
-			got.get(url)
+			got.get(url, { timeout: { request: 250 } } )
 			.then((response) => {
 				if (response.body) {
 					const str = response.body.trim()
@@ -468,7 +472,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.log('info', `Cam Request: ${url}`)
 			}
 	
-			got.get(url)
+			got.get(url, { timeout: { request: 250 } } )
 			.then((response) => {
 				if (response.body) {
 					const str = response.body.trim()
@@ -498,7 +502,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.log('info', `Web Request: ${url}`)
 			}
 	
-			got.get(url)
+			got.get(url, { timeout: { request: 250 } } )
 			.then((response) => {
 				if (response.body) {
 					const lines = response.body.trim().split('\r\n')
@@ -507,7 +511,7 @@ class PanasonicPTZInstance extends InstanceBase {
 						const str = line.trim()
 	
 						if (this.config.debug) {
-							this.log('info', 'Received Web Command Response: ' + str)
+							this.log('info', 'Received Web Command Response [' + cmd + ']: ' + str)
 						}
 	
 						this.parseWeb(str.split('='), cmd)
@@ -518,7 +522,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				}
 			})
 			.catch((err) => {
-				this.log('error', 'Error requesting status from Web: ' + String(err))
+				this.log('error', 'Error requesting status from Web [' + cmd + ']: ' + String(err))
 			})
 		}
 	}
@@ -770,11 +774,14 @@ class PanasonicPTZInstance extends InstanceBase {
 	parseWeb(str, cmd) {
 		switch (cmd) {
 			case 'get_rtmp_status':
-				this.data.rtmp = str[1] === '1'
+				if (str[0] === 'status') this.data.rtmp = str[1] === '1'
 				break
 			case 'get_srt_status':
-				this.data.srt = str[1] === '1'
+				if (str[0] === 'status') this.data.srt = str[1] === '1'
 				break
+			case 'get_ts_status':
+				if (str[0] === 'status') this.data.ts = str[1] === '1'
+				break				
 			case 'get_state':
 				switch (str[0]) {
 					case 'rec': this.data.recording = str[1].toUpperCase(); break
@@ -821,6 +828,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			recording: null,
 			rtmp: null,
 			srt: null,
+			ts: null,
 			tally: null,
 			tally2: null,
 			tally3: null,
@@ -894,8 +902,8 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.getCameraInfo()
 		this.getCameraTitle()
 		this.getCameraStatus()
-		this.queryCameraStatus()
-		this.init_tcp()
+		//this.updateStatus(InstanceStatus.Ok)
+		
 		this.reInitAll()
 
 		this.speedChangeEmitter = new EventEmitter()
@@ -908,8 +916,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.getCameraInfo()
 		this.getCameraTitle()
 		this.getCameraStatus()
-		this.queryCameraStatus()
-		this.init_tcp()
+		//this.updateStatus(InstanceStatus.Ok)
 	}
 
 	reInitAll() {
@@ -919,6 +926,9 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.checkVariables()
 		this.init_feedbacks()
 		this.checkFeedbacks()
+
+		this.queryCameraStatus()
+		this.init_tcp()
 	}
 
 	// Return config fields for web config
