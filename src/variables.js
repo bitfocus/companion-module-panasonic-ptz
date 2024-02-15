@@ -6,13 +6,7 @@ import { e } from './enum.js'
 // ##########################
 export function setVariables(self) {
 	const SERIES = getAndUpdateSeries(self)
-	// console.log(SERIES);
 
-	// console.log('variable set');
-	// console.log(self.config.model);
-	// console.log(self.data.model);
-	// console.log(self.data.modelTCP);
-	// console.log(self.data.series);
 	const variables = []
 
 	variables.push({ variableId: 'series', name: 'Camera Series' })

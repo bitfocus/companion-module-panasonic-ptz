@@ -3,7 +3,7 @@ import { MODELS, SERIES_SPECS } from './models.js'
 export function getAndUpdateSeries(self) {
 	// Set the model and series selected, if in auto, detect what model is connected via TCP
 	if (self.config.model === 'Auto') {
-		self.data.model = self.data.modelINFO
+		self.data.model = self.data.modelINFO || self.data.modelTCP
 	} else {
 		self.data.model = self.config.model
 	}

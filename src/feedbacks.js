@@ -389,7 +389,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function (feedback) {
-				return self.data.streamRTMP
+				return self.data.rtmp
 			},
 		}
 	}
@@ -405,7 +405,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function (feedback) {
-				return self.data.streamSRT
+				return self.data.srt
 			},
 		}
 	}
