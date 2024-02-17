@@ -7,15 +7,15 @@ export const MODELS = [
 	{ id: 'AW-HE35', series: 'HE40', label: 'AW-HE35' },
 	{ id: 'AW-HE38', series: 'HE40', label: 'AW-HE38' },
 	{ id: 'AW-HE40', series: 'HE40', label: 'AW-HE40' },
-	{ id: 'AW-HE42', series: 'HE42', label: 'AW-HE42' },
+	{ id: 'AW-HE42', series: 'UE70', label: 'AW-HE42' },
 	{ id: 'AW-HE48', series: 'HE40', label: 'AW-HE48' },
 	{ id: 'AW-HE50', series: 'HE50', label: 'AW-HE50' },
 	{ id: 'AW-HE58', series: 'HE40', label: 'AW-HE58' },
 	{ id: 'AW-HE60', series: 'HE60', label: 'AW-HE60' },
 	{ id: 'AW-HE65', series: 'HE40', label: 'AW-HE65' },
-	{ id: 'AW-HE68', series: 'HE42', label: 'AW-HE68' },
+	{ id: 'AW-HE68', series: 'UE70', label: 'AW-HE68' },
 	{ id: 'AW-HE70', series: 'HE40', label: 'AW-HE70' },
-	{ id: 'AW-HE75', series: 'HE42', label: 'AW-HE75' },
+	{ id: 'AW-HE75', series: 'UE70', label: 'AW-HE75' },
 	{ id: 'AW-HE120', series: 'HE120', label: 'AW-HE120' },
 	{ id: 'AW-HE130', series: 'HE130', label: 'AW-HE130' },
 	{ id: 'AW-HE145', series: 'UE150', label: 'AW-HE145' },
@@ -73,7 +73,7 @@ export const SERIES_SPECS = [
 		// Includes all Actions / Variables / Feedbacks
 		id: 'Other',
 		capabilities: {
-			colorGain: { cmd: { red: 'ORI', blue: 'OBI', green: 'OSJ:10' }, offset: 0x96, limit: 150, step: 1, hexlen: 3 }, // Has numbered red/blue Gain (ORG and OBG)
+			colorGain: { cmd: { red: 'ORI', blue: 'OBI' }, offset: 0x96, limit: 150, step: 1, hexlen: 3 }, // Has numbered red/blue Gain (ORG and OBG)
 			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 150, step: 1, hexlen: 3 }, // Has numbered red/blue Pedestal (ORP or OBP)
 			colorTemperature: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', set: 'OSI:20', min: 2000, max: 15000 } }, // Has Color Temperature (OSD:B1 or OSI:20)
 			colorbar: true, // Has Color Bar Generator (DCB:1 or DCB:0)
@@ -129,13 +129,13 @@ export const SERIES_SPECS = [
 			ois: { dropdown: e.ENUM_OIS_OTHER },
 			panTilt: true,
 			pedestal: { cmd: 'OTD', offset: 0x1e, limit: 30, step: 3, hexlen: 2 },
-			poll: false,
+			poll: { ptz: false, cam: false,	web: ['get_state'] },
 			power: true,
 			preset: 100,
 			presetSpeed: { dropdown: e.ENUM_PSSPEED_TABLE_2 },
 			presetTime: false,
 			recordSD: true,
-			restart: false,
+			restart: true,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE40 },
 			streamRTMP: false,
 			streamSRT: false,
@@ -151,8 +151,8 @@ export const SERIES_SPECS = [
 	},
 
 	{
-		// Specific for the HE42 Series
-		id: 'HE42',
+		// Specific for the UE70 Series
+		id: 'UE70',
 		capabilities: {
 			colorGain: { cmd: { red: 'ORG', blue: 'OBG' }, offset: 0x1e, limit: 30, step: 1, hexlen: 2 },
 			colorPedestal: false,
@@ -170,7 +170,7 @@ export const SERIES_SPECS = [
 			ois: { dropdown: e.ENUM_OIS_OTHER },
 			panTilt: true,
 			pedestal: { cmd: 'OTD', offset: 0x1e, limit: 30, step: 3, hexlen: 2 },
-			poll: false,
+			poll: { ptz: false, cam: false,	web: ['get_state'] },
 			power: true,
 			preset: 100,
 			presetSpeed: { dropdown: e.ENUM_PSSPEED_TABLE_2 },
@@ -233,47 +233,6 @@ export const SERIES_SPECS = [
 	},
 
 	{
-		// Specific for the UE70 Series
-		id: 'UE70',
-		capabilities: {
-			colorGain: { cmd: { red: 'ORG', blue: 'OBG' }, offset: 0x1e, limit: 30, step: 1, hexlen: 2 },
-			colorPedestal: false,
-			colorTemperature: { index: { cmd: 'OSD:B1', dropdown: e.ENUM_COLOR_TEMPERATURE_HE40 } },
-			colorbar: true,
-			error: true,
-			filter: { dropdown: e.ENUM_FILTER_3A },
-			focus: true,
-			focusAuto: true,
-			focusPushAuto: true,
-			gain: { cmd: 'OGU', dropdown: e.ENUM_GAIN_HE40 },
-			install: true,
-			iris: true,
-			irisAuto: true,
-			ois: { dropdown: e.ENUM_OIS_OTHER },
-			panTilt: true,
-			pedestal: { cmd: 'OTD', offset: 0x1e, limit: 30, step: 3, hexlen: 2 },
-			poll: false,
-			power: true,
-			preset: 100,
-			presetSpeed: { dropdown: e.ENUM_PSSPEED_TABLE_2 },
-			presetTime: false,
-			recordSD: true,
-			restart: true,
-			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE40 },
-			streamRTMP: false,
-			streamSRT: false,
-			subscription: true,
-			tally2: false,
-			tally3: false,
-			tally: true,
-			trackingAuto: false,
-			version: true,
-			whiteBalance: { dropdown: e.ENUM_WHITEBALANCE_SET },
-			zoom: true,
-		},
-	},
-
-	{
 		// Specific for the UE150 Series
 		id: 'UE150',
 		capabilities: {
@@ -293,7 +252,7 @@ export const SERIES_SPECS = [
 			ois: { dropdown: e.ENUM_OIS_OTHER },
 			panTilt: true,
 			pedestal: { cmd: 'OSJ:0F', offset: 0x800, limit: 200, step: 1, hexlen: 3 },
-			poll: {	ptz: false, cam: false,	web: [ 'get_rtmp_status', 'get_srt_status', 'get_ts_status' ] },
+			poll: { ptz: false, cam: false,	web: ['get_rtmp_status','get_srt_status','get_ts_status'] },
 			power: true,
 			preset: 100,
 			presetSpeed: { dropdown: e.ENUM_PSSPEED_TABLE_2 },
@@ -688,7 +647,7 @@ export const SERIES_SPECS = [
 		id: 'CX350',
 		capabilities: {
 			colorGain: { cmd: { red: 'OSG:39', blue: 'OSG:3A' }, offset: 0x800, limit: 200, step: 1, hexlen: 3 },
-			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP' }, offset: 0x96, limit: 100, step: 1, hexlen: 3 },
+			colorPedestal: { cmd: { red: 'ORP', blue: 'OBP', green: 'OSJ:10' }, offset: 0x96, limit: 100, step: 1, hexlen: 3 },
 			colorTemperature: { advanced: { inc: 'OSI:1E', dec: 'OSI:1F', set: 'OSI:20', min: 2000, max: 15000 } },
 			colorbar: true,
 			error: false,
@@ -703,8 +662,8 @@ export const SERIES_SPECS = [
 			ois: { dropdown: e.ENUM_OIS_OTHER },
 			panTilt: false,
 			pedestal: { cmd: 'OSJ:0F', offset: 0x800, limit: 200, step: 1, hexlen: 3 },
-			poll: { ptz: [ 'GF', 'GI', 'GZ', 'I' ], cam: [ 'QAF', 'QAW', 'QBR', 'QBP', 'QFT', 'QGU', 'QID', 'QIS', 'QRP', 'QRS', 'QLR', 'QLG', 'QSD:4F', 'QSG:39', 'QSG:3A', 'QSI:20', 'QSJ:0F', 'QSJ:10' ], web: [ 'get_state', 'get_rtmp_status', 'get_srt_status', 'get_ts_status' ] },
-			power: 	false,
+			poll: { ptz: ['GF','GI','GZ'], cam: ['QAF','QAW','QBR','QBP','QFT','QGU','QIS','QRP','QLR','QLG','QSD:4F','QSG:39','QSG:3A','QSI:20','QSJ:0F'], web: ['get_state'] },
+			power: false,
 			preset: false,
 			presetSpeed: false,
 			presetTime: false,

@@ -85,7 +85,7 @@ export function setVariables(self) {
 		variables.push({ variableId: 'fSpeedVar', name: 'Focus Speed' })
 	}
 	if (SERIES.capabilities.iris) {
-		variables.push({ variableId: 'iris', name: 'Iris' })
+		//variables.push({ variableId: 'iris', name: 'Iris' })
 		variables.push({ variableId: 'irisF', name: 'Iris F-Stop' })
 		variables.push({ variableId: 'irisPosition', name: 'Iris Position' })
 		variables.push({ variableId: 'irisPositionPct', name: 'Iris Position %' })
@@ -133,6 +133,9 @@ export function setVariables(self) {
 export function checkVariables(self) {
 	const SERIES = getAndUpdateSeries(self)
 
+	const colorbar = SERIES.capabilities.colorbar
+		? getLabel(e.ENUM_OFF_ON, self.data.colorbar) : null
+
 	const colorTemperature = SERIES.capabilities.colorTemperature.index
 		? getLabel(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature) : null
 
@@ -148,14 +151,17 @@ export function checkVariables(self) {
 	const installMode = SERIES.capabilities.install
 		? getLabel(e.ENUM_INSTALL_POSITION, self.data.installMode) : null
 
-	const iris = SERIES.capabilities.iris
-		? getLabel(e.ENUM_IRIS, self.data.iris) : null
+	//const iris = SERIES.capabilities.iris
+	//	? getLabel(e.ENUM_IRIS, self.data.iris) : null
 
 	const irisMode = SERIES.capabilities.irisAuto
 		? getLabel(e.ENUM_MAN_AUTO, self.data.irisMode) : null
 
 	const ois = SERIES.capabilities.ois
 		? getLabel(SERIES.capabilities.ois.dropdown, self.data.ois) : null
+
+	const power = SERIES.capabilities.power
+		? getLabel(e.ENUM_OFF_ON, self.data.power) : null
 
 	const presetScope = SERIES.capabilities.preset
 		? getLabel(e.ENUM_PRESET_SCOPE, self.data.presetScope) : null
@@ -169,8 +175,23 @@ export function checkVariables(self) {
 	const presetSpeedUnit = SERIES.capabilities.presetTime
 		? getLabel(e.ENUM_PSSPEED_UNIT, self.data.presetSpeedUnit) : null
 
+	const rtmp = SERIES.capabilities.streamRTMP
+		? getLabel(e.ENUM_OFF_ON, self.data.rtmp) : null
+
 	const shutter = SERIES.capabilities.shutter
 		? getLabel(SERIES.capabilities.shutter.dropdown, self.data.shutter) : null
+
+	const srt = SERIES.capabilities.streamSRT
+		? getLabel(e.ENUM_OFF_ON, self.data.srt) : null
+
+	const tally = SERIES.capabilities.tally
+		? getLabel(e.ENUM_OFF_ON, self.data.tally) : null
+
+	const tally2 = SERIES.capabilities.tally2
+		? getLabel(e.ENUM_OFF_ON, self.data.tally2) : null
+
+	const tally3 = SERIES.capabilities.tally3
+		? getLabel(e.ENUM_OFF_ON, self.data.tally3) : null
 
 	const whiteBalance = SERIES.capabilities.whiteBalance
 		? getLabel(SERIES.capabilities.whiteBalance.dropdown, self.data.whiteBalance) : null
@@ -208,15 +229,7 @@ export function checkVariables(self) {
 		title: self.data.title,
 		version: self.data.version,
 
-		power: self.data.power,
-		colorbar: self.data.colorbar,
 		recording: self.data.recording,
-		recordingTime: self.data.recordingTime,
-		streamingRTMP: self.data.rtmp,
-		streamingSRT: self.data.srt,
-		tally: self.data.tally,
-		tally2: self.data.tally2,
-		tally3: self.data.tally3,
 
 		presetSelected: (self.data.presetSelectedIdx + 1).toString(),
 		presetCompleted: (self.data.presetCompletedIdx + 1).toString(),
@@ -240,22 +253,30 @@ export function checkVariables(self) {
 		
 		error: self.data.errorLabel,
 		irisF: self.data.irisLabel,
+		recordingTime: self.data.recordingTime,
 		shutterStep: self.data.shutterStepLabel,
 
 		colorTemperature: self.data.colorTempLabel?self.data.colorTempLabel:colorTemperature,
 
+		colorbar: colorbar,
 		filter: filter,
 		focusMode: focusMode,
 		gain: gain,
 		installMode: installMode,
-		iris: iris,
+		//iris: iris,
 		irisMode: irisMode,
 		ois: ois,
+		power: power,
 		presetScope: presetScope,
 		presetSpeed: presetSpeed,
 		presetSpeedTable: presetSpeedTable,
 		presetSpeedUnit: presetSpeedUnit,
 		shutter: shutter,
+		streamingRTMP: rtmp,
+		streamingSRT: srt,
+		tally: tally,
+		tally2: tally2,
+		tally3: tally3,
 		whiteBalance: whiteBalance,
 
 		ptSpeedVar: self.ptSpeed,

@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { e } from './enum.js'
 import { getAndUpdateSeries, getNext, getNextValue, toHexString } from './common.js'
+import { parseUpdate, parseWeb } from './parser.js'
 import got from 'got'
 
 // ######################
@@ -23,7 +24,7 @@ export async function sendPTZ(self, cmd) {
 				self.log('info', 'Received PTZ Command Response: ' + str)
 			}
 
-			self.parseUpdate(str.split(':'))
+			parseUpdate(self, str.split(':'))
 
 			self.checkVariables()
 			self.checkFeedbacks()
@@ -51,7 +52,7 @@ export async function sendCam(self, cmd) {
 				self.log('info', 'Received Cam Command Response: ' + str)
 			}
 
-			self.parseUpdate(str.split(':'))
+			parseUpdate(self, str.split(':'))
 
 			self.checkVariables()
 			self.checkFeedbacks()
@@ -82,7 +83,7 @@ export async function sendWeb(self, cmd) {
 					self.log('info', 'Received Web Command Response: ' + str)
 				}
 
-				self.parseWeb(str.split('='), cmd)
+				parseWeb(self, str.split('='), cmd)
 			}
 
 			self.checkVariables()
@@ -1477,6 +1478,24 @@ export function getActionDefinitions(self) {
 					await sendPTZ(self, 'DA' + action.options.val)
 				},
 			}
+		}
+	}
+
+	if (SERIES.capabilities.ois) {
+		actions.autotrackingMode = {
+			name: 'Image Stabilization - Set Mode',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Option',
+					id: 'val',
+					default: SERIES.capabilities.ois.dropdown[1].id,
+					choices: SERIES.capabilities.ois.dropdown,
+				},
+			],
+			callback: async (action) => {
+				await sendCam(self, 'OIS:' + action.options.val)
+			},
 		}
 	}
 

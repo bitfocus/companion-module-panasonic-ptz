@@ -30,7 +30,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function (feedback) {
-				return self.data.power === 'ON'
+				return self.data.power === '1'
 			}
 		}
 	}
@@ -46,7 +46,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function (feedback) {
-				return self.data.colorbar === 'ON'
+				return self.data.colorbar === '1'
 			},
 		}
 	}
@@ -62,7 +62,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function (feedback) {
-				return self.data.tally === 'ON'
+				return self.data.tally === '1'
 			},
 		}
 	}
@@ -78,7 +78,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function (feedback) {
-				return self.data.tally2 === 'ON'
+				return self.data.tally2 === '1'
 			},
 		}
 	}
@@ -94,7 +94,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function (feedback) {
-				return self.data.tally3 === 'ON'
+				return self.data.tally3 === '1'
 			},
 		}
 	}
@@ -366,14 +366,30 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.recState = {
 			type: 'boolean',
 			name: 'Recording - State',
-			description: 'Indicates if currently recording on camera',
+			description: 'Indicates if currently recording on the camera',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorRed,
 			},
 			options: [],
 			callback: function (feedback) {
-				return self.data.recording === 'ON'
+				return self.data.recording
+			},
+		}
+	}
+
+	if (SERIES.capabilities.recordSD) {
+		feedbacks.sdState = {
+			type: 'boolean',
+			name: 'Recording - SD card inserted',
+			description: 'Indicates if at least one SD card it inserted in a slot on the camera',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorGreen,
+			},
+			options: [],
+			callback: function (feedback) {
+				return self.data.sdInserted || self.data.sd2Inserted
 			},
 		}
 	}
