@@ -10,7 +10,7 @@ import got from 'got'
 import EventEmitter from 'events'
 import { getAndUpdateSeries } from './common.js'
 import { parseUpdate, parseWeb } from './parser.js'
-import { pollCameraStatus, initCameraStatus } from './polling.js'
+import { pollCameraStatus, pullCameraStatus } from './polling.js'
 
 // ########################
 // #### Instance setup ####
@@ -32,7 +32,8 @@ class PanasonicPTZInstance extends InstanceBase {
 
 			this.log('info', 'un-subscribed: ' + url)
 		} catch (err) {
-			this.log('error', 'Error on TCP unsubscribe: ' + String(err))
+			if (this.handleHTTPError(err))
+				this.log('error', 'Error on TCP unsubscribe: ' + String(err))
 		}
 	}
 
@@ -48,10 +49,10 @@ class PanasonicPTZInstance extends InstanceBase {
 
 			this.log('info', 'subscribed: ' + url)
 
-			//this.updateStatus(InstanceStatus.Ok)
+			this.updateStatus(InstanceStatus.Ok)
 		} catch (err) {
-			this.log('error', 'Error on subscribe: ' + String(err))
-			
+			if (this.handleHTTPError(err))
+				this.log('error', 'Error on subscribe: ' + String(err))
 			//this.updateStatus(InstanceStatus.UnknownWarning, 'TCP subscription failed')
 		}
 	}
@@ -77,14 +78,12 @@ class PanasonicPTZInstance extends InstanceBase {
 				// When the client requests to end the TCP connection with the server, the server ends the connection.
 				socket.on('end', () => {
 					this.clients.splice(this.clients.indexOf(socket), 1)
-					//this.updateStatus(InstanceStatus.Disconnected)
 				})
 
 				// common error handler
 				socket.on('error', () => {
 					this.clients.splice(this.clients.indexOf(socket), 1)
 					this.log('error', 'Update notification channel errored/died: ' + socket.name)
-					//this.updateStatus(InstanceStatus.Disconnected)
 				})
 
 				socket.name = socket.remoteAddress + ':' + socket.remotePort
@@ -116,7 +115,6 @@ class PanasonicPTZInstance extends InstanceBase {
 			this.server.on('error', (err) => {
 				// Catch uncaught Exception"EADDRINUSE" error that orcures if the port is already in use
 				if (err.code === 'EADDRINUSE') {
-					// self.log('error', "TCP error: " + String(err));
 					this.log('error', 'TCP error: Please use another TCP port, ' + tcpPortSelected + ' is already in use')
 					this.log('error', 'TCP error: The TCP port must be unique between instances')
 					this.log('error', 'TCP error: Please change it and click apply in ALL PTZ instances')
@@ -149,19 +147,12 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.log('error', "Couldn't bind to TCP port " + tcpPortSelected + ' on localhost: ' + String(err))
 				this.updateStatus(InstanceStatus.UnknownError, 'TCP Port failure')
 			}
-
-			// Catch uncaught Exception errors that orcure
-			// process.on('uncaughtException',  (err) => {
-			// 	debug(err)
-			// 	console.log(err)
-			// 	// process.exit(1)
-			// })
 		}
 
 		return this
 	}
 
-	getCameraInfo() {
+	async getCameraInfo() {
 		if (this.config.host) {
 			const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/getinfo?FILE=1`
 
@@ -169,8 +160,8 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.log('info', 'getinfo Request: ' + url)
 			}
 
-			got.get(url, { timeout: { request: 1000 } } )
-			.then((response) => {
+			try {
+				const response = await got.get(url)
 				if (response.body) {
 					const lines = response.body.trim().split('\r\n')
 
@@ -203,18 +194,16 @@ class PanasonicPTZInstance extends InstanceBase {
 					}
 
 					this.checkVariables()
-
 					this.updateStatus(InstanceStatus.Ok)
 				}
-			})
-			.catch((err) => {
-				this.updateStatus(InstanceStatus.ConnectionFailure)
-				this.log('error', 'Error checking basic communication and receiving model: ' + String(err))
-			})
+			} catch (err) {
+				if (this.handleHTTPError(err))
+					this.log('error', 'Error checking basic communication and receiving info: ' + String(err))
+			}
 		}
 	}
 
-	getCameraTitle() {
+	async getCameraTitle() {
 		if (this.config.host) {
 			const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/get_basic`
 
@@ -222,8 +211,8 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.log('info', 'get_basic Request: ' + url)
 			}
 
-			got.get(url, { timeout: { request: 1000 } } )
-			.then((response) => {
+			try {
+				const response = await got.get(url)
 				if (response.body) {
 					const lines = response.body.trim().split('\r\n')
 
@@ -241,18 +230,16 @@ class PanasonicPTZInstance extends InstanceBase {
 					}
 
 					this.checkVariables()
-
 					this.updateStatus(InstanceStatus.Ok)
 				}
-			})
-			.catch((err) => {
-				this.updateStatus(InstanceStatus.ConnectionFailure)
-				this.log('error', 'Error checking basic communication and receiving title: ' + String(err))
-			})
+			} catch (err) {
+				if (this.handleHTTPError(err))
+					this.log('error', 'Error checking basic communication and receiving title: ' + String(err))
+			}
 		}
 	}
 
-	getCameraStatus() {
+	async getCameraStatus() {
 		if (this.config.host) {
 			const url = `http://${this.config.host}:${this.config.httpPort}/live/camdata.html`
 
@@ -260,8 +247,8 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.log('info', 'camdata Request: ' + url)
 			}
 
-			got.get(url, { timeout: { request: 1000 } } )
-			.then((response) => {
+			try {
+				const response = await got.get(url)
 				if (response.body) {
 					const lines = response.body.trim().split('\r\n')
 
@@ -280,10 +267,10 @@ class PanasonicPTZInstance extends InstanceBase {
 
 					this.updateStatus(InstanceStatus.Ok)
 				}
-			})
-			.catch((err) => {
-				this.log('error', 'Error requesting inital status from PTZ: ' + String(err))
-			})
+			} catch (err) {
+				if (this.handleHTTPError(err))
+					this.log('error', 'Error requesting inital status from PTZ: ' + String(err))
+			}
 		}
 	}
 
@@ -308,7 +295,8 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.checkFeedbacks()
 			}
 		} catch (err) {
-			this.log('error', 'Error requesting status from PTZ: ' + String(err))
+			if (this.handleHTTPError(err))
+				this.log('error', 'Error requesting status from PTZ: ' + String(err))
 		}
 	}
 	
@@ -334,7 +322,8 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.checkFeedbacks()
 			}
 		} catch (err) {
-			this.log('error', 'Error requesting status from Cam: ' + String(err))
+			if (this.handleHTTPError(err))
+				this.log('error', 'Error requesting status from Cam: ' + String(err))
 		}
 	}
 	
@@ -365,7 +354,8 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.checkFeedbacks()
 			}
 		} catch (err) {
-			this.log('error', 'Error requesting status from Web [' + cmd + ']: ' + String(err))
+			if (this.handleHTTPError(err))
+				this.log('error', 'Error requesting status from Web [' + cmd + ']: ' + String(err))
 		}
 	}
 
@@ -487,23 +477,37 @@ class PanasonicPTZInstance extends InstanceBase {
 	// Update module after a config change
 	async configUpdated(config) {
 		this.config = config
-		this.reInitAll()
+		this.polling = false
+		this.config.host.length > 0 ? this.reInitAll() : this.updateStatus(InstanceStatus.BadConfig)
 	}
 
-	initCameraConnection() {
+	handleHTTPError(err) {
+		if (err.code === 'ETIMEDOUT') {
+			this.polling = false
+			this.updateStatus(InstanceStatus.Disconnected, 'Timeout')
+			this.reInitAll()
+			return true
+		} else if (err.code !== 'ERR_NON_2XX_3XX_RESPONSE') {
+			this.updateStatus(InstanceStatus.ConnectionFailure, String(err))
+			return true
+		}
+		return false
+	}
+
+	reInitAll() {
+		this.polling = false
+		this.SERIES = getAndUpdateSeries(this)
+
 		this.updateStatus(InstanceStatus.Connecting, this.config.host + ':' + this.config.httpPort)
 		this.getCameraInfo()
-	}
 
-	// Requests inital status and setup status push or pull
-	initCameraStatus() {
 		this.getCameraTitle() // pull camera title
 		if (this.SERIES.capabilities.pull) {
-			initCameraStatus(this) // initial pull all (if available on model)
+			pullCameraStatus(this) // initial pull all (if available on model)
 		}
 		if (this.SERIES.capabilities.subscription) {
-			if (!this.SERIES.capabilities.pull) {
-				this.getCameraStatus() // initial bulk get all (if available on model)
+			if (!this.SERIES.capabilities.pull) { // prefer explicit pull of data
+				this.getCameraStatus() // initial bulk retrieve of all data 
 			}
 			this.init_tcp() // setup tcp push updates (if available on model)
 			this.getPTZ('LPC1') // enable Lens Position	Information updates
@@ -511,25 +515,12 @@ class PanasonicPTZInstance extends InstanceBase {
 		if (this.SERIES.capabilities.poll) {
 			this.polling = true
 			pollCameraStatus(this) // enable explicit pulls (if defined on model)
-		} else {
-			this.polling = false
 		}
-	}
-
-	// needed on initial module init using initial config data, after config change and automatic model change
-	// requires knowledge of model!
-	reInitAll() {
-		this.SERIES = getAndUpdateSeries(this)
-
-		this.initCameraConnection()
-		this.initCameraStatus()
 
 		this.init_actions()
 		this.init_presets()
 		this.init_variables()
-		//this.checkVariables()
 		this.init_feedbacks()
-		//this.checkFeedbacks()
 	}
 
 	// Return config fields for web config

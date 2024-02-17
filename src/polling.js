@@ -29,7 +29,7 @@ export async function pollCameraStatus(self) {
 	}
 }
 
-export async function initCameraStatus(self) {
+export async function pullCameraStatus(self) {
     const pull = {
         ptz: [
             'O', // Power*
