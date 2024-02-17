@@ -1,6 +1,6 @@
 export async function pollCameraStatus(self) {
 	if (self.SERIES.capabilities.poll) {
-		const delay = 250
+		const delay = 100
 		if (self.SERIES.capabilities.poll.ptz) {
 			for (let cmd of self.SERIES.capabilities.poll.ptz) {
 				if (self.polling) await self.getPTZ(cmd)

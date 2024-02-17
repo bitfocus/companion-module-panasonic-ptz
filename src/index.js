@@ -498,9 +498,13 @@ class PanasonicPTZInstance extends InstanceBase {
 	// Requests inital status and setup status push or pull
 	initCameraStatus() {
 		this.getCameraTitle() // pull camera title
-		initCameraStatus(this) // initial pull all (if available on model)
+		if (this.SERIES.capabilities.pull) {
+			initCameraStatus(this) // initial pull all (if available on model)
+		}
 		if (this.SERIES.capabilities.subscription) {
-			//this.getCameraStatus() // initial bulk get all (if available on model)
+			if (!this.SERIES.capabilities.pull) {
+				this.getCameraStatus() // initial bulk get all (if available on model)
+			}
 			this.init_tcp() // setup tcp push updates (if available on model)
 			this.getPTZ('LPC1') // enable Lens Position	Information updates
 		}
