@@ -84,10 +84,11 @@ export function parseUpdate(self, str) {
         case 'd31': self.data.irisMode = '1'; break
         case 'DCB':
         case 'OBR': self.data.colorbar = str[1]; break
-        case 'OID': self.data.modelTCP = str[1]
+        case 'OID': self.data.modelAuto = str[1]
             // if a new model is detected or selected, re-initialise all actions, variables and feedbacks
-            if (self.data.modelTCP !== self.data.model) {
-                self.reInitAll()
+            if (self.data.modelAuto !== self.data.model) {
+                self.log('info', 'Detected Camera Model: ' + self.data.modelAuto)
+                //self.reInitAll()
             }
             break
         case 'OLR':
@@ -123,6 +124,7 @@ export function parseUpdate(self, str) {
             }
             break
         case 'OSH': self.data.shutter = str[1].replace('0x', ''); break
+        case 'OSV': self.data.version = str[1]; break
         case 'OFT': self.data.filter = str[1]; break
         case 'OSE':
             if (str[1] === '71') {
@@ -183,15 +185,37 @@ export function parseUpdate(self, str) {
 
 export function parseWeb(self, str, cmd) {
     switch (cmd) {
+        case 'get_basic': if (str[0] === 'cam_title') self.data.title = str[1]; break
         case 'get_rtmp_status': if (str[0] === 'status') self.data.rtmp = str[1]; break
         case 'get_srt_status': if (str[0] === 'status') self.data.srt = str[1]; break
-        case 'get_ts_status': if (str[0] === 'status') self.data.ts = str[1]; break				
+        case 'get_ts_status': if (str[0] === 'status') self.data.ts = str[1]; break
         case 'get_state':
             switch (str[0]) {
                 case 'rec': self.data.recording = str[1] === 'on'; break
                 case 'rec_counter': self.data.recordingTime = str[1]; break
                 case 'sd_insert': self.data.sdInsert = str[1] === 'on'; break
                 case 'sd2_insert': self.data.sd2Insert = str[1] === 'on'; break
+            }
+            break
+        case 'getinfo?FILE=1':
+            switch (str[0]) {
+                case 'MAC':
+                    self.data.mac = str[1]
+                    break
+                case 'SERIAL':
+                    self.data.serial = str[1]
+                    break
+                case 'VERSION':
+                    self.data.version = str[1]
+                    break
+                case 'NAME':
+                    self.data.modelAuto = str[1]
+                    // if a new model is detected or selected, re-initialise all actions, variables and feedbacks
+                    if (self.data.modelAuto !== self.data.model) {
+                        self.log('info', 'Detected Camera Model: ' + self.data.modelAuto)
+                        //self.reInitAll()
+                    }
+                    break
             }
             break
     }

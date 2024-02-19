@@ -9,10 +9,10 @@ export function setVariables(self) {
 
 	const variables = []
 
-	variables.push({ variableId: 'series', name: 'Camera Series' })
+	//variables.push({ variableId: 'series', name: 'Camera Series' })
 	variables.push({ variableId: 'model', name: 'Model of camera' })
-	variables.push({ variableId: 'mac', name: 'MAC address' })
-	variables.push({ variableId: 'serial', name: 'Serial number' })
+	//variables.push({ variableId: 'mac', name: 'MAC address' })
+	//variables.push({ variableId: 'serial', name: 'Serial number' })
 	variables.push({ variableId: 'title', name: 'Title of camera' })
 	if (SERIES.capabilities.version) {
 		variables.push({ variableId: 'version', name: 'Firmware Version' })
@@ -212,7 +212,7 @@ export function checkVariables(self) {
 		}
 		return (val < low || val > high) ? null : (((val - low) / (high - low)) * 100).toFixed(fractionDigits)
 	}
-
+/* 
 	const norm = (val, low = 0, high = 100) => {
 		return (val < low || val > high) ? null : (((val - low) / (high - low)) * 2) - 1
 	}
@@ -220,12 +220,12 @@ export function checkVariables(self) {
 	const normS = (val, low = -100, high = 100) => {
 		return (val < low || val > high) ? null : (((val - low) / (high - low)) * 2) - 1
 	}
-
+ */
 	self.setVariableValues({
-		series: self.data.series,
+		//series: self.data.series,
 		model: self.data.model,
-		mac: self.data.mac,
-		serial: self.data.serial,
+		//mac: self.data.mac,
+		//serial: self.data.serial,
 		title: self.data.title,
 		version: self.data.version,
 

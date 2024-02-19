@@ -1,9 +1,9 @@
 import { MODELS, SERIES_SPECS } from './models.js'
 
 export function getAndUpdateSeries(self) {
-	// Set the model and series selected, if in auto, detect what model is connected via TCP
+	// Set the model and series selected, if in auto, detect what model is connected
 	if (self.config.model === 'Auto') {
-		self.data.model = self.data.modelINFO || self.data.modelTCP
+		self.data.model = self.data.modelAuto
 	} else {
 		self.data.model = self.config.model
 	}
@@ -13,10 +13,9 @@ export function getAndUpdateSeries(self) {
 	}
 
 	// Find the specific commands for a given series
-	let SERIES =
-		self.data.series !== 'Auto' && self.data.series !== 'Other'
-			? SERIES_SPECS.find((SERIES_SPECS) => SERIES_SPECS.id === self.data.series)
-			: undefined
+	let SERIES = self.data.series !== 'Auto' && self.data.series !== 'Other'
+		? SERIES_SPECS.find((SERIES_SPECS) => SERIES_SPECS.id === self.data.series)
+		: undefined
 
 	return SERIES || SERIES_SPECS.find((SERIES_SPECS) => SERIES_SPECS.id === 'Other')
 }

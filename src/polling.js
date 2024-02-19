@@ -1,51 +1,48 @@
 export async function pollCameraStatus(self) {
-	if (self.SERIES.capabilities.poll) {
-		const delay = 100
-		if (self.SERIES.capabilities.poll.ptz) {
-			for (let cmd of self.SERIES.capabilities.poll.ptz) {
-				if (self.polling) await self.getPTZ(cmd)
-				else return
-				if (self.polling) await sleep(delay)
-				else return
-			}
-		}
-		if (self.SERIES.capabilities.poll.cam) {
-			for (let cmd of self.SERIES.capabilities.poll.cam) {
-				if (self.polling) await self.getCam(cmd)
-				else return
-				if (self.polling) await sleep(delay)
-				else return
-			}
-		}
-		if (self.SERIES.capabilities.poll.web) {
-			for (let cmd of self.SERIES.capabilities.poll.web) {
-				if (self.polling) await self.getWeb(cmd)
-				else return
-				if (self.polling) await sleep(delay)
-				else return
-			}
-		}
-		pollCameraStatus(self)
-	}
+    if (self.SERIES.capabilities.poll.ptz) {
+        for (let cmd of self.SERIES.capabilities.poll.ptz) {
+            if (self.poll) await self.getPTZ(cmd)
+            else return
+            if (self.poll) await sleep(self.config.pollDelay)
+            else return
+        }
+    }
+    if (self.SERIES.capabilities.poll.cam) {
+        for (let cmd of self.SERIES.capabilities.poll.cam) {
+            if (self.poll) await self.getCam(cmd)
+            else return
+            if (self.poll) await sleep(self.config.pollDelay)
+            else return
+        }
+    }
+    if (self.SERIES.capabilities.poll.web) {
+        for (let cmd of self.SERIES.capabilities.poll.web) {
+            if (self.poll) await self.getWeb(cmd)
+            else return
+            if (self.poll) await sleep(self.config.pollDelay)
+            else return
+        }
+    }
+    pollCameraStatus(self)
 }
 
 export async function pullCameraStatus(self) {
     const pull = {
         ptz: [
-            'O', // Power*
+            'O', // Power
             'PE00', // Preset Entry 0
             'PE01', // Preset Entry 1
             'PE02', // Preset Entry 2
-            'AXF', // Focus Position Control*
-            'AXI', // Iris Position Control*
+            'AXF', // Focus Position Control
+            'AXI', // Iris Position Control
             'AXZ', // Zoom Position Control
-            'GF', // Request Focus Position*
-            'GI', // Request Iris Position (+Mode)*
-            'GZ', // Request Zoom Position*
-            //'I', // Iris Position (1-99)*
-            //'D1', // Focus Mode*
-            //'D3', // Iris Mode*
-            'DA', // Tally*
+            'GF', // Request Focus Position
+            'GI', // Request Iris Position (+Mode)
+            'GZ', // Request Zoom Position
+            //'I', // Iris Position (1-99)
+            //'D1', // Focus Mode
+            //'D3', // Iris Mode
+            'DA', // Tally
             'INS', // Installation Position
             //'LPC', // Lens Position Information Control
             'LPI', // Lens Position
@@ -59,37 +56,37 @@ export async function pullCameraStatus(self) {
             'UPVS', // Preset Speed
         ],
         cam: [
-            'QAF', // Focus Mode*
-            'QAW', // White Balance Mode*
-            'QBR', // Color Bar*
-            'QBI', // B Gain*
-            'QBP', // B Pedestal*
+            'QAF', // Focus Mode
+            'QAW', // White Balance Mode
+            'QBR', // Color Bar
+            'QBI', // B Gain
+            'QBP', // B Pedestal
             'QGB', // B Gain
             'QBD', // B Pedestal
-            'QFT', // ND Filter*
+            'QFT', // ND Filter
             'QGS', // Gain Select (UB300 only)
-            'QGU', // Gain*
-            'QID', // Model Number*
+            'QGU', // Gain
+            'QID', // Model Number
             'QIF', // Request Iris F No.
-            'QIS', // OIS*
-            'QRI', // R Gain*
-            'QRP', // R Pedestal*
+            'QIS', // OIS
+            'QRI', // R Gain
+            'QRP', // R Pedestal
             'QGR', // R Gain
             'QRD', // R Pedestal
-            'QRS', // Iris Mode*
-            //'QRV', // Iris Control (0x0-0x3FF)*
+            'QRS', // Iris Mode
+            //'QRV', // Iris Control (0x0-0x3FF)
             'QSH', // Shutter
             'QSV', // Software Version
             'QTD', // T Pedestal
             'QTP', // T Pedestal
-            'QLR', // R-Tally Control*
-            'QLG', // G-Tally Control*
+            'QLR', // R-Tally Control
+            'QLG', // G-Tally Control
             'QLY', // Y-Tally Control
-            'QSD:4F', // Iris Follow*
+            'QSD:4F', // Iris Follow
             'QSD:B1', // Color Temperature (enumerated)
             'QSE:71', // Preset Scope
-            'QSG:39', // R Gain*
-            'QSG:3A', // B Gain*
+            'QSG:39', // R Gain
+            'QSG:3A', // B Gain
             'QSG:4A', // Master Pedestal (UB300 only)
             'QSG:4C', // R Pedestal (UB300 only)
             'QSG:4D', // G Pedestal (UE160 only) 
@@ -99,12 +96,12 @@ export async function pullCameraStatus(self) {
             'QSG:5D', // Shutter Speed (UB300 only)
             'QSI:18', // Request Zoom/Focus/Iris Position
             'QSI:19:0', // Software Version, System Version (UB300 only)
-            'QSI:20', // Color Temperature*
+            'QSI:20', // Color Temperature
             'QSJ:03', // Shutter Mode
             'QSJ:06', // Shutter Step Value
             'QSJ:09', // Shutter Synchro Value
-            'QSJ:0F', // Master Pedestal*
-            'QSJ:10', // G Pedestal*
+            'QSJ:0F', // Master Pedestal
+            'QSJ:10', // G Pedestal
             'QSJ:29', // Preset Speed Unit
             'QSJ:5C', // Camera Title
             'QSJ:D2', // ND Filter Status

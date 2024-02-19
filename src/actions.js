@@ -1,98 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { e } from './enum.js'
 import { getAndUpdateSeries, getNext, getNextValue, toHexString } from './common.js'
-import { parseUpdate, parseWeb } from './parser.js'
-import got from 'got'
-
-// ######################
-// #### Send Actions ####
-// ######################
-
-export async function sendPTZ(self, cmd) {
-	const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/aw_ptz?cmd=%23${cmd}&res=1`
-	if (self.config.debug) {
-		self.log('info', `PTZ Request: ${url}`)
-	}
-
-	try {
-		const response = await got.get(url)
-
-		if (response.body) {
-			const str = response.body.trim()
-
-			if (self.config.debug) {
-				self.log('info', 'Received PTZ Command Response: ' + str)
-			}
-
-			parseUpdate(self, str.split(':'))
-
-			self.checkVariables()
-			self.checkFeedbacks()
-		}
-
-	} catch (err) {
-		throw new Error(`PTZ Action failed: ${url}`)
-	}
-}
-
-export async function sendCam(self, cmd) {
-	const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/aw_cam?cmd=${cmd}&res=1`
-
-	if (self.config.debug) {
-		self.log('info', `Cam Request: ${url}`)
-	}
-
-	try {
-		const response = await got.get(url)
-		
-		if (response.body) {
-			const str = response.body.trim()
-
-			if (self.config.debug) {
-				self.log('info', 'Received Cam Command Response: ' + str)
-			}
-
-			parseUpdate(self, str.split(':'))
-
-			self.checkVariables()
-			self.checkFeedbacks()
-		}
-	} catch (err) {
-		throw new Error(`Cam Action failed: ${url}`)
-	}
-}
-
-// Currently only for web commands that don't require admin rights
-export async function sendWeb(self, cmd) {
-	const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/${cmd}`
-
-	if (self.config.debug) {
-		self.log('info', `Web Request: ${url}`)
-	}
-
-	try {
-		const response = await got.get(url)
-
-		if (response.body) {
-			const lines = response.body.trim().split('\r\n')
-
-			for (let line of lines) {
-				const str = line.trim()
-
-				if (self.config.debug) {
-					self.log('info', 'Received Web Command Response: ' + str)
-				}
-
-				parseWeb(self, str.split('='), cmd)
-			}
-
-			self.checkVariables()
-			self.checkFeedbacks()
-		}
-	} catch (err) {
-		throw new Error(`Web Action failed: ${url}`)
-	}
-}
 
 function speedCmd(speed) {
 	return speed.toString().padStart(2, '0')
@@ -131,12 +39,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				await sendPTZ(self, speedCmdPT(SPEED_OFFSET - self.ptSpeed, SPEED_OFFSET))
+				await self.getPTZ(speedCmdPT(SPEED_OFFSET - self.ptSpeed, SPEED_OFFSET))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await sendPTZ(self, speedCmdPT(SPEED_OFFSET - self.ptSpeed, SPEED_OFFSET))
+							await self.getPTZ(speedCmdPT(SPEED_OFFSET - self.ptSpeed, SPEED_OFFSET))
 						})
 					)
 				}
@@ -154,12 +62,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				await sendPTZ(self, speedCmdPT(SPEED_OFFSET + self.ptSpeed, SPEED_OFFSET))
+				await self.getPTZ(speedCmdPT(SPEED_OFFSET + self.ptSpeed, SPEED_OFFSET))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await sendPTZ(self, speedCmdPT(SPEED_OFFSET + self.ptSpeed, SPEED_OFFSET))
+							await self.getPTZ(speedCmdPT(SPEED_OFFSET + self.ptSpeed, SPEED_OFFSET))
 						})
 					)
 				}
@@ -177,12 +85,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				await sendPTZ(self, speedCmdPT(SPEED_OFFSET, SPEED_OFFSET + self.ptSpeed))
+				await self.getPTZ(speedCmdPT(SPEED_OFFSET, SPEED_OFFSET + self.ptSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await sendPTZ(self, speedCmdPT(SPEED_OFFSET, SPEED_OFFSET + self.ptSpeed))
+							await self.getPTZ(speedCmdPT(SPEED_OFFSET, SPEED_OFFSET + self.ptSpeed))
 						})
 					)
 				}
@@ -200,12 +108,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				await sendPTZ(self, speedCmdPT(SPEED_OFFSET, SPEED_OFFSET - self.ptSpeed))
+				await self.getPTZ(speedCmdPT(SPEED_OFFSET, SPEED_OFFSET - self.ptSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await sendPTZ(self, speedCmdPT(SPEED_OFFSET, SPEED_OFFSET - self.ptSpeed))
+							await self.getPTZ(speedCmdPT(SPEED_OFFSET, SPEED_OFFSET - self.ptSpeed))
 						})
 					)
 				}
@@ -223,12 +131,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				await sendPTZ(self, speedCmdPT(SPEED_OFFSET - self.pSpeed, SPEED_OFFSET + self.tSpeed))
+				await self.getPTZ(speedCmdPT(SPEED_OFFSET - self.pSpeed, SPEED_OFFSET + self.tSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await sendPTZ(self, speedCmdPT(SPEED_OFFSET - self.pSpeed, SPEED_OFFSET + self.tSpeed))
+							await self.getPTZ(speedCmdPT(SPEED_OFFSET - self.pSpeed, SPEED_OFFSET + self.tSpeed))
 						})
 					)
 				}
@@ -246,12 +154,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				await sendPTZ(self, speedCmdPT(SPEED_OFFSET + self.pSpeed, SPEED_OFFSET + self.tSpeed))
+				await self.getPTZ(speedCmdPT(SPEED_OFFSET + self.pSpeed, SPEED_OFFSET + self.tSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await sendPTZ(self, speedCmdPT(SPEED_OFFSET + self.pSpeed, SPEED_OFFSET + self.tSpeedy))
+							await self.getPTZ(speedCmdPT(SPEED_OFFSET + self.pSpeed, SPEED_OFFSET + self.tSpeedy))
 						})
 					)
 				}
@@ -269,12 +177,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				await sendPTZ(self, speedCmdPT(SPEED_OFFSET - self.pSpeed, SPEED_OFFSET - self.tSpeed))
+				await self.getPTZ(speedCmdPT(SPEED_OFFSET - self.pSpeed, SPEED_OFFSET - self.tSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await sendPTZ(self, speedCmdPT(SPEED_OFFSET - self.pSpeed, SPEED_OFFSET - self.tSpeed))
+							await self.getPTZ(speedCmdPT(SPEED_OFFSET - self.pSpeed, SPEED_OFFSET - self.tSpeed))
 						})
 					)
 				}
@@ -292,12 +200,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				await sendPTZ(self, speedCmdPT(SPEED_OFFSET + self.pSpeed, SPEED_OFFSET - self.tSpeed))
+				await self.getPTZ(speedCmdPT(SPEED_OFFSET + self.pSpeed, SPEED_OFFSET - self.tSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await sendPTZ(self, speedCmdPT(SPEED_OFFSET + self.pSpeed, SPEED_OFFSET - self.tSpeed))
+							await self.getPTZ(speedCmdPT(SPEED_OFFSET + self.pSpeed, SPEED_OFFSET - self.tSpeed))
 						})
 					)
 				}
@@ -308,7 +216,7 @@ export function getActionDefinitions(self) {
 			name: 'Pan/Tilt - Stop',
 			options: [],
 			callback: async (action) => {
-				await sendPTZ(self, speedCmdPT(SPEED_OFFSET, SPEED_OFFSET))
+				await self.getPTZ(speedCmdPT(SPEED_OFFSET, SPEED_OFFSET))
 				if (self.speedChangeEmitter.listenerCount('ptSpeed')) self.speedChangeEmitter.removeAllListeners('ptSpeed')
 			},
 		}
@@ -317,7 +225,7 @@ export function getActionDefinitions(self) {
 			name: 'Pan/Tilt - Home Position',
 			options: [],
 			callback: async (action) => {
-				await sendPTZ(self, 'APC7FFF7FFF')
+				await self.getPTZ('APC7FFF7FFF')
 			},
 		}
 
@@ -488,12 +396,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'Z' + speedCmd(SPEED_OFFSET + self.zSpeed))
+				await self.getPTZ('Z' + speedCmd(SPEED_OFFSET + self.zSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('zSpeed').then(
 						self.speedChangeEmitter.on('zSpeed', async () => {
-							await sendPTZ(self, 'Z' + speedCmd(SPEED_OFFSET + self.zSpeed))
+							await self.getPTZ('Z' + speedCmd(SPEED_OFFSET + self.zSpeed))
 						})
 					)
 				}
@@ -511,12 +419,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'Z' + speedCmd(SPEED_OFFSET - self.zSpeed))
+				await self.getPTZ('Z' + speedCmd(SPEED_OFFSET - self.zSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('zSpeed').then(
 						self.speedChangeEmitter.on('zSpeed', async () => {
-							await sendPTZ(self, 'Z' + speedCmd(SPEED_OFFSET - self.zSpeed))
+							await self.getPTZ('Z' + speedCmd(SPEED_OFFSET - self.zSpeed))
 						})
 					)
 				}
@@ -527,7 +435,7 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Zoom Stop',
 			options: [],
 			callback: async (action) => {
-				await sendPTZ(self, 'Z' + speedCmd(SPEED_OFFSET))
+				await self.getPTZ('Z' + speedCmd(SPEED_OFFSET))
 				if (self.speedChangeEmitter.listenerCount('zSpeed')) self.speedChangeEmitter.removeAllListeners('zSpeed')
 			},
 		}
@@ -586,12 +494,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'F' + speedCmd(SPEED_OFFSET - self.fSpeed))
+				await self.getPTZ('F' + speedCmd(SPEED_OFFSET - self.fSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('fSpeed').then(
 						self.speedChangeEmitter.on('fSpeed', async () => {
-							await sendPTZ(self, 'F' + speedCmd(SPEED_OFFSET - self.fSpeed))
+							await self.getPTZ('F' + speedCmd(SPEED_OFFSET - self.fSpeed))
 						})
 					)
 				}
@@ -609,12 +517,12 @@ export function getActionDefinitions(self) {
 				}
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'F' + speedCmd(SPEED_OFFSET + self.fSpeed))
+				await self.getPTZ('F' + speedCmd(SPEED_OFFSET + self.fSpeed))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('fSpeed').then(
 						self.speedChangeEmitter.on('fSpeed', async () => {
-							await sendPTZ(self, 'F' + speedCmd(SPEED_OFFSET + self.fSpeed))
+							await self.getPTZ('F' + speedCmd(SPEED_OFFSET + self.fSpeed))
 						})
 					)
 				}
@@ -625,7 +533,7 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Focus Stop',
 			options: [],
 			callback: async (action) => {
-				await sendPTZ(self, 'F' + speedCmd(SPEED_OFFSET))
+				await self.getPTZ('F' + speedCmd(SPEED_OFFSET))
 				if (self.speedChangeEmitter.listenerCount('fSpeed')) self.speedChangeEmitter.removeAllListeners('fSpeed')
 			},
 		}
@@ -685,7 +593,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OAF:' + action.options.val)
+				await self.getCam('OAF:' + action.options.val)
 			},
 		}
 	}
@@ -695,7 +603,7 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Focus Push Auto',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, 'OSE:69:1')
+				await self.getCam('OSE:69:1')
 			},
 		}
 	}
@@ -709,8 +617,8 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Iris Up',
 			options: [],
 			callback: async (action) => {
-				// await sendPTZ(self, 'I' + getNext(e.ENUM_IRIS, self.data.iris, +1).id)
-				await sendPTZ(self, 'AXI' + toHexString(0x555 + getNextValue(self.data.irisPosition, 0x0, 0xAAA, +0x1E), 3))
+				// await self.getPTZ('I' + getNext(e.ENUM_IRIS, self.data.iris, +1).id)
+				await self.getPTZ('AXI' + toHexString(0x555 + getNextValue(self.data.irisPosition, 0x0, 0xAAA, +0x1E), 3))
 			},
 		}
 
@@ -718,8 +626,8 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Iris Down',
 			options: [],
 			callback: async (action) => {
-				// await sendPTZ(self, 'I' + getNext(e.ENUM_IRIS, self.data.iris, -1).id)
-				await sendPTZ(self, 'AXI' + toHexString(0x555 + getNextValue(self.data.irisPosition, 0x0, 0xAAA, -0x1E), 3))
+				// await self.getPTZ('I' + getNext(e.ENUM_IRIS, self.data.iris, -1).id)
+				await self.getPTZ('AXI' + toHexString(0x555 + getNextValue(self.data.irisPosition, 0x0, 0xAAA, -0x1E), 3))
 			},
 		}
 
@@ -739,7 +647,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'AXI' + toHexString(0x555 + action.options.val, 3))
+				await self.getPTZ('AXI' + toHexString(0x555 + action.options.val, 3))
 			},
 		}
 
@@ -755,7 +663,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'ORS:' + action.options.val)
+				await self.getCam('ORS:' + action.options.val)
 			},
 		}
 	}
@@ -765,7 +673,7 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Gain Up',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.gain.cmd + ':' + getNext(SERIES.capabilities.gain.dropdown, self.data.gain, +1).id)
+				await self.getCam(SERIES.capabilities.gain.cmd + ':' + getNext(SERIES.capabilities.gain.dropdown, self.data.gain, +1).id)
 			},
 		}
 
@@ -773,7 +681,7 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Gain Down',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.gain.cmd + ':' + getNext(SERIES.capabilities.gain.dropdown, self.data.gain, -1).id)
+				await self.getCam(SERIES.capabilities.gain.cmd + ':' + getNext(SERIES.capabilities.gain.dropdown, self.data.gain, -1).id)
 			},
 		}
 
@@ -789,7 +697,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.gain.cmd + ':' + action.options.val)
+				await self.getCam(SERIES.capabilities.gain.cmd + ':' + action.options.val)
 			},
 		}
 	}
@@ -800,9 +708,9 @@ export function getActionDefinitions(self) {
 			options: [],
 			callback: async (action) => {
 				if (SERIES.capabilities.shutter.inc) {
-					await sendCam(self, SERIES.capabilities.shutter.inc + ':0x01')
+					await self.getCam(SERIES.capabilities.shutter.inc + ':0x01')
 				} else {				
-					await sendCam(self, SERIES.capabilities.shutter.cmd + ':' + getNext(SERIES.capabilities.shutter.dropdown, self.data.shutter, +1).id)
+					await self.getCam(SERIES.capabilities.shutter.cmd + ':' + getNext(SERIES.capabilities.shutter.dropdown, self.data.shutter, +1).id)
 				}
 			},
 		}
@@ -812,9 +720,9 @@ export function getActionDefinitions(self) {
 			options: [],
 			callback: async (action) => {
 				if (SERIES.capabilities.shutter.dec) {
-					await sendCam(self, SERIES.capabilities.shutter.dec + ':0x01')
+					await self.getCam(SERIES.capabilities.shutter.dec + ':0x01')
 				} else {
-					await sendCam(self, SERIES.capabilities.shutter.cmd + ':' + getNext(SERIES.capabilities.shutter.dropdown, self.data.shutter, -1).id)
+					await self.getCam(SERIES.capabilities.shutter.cmd + ':' + getNext(SERIES.capabilities.shutter.dropdown, self.data.shutter, -1).id)
 				}
 			},
 		}
@@ -832,7 +740,7 @@ export function getActionDefinitions(self) {
 					},
 				],
 				callback: async (action) => {
-					await sendCam(self, SERIES.capabilities.shutter.cmd + ':' + action.options.val)
+					await self.getCam(SERIES.capabilities.shutter.cmd + ':' + action.options.val)
 				},
 			}
 		}
@@ -846,7 +754,7 @@ export function getActionDefinitions(self) {
 				const val = getNextValue(self.data.masterPedValue,
 					-SERIES.capabilities.pedestal.limit, +SERIES.capabilities.pedestal.limit,
 					+SERIES.capabilities.pedestal.step)
-				await sendCam(self, SERIES.capabilities.pedestal.cmd + ':' +
+				await self.getCam(SERIES.capabilities.pedestal.cmd + ':' +
 					toHexString(SERIES.capabilities.pedestal.offset + val, SERIES.capabilities.pedestal.hexlen))
 			},			
 		}
@@ -858,7 +766,7 @@ export function getActionDefinitions(self) {
 				const val = getNextValue(self.data.masterPedValue,
 					-SERIES.capabilities.pedestal.limit, +SERIES.capabilities.pedestal.limit,
 					-SERIES.capabilities.pedestal.step)
-				await sendCam(self, SERIES.capabilities.pedestal.cmd + ':' +
+				await self.getCam(SERIES.capabilities.pedestal.cmd + ':' +
 					toHexString(SERIES.capabilities.pedestal.offset + val, SERIES.capabilities.pedestal.hexlen))
 			},	
 		}
@@ -879,7 +787,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.pedestal.cmd + ':' +
+				await self.getCam(SERIES.capabilities.pedestal.cmd + ':' +
 					toHexString(SERIES.capabilities.pedestal.offset + action.options.val, SERIES.capabilities.pedestal.hexlen))
 			},
 		}
@@ -898,7 +806,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OAW:' + action.options.val)
+				await self.getCam('OAW:' + action.options.val)
 			},
 		}
 
@@ -906,7 +814,7 @@ export function getActionDefinitions(self) {
 			name: 'White Balance - Execute AWC/AWB',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, 'OWS')
+				await self.getCam('OWS')
 			},
 		}
 
@@ -914,7 +822,7 @@ export function getActionDefinitions(self) {
 			name: 'White Balance - Execute ABC/ABB',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, 'OAS')
+				await self.getCam('OAS')
 			},
 		}
 	}
@@ -924,7 +832,7 @@ export function getActionDefinitions(self) {
 			name: 'White Balance - Color Temperature Up',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':' +
+				await self.getCam(SERIES.capabilities.colorTemperature.index.cmd + ':' +
 					getNext(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature, +1).id)
 			},
 		}
@@ -933,7 +841,7 @@ export function getActionDefinitions(self) {
 			name: 'White Balance - Color Temperature Down',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':' +
+				await self.getCam(SERIES.capabilities.colorTemperature.index.cmd + ':' +
 					getNext(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature, -1).id)
 			},
 		}
@@ -950,7 +858,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.colorTemperature.index.cmd + ':' + action.options.val)
+				await self.getCam(SERIES.capabilities.colorTemperature.index.cmd + ':' + action.options.val)
 			},
 		}
 	}
@@ -960,7 +868,7 @@ export function getActionDefinitions(self) {
 			name: 'White Balance - Color Temperature Up',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.colorTemperature.advanced.inc + ':1')
+				await self.getCam(SERIES.capabilities.colorTemperature.advanced.inc + ':1')
 			},
 		}
 
@@ -968,7 +876,7 @@ export function getActionDefinitions(self) {
 			name: 'White Balance - Color Temperature Down',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.colorTemperature.advanced.dec + ':1')
+				await self.getCam(SERIES.capabilities.colorTemperature.advanced.dec + ':1')
 			},
 		}
 
@@ -989,7 +897,7 @@ export function getActionDefinitions(self) {
 					},
 				],
 				callback: async (action) => {
-					await sendCam(self, SERIES.capabilities.colorTemperature.advanced.set + ':' +
+					await self.getCam(SERIES.capabilities.colorTemperature.advanced.set + ':' +
 						toHexString(action.options.val, 5) + ':0')
 				},
 			}
@@ -1004,7 +912,7 @@ export function getActionDefinitions(self) {
 				const val = getNextValue(self.data.redPedValue,
 					-SERIES.capabilities.colorPedestal.limit, +SERIES.capabilities.colorPedestal.limit,
 					+SERIES.capabilities.colorPedestal.step)
-				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.red + ':' +
+				await self.getCam(SERIES.capabilities.colorPedestal.cmd.red + ':' +
 					toHexString(SERIES.capabilities.colorPedestal.offset + val, SERIES.capabilities.colorPedestal.hexlen))
 			},
 		}
@@ -1016,7 +924,7 @@ export function getActionDefinitions(self) {
 				const val = getNextValue(self.data.redPedValue,
 					-SERIES.capabilities.colorPedestal.limit, +SERIES.capabilities.colorPedestal.limit,
 					-SERIES.capabilities.colorPedestal.step)
-				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.red + ':' +
+				await self.getCam(SERIES.capabilities.colorPedestal.cmd.red + ':' +
 					toHexString(SERIES.capabilities.colorPedestal.offset + val, SERIES.capabilities.colorPedestal.hexlen))
 			},
 		}
@@ -1037,7 +945,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.red + ':' +
+				await self.getCam(SERIES.capabilities.colorPedestal.cmd.red + ':' +
 					toHexString(SERIES.capabilities.colorPedestal.offset + action.options.val, SERIES.capabilities.colorPedestal.hexlen))
 			},
 		}
@@ -1051,7 +959,7 @@ export function getActionDefinitions(self) {
 				const val = getNextValue(self.data.bluePedValue,
 					-SERIES.capabilities.colorPedestal.limit, +SERIES.capabilities.colorPedestal.limit,
 					+SERIES.capabilities.colorPedestal.step)
-				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.blue + ':' +
+				await self.getCam(SERIES.capabilities.colorPedestal.cmd.blue + ':' +
 					toHexString(SERIES.capabilities.colorPedestal.offset + val, SERIES.capabilities.colorPedestal.hexlen))
 			},
 		}
@@ -1063,7 +971,7 @@ export function getActionDefinitions(self) {
 				const val = getNextValue(self.data.bluePedValue,
 					-SERIES.capabilities.colorPedestal.limit, +SERIES.capabilities.colorPedestal.limit,
 					-SERIES.capabilities.colorPedestal.step)
-				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.blue + ':' +
+				await self.getCam(SERIES.capabilities.colorPedestal.cmd.blue + ':' +
 					toHexString(SERIES.capabilities.colorPedestal.offset + val, SERIES.capabilities.colorPedestal.hexlen))
 			},
 		}
@@ -1084,7 +992,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.colorPedestal.cmd.blue + ':' +
+				await self.getCam(SERIES.capabilities.colorPedestal.cmd.blue + ':' +
 					toHexString(SERIES.capabilities.colorPedestal.offset + action.options.val, SERIES.capabilities.colorPedestal.hexlen))
 			},
 		}
@@ -1098,7 +1006,7 @@ export function getActionDefinitions(self) {
 				const val = getNextValue(self.data.redGainValue,
 					-SERIES.capabilities.colorGain.limit, +SERIES.capabilities.colorGain.limit,
 					+SERIES.capabilities.colorGain.step)
-				await sendCam(self, SERIES.capabilities.colorGain.cmd.red + ':' +
+				await self.getCam(SERIES.capabilities.colorGain.cmd.red + ':' +
 					toHexString(SERIES.capabilities.colorGain.offset + val, SERIES.capabilities.colorGain.hexlen))
 			},
 		}
@@ -1110,7 +1018,7 @@ export function getActionDefinitions(self) {
 				const val = getNextValue(self.data.redGainValue,
 					-SERIES.capabilities.colorGain.limit, +SERIES.capabilities.colorGain.limit,
 					-SERIES.capabilities.colorGain.step)
-				await sendCam(self, SERIES.capabilities.colorGain.cmd.red + ':' +
+				await self.getCam(SERIES.capabilities.colorGain.cmd.red + ':' +
 					toHexString(SERIES.capabilities.colorGain.offset + val, SERIES.capabilities.colorGain.hexlen))
 			},
 		}
@@ -1131,7 +1039,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.colorGain.cmd.red + ':' +
+				await self.getCam(SERIES.capabilities.colorGain.cmd.red + ':' +
 					toHexString(SERIES.capabilities.colorGain.offset + action.options.val, SERIES.capabilities.colorGain.hexlen))
 			},
 		}
@@ -1145,7 +1053,7 @@ export function getActionDefinitions(self) {
 				const val = getNextValue(self.data.blueGainValue,
 					-SERIES.capabilities.colorGain.limit, +SERIES.capabilities.colorGain.limit,
 					+SERIES.capabilities.colorGain.step)
-				await sendCam(self, SERIES.capabilities.colorGain.cmd.blue + ':' +
+				await self.getCam(SERIES.capabilities.colorGain.cmd.blue + ':' +
 					toHexString(SERIES.capabilities.colorGain.offset + val, SERIES.capabilities.colorGain.hexlen))
 			},
 		}
@@ -1157,7 +1065,7 @@ export function getActionDefinitions(self) {
 				const val = getNextValue(self.data.blueGainValue,
 					-SERIES.capabilities.colorGain.limit, +SERIES.capabilities.colorGain.limit,
 					-SERIES.capabilities.colorGain.step)
-				await sendCam(self, SERIES.capabilities.colorGain.cmd.blue + ':' +
+				await self.getCam(SERIES.capabilities.colorGain.cmd.blue + ':' +
 					toHexString(SERIES.capabilities.colorGain.offset + val, SERIES.capabilities.colorGain.hexlen))
 			},
 		}
@@ -1178,7 +1086,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, SERIES.capabilities.colorGain.cmd.blue + ':' +
+				await self.getCam(SERIES.capabilities.colorGain.cmd.blue + ':' +
 				toHexString(SERIES.capabilities.colorGain.offset + action.options.val, SERIES.capabilities.colorGain.hexlen))
 			},
 		}
@@ -1189,7 +1097,7 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - ND Filter Up',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, 'OFT:' + getNext(SERIES.capabilities.filter.dropdown, self.data.filter, +1).id)
+				await self.getCam('OFT:' + getNext(SERIES.capabilities.filter.dropdown, self.data.filter, +1).id)
 			},
 		}
 
@@ -1197,7 +1105,7 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - ND Filter Down',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, 'OFT:' + getNext(SERIES.capabilities.filter.dropdown, self.data.filter, -1).id)
+				await self.getCam('OFT:' + getNext(SERIES.capabilities.filter.dropdown, self.data.filter, -1).id)
 			},
 		}
 
@@ -1213,7 +1121,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OFT:' + action.options.val)
+				await self.getCam('OFT:' + action.options.val)
 			},
 		}
 	}
@@ -1235,7 +1143,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'M' + action.options.val)
+				await self.getPTZ('M' + action.options.val)
 			},
 		}
 
@@ -1251,7 +1159,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'R' + action.options.val)
+				await self.getPTZ('R' + action.options.val)
 			},
 		}
 
@@ -1267,7 +1175,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'C' + action.options.val)
+				await self.getPTZ('C' + action.options.val)
 			},
 		}
 
@@ -1283,7 +1191,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OSE:71:' + action.options.val)
+				await self.getCam('OSE:71:' + action.options.val)
 			},
 		}
 	}
@@ -1310,9 +1218,9 @@ export function getActionDefinitions(self) {
 			callback: async (action) => {
 				const r = parseInt(action.options.speed, 16)
 				const s = r < 0x001 || r > 0x063
-				if (SERIES.capabilities.presetTime) await sendCam(self, 'OSJ:29:' + (s?'0':'1'))
-				if (s) await sendPTZ(self, 'PST' + action.options.table)
-				await sendPTZ(self, 'UPVS' + action.options.speed)
+				if (SERIES.capabilities.presetTime) await self.getCam('OSJ:29:' + (s?'0':'1'))
+				if (s) await self.getPTZ('PST' + action.options.table)
+				await self.getPTZ('UPVS' + action.options.speed)
 			},
 		}
 	}
@@ -1333,8 +1241,8 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OSJ:29:1')
-				await sendPTZ(self, 'UPVS' + toHexString(action.options.val, 3))
+				await self.getCam('OSJ:29:1')
+				await self.getPTZ('UPVS' + toHexString(action.options.val, 3))
 			},
 		}
 	}
@@ -1356,7 +1264,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OSL:B6:' + action.options.val)
+				await self.getCam('OSL:B6:' + action.options.val)
 			},
 		}
 
@@ -1372,7 +1280,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OSL:BC:' + action.options.val)
+				await self.getCam('OSL:BC:' + action.options.val)
 			},
 		}
 	}
@@ -1386,7 +1294,7 @@ export function getActionDefinitions(self) {
 			name: 'System - Power Off',
 			options: [],
 			callback: async (action) => {
-				await sendPTZ(self, 'O0')
+				await self.getPTZ('O0')
 			},
 		}
 
@@ -1394,7 +1302,7 @@ export function getActionDefinitions(self) {
 			name: 'System - Power On',
 			options: [],
 			callback: async (action) => {
-				await sendPTZ(self, 'O1')
+				await self.getPTZ('O1')
 			},
 		}
 	}
@@ -1407,7 +1315,7 @@ export function getActionDefinitions(self) {
 			options: [],
 			callback: async (action) => {
 				//ToDo: POST with Admin auth
-				await sendWeb(self, 'initial?cmd=reset&Randomnum=0123456789ABCDEF')
+				await self.getWeb('initial?cmd=reset&Randomnum=0123456789ABCDEF')
 			},
 		}
 	}
@@ -1427,7 +1335,7 @@ export function getActionDefinitions(self) {
 					},
 				],
 				callback: async (action) => {
-					await sendCam(self, 'TLR:' + action.options.val)
+					await self.getCam('TLR:' + action.options.val)
 				},
 			}
 			actions.tally2 = {
@@ -1442,7 +1350,7 @@ export function getActionDefinitions(self) {
 					},
 				],
 				callback: async (action) => {
-					await sendCam(self, 'TLG:' + action.options.val)
+					await self.getCam('TLG:' + action.options.val)
 				},
 			}
 			if (SERIES.capabilities.tally3) {
@@ -1458,7 +1366,7 @@ export function getActionDefinitions(self) {
 						},
 					],
 					callback: async (action) => {
-						await sendCam(self, 'TLY:' + action.options.val)
+						await self.getCam('TLY:' + action.options.val)
 					},
 				}
 			}
@@ -1475,7 +1383,7 @@ export function getActionDefinitions(self) {
 					},
 				],
 				callback: async (action) => {
-					await sendPTZ(self, 'DA' + action.options.val)
+					await self.getPTZ('DA' + action.options.val)
 				},
 			}
 		}
@@ -1494,7 +1402,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OIS:' + action.options.val)
+				await self.getCam('OIS:' + action.options.val)
 			},
 		}
 	}
@@ -1512,7 +1420,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'DCB:' + action.options.val)
+				await self.getCam('DCB:' + action.options.val)
 			},
 		}
 	}
@@ -1530,7 +1438,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendPTZ(self, 'INS' + action.options.val)
+				await self.getPTZ('INS' + action.options.val)
 			},
 		}
 	}
@@ -1551,7 +1459,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendWeb(self, 'sdctrl?save=' + action.options.val)
+				await self.getWeb('sdctrl?save=' + action.options.val)
 			},
 		}
 	}
@@ -1572,7 +1480,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendWeb(self, 'srt_ctrl?cmd=' + action.options.val)
+				await self.getWeb('srt_ctrl?cmd=' + action.options.val)
 			},
 		}
 	}
@@ -1593,7 +1501,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await sendWeb(self, 'rtmp_ctrl?cmd=' + action.options.val)
+				await self.getWeb('rtmp_ctrl?cmd=' + action.options.val)
 			},
 		}
 	}
@@ -1621,9 +1529,9 @@ export function getActionDefinitions(self) {
 		],
 		callback: async (action) => {
 			switch (action.options.dest) {
-				case '0': await sendCam(self, action.options.cmd); break
-				case '1': await sendPTZ(self, action.options.cmd); break
-				case '2': await sendWeb(self, action.options.cmd); break
+				case '0': await self.getCam(action.options.cmd); break
+				case '1': await self.getPTZ(action.options.cmd); break
+				case '2': await self.getWeb(action.options.cmd); break
 			}
 		},
 	}

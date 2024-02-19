@@ -9,15 +9,13 @@ export function getFeedbackDefinitions(self) {
 	const feedbacks = {}
 
 	const SERIES = getAndUpdateSeries(self)
-	// console.log(SERIES);
 
-	const foregroundColor = combineRgb(255, 255, 255) // White
-	const backgroundColorBlack = combineRgb(0, 0, 0) // Black
-	const backgroundColorRed = combineRgb(255, 0, 0) // Red
-	const backgroundColorGreen = combineRgb(0, 255, 0) // Green
-	const backgroundColorOrange = combineRgb(255, 102, 0) // Orange
-	const backgroundColorBlue = combineRgb(0, 51, 204)
-	const backgroundColorGrey = combineRgb(51, 51, 51)
+	const colorWhite = combineRgb(255, 255, 255)
+	const colorRed = combineRgb(255, 0, 0)
+	const colorGreen = combineRgb(0, 255, 0)
+	const colorOrange = combineRgb(255, 102, 0)
+	const colorBlue = combineRgb(0, 51, 204)
+	const colorGrey = combineRgb(51, 51, 51)
 
 	if (SERIES.capabilities.power) {
 		feedbacks.powerState = {
@@ -25,8 +23,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'System - Power State',
 			description: 'Indicates if the camera is currently fully powered',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorRed,
+				color: colorWhite,
+				bgcolor: colorRed,
 			},
 			options: [],
 			callback: function (feedback) {
@@ -41,8 +39,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'System - Color Bar State',
 			description: 'Indicates if the color bar is currently enabled',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorRed,
+				color: colorWhite,
+				bgcolor: colorRed,
 			},
 			options: [],
 			callback: function (feedback) {
@@ -57,8 +55,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'System - Red Tally State',
 			description: 'Indicates if the red Tally is currently active',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorRed,
+				color: colorWhite,
+				bgcolor: colorRed,
 			},
 			options: [],
 			callback: function (feedback) {
@@ -73,8 +71,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'System - Green Tally State',
 			description: 'Indicates if the green Tally is currently active',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorGreen,
+				color: colorWhite,
+				bgcolor: colorGreen,
 			},
 			options: [],
 			callback: function (feedback) {
@@ -89,8 +87,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'System - Yellow Tally State',
 			description: 'Indicates if the yellow Tally is currently active',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorOrange,
+				color: colorWhite,
+				bgcolor: colorOrange,
 			},
 			options: [],
 			callback: function (feedback) {
@@ -105,8 +103,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'System - Install Position',
 			description: 'Indicates if the selected mounting position is currently active',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorRed,
+				color: colorWhite,
+				bgcolor: colorRed,
 			},
 			options: [
 				{
@@ -129,8 +127,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Lens - Focus Mode Auto',
 			description: 'Indicates if Auto Focus is currently enabled',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorRed,
+				color: colorWhite,
+				bgcolor: colorRed,
 			},
 			options: [],
 			callback: function (feedback) {
@@ -145,8 +143,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Lens - Iris Mode Auto',
 			description: 'Indicates if Auto Iris is currently enabled',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorRed,
+				color: colorWhite,
+				bgcolor: colorRed,
 			},
 			options: [],
 			callback: function (feedback) {
@@ -161,8 +159,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Preset - Recall Mode',
 			description: 'Indicates if the selected preset recall mode is currently active',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorRed,
+				color: colorWhite,
+				bgcolor: colorRed,
 			},
 			options: [
 				{
@@ -182,8 +180,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Preset - Selected / Active',
 			description: 'Indicates if the selected preset is currently active (last selected)',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorOrange,
+				color: colorWhite,
+				bgcolor: colorOrange,
 			},
 			options: [
 				{
@@ -203,8 +201,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Preset - Recall Completion Notification',
 			description: 'Indicates if the last recall to the selected preset is completed',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorBlue,
+				color: colorWhite,
+				bgcolor: colorBlue,
 			},
 			options: [
 				{
@@ -224,8 +222,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Preset - Memory State',
 			description: 'Indicates if the selected preset memory slot is used',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorGrey,
+				color: colorWhite,
+				bgcolor: colorGrey,
 			},
 			options: [
 				{
@@ -248,8 +246,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Image Stabilization - Mode',
 			description: 'Indicates whether the selected image stabilization mode is currently active',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorRed,
+				color: colorWhite,
+				bgcolor: colorRed,
 			},
 			options: [
 				{
@@ -272,8 +270,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Exposure - ND Filter',
 			description: 'Indicates whether the selected ND filter is currently active',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorRed,
+				color: colorWhite,
+				bgcolor: colorRed,
 			},
 			options: [
 				{
@@ -296,8 +294,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Exposure - Gain Mode',
 			description: 'Indicates whether the selected gain mode is currently active',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorRed,
+				color: colorWhite,
+				bgcolor: colorRed,
 			},
 			options: [
 				{
@@ -320,8 +318,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Exposure - Shutter Mode',
 			description: 'Indicates whether the selected shutter mode is currently active',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorRed,
+				color: colorWhite,
+				bgcolor: colorRed,
 			},
 			options: [
 				{
@@ -344,8 +342,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'White Balance - Mode',
 			description: 'Indicates whether the selected white balance mode is currently active',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorRed,
+				color: colorWhite,
+				bgcolor: colorRed,
 			},
 			options: [
 				{
@@ -368,8 +366,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Recording - State',
 			description: 'Indicates if currently recording on the camera',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorRed,
+				color: colorWhite,
+				bgcolor: colorRed,
 			},
 			options: [],
 			callback: function (feedback) {
@@ -384,8 +382,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Recording - SD card inserted',
 			description: 'Indicates if at least one SD card it inserted in a slot on the camera',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorGreen,
+				color: colorWhite,
+				bgcolor: colorGreen,
 			},
 			options: [],
 			callback: function (feedback) {
@@ -400,8 +398,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Streaming - RTMP Client State',
 			description: 'Indicates if streaming in RTMP Client Mode is currently active',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorRed,
+				color: colorWhite,
+				bgcolor: colorRed,
 			},
 			options: [],
 			callback: function (feedback) {
@@ -416,8 +414,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Streaming - SRT Caller State',
 			description: 'Indicates if streaming in SRT Caller Mode is currently active',
 			defaultStyle: {
-				color: foregroundColor,
-				bgcolor: backgroundColorRed,
+				color: colorWhite,
+				bgcolor: colorRed,
 			},
 			options: [],
 			callback: function (feedback) {

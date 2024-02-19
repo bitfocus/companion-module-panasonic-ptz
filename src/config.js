@@ -7,12 +7,12 @@ export const ConfigFields = [
 		width: 12,
 		label: 'Information',
 		value:
-			"This module controls Panasonic PTZ cameras, you can find supported models in the dropdown below.<br/>If your camera isn't in the list below, feel free to try it anyway by option 'Other Cameras'.",
+			"This module controls Panasonic PTZ cameras, you can find supported models in the dropdown below.<br/>If your camera isn't in the list below yet, feel free to try it anyway by option 'Other Cameras'. This should still support some basic operation.",
 	},
 	{
 		type: 'textinput',
 		id: 'host',
-		label: 'Camera IP',
+		label: 'Camera IP / Hostname',
 		width: 4,
 		// regex: Regex.IP
 	},
@@ -60,8 +60,46 @@ export const ConfigFields = [
 		id: 'Info',
 		width: 12,
 		label: 'Other Settings',
-		value:
-			'These setting can be left on the default values and should give you a consistent setup, but they are there for you to use if need be.',
+		value: 'These setting can be left on the default values and should give you a consistent setup, but they are there for you to use if need be.',
+	},
+	{
+		type: 'number',
+		id: 'timeout',
+		label: 'Timeout (ms)',
+		width: 3,
+		default: 1000,
+		min: 100,
+		max: 2500,
+	},
+	{
+		type: 'static-text',
+		id: 'timeoutInfo',
+		width: 9,
+		label: '',
+		value: 'Sets the maximum amount of time to wait for a response from the camera after a request command. Otherwise the connection is considered lost and repeated attempts are made to reinitialize the connection.',
+	},
+	{
+		type: 'checkbox',
+		id: 'pollAllow',
+		width: 1,
+		label: 'Allow',
+		default: true,
+	},
+	{
+		type: 'static-text',
+		id: 'pollInfo',
+		width: 9,
+		label: 'Polling',
+		value: 'Allows periodic querying of data that is not automatically updated by the camera. In theory, this may add a slight additional load on command processing, but is mandatory to obtain updated operational data from camera models that do not support update notification subscription. Additionally allows any operating status values ​​to be kept in sync that never have an update notification. The delay setting specifies the waiting time between individual pull requests.',
+	},
+	{
+		type: 'number',
+		id: 'pollDelay',
+		label: 'Poll Delay (ms)',
+		width: 2,
+		default: 100,
+		min: 1,
+		max: 1000,
 	},
 	{
 		type: 'checkbox',
@@ -83,7 +121,7 @@ export const ConfigFields = [
 		label: 'TCP Port',
 		width: 3,
 		default: 31004,
-		min: 1,
+		min: 1024,
 		max: 65535,
 	},
 	{
@@ -104,8 +142,7 @@ export const ConfigFields = [
 		type: 'static-text',
 		id: 'debugInfo',
 		width: 11,
-		label: 'Enable Debug To Log Window',
-		value:
-			'Requires Companion to be restarted. But this will allow you the see what is being sent from the module and what is being received from the camera.',
+		label: 'Debug To Log Window',
+		value: 'Requires Companion to be restarted. But this will allow you the see what is being sent from the module and what is being received from the camera.',
 	},
 ]

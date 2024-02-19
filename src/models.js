@@ -89,12 +89,12 @@ export const SERIES_SPECS = [
 			ois: { dropdown: e.ENUM_OIS_OTHER }, // Has Optical Image Stabilisation Control (OIS)
 			panTilt: true, // Has Pan/Tilt Head support (PTSxx)
 			pedestal: { cmd: 'OSJ:0F', offset: 0x800, limit: 200, step: 1, hexlen: 3 }, // Has Master Pedestal (OTD, OSJ:0F or OSG:4A)
-			poll: { ptz: false, cam: false, web: ['get_state','get_rtmp_status','get_srt_status','get_ts_status'] },
+			poll: false, // { ptz: false, cam: false, web: ['get_state','get_rtmp_status','get_srt_status','get_ts_status'] },
 			power: true, // Has Power Control (p1/p0 and O1/O0)
 			preset: 100, // Has Preset operations (Mxxx, Rxxx and Cxxx) and states (sXX and qXX)
 			presetSpeed: { dropdown: e.ENUM_PSSPEED_TABLE_2 }, // Has Preset Recall Speed Control (UPVSxx)
 			presetTime: true, // Has additional Preset Recall Time Control (UPVSxx and OSJ:29:1)
-			pull: false,
+			pull: true,
 			recordSD: true, // Has SD Card Recording Control (sdctrl?save=start or sdctrl?save=end)
 			restart: true, // Has Restart command (initial?cmd=reset)
 			shutter: { cmd: 'OSJ:03', inc: 'OSJ:04', dec: 'OSJ:05', dropdown: e.ENUM_SHUTTER_ADV }, // Has Shutter Support (OSH, OSJ:03 - OSJ:06, ...)
@@ -567,7 +567,7 @@ export const SERIES_SPECS = [
 			preset: 100,
 			presetSpeed: { dropdown: e.ENUM_PSSPEED_TABLE_2 },
 			presetTime: false,
-			pull: false,
+			pull: { ptz: ['O','PE00','PE01','PE02','DA','INS','LPI','PST','RER','S','UPVS'], cam: ['QAF','QAW','QBR','QBI','QBP','QFT','QGU','QIS','QRI','QRP','QSV','QTP','QSD:4F','QSD:B1','QSE:71'], web: false },
 			recordSD: false,
 			restart: true,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE130 },
