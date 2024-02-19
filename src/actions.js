@@ -28,184 +28,41 @@ export function getActionDefinitions(self) {
 	// ##########################
 
 	if (SERIES.capabilities.panTilt) {
-		actions.left = {
-			name: 'Pan/Tilt - Pan Left',
+		actions.ptMove = {
+			name: 'Pan/Tilt - Move',
 			options: [
+				{
+					type: 'dropdown',
+					label: 'Direction',
+					id: 'direction',
+					default: '21',
+					choices: [
+						{ id: '21', label: '➡ Right' }, // +
+						{ id: '01', label: '⬅ Left' }, // -
+						{ id: '12', label: '⬆ Up' }, // +
+						{ id: '10', label: '⬇ Down' }, // -
+						{ id: '22', label: '↗ Up Right' }, // ++
+						{ id: '02', label: '↖ Up Left' }, // -+
+						{ id: '00', label: '↙ Down Left' }, // --
+						{ id: '20', label: '↘ Up Right' }, // +-
+					],
+				},
 				{
 					id: 'liveSpeed',
 					type: 'checkbox',
-					label: 'Adjust the velocity of panning left on speed change',
+					label: 'Adjust the velocity of movement on speed change',
 					default: false
 				}
 			],
 			callback: async (action) => {
-				await self.getPTZ(speedCmdPT(SPEED_OFFSET - self.ptSpeed, SPEED_OFFSET))
+				let arr = Array.from(action.options.direction)
+				let pan = parseInt(arr[0]) - 1; let tilt = parseInt(arr[1]) - 1
+				await self.getPTZ(speedCmdPT(pan * self.ptSpeed + SPEED_OFFSET, tilt * self.ptSpeed + SPEED_OFFSET))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await self.getPTZ(speedCmdPT(SPEED_OFFSET - self.ptSpeed, SPEED_OFFSET))
-						})
-					)
-				}
-			},
-		}
-
-		actions.right = {
-			name: 'Pan/Tilt - Pan Right',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of panning right on speed change',
-					default: false
-				}
-			],
-			callback: async (action) => {
-				await self.getPTZ(speedCmdPT(SPEED_OFFSET + self.ptSpeed, SPEED_OFFSET))
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
-						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await self.getPTZ(speedCmdPT(SPEED_OFFSET + self.ptSpeed, SPEED_OFFSET))
-						})
-					)
-				}
-			},
-		}
-
-		actions.up = {
-			name: 'Pan/Tilt - Tilt Up',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of tilting up on speed change',
-					default: false
-				}
-			],
-			callback: async (action) => {
-				await self.getPTZ(speedCmdPT(SPEED_OFFSET, SPEED_OFFSET + self.ptSpeed))
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
-						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await self.getPTZ(speedCmdPT(SPEED_OFFSET, SPEED_OFFSET + self.ptSpeed))
-						})
-					)
-				}
-			},
-		}
-
-		actions.down = {
-			name: 'Pan/Tilt - Tilt Down',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of tilting down on speed change',
-					default: false
-				}
-			],
-			callback: async (action) => {
-				await self.getPTZ(speedCmdPT(SPEED_OFFSET, SPEED_OFFSET - self.ptSpeed))
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
-						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await self.getPTZ(speedCmdPT(SPEED_OFFSET, SPEED_OFFSET - self.ptSpeed))
-						})
-					)
-				}
-			},
-		}
-
-		actions.upLeft = {
-			name: 'Pan/Tilt - Up Left',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of the up left movement on speed change',
-					default: false
-				}
-			],
-			callback: async (action) => {
-				await self.getPTZ(speedCmdPT(SPEED_OFFSET - self.pSpeed, SPEED_OFFSET + self.tSpeed))
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
-						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await self.getPTZ(speedCmdPT(SPEED_OFFSET - self.pSpeed, SPEED_OFFSET + self.tSpeed))
-						})
-					)
-				}
-			},
-		}
-
-		actions.upRight = {
-			name: 'Pan/Tilt - Up Right',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of the up right movement on speed change',
-					default: false
-				}
-			],
-			callback: async (action) => {
-				await self.getPTZ(speedCmdPT(SPEED_OFFSET + self.pSpeed, SPEED_OFFSET + self.tSpeed))
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
-						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await self.getPTZ(speedCmdPT(SPEED_OFFSET + self.pSpeed, SPEED_OFFSET + self.tSpeedy))
-						})
-					)
-				}
-			},
-		}
-
-		actions.downLeft = {
-			name: 'Pan/Tilt - Down Left',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of the down left movement on speed change',
-					default: false
-				}
-			],
-			callback: async (action) => {
-				await self.getPTZ(speedCmdPT(SPEED_OFFSET - self.pSpeed, SPEED_OFFSET - self.tSpeed))
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
-						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await self.getPTZ(speedCmdPT(SPEED_OFFSET - self.pSpeed, SPEED_OFFSET - self.tSpeed))
-						})
-					)
-				}
-			},
-		}
-
-		actions.downRight = {
-			name: 'Pan/Tilt - Down Right',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of the down right movement on speed change',
-					default: false
-				}
-			],
-			callback: async (action) => {
-				await self.getPTZ(speedCmdPT(SPEED_OFFSET + self.pSpeed, SPEED_OFFSET - self.tSpeed))
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
-						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await self.getPTZ(speedCmdPT(SPEED_OFFSET + self.pSpeed, SPEED_OFFSET - self.tSpeed))
+							await self.getPTZ(speedCmdPT(pan * self.ptSpeed + SPEED_OFFSET, tilt * self.ptSpeed + SPEED_OFFSET))
 						})
 					)
 				}
@@ -225,7 +82,7 @@ export function getActionDefinitions(self) {
 			name: 'Pan/Tilt - Home Position',
 			options: [],
 			callback: async (action) => {
-				await self.getPTZ('APC7FFF7FFF')
+				await self.getPTZ('APC80008000')
 			},
 		}
 
@@ -291,87 +148,37 @@ export function getActionDefinitions(self) {
 			},
 		}
 
-		actions.ptSpeedU = {
-			name: 'Pan/Tilt - Speed Up',
-			options: [],
-			callback: async () => {
-				self.ptSpeed = getNextValue(self.ptSpeed, SPEED_MIN, SPEED_MAX, +1)
-				self.pSpeed = self.ptSpeed
-				self.tSpeed = self.ptSpeed
-				self.setVariableValues({
-					ptSpeedVar: self.ptSpeed,
-					pSpeedVar: self.pSpeed,
-					tSpeedVar: self.tSpeed,
-				})
-				self.speedChangeEmitter.emit('ptSpeed')
-			},
-		}
-
-		actions.pSpeedU = {
-			name: 'Pan/Tilt - Pan - Speed Up',
-			options: [],
-			callback: async () => {
-				self.pSpeed = getNextValue(self.pSpeed, SPEED_MIN, SPEED_MAX, +1)
-				if (self.pSpeed === self.tSpeed) self.ptSpeed = self.pSpeed
-				self.setVariableValues({
-					pSpeedVar: self.pSpeed,
-					ptSpeedVar: self.ptSpeed,
-				})
-				self.speedChangeEmitter.emit('ptSpeed')
-			},
-		}
-
-		actions.tSpeedU = {
-			name: 'Pan/Tilt - Tilt - Speed Up',
-			options: [],
-			callback: async () => {
-				self.tSpeed = getNextValue(self.tSpeed, SPEED_MIN, SPEED_MAX, +1)
-				if (self.tSpeed === self.pSpeed) self.ptSpeed = self.tSpeed
-				self.setVariableValues({
-					tSpeedVar: self.tSpeed,
-					ptSpeedVar: self.ptSpeed,
-				})
-				self.speedChangeEmitter.emit('ptSpeed')
-			},
-		}
-
-		actions.ptSpeedD = {
-			name: 'Pan/Tilt - Speed Down',
-			options: [],
-			callback: async () => {
-				self.ptSpeed = getNextValue(self.ptSpeed, SPEED_MIN, SPEED_MAX, -1)
-				self.pSpeed = self.ptSpeed
-				self.tSpeed = self.ptSpeed
-				self.setVariableValues({
-					ptSpeedVar: self.ptSpeed,
-					pSpeedVar: self.pSpeed,
-					tSpeedVar: self.tSpeed,
-				})
-				self.speedChangeEmitter.emit('ptSpeed')
-			},
-		}
-
-		actions.pSpeedD = {
-			name: 'Pan/Tilt - Pan - Speed Down',
-			options: [],
-			callback: async () => {
-				self.pSpeed = getNextValue(self.pSpeed, SPEED_MIN, SPEED_MAX, -1)
-				if (self.pSpeed === self.tSpeed) self.ptSpeed = self.pSpeed
+		actions.ptSpeedM = {
+			name: 'Pan/Tilt - Speed Change',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Speed Change',
+					id: 'change',
+					default: '22',
+					choices: [
+						{ id: '22', label: '+ Pan/Tilt Speed' }, // +
+						{ id: '00', label: '- Pan/Tilt Speed' }, // -
+						{ id: '21', label: '+ Pan Speed' }, // +
+						{ id: '01', label: '- Pan Speed' }, // -
+						{ id: '12', label: '+ Tilt Speed' }, // +
+						{ id: '10', label: '- Tilt Speed' }, // -
+					],
+				},
+			],
+			callback: async (action) => {
+				let arr = Array.from(action.options.change)
+				let pan = parseInt(arr[0]) - 1; let tilt = parseInt(arr[1]) - 1
+				if (pan === tilt) {
+					self.ptSpeed = getNextValue(self.ptSpeed, SPEED_MIN, SPEED_MAX, pan)
+					self.pSpeed = self.ptSpeed
+					self.tSpeed = self.ptSpeed
+				} else {
+					self.pSpeed = getNextValue(self.pSpeed, SPEED_MIN, SPEED_MAX, pan)
+					self.tSpeed = getNextValue(self.tSpeed, SPEED_MIN, SPEED_MAX, tilt)
+				}
 				self.setVariableValues({
 					pSpeedVar: self.pSpeed,
-					ptSpeedVar: self.ptSpeed,
-				})
-				self.speedChangeEmitter.emit('ptSpeed')
-			},
-		}
-
-		actions.tSpeedD = {
-			name: 'Pan/Tilt - Tilt - Speed Down',
-			options: [],
-			callback: async () => {
-				self.tSpeed = getNextValue(self.tSpeed, SPEED_MIN, SPEED_MAX, -1)
-				if (self.tSpeed === self.pSpeed) self.ptSpeed = self.tSpeed
-				self.setVariableValues({
 					tSpeedVar: self.tSpeed,
 					ptSpeedVar: self.ptSpeed,
 				})
@@ -386,45 +193,33 @@ export function getActionDefinitions(self) {
 
 	if (SERIES.capabilities.zoom) {
 		actions.zoomI = {
-			name: 'Lens - Zoom In',
+			name: 'Lens - Zoom',
 			options: [
+				{
+					type: 'dropdown',
+					label: 'Action',
+					id: 'action',
+					default: 0,
+					choices: [
+						{ id: 0, label: 'Stop' },
+						{ id: +1, label: 'Zoom In' },
+						{ id: -1, label: 'Zoom Out' },
+					],
+				},
 				{
 					id: 'liveSpeed',
 					type: 'checkbox',
-					label: 'Adjust the velocity of zooming in on speed change',
-					default: false
+					label: 'Adjust the velocity of zooming on speed change',
+					default: false,
 				}
 			],
 			callback: async (action) => {
-				await self.getPTZ('Z' + speedCmd(SPEED_OFFSET + self.zSpeed))
+				await self.getPTZ('Z' + speedCmd(action.options.action * self.zSpeed + SPEED_OFFSET))
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.removeAllListeners('zSpeed').then(
 						self.speedChangeEmitter.on('zSpeed', async () => {
-							await self.getPTZ('Z' + speedCmd(SPEED_OFFSET + self.zSpeed))
-						})
-					)
-				}
-			},
-		}
-
-		actions.zoomO = {
-			name: 'Lens - Zoom Out',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of zooming out on speed change',
-					default: false
-				}
-			],
-			callback: async (action) => {
-				await self.getPTZ('Z' + speedCmd(SPEED_OFFSET - self.zSpeed))
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('zSpeed').then(
-						self.speedChangeEmitter.on('zSpeed', async () => {
-							await self.getPTZ('Z' + speedCmd(SPEED_OFFSET - self.zSpeed))
+							await self.getPTZ('Z' + speedCmd(action.options.action * self.zSpeed + SPEED_OFFSET))
 						})
 					)
 				}
@@ -441,8 +236,19 @@ export function getActionDefinitions(self) {
 		}
 
 		actions.zSpeedS = {
-			name: 'Lens - Zoom Speed Set',
+			name: 'Lens - Zoom Speed',
 			options: [
+				{
+					type: 'dropdown',
+					label: 'Action',
+					id: 'action',
+					default: 'set',
+					choices: [
+						{ id: 'set', label: 'Set' }, // +
+						{ id: '+1', label: 'Increase' }, // -
+						{ id: '-1', label: 'Decrease' }, // +
+					],
+				},
 				{
 					id: 'val',
 					type: 'number',
@@ -452,30 +258,13 @@ export function getActionDefinitions(self) {
 					max: SPEED_MAX,
 					required: true,
 					range: true,
+					isVisible: ((options) => options.action === 'set')
 				},
 			],
 			callback: async (action) => {
-				self.zSpeed = action.options.val
-				self.setVariableValues({ zSpeedVar: self.zSpeed })
-				self.speedChangeEmitter.emit('zSpeed')
-			},
-		}
-
-		actions.zSpeedU = {
-			name: 'Lens - Zoom Speed Up',
-			options: [],
-			callback: async () => {
-				self.zSpeed = getNextValue(self.zSpeed, SPEED_MIN, SPEED_MAX, +1)
-				self.setVariableValues({ zSpeedVar: self.zSpeed })
-				self.speedChangeEmitter.emit('zSpeed')
-			},
-		}
-
-		actions.zSpeedD = {
-			name: 'Lens - Zoom Speed Down',
-			options: [],
-			callback: async () => {
-				self.zSpeed = getNextValue(self.zSpeed, SPEED_MIN, SPEED_MAX, +1)
+				self.zSpeed = parseInt(action.options.action)
+					? getNextValue(self.zSpeed, SPEED_MIN, SPEED_MAX, parseInt(action.options.action))
+					: action.options.val
 				self.setVariableValues({ zSpeedVar: self.zSpeed })
 				self.speedChangeEmitter.emit('zSpeed')
 			},

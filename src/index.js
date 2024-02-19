@@ -349,6 +349,8 @@ class PanasonicPTZInstance extends InstanceBase {
 			focusPosition: null,
 			irisPosition: null,
 			irisFollowPosition: null,
+			panPosition: null,
+			tiltPosition: null,
 			zoomPosition: null,
 
 			// numeric signed values
@@ -443,9 +445,9 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 
 		if (this.SERIES.capabilities.subscription) {
-			if (!this.SERIES.capabilities.pull) { // prefer explicit pull
+			//if (!this.SERIES.capabilities.pull) { // prefer explicit pull
 				this.getCameraStatus() // initial bulk retrieve of all data 
-			}
+			//}
 
 			this.init_tcp() // setup tcp push updates
 		}

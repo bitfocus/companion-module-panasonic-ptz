@@ -71,6 +71,10 @@ export function setVariables(self) {
 		variables.push({ variableId: 'ptSpeedVar', name: 'Pan/Tilt Speed' })
 		variables.push({ variableId: 'pSpeedVar', name: 'Pan Speed' })
 		variables.push({ variableId: 'tSpeedVar', name: 'Tilt Speed' })
+		variables.push({ variableId: 'panPosition', name: 'Pan Position' })
+		variables.push({ variableId: 'tiltPosition', name: 'Tilt Position' })
+		variables.push({ variableId: 'panPositionDeg', name: 'Pan Position °' })
+		variables.push({ variableId: 'tiltPositionDeg', name: 'Tilt Position °' })
 	}
 	if (SERIES.capabilities.zoom) {
 		variables.push({ variableId: 'zoomPosition', name: 'Zoom Position' })
@@ -234,13 +238,17 @@ export function checkVariables(self) {
 		presetSelected: (self.data.presetSelectedIdx + 1).toString(),
 		presetCompleted: (self.data.presetCompletedIdx + 1).toString(),
 
-		zoomPosition: self.data.zoomPosition,
+		panPosition: self.data.panPosition,
+		tiltPosition: self.data.tiltPosition,
+		panPositionDeg: (-self.data.panPosition * (29.7/3600)).toFixed(1),
+		tiltPositionDeg: (-self.data.tiltPosition * (29.7/3600)).toFixed(1),
 		focusPosition: self.data.focusPosition,
 		irisPosition: self.data.irisPosition,
 		irisFollowPosition: self.data.irisFollowPosition,
-		zoomPositionPct: normalizePct(self.data.zoomPosition, 0x0, 0xAAA, false, 1),
+		zoomPosition: self.data.zoomPosition,
 		focusPositionPct: normalizePct(self.data.focusPosition, 0x0, 0xAAA, false),
 		irisPositionPct: normalizePct(self.data.irisPosition, 0x0, 0xAAA, false),
+		zoomPositionPct: normalizePct(self.data.zoomPosition, 0x0, 0xAAA, false, 1),
 		zoomPositionBar: progressBar(normalizePct(self.data.zoomPosition, 0x0, 0xAAA), 10, 'W', 'T'),
 		focusPositionBar: progressBar(normalizePct(self.data.focusPosition, 0x0, 0xAAA), 10, 'N', 'F'),
 		irisPositionBar: progressBar(normalizePct(self.data.irisPosition, 0x0, 0xAAA), 10, 'C', 'O'),

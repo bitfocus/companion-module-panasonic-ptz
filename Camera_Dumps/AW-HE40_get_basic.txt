@@ -1,0 +1,3 @@
+cam_title=RHS1
+plugin_download=enable
+plugin_disp=1

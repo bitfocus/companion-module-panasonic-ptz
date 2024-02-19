@@ -17,6 +17,10 @@ export function parseUpdate(self, str) {
                 break
         }
     }
+    if (str[0].substring(0, 3) === 'aPC') {
+        self.data.panPosition = parseInt(str[0].substring(3, 7), 16) - 0x8000
+        self.data.tiltPosition = parseInt(str[0].substring(7, 11), 16) - 0x8000
+    }
     if (str[0].substring(0, 2) === 'ax') {
         switch (str[0].substring(2, 3)) {
             case 'z': self.data.zoomPosition = parseInt(str[0].substring(3), 16) - 0x555; break
