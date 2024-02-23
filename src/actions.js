@@ -2,6 +2,158 @@
 import { e } from './enum.js'
 import { getAndUpdateSeries, getNext, getNextValue, toHexString } from './common.js'
 
+const SPEED_OFFSET = 50
+const SPEED_MIN = 0
+const SPEED_MAX = 49
+const SPEED_DEFAULT = 25
+
+const ACTION_SET = 's'
+const ACTION_TOGGLE = 't'
+const ACTION_STOP = 0
+const ACTION_HOLD = 0
+const ACTION_RAISE = 1
+const ACTION_LOWER = -1
+const ACTION_UP = 1
+const ACTION_DOWN = -1
+const ACTION_INC = 1
+const ACTION_DEC = -1
+const ACTION_NEXT = 1
+const ACTION_PREV = -1
+
+const liveSpeed = {
+	id: 'liveSpeed',
+	type: 'checkbox',
+	label: 'Adjust the velocity on speed change',
+	default: false
+}
+
+const speedOperation = {
+	type: 'dropdown',
+	label: 'Speed Change',
+	id: 'op',
+	default: ACTION_SET,
+	choices: [
+		{ id: ACTION_SET, label: 'Set Speed' },
+		{ id: ACTION_RAISE, label: 'Raise Speed' },
+		{ id: ACTION_LOWER, label: 'Lower Speed' },
+	],
+}
+
+const speedSetting = {
+	type: 'number',
+	label: 'Speed setting',
+	id: 'set',
+	default: SPEED_DEFAULT,
+	min: SPEED_MIN,
+	max: SPEED_MAX,
+	required: true,
+	range: true,
+	isVisible: ((options) => options.op === ACTION_SET)
+}
+
+function btnMove(label_inc = '⬆', label_dec = '⬇') {
+	return [
+		{
+			type: 'dropdown',
+			label: 'Direction',
+			id: 'dir',
+			default: ACTION_STOP,
+			choices: [
+				{ id: ACTION_STOP, label: 'Stop' },
+				{ id: ACTION_INC, label: label_inc },
+				{ id: ACTION_DEC, label: label_dec },
+			],
+		},
+		liveSpeed,
+	]
+}
+
+function btnSetToggle(choices, label = 'Setting', def = 0) {
+	return [
+		{
+			type: 'dropdown',
+			label: 'Action',
+			id: 'op',
+			default: ACTION_SET,
+			choices: [
+				{ id: ACTION_SET, label: 'Set' },
+				{ id: ACTION_TOGGLE, label: 'Toggle' },
+			],
+		},
+		{
+			type: 'dropdown',
+			label: label,
+			id: 'set',
+			default: choices[def].id,
+			choices: choices,
+			isVisible: ((options) => options.op === ACTION_SET)
+		},
+	]
+}
+
+function btnSetToggleNextPrev(choices, label = 'Setting', def = 0) {
+	return [
+		{
+			type: 'dropdown',
+			label: 'Action',
+			id: 'op',
+			default: ACTION_SET,
+			choices: [
+				{ id: ACTION_SET, label: 'Set' },
+				{ id: ACTION_TOGGLE, label: 'Toggle' },
+				{ id: ACTION_NEXT, label: 'Next' },
+				{ id: ACTION_PREV, label: 'Previous' },
+			],
+		},
+		{
+			type: 'dropdown',
+			label: label,
+			id: 'set',
+			default: choices[def].id,
+			choices: choices,
+			isVisible: ((options) => options.op === ACTION_SET)
+		},
+	]
+}
+
+function btnSetIncDecStep(label = 'Value', def, min, max, step = 1) {
+	return [
+		{
+			type: 'dropdown',
+			label: 'Action',
+			id: 'op',
+			default: ACTION_SET,
+			choices: [
+				{ id: ACTION_SET, label: 'Set' },
+				{ id: ACTION_INC, label: 'Increase' },
+				{ id: ACTION_DEC, label: 'Decrease' },
+			],
+		},
+		{
+			id: 'set',
+			type: 'number',
+			label: label,
+			default: def,
+			min: min,
+			max: max,
+			step: step,
+			required: true,
+			range: true,
+			isVisible: ((options) => options.op === ACTION_SET)
+		},
+		{
+			id: 'step',
+			type: 'number',
+			label: 'Step size',
+			default: step,
+			min: 1,
+			max: max-min,
+			required: true,
+			isVisible: ((options) => options.op !== ACTION_SET)
+		},
+	]
+}
+
 function speedCmd(speed) {
 	return speed.toString().padStart(2, '0')
 }
@@ -18,11 +170,6 @@ export function getActionDefinitions(self) {
 
 	const SERIES = getAndUpdateSeries(self)
 
-	const SPEED_OFFSET = 50
-	const SPEED_MIN = 0
-	const SPEED_MAX = 49
-	const SPEED_DEFAULT = 25
-
 	// ##########################
 	// #### Pan/Tilt Actions ####
 	// ##########################
@@ -34,47 +181,38 @@ export function getActionDefinitions(self) {
 				{
 					type: 'dropdown',
 					label: 'Direction',
-					id: 'direction',
-					default: '21',
+					id: 'dir',
+					default: ACTION_STOP,
 					choices: [
+						{ id: ACTION_STOP, label: 'Stop' },
 						{ id: '21', label: '➡ Right' }, // +
 						{ id: '01', label: '⬅ Left' }, // -
 						{ id: '12', label: '⬆ Up' }, // +
 						{ id: '10', label: '⬇ Down' }, // -
-						{ id: '22', label: '↗ Up Right' }, // ++
-						{ id: '02', label: '↖ Up Left' }, // -+
-						{ id: '00', label: '↙ Down Left' }, // --
-						{ id: '20', label: '↘ Up Right' }, // +-
+						{ id: '22', label: '⬈ Up Right' }, // ++
+						{ id: '02', label: '⬉ Up Left' }, // -+
+						{ id: '00', label: '⬋ Down Left' }, // --
+						{ id: '20', label: '⬊ Up Right' }, // +-
 					],
 				},
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of movement on speed change',
-					default: false
-				}
+				liveSpeed,
 			],
 			callback: async (action) => {
-				let arr = Array.from(action.options.direction)
-				let pan = parseInt(arr[0]) - 1; let tilt = parseInt(arr[1]) - 1
-				await self.getPTZ(speedCmdPT(pan * self.ptSpeed + SPEED_OFFSET, tilt * self.ptSpeed + SPEED_OFFSET))
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
-						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await self.getPTZ(speedCmdPT(pan * self.ptSpeed + SPEED_OFFSET, tilt * self.ptSpeed + SPEED_OFFSET))
-						})
-					)
+				if (action.options.dir === ACTION_STOP) {
+					await self.getPTZ(speedCmdPT(SPEED_OFFSET, SPEED_OFFSET))
+					if (self.speedChangeEmitter.listenerCount('ptSpeed')) self.speedChangeEmitter.removeAllListeners('ptSpeed')
+				} else {
+					let arr = Array.from(action.options.dir)
+					let pan = parseInt(arr[0]) - 1; let tilt = parseInt(arr[1]) - 1
+					await self.getPTZ(speedCmdPT(pan * self.ptSpeed + SPEED_OFFSET, tilt * self.ptSpeed + SPEED_OFFSET))
+					if (action.options.liveSpeed) {
+						self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
+							self.speedChangeEmitter.on('ptSpeed', async () => {
+								await self.getPTZ(speedCmdPT(pan * self.ptSpeed + SPEED_OFFSET, tilt * self.ptSpeed + SPEED_OFFSET))
+							})
+						)
+					}
 				}
-			},
-		}
-
-		actions.stop = {
-			name: 'Pan/Tilt - Stop',
-			options: [],
-			callback: async (action) => {
-				await self.getPTZ(speedCmdPT(SPEED_OFFSET, SPEED_OFFSET))
-				if (self.speedChangeEmitter.listenerCount('ptSpeed')) self.speedChangeEmitter.removeAllListeners('ptSpeed')
 			},
 		}
 
@@ -86,102 +224,54 @@ export function getActionDefinitions(self) {
 			},
 		}
 
-		actions.ptSpeedS = {
-			name: 'Pan/Tilt - Speed Set',
-			options: [
-				{
-					type: 'checkbox',
-					label: 'Advanced mode - set independent speed for panning and tilting',
-					id: 'advanced',
-					default: false,
-				},
-				{
-					type: 'number',
-					label: 'Speed setting',
-					id: 'speed',
-					default: SPEED_DEFAULT,
-					min: SPEED_MIN,
-					max: SPEED_MAX,
-					required: true,
-					range: true,
-					isVisible: ((options) => options.advanced ? false : true)
-				},
-				{
-					type: 'number',
-					label: 'Pan speed setting',
-					id: 'pSpeed',
-					default: SPEED_DEFAULT,
-					min: SPEED_MIN,
-					max: SPEED_MAX,
-					required: true,
-					range: true,
-					isVisible: ((options) => options.advanced ? true : false)
-				},
-				{
-					type: 'number',
-					label: 'Tilt speed setting',
-					id: 'tSpeed',
-					default: SPEED_DEFAULT,
-					min: SPEED_MIN,
-					max: SPEED_MAX,
-					required: true,
-					range: true,
-					isVisible: ((options) => options.advanced ? true : false)
-				},
-			],
-			callback: async (action) => {
-				if (action.options.advanced === false) {
-					self.ptSpeed = action.options.speed
-					self.pSpeed = self.ptSpeed
-					self.tSpeed = self.ptSpeed
-				} else {
-					self.pSpeed = action.options.pSpeed
-					self.tSpeed = action.options.tSpeed
-					if (self.pSpeed === self.tSpeed) self.ptSpeed = self.pSpeed
-				}
-				self.setVariableValues({
-					ptSpeedVar: self.ptSpeed,
-					pSpeedVar: self.pSpeed,
-					tSpeedVar: self.tSpeed,
-				})
-				self.speedChangeEmitter.emit('ptSpeed')
-			},
-		}
-
-		actions.ptSpeedM = {
-			name: 'Pan/Tilt - Speed Change',
+		actions.ptSpeed = {
+			name: 'Pan/Tilt - Speed',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Speed Change',
-					id: 'change',
-					default: '22',
+					label: 'Scope',
+					id: 'scope',
+					default: 'pt',
 					choices: [
-						{ id: '22', label: '+ Pan/Tilt Speed' }, // +
-						{ id: '00', label: '- Pan/Tilt Speed' }, // -
-						{ id: '21', label: '+ Pan Speed' }, // +
-						{ id: '01', label: '- Pan Speed' }, // -
-						{ id: '12', label: '+ Tilt Speed' }, // +
-						{ id: '10', label: '- Tilt Speed' }, // -
+						{ id: 'pt', label: 'Pan/Tilt' },
+						{ id: 'p', label: 'Pan only' },
+						{ id: 't', label: 'Tilt only' },
 					],
-				},
+				},	
+				speedOperation,
+				speedSetting,
 			],
 			callback: async (action) => {
-				let arr = Array.from(action.options.change)
-				let pan = parseInt(arr[0]) - 1; let tilt = parseInt(arr[1]) - 1
-				if (pan === tilt) {
-					self.ptSpeed = getNextValue(self.ptSpeed, SPEED_MIN, SPEED_MAX, pan)
-					self.pSpeed = self.ptSpeed
-					self.tSpeed = self.ptSpeed
+				if (action.options.op === ACTION_SET) {
+					switch (action.options.scope) {
+						case 'pt':
+							self.ptSpeed = action.options.speed
+							self.pSpeed = self.ptSpeed
+							self.tSpeed = self.ptSpeed
+							break
+						case 'p': self.pSpeed = action.options.speed; break
+						case 't': self.tSpeed = action.options.speed; break
+					}
 				} else {
-					self.pSpeed = getNextValue(self.pSpeed, SPEED_MIN, SPEED_MAX, pan)
-					self.tSpeed = getNextValue(self.tSpeed, SPEED_MIN, SPEED_MAX, tilt)
+					switch (action.options.scope) {
+						case 'pt':
+							self.ptSpeed = getNextValue(self.ptSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
+							self.pSpeed = self.ptSpeed
+							self.tSpeed = self.ptSpeed
+							break
+						case 'p': self.pSpeed = getNextValue(self.pSpeed, SPEED_MIN, SPEED_MAX, action.options.op); break
+						case 't': self.tSpeed = getNextValue(self.tSpeed, SPEED_MIN, SPEED_MAX, action.options.op); break
+					}
 				}
+
+				if (self.pSpeed === self.tSpeed) self.ptSpeed = self.pSpeed
+
 				self.setVariableValues({
+					ptSpeedVar: self.ptSpeed,
 					pSpeedVar: self.pSpeed,
 					tSpeedVar: self.tSpeed,
-					ptSpeedVar: self.ptSpeed,
 				})
+
 				self.speedChangeEmitter.emit('ptSpeed')
 			},
 		}
@@ -192,79 +282,32 @@ export function getActionDefinitions(self) {
 	// ######################
 
 	if (SERIES.capabilities.zoom) {
-		actions.zoomI = {
+		actions.zoom = {
 			name: 'Lens - Zoom',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Action',
-					id: 'action',
-					default: 0,
-					choices: [
-						{ id: 0, label: 'Stop' },
-						{ id: +1, label: 'Zoom In' },
-						{ id: -1, label: 'Zoom Out' },
-					],
-				},
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of zooming on speed change',
-					default: false,
-				}
-			],
+			options: btnMove('⬆ In', '⬇ Out'),
 			callback: async (action) => {
-				await self.getPTZ('Z' + speedCmd(action.options.action * self.zSpeed + SPEED_OFFSET))
+				await self.getPTZ('Z' + speedCmd(action.options.op * self.zSpeed + SPEED_OFFSET))
+
+				if (self.speedChangeEmitter.listenerCount('zSpeed')) self.speedChangeEmitter.removeAllListeners('zSpeed')
 
 				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('zSpeed').then(
-						self.speedChangeEmitter.on('zSpeed', async () => {
-							await self.getPTZ('Z' + speedCmd(action.options.action * self.zSpeed + SPEED_OFFSET))
-						})
-					)
+					self.speedChangeEmitter.on('zSpeed', async () => {
+						await self.getPTZ('Z' + speedCmd(action.options.op * self.zSpeed + SPEED_OFFSET))
+					})
 				}
-			},
-		}
-
-		actions.zoomS = {
-			name: 'Lens - Zoom Stop',
-			options: [],
-			callback: async (action) => {
-				await self.getPTZ('Z' + speedCmd(SPEED_OFFSET))
-				if (self.speedChangeEmitter.listenerCount('zSpeed')) self.speedChangeEmitter.removeAllListeners('zSpeed')
 			},
 		}
 
 		actions.zSpeedS = {
 			name: 'Lens - Zoom Speed',
 			options: [
-				{
-					type: 'dropdown',
-					label: 'Action',
-					id: 'action',
-					default: 'set',
-					choices: [
-						{ id: 'set', label: 'Set' }, // +
-						{ id: '+1', label: 'Increase' }, // -
-						{ id: '-1', label: 'Decrease' }, // +
-					],
-				},
-				{
-					id: 'val',
-					type: 'number',
-					label: 'Speed setting',
-					default: SPEED_DEFAULT,
-					min: SPEED_MIN,
-					max: SPEED_MAX,
-					required: true,
-					range: true,
-					isVisible: ((options) => options.action === 'set')
-				},
+				speedOperation,
+				speedSetting,
 			],
 			callback: async (action) => {
-				self.zSpeed = parseInt(action.options.action)
-					? getNextValue(self.zSpeed, SPEED_MIN, SPEED_MAX, parseInt(action.options.action))
-					: action.options.val
+				self.zSpeed = action.options.op !== ACTION_SET
+					? getNextValue(self.zSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
+					: action.options.speed
 				self.setVariableValues({ zSpeedVar: self.zSpeed })
 				self.speedChangeEmitter.emit('zSpeed')
 			},
@@ -273,96 +316,31 @@ export function getActionDefinitions(self) {
 
 	if (SERIES.capabilities.focus) {
 		actions.focusN = {
-			name: 'Lens - Focus Near',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the quickness of near focusing on speed change',
-					default: false
-				}
-			],
+			name: 'Lens - Focus Adjust',
+			options: btnMove('⬆ Far', '⬇ Near'),
 			callback: async (action) => {
-				await self.getPTZ('F' + speedCmd(SPEED_OFFSET - self.fSpeed))
+				await self.getPTZ('F' + speedCmd(action.options.op * self.fSpeed + SPEED_OFFSET))
 
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('fSpeed').then(
-						self.speedChangeEmitter.on('fSpeed', async () => {
-							await self.getPTZ('F' + speedCmd(SPEED_OFFSET - self.fSpeed))
-						})
-					)
-				}
-			},
-		}
-
-		actions.focusF = {
-			name: 'Lens - Focus Far',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the quickness of far focusing on speed change',
-					default: false
-				}
-			],
-			callback: async (action) => {
-				await self.getPTZ('F' + speedCmd(SPEED_OFFSET + self.fSpeed))
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('fSpeed').then(
-						self.speedChangeEmitter.on('fSpeed', async () => {
-							await self.getPTZ('F' + speedCmd(SPEED_OFFSET + self.fSpeed))
-						})
-					)
-				}
-			},
-		}
-
-		actions.focusS = {
-			name: 'Lens - Focus Stop',
-			options: [],
-			callback: async (action) => {
-				await self.getPTZ('F' + speedCmd(SPEED_OFFSET))
 				if (self.speedChangeEmitter.listenerCount('fSpeed')) self.speedChangeEmitter.removeAllListeners('fSpeed')
+
+				if (action.options.liveSpeed) {
+					self.speedChangeEmitter.on('fSpeed', async () => {
+						await self.getPTZ('F' + speedCmd(action.options.op * self.fSpeed + SPEED_OFFSET))
+					})
+				}
 			},
 		}
 
-		actions.fSpeedS = {
-			name: 'Lens - Focus Speed Set',
+		actions.fSpeed = {
+			name: 'Lens - Focus Speed',
 			options: [
-				{
-					id: 'val',
-					type: 'number',
-					label: 'Speed',
-					default: SPEED_DEFAULT,
-					min: SPEED_MIN,
-					max: SPEED_MAX,
-					required: true,
-					range: true,
-				},
+				speedOperation,
+				speedSetting,
 			],
 			callback: async (action) => {
-				self.fSpeed = action.options.val
-				self.setVariableValues({ fSpeedVar: self.fSpeed })
-				self.speedChangeEmitter.emit('fSpeed')
-			},
-		}
-
-		actions.fSpeedU = {
-			name: 'Lens - Focus Speed Up',
-			options: [],
-			callback: async () => {
-				self.fSpeed = getNextValue(self.fSpeed, SPEED_MIN, SPEED_MAX, +1)
-				self.setVariableValues({ fSpeedVar: self.fSpeed })
-				self.speedChangeEmitter.emit('fSpeed')
-			},
-		}
-
-		actions.fSpeedD = {
-			name: 'Lens - Focus Speed Down',
-			options: [],
-			callback: async (action) => {
-				self.fSpeed = getNextValue(self.fSpeed, SPEED_MIN, SPEED_MAX, -1)
+				self.fSpeed = action.options.op !== ACTION_SET
+					? getNextValue(self.fSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
+					: action.options.speed
 				self.setVariableValues({ fSpeedVar: self.fSpeed })
 				self.speedChangeEmitter.emit('fSpeed')
 			},
@@ -372,17 +350,11 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.focusAuto) {
 		actions.focusM = {
 			name: 'Lens - Focus Mode',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Auto / Manual Focus',
-					id: 'val',
-					default: e.ENUM_MAN_AUTO[0].id,
-					choices: e.ENUM_MAN_AUTO,
-				},
-			],
+			options: btnSetToggle(e.ENUM_MAN_AUTO),
 			callback: async (action) => {
-				await self.getCam('OAF:' + action.options.val)
+				action.options.op === ACTION_SET
+					? await self.getCam('OAF:' + action.options.set)
+					: await self.getCam('OAF:' + getNext(e.ENUM_MAN_AUTO, self.data.focusAuto, 1, true))
 			},
 		}
 	}
@@ -402,91 +374,41 @@ export function getActionDefinitions(self) {
 	// ##########################
 
 	if (SERIES.capabilities.iris) {
-		actions.irisU = {
-			name: 'Exposure - Iris Up',
-			options: [],
+		actions.iris = {
+			name: 'Exposure - Iris',
+			options: btnSetIncDecStep('Iris setting', 0x555, 0x0, 0xAAA, 0x1E),
 			callback: async (action) => {
-				// await self.getPTZ('I' + getNext(e.ENUM_IRIS, self.data.iris, +1).id)
-				await self.getPTZ('AXI' + toHexString(0x555 + getNextValue(self.data.irisPosition, 0x0, 0xAAA, +0x1E), 3))
+				if (action.options.op === ACTION_SET) {
+					await self.getPTZ('AXI' + toHexString(0x555 + action.options.set, 3))
+				} else {
+					const val = getNextValue(self.data.irisPosition, 0x0, 0xAAA, action.options.op * 0x1E)
+					await self.getPTZ('AXI' + toHexString(0x555 + val, 3))
+				}
 			},
 		}
 
-		actions.irisD = {
-			name: 'Exposure - Iris Down',
-			options: [],
-			callback: async (action) => {
-				// await self.getPTZ('I' + getNext(e.ENUM_IRIS, self.data.iris, -1).id)
-				await self.getPTZ('AXI' + toHexString(0x555 + getNextValue(self.data.irisPosition, 0x0, 0xAAA, -0x1E), 3))
-			},
-		}
-
-		actions.irisS = {
-			name: 'Exposure - Iris Set',
-			options: [
-				{
-					id: 'val',
-					type: 'number',
-					label: 'Iris setting',
-					default: 0x555,
-					min: 0x0,
-					max: 0xAAA,
-					step: 0x1E,
-					required: true,
-					range: true,
-				},
-			],
-			callback: async (action) => {
-				await self.getPTZ('AXI' + toHexString(0x555 + action.options.val, 3))
-			},
-		}
-
-		actions.irisM = {
+		actions.irisMode = {
 			name: 'Exposure - Iris Mode',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Auto / Manual Iris',
-					id: 'val',
-					default: e.ENUM_MAN_AUTO[0].id,
-					choices: e.ENUM_MAN_AUTO,
-				},
-			],
+			options: btnSetToggle(e.ENUM_MAN_AUTO),
 			callback: async (action) => {
-				await self.getCam('ORS:' + action.options.val)
+				action.option.op === ACTION_SET
+					? await self.getCam('ORS:' + action.options.set)
+					: await self.getCam('ORS:' + getNext(e.ENUM_MAN_AUTO, self.data.irisMode, 1, true).id)
 			},
 		}
 	}
 
 	if (SERIES.capabilities.gain.cmd) {
-		actions.gainU = {
-			name: 'Exposure - Gain Up',
-			options: [],
+		actions.gain = {
+			name: 'Exposure - Gain',
+			options: btnSetToggleNextPrev(SERIES.capabilities.gain.dropdown),
 			callback: async (action) => {
-				await self.getCam(SERIES.capabilities.gain.cmd + ':' + getNext(SERIES.capabilities.gain.dropdown, self.data.gain, +1).id)
-			},
-		}
-
-		actions.gainD = {
-			name: 'Exposure - Gain Down',
-			options: [],
-			callback: async (action) => {
-				await self.getCam(SERIES.capabilities.gain.cmd + ':' + getNext(SERIES.capabilities.gain.dropdown, self.data.gain, -1).id)
-			},
-		}
-
-		actions.gainS = {
-			name: 'Exposure - Gain Set',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Gain setting',
-					id: 'val',
-					default: SERIES.capabilities.gain.dropdown[0].id,
-					choices: SERIES.capabilities.gain.dropdown,
-				},
-			],
-			callback: async (action) => {
-				await self.getCam(SERIES.capabilities.gain.cmd + ':' + action.options.val)
+				const cmd = SERIES.capabilities.gain.cmd + ':'
+				switch (action.options.op) {
+					case ACTION_SET: await self.getCam(cmd + action.options.set); break
+					case ACTION_TOGGLE: await self.getCam(cmd + getNext(SERIES.capabilities.gain.dropdown, self.data.gain).id); break
+					default: await self.getCam(cmd + getNext(SERIES.capabilities.gain.dropdown, self.data.gain, action.options.op, false).id); break
+				}
 			},
 		}
 	}
@@ -536,48 +458,20 @@ export function getActionDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.pedestal.cmd) {
-		actions.pedU = {
-			name: 'Exposure - Master Pedestal Up',
-			options: [],
+		actions.ped = {
+			name: 'Exposure - Master Pedestal',
+			options: btnSetIncDecStep('Level', 0, -SERIES.capabilities.pedestal.limit, +SERIES.capabilities.pedestal.limit, SERIES.capabilities.pedestal.step),
 			callback: async (action) => {
-				const val = getNextValue(self.data.masterPedValue,
-					-SERIES.capabilities.pedestal.limit, +SERIES.capabilities.pedestal.limit,
-					+SERIES.capabilities.pedestal.step)
-				await self.getCam(SERIES.capabilities.pedestal.cmd + ':' +
-					toHexString(SERIES.capabilities.pedestal.offset + val, SERIES.capabilities.pedestal.hexlen))
-			},			
-		}
-
-		actions.pedD = {
-			name: 'Exposure - Master Pedestal Down',
-			options: [],
-			callback: async (action) => {
-				const val = getNextValue(self.data.masterPedValue,
-					-SERIES.capabilities.pedestal.limit, +SERIES.capabilities.pedestal.limit,
-					-SERIES.capabilities.pedestal.step)
-				await self.getCam(SERIES.capabilities.pedestal.cmd + ':' +
-					toHexString(SERIES.capabilities.pedestal.offset + val, SERIES.capabilities.pedestal.hexlen))
-			},	
-		}
-
-		actions.pedS = {
-			name: 'Exposure - Master Pedestal Set',
-			options: [
-				{
-					id: 'val',
-					type: 'number',
-					label: 'Level',
-					default: 0,
-					min: -SERIES.capabilities.pedestal.limit,
-					max: +SERIES.capabilities.pedestal.limit,
-					step: SERIES.capabilities.pedestal.step,
-					required: true,
-					range: true,
-				},
-			],
-			callback: async (action) => {
-				await self.getCam(SERIES.capabilities.pedestal.cmd + ':' +
+				if (action.options.op === ACTION_SET) {
+					await self.getCam(SERIES.capabilities.pedestal.cmd + ':' +
 					toHexString(SERIES.capabilities.pedestal.offset + action.options.val, SERIES.capabilities.pedestal.hexlen))
+				} else {
+					const val = getNextValue(self.data.masterPedValue,
+						-SERIES.capabilities.pedestal.limit, +SERIES.capabilities.pedestal.limit,
+						action.options.op * SERIES.capabilities.pedestal.step)
+					await self.getCam(SERIES.capabilities.pedestal.cmd + ':' +
+						toHexString(SERIES.capabilities.pedestal.offset + val, SERIES.capabilities.pedestal.hexlen))
+				}
 			},
 		}
 	}
@@ -585,17 +479,13 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.whiteBalance) {
 		actions.whiteBalanceMode = {
 			name: 'White Balance - Mode',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Select Mode',
-					id: 'val',
-					default: SERIES.capabilities.whiteBalance.dropdown[0].id,
-					choices: SERIES.capabilities.whiteBalance.dropdown,
-				},
-			],
+			options: btnSetToggleNextPrev(SERIES.capabilities.whiteBalance.dropdown),
 			callback: async (action) => {
-				await self.getCam('OAW:' + action.options.val)
+				switch (action.options.op) {
+					case ACTION_SET: await self.getCam('OAW:' + action.options.set); break
+					case ACTION_TOGGLE: await self.getCam('OAW:' + getNext(SERIES.capabilities.whiteBalance.dropdown, self.data.whiteBalance).id); break
+					default: await self.getCam('OAW:' + getNext(SERIES.capabilities.whiteBalance.dropdown, self.data.whiteBalance, action.options.op, false).id); break
+				}
 			},
 		}
 
@@ -617,300 +507,122 @@ export function getActionDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.colorTemperature && SERIES.capabilities.colorTemperature.index) { 
-		actions.colorTemperatureUp = {
-			name: 'White Balance - Color Temperature Up',
-			options: [],
+		actions.colorTemperature = {
+			name: 'White Balance - Color Temperature',
+			options: btnSetToggleNextPrev(SERIES.capabilities.colorTemperature.index.dropdown),
 			callback: async (action) => {
-				await self.getCam(SERIES.capabilities.colorTemperature.index.cmd + ':' +
-					getNext(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature, +1).id)
-			},
-		}
-
-		actions.colorTemperatureDown = {
-			name: 'White Balance - Color Temperature Down',
-			options: [],
-			callback: async (action) => {
-				await self.getCam(SERIES.capabilities.colorTemperature.index.cmd + ':' +
-					getNext(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature, -1).id)
-			},
-		}
-
-		actions.colorTemperatureSet = {
-			name: 'White Balance - Color Temperature Set',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Color Temperature',
-					id: 'val',
-					default: SERIES.capabilities.colorTemperature.index.dropdown[0].id,
-					choices: SERIES.capabilities.colorTemperature.index.dropdown,
-				},
-			],
-			callback: async (action) => {
-				await self.getCam(SERIES.capabilities.colorTemperature.index.cmd + ':' + action.options.val)
+				const cmd = SERIES.capabilities.colorTemperature.index.cmd + ':'
+				switch (action.options.op) {
+					case ACTION_SET: await self.getCam(cmd + action.options.set); break
+					case ACTION_TOGGLE: await self.getCam(cmd + getNext(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature).id); break
+					default: await self.getCam(cmd + getNext(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature, action.options.op, false).id); break
+				}
 			},
 		}
 	}
 
 	if (SERIES.capabilities.colorTemperature && SERIES.capabilities.colorTemperature.advanced) { 
-		actions.colorTemperatureUp = {
-			name: 'White Balance - Color Temperature Up',
-			options: [],
-			callback: async (action) => {
-				await self.getCam(SERIES.capabilities.colorTemperature.advanced.inc + ':1')
-			},
-		}
-
-		actions.colorTemperatureDown = {
-			name: 'White Balance - Color Temperature Down',
-			options: [],
-			callback: async (action) => {
-				await self.getCam(SERIES.capabilities.colorTemperature.advanced.dec + ':1')
-			},
-		}
-
 		if (SERIES.capabilities.colorTemperature.advanced.set) {
-			actions.colorTemperatureSet = {
-				name: 'White Balance - Color Temperature Set',
-				options: [
-					{
-						id: 'val',
-						type: 'number',
-						label: 'Color Temperature [K]',
-						default: 3200,
-						min: SERIES.capabilities.colorTemperature.advanced.min,
-						max: SERIES.capabilities.colorTemperature.advanced.max,
-						step: 20,
-						required: true,
-						range: true,
-					},
-				],
+			actions.colorTemperature = {
+				name: 'White Balance - Color Temperature',
+				options: btnSetIncDecStep('Color Temperature [K]', 3200, SERIES.capabilities.colorTemperature.advanced.min, SERIES.capabilities.colorTemperature.advanced.max, 20),
 				callback: async (action) => {
-					await self.getCam(SERIES.capabilities.colorTemperature.advanced.set + ':' +
-						toHexString(action.options.val, 5) + ':0')
+					switch (action.options.op) {
+						case ACTION_SET: await self.getCam(SERIES.capabilities.colorTemperature.advanced.set + ':' + toHexString(action.options.set, 5) + ':0'); break
+						case ACTION_INC: await self.getCam(SERIES.capabilities.colorTemperature.advanced.inc + ':1'); break
+						case ACTION_DEC: await self.getCam(SERIES.capabilities.colorTemperature.advanced.dec + ':1'); break
+					}
 				},
 			}
 		}
 	}
 
 	if (SERIES.capabilities.colorPedestal && SERIES.capabilities.colorPedestal.cmd.red) {
-		actions.pedRedU = {
-			name: 'Color - Red Pedestal Up',
-			options: [],
+		actions.pedRed = {
+			name: 'Color - Red Pedestal',
+			options: btnSetIncDecStep('Level', 0, -SERIES.capabilities.colorPedestal.limit, +SERIES.capabilities.colorPedestal.limit, SERIES.capabilities.colorPedestal.step),
 			callback: async (action) => {
-				const val = getNextValue(self.data.redPedValue,
-					-SERIES.capabilities.colorPedestal.limit, +SERIES.capabilities.colorPedestal.limit,
-					+SERIES.capabilities.colorPedestal.step)
-				await self.getCam(SERIES.capabilities.colorPedestal.cmd.red + ':' +
-					toHexString(SERIES.capabilities.colorPedestal.offset + val, SERIES.capabilities.colorPedestal.hexlen))
-			},
-		}
-
-		actions.pedRedD = {
-			name: 'Color - Red Pedestal Down',
-			options: [],
-			callback: async (action) => {
-				const val = getNextValue(self.data.redPedValue,
-					-SERIES.capabilities.colorPedestal.limit, +SERIES.capabilities.colorPedestal.limit,
-					-SERIES.capabilities.colorPedestal.step)
-				await self.getCam(SERIES.capabilities.colorPedestal.cmd.red + ':' +
-					toHexString(SERIES.capabilities.colorPedestal.offset + val, SERIES.capabilities.colorPedestal.hexlen))
-			},
-		}
-
-		actions.pedRedS = {
-			name: 'Color - Red Pedestal Set',
-			options: [
-				{
-					id: 'val',
-					type: 'number',
-					label: 'Level',
-					default: 0,
-					min: -SERIES.capabilities.colorPedestal.limit,
-					max: +SERIES.capabilities.colorPedestal.limit,
-					step: SERIES.capabilities.colorPedestal.step,
-					required: true,
-					range: true,
-				},
-			],
-			callback: async (action) => {
-				await self.getCam(SERIES.capabilities.colorPedestal.cmd.red + ':' +
-					toHexString(SERIES.capabilities.colorPedestal.offset + action.options.val, SERIES.capabilities.colorPedestal.hexlen))
+				if (action.options.op === ACTION_SET) {
+					await self.getCam(SERIES.capabilities.colorPedestal.cmd.red + ':' +
+					toHexString(SERIES.capabilities.colorPedestal.offset + action.options.set, SERIES.capabilities.colorPedestal.hexlen))
+				} else {
+					const val = getNextValue(self.data.redPedValue,
+						-SERIES.capabilities.colorPedestal.limit, +SERIES.capabilities.colorPedestal.limit,
+						action.options.op * SERIES.capabilities.colorPedestal.step)
+					await self.getCam(SERIES.capabilities.colorPedestal.cmd.red + ':' +
+						toHexString(SERIES.capabilities.colorPedestal.offset + val, SERIES.capabilities.colorPedestal.hexlen))
+				}
 			},
 		}
 	}
 
 	if (SERIES.capabilities.colorPedestal && SERIES.capabilities.colorPedestal.cmd.blue) {
-		actions.pedBlueU = {
-			name: 'Color - Blue Pedestal Up',
-			options: [],
+		actions.pedBlue = {
+			name: 'Color - Blue Pedestal',
+			options: btnSetIncDecStep('Level', 0, -SERIES.capabilities.colorPedestal.limit, +SERIES.capabilities.colorPedestal.limit, SERIES.capabilities.colorPedestal.step),
 			callback: async (action) => {
-				const val = getNextValue(self.data.bluePedValue,
-					-SERIES.capabilities.colorPedestal.limit, +SERIES.capabilities.colorPedestal.limit,
-					+SERIES.capabilities.colorPedestal.step)
-				await self.getCam(SERIES.capabilities.colorPedestal.cmd.blue + ':' +
-					toHexString(SERIES.capabilities.colorPedestal.offset + val, SERIES.capabilities.colorPedestal.hexlen))
-			},
-		}
-
-		actions.pedBlueD = {
-			name: 'Color - Blue Pedestal Down',
-			options: [],
-			callback: async (action) => {
-				const val = getNextValue(self.data.bluePedValue,
-					-SERIES.capabilities.colorPedestal.limit, +SERIES.capabilities.colorPedestal.limit,
-					-SERIES.capabilities.colorPedestal.step)
-				await self.getCam(SERIES.capabilities.colorPedestal.cmd.blue + ':' +
-					toHexString(SERIES.capabilities.colorPedestal.offset + val, SERIES.capabilities.colorPedestal.hexlen))
-			},
-		}
-
-		actions.pedBlueS = {
-			name: 'Color - Blue Pedestal Set',
-			options: [
-				{
-					id: 'val',
-					type: 'number',
-					label: 'Level',
-					default: 0,
-					min: -SERIES.capabilities.colorPedestal.limit,
-					max: +SERIES.capabilities.colorPedestal.limit,
-					step: SERIES.capabilities.colorPedestal.step,
-					required: true,
-					range: true,
-				},
-			],
-			callback: async (action) => {
-				await self.getCam(SERIES.capabilities.colorPedestal.cmd.blue + ':' +
-					toHexString(SERIES.capabilities.colorPedestal.offset + action.options.val, SERIES.capabilities.colorPedestal.hexlen))
+				if (action.options.op === ACTION_SET) {
+					await self.getCam(SERIES.capabilities.colorPedestal.cmd.blue + ':' +
+					toHexString(SERIES.capabilities.colorPedestal.offset + action.options.set, SERIES.capabilities.colorPedestal.hexlen))
+				} else {
+					const val = getNextValue(self.data.bluePedValue,
+						-SERIES.capabilities.colorPedestal.limit, +SERIES.capabilities.colorPedestal.limit,
+						action.options.op * SERIES.capabilities.colorPedestal.step)
+					await self.getCam(SERIES.capabilities.colorPedestal.cmd.blue + ':' +
+						toHexString(SERIES.capabilities.colorPedestal.offset + val, SERIES.capabilities.colorPedestal.hexlen))
+				}
 			},
 		}
 	}
 
 	if (SERIES.capabilities.colorGain && SERIES.capabilities.colorGain.cmd.red) {
-		actions.gainRedU = {
-			name: 'Color - Red Gain Up',
-			options: [],
+		actions.gainRed = {
+			name: 'Color - Red Gain',
+			options: btnSetIncDecStep('Level', 0, -SERIES.capabilities.colorGain.limit, +SERIES.capabilities.colorGain.limit, SERIES.capabilities.colorGain.step),
 			callback: async (action) => {
-				const val = getNextValue(self.data.redGainValue,
-					-SERIES.capabilities.colorGain.limit, +SERIES.capabilities.colorGain.limit,
-					+SERIES.capabilities.colorGain.step)
-				await self.getCam(SERIES.capabilities.colorGain.cmd.red + ':' +
-					toHexString(SERIES.capabilities.colorGain.offset + val, SERIES.capabilities.colorGain.hexlen))
-			},
-		}
-
-		actions.gainRedD = {
-			name: 'Color - Red Gain Down',
-			options: [],
-			callback: async (action) => {
-				const val = getNextValue(self.data.redGainValue,
-					-SERIES.capabilities.colorGain.limit, +SERIES.capabilities.colorGain.limit,
-					-SERIES.capabilities.colorGain.step)
-				await self.getCam(SERIES.capabilities.colorGain.cmd.red + ':' +
-					toHexString(SERIES.capabilities.colorGain.offset + val, SERIES.capabilities.colorGain.hexlen))
-			},
-		}
-
-		actions.gainRedS = {
-			name: 'Color - Red Gain Set',
-			options: [
-				{
-					id: 'val',
-					type: 'number',
-					label: 'Level',
-					default: 0,
-					min: -SERIES.capabilities.colorGain.limit,
-					max: +SERIES.capabilities.colorGain.limit,
-					step: SERIES.capabilities.colorGain.step,
-					required: true,
-					range: true,
-				},
-			],
-			callback: async (action) => {
-				await self.getCam(SERIES.capabilities.colorGain.cmd.red + ':' +
-					toHexString(SERIES.capabilities.colorGain.offset + action.options.val, SERIES.capabilities.colorGain.hexlen))
+				if (action.options.op === ACTION_SET) {
+					await self.getCam(SERIES.capabilities.colorGain.cmd.red + ':' +
+					toHexString(SERIES.capabilities.colorGain.offset + action.options.set, SERIES.capabilities.colorGain.hexlen))
+				} else {
+					const val = getNextValue(self.data.redGainValue,
+						-SERIES.capabilities.colorGain.limit, +SERIES.capabilities.colorGain.limit,
+						action.options.op * SERIES.capabilities.colorGain.step)
+					await self.getCam(SERIES.capabilities.colorGain.cmd.red + ':' +
+						toHexString(SERIES.capabilities.colorGain.offset + val, SERIES.capabilities.colorGain.hexlen))
+				}
 			},
 		}
 	}
 
 	if (SERIES.capabilities.colorGain && SERIES.capabilities.colorGain.cmd.blue) {
-		actions.gainBlueU = {
-			name: 'Color - Blue Gain Up',
-			options: [],
+		actions.gainBlue = {
+			name: 'Color - Blue Gain',
+			options: btnSetIncDecStep('Level', 0, -SERIES.capabilities.colorGain.limit, +SERIES.capabilities.colorGain.limit, SERIES.capabilities.colorGain.step),
 			callback: async (action) => {
-				const val = getNextValue(self.data.blueGainValue,
-					-SERIES.capabilities.colorGain.limit, +SERIES.capabilities.colorGain.limit,
-					+SERIES.capabilities.colorGain.step)
-				await self.getCam(SERIES.capabilities.colorGain.cmd.blue + ':' +
-					toHexString(SERIES.capabilities.colorGain.offset + val, SERIES.capabilities.colorGain.hexlen))
-			},
-		}
-
-		actions.gainBlueD = {
-			name: 'Color - Blue Gain Down',
-			options: [],
-			callback: async (action) => {
-				const val = getNextValue(self.data.blueGainValue,
-					-SERIES.capabilities.colorGain.limit, +SERIES.capabilities.colorGain.limit,
-					-SERIES.capabilities.colorGain.step)
-				await self.getCam(SERIES.capabilities.colorGain.cmd.blue + ':' +
-					toHexString(SERIES.capabilities.colorGain.offset + val, SERIES.capabilities.colorGain.hexlen))
-			},
-		}
-
-		actions.gainBlueS = {
-			name: 'Color - Blue Gain Set',
-			options: [
-				{
-					id: 'val',
-					type: 'number',
-					label: 'Level',
-					default: 0,
-					min: -SERIES.capabilities.colorGain.limit,
-					max: +SERIES.capabilities.colorGain.limit,
-					step: SERIES.capabilities.colorGain.step,
-					required: true,
-					range: true,
-				},
-			],
-			callback: async (action) => {
-				await self.getCam(SERIES.capabilities.colorGain.cmd.blue + ':' +
-				toHexString(SERIES.capabilities.colorGain.offset + action.options.val, SERIES.capabilities.colorGain.hexlen))
+				if (action.options.op === ACTION_SET) {
+					await self.getCam(SERIES.capabilities.colorGain.cmd.blue + ':' +
+					toHexString(SERIES.capabilities.colorGain.offset + action.options.set, SERIES.capabilities.colorGain.hexlen))
+				} else {
+					const val = getNextValue(self.data.blueGainValue,
+						-SERIES.capabilities.colorGain.limit, +SERIES.capabilities.colorGain.limit,
+						action.options.op * SERIES.capabilities.colorGain.step)
+					await self.getCam(SERIES.capabilities.colorGain.cmd.blue + ':' +
+						toHexString(SERIES.capabilities.colorGain.offset + val, SERIES.capabilities.colorGain.hexlen))
+				}
 			},
 		}
 	}
 
 	if (SERIES.capabilities.filter) {
-		actions.filterU = {
-			name: 'Exposure - ND Filter Up',
-			options: [],
+		actions.filter = {
+			name: 'Exposure - ND Filter',
+			options: btnSetToggleNextPrev(SERIES.capabilities.filter.dropdown),
 			callback: async (action) => {
-				await self.getCam('OFT:' + getNext(SERIES.capabilities.filter.dropdown, self.data.filter, +1).id)
-			},
-		}
-
-		actions.filterD = {
-			name: 'Exposure - ND Filter Down',
-			options: [],
-			callback: async (action) => {
-				await self.getCam('OFT:' + getNext(SERIES.capabilities.filter.dropdown, self.data.filter, -1).id)
-			},
-		}
-
-		actions.filterS = {
-			name: 'Exposure - ND Filter Set',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'ND Filter setting',
-					id: 'val',
-					default: SERIES.capabilities.filter.dropdown[0].id,
-					choices: SERIES.capabilities.filter.dropdown,
-				},
-			],
-			callback: async (action) => {
-				await self.getCam('OFT:' + action.options.val)
+				switch (action.options.op) {
+					case ACTION_SET: await self.getCam('OFT:' + action.options.set); break
+					case ACTION_TOGGLE: await self.getCam('OFT:' + getNext(SERIES.capabilities.filter.dropdown, self.data.filter).id); break
+					default: await self.getCam('OFT:' + getNext(SERIES.capabilities.filter.dropdown, self.data.filter, action.options.op, false).id); break
+				}
 			},
 		}
 	}
@@ -920,9 +632,20 @@ export function getActionDefinitions(self) {
 	// ########################
 
 	if (SERIES.capabilities.preset) {
-		actions.savePset = {
-			name: 'Preset - Save',
+		actions.presetMem = {
+			name: 'Preset - Memory Operation',
 			options: [
+				{
+					type: 'dropdown',
+					label: 'Action',
+					id: 'op',
+					default: e.ENUM_PRESET[0].id,
+					choices: [
+						{ id: 'R', label: 'Recall' },
+						{ id: 'M', label: 'Save' },
+						{ id: 'C', label: 'Clear' },
+					],
+				},
 				{
 					type: 'dropdown',
 					label: 'Preset Nr.',
@@ -932,55 +655,19 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				await self.getPTZ('M' + action.options.val)
+				await self.getPTZ(action.options.op + action.options.val)
 			},
 		}
 
-		actions.recallPset = {
-			name: 'Preset - Recall',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Preset Nr.',
-					id: 'val',
-					default: e.ENUM_PRESET[0].id,
-					choices: e.ENUM_PRESET,
-				},
-			],
+		actions.presetRecallMode = {
+			name: 'Preset - Recall Scope',
+			options: btnSetToggleNextPrev(e.ENUM_PRESET_SCOPE, 'Preset Recall Scope'),
 			callback: async (action) => {
-				await self.getPTZ('R' + action.options.val)
-			},
-		}
-
-		actions.clearPset = {
-			name: 'Preset - Clear',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Preset Nr.',
-					id: 'val',
-					default: e.ENUM_PRESET[0].id,
-					choices: e.ENUM_PRESET,
-				},
-			],
-			callback: async (action) => {
-				await self.getPTZ('C' + action.options.val)
-			},
-		}
-
-		actions.recallModePset = {
-			name: 'Preset - Recall Scope Set',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Preset Recall Scope',
-					id: 'val',
-					default: e.ENUM_PRESET_SCOPE[0].id,
-					choices: e.ENUM_PRESET_SCOPE,
-				},
-			],
-			callback: async (action) => {
-				await self.getCam('OSE:71:' + action.options.val)
+				switch (action.options.op) {
+					case ACTION_SET: await self.getCam('OSE:71:' + action.options.set); break
+					case ACTION_TOGGLE: await self.getCam('OSE:71:' + getNext(e.ENUM_PRESET_SCOPE, self.data.presetScope).id); break
+					default: await self.getCam('OSE:71:' + getNext(e.ENUM_PRESET_SCOPE, self.data.presetScope, action.options.op, false).id); break
+				}				
 			},
 		}
 	}

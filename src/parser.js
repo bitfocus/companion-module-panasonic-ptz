@@ -196,9 +196,9 @@ export function parseWeb(self, str, cmd) {
         case 'get_state':
             switch (str[0]) {
                 case 'rec': self.data.recording = str[1] === 'on'; break
-                case 'rec_counter': self.data.recordingTime = str[1]; break
-                case 'sd_insert': self.data.sdInsert = str[1] === 'on'; break
-                case 'sd2_insert': self.data.sd2Insert = str[1] === 'on'; break
+                //case 'rec_counter': self.data.recordingTime = str[1]; break
+                case 'sd_insert': self.data.sdInserted = str[1] === 'on'; break
+                case 'sd2_insert': self.data.sd2Inserted = str[1] === 'on'; break
             }
             break
         case 'getinfo?FILE=1':

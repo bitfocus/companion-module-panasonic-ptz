@@ -119,7 +119,7 @@ export function setVariables(self) {
 	}
 	if (SERIES.capabilities.recordSD) {
 		variables.push({ variableId: 'recording', name: 'Recording' })
-		variables.push({ variableId: 'recordingTime', name: 'Recording Time' })
+		//variables.push({ variableId: 'recordingTime', name: 'Recording Time' })
 	}
 	if (SERIES.capabilities.streamRTMP) {
 		variables.push({ variableId: 'streamingRTMP', name: 'RTMP Client Status' })
@@ -261,7 +261,7 @@ export function checkVariables(self) {
 		
 		error: self.data.errorLabel,
 		irisF: self.data.irisLabel,
-		recordingTime: self.data.recordingTime,
+		//recordingTime: self.data.recordingTime,
 		shutterStep: self.data.shutterStepLabel,
 
 		colorTemperature: self.data.colorTempLabel?self.data.colorTempLabel:colorTemperature,
