@@ -165,12 +165,8 @@ function cmdEnum(action, dropdown, data) {
 	return getNext(dropdown, data, action.options.op, false).id
 }
 
-function speedCmd(speed) {
+function cmdSpeed(speed) {
 	return speed.toString().padStart(2, '0')
-}
-
-function speedCmdPT(speedPan, speedTilt) {
-	return 'PTS' + speedCmd(speedPan) + speedCmd(speedTilt)
 }
 
 // ##########################
@@ -210,16 +206,16 @@ export function getActionDefinitions(self) {
 			],
 			callback: async (action) => {
 				if (action.options.dir === ACTION_STOP) {
-					await self.getPTZ(speedCmdPT(SPEED_OFFSET, SPEED_OFFSET))
+					await self.getPTZ('PTS' + cmdSpeed(SPEED_OFFSET)+ cmdSpeed(SPEED_OFFSET))
 					if (self.speedChangeEmitter.listenerCount('ptSpeed')) self.speedChangeEmitter.removeAllListeners('ptSpeed')
 				} else {
 					let arr = Array.from(action.options.dir)
 					let pan = parseInt(arr[0]) - 1; let tilt = parseInt(arr[1]) - 1
-					await self.getPTZ(speedCmdPT(pan * self.ptSpeed + SPEED_OFFSET, tilt * self.ptSpeed + SPEED_OFFSET))
+					await self.getPTZ('PTS' + cmdSpeed(pan * self.ptSpeed + SPEED_OFFSET) + cmdSpeed(tilt * self.ptSpeed + SPEED_OFFSET))
 					if (action.options.liveSpeed) {
 						self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 							self.speedChangeEmitter.on('ptSpeed', async () => {
-								await self.getPTZ(speedCmdPT(pan * self.ptSpeed + SPEED_OFFSET, tilt * self.ptSpeed + SPEED_OFFSET))
+								await self.getPTZ('PTS' + cmdSpeed(pan * self.ptSpeed + SPEED_OFFSET) + cmdSpeed(tilt * self.ptSpeed + SPEED_OFFSET))
 							})
 						)
 					}
@@ -297,13 +293,13 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Zoom',
 			options: btnMove('⬆ In', '⬇ Out'),
 			callback: async (action) => {
-				await self.getPTZ('Z' + speedCmd(action.options.op * self.zSpeed + SPEED_OFFSET))
+				await self.getPTZ('Z' + cmdSpeed(action.options.op * self.zSpeed + SPEED_OFFSET))
 
 				if (self.speedChangeEmitter.listenerCount('zSpeed')) self.speedChangeEmitter.removeAllListeners('zSpeed')
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.on('zSpeed', async () => {
-						await self.getPTZ('Z' + speedCmd(action.options.op * self.zSpeed + SPEED_OFFSET))
+						await self.getPTZ('Z' + cmdSpeed(action.options.op * self.zSpeed + SPEED_OFFSET))
 					})
 				}
 			},
@@ -330,13 +326,13 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Focus',
 			options: btnMove('⬆ Far', '⬇ Near'),
 			callback: async (action) => {
-				await self.getPTZ('F' + speedCmd(action.options.op * self.fSpeed + SPEED_OFFSET))
+				await self.getPTZ('F' + cmdSpeed(action.options.op * self.fSpeed + SPEED_OFFSET))
 
 				if (self.speedChangeEmitter.listenerCount('fSpeed')) self.speedChangeEmitter.removeAllListeners('fSpeed')
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.on('fSpeed', async () => {
-						await self.getPTZ('F' + speedCmd(action.options.op * self.fSpeed + SPEED_OFFSET))
+						await self.getPTZ('F' + cmdSpeed(action.options.op * self.fSpeed + SPEED_OFFSET))
 					})
 				}
 			},
