@@ -1101,4 +1101,20 @@ export const e = {
 		{ id: '0', label: 'Desktop' },
 		{ id: '1', label: 'Hanging' },
 	],
+
+	ENUM_AUTOTRACKING_ANGLE: [
+		{ id: '0', label: 'Off' },
+		{ id: '1', label: 'Full Body' },
+		{ id: '2', label: 'Upper Body' },
+	],
+
+	ENUM_RECORDING: [
+		{ id: 'start', label: 'Start Recording' },
+		{ id: 'end', label: 'Stop Recording' },
+	],
+
+	ENUM_STREAMING: [
+		{ id: 'start', label: 'Start Streaming' },
+		{ id: 'stop', label: 'Stop Streaming' },
+	],
 }

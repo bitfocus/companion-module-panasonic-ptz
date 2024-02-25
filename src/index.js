@@ -335,10 +335,11 @@ class PanasonicPTZInstance extends InstanceBase {
 			sd2Inserted: null,
 			shutter: null,
 			srt: null,
-			ts: null,
 			tally: null,
 			tally2: null,
 			tally3: null,
+			tracking: null,
+			ts: null,
 			whiteBalance: null,
 
 			// numeric index

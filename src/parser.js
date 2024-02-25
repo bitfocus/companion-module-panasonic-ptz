@@ -170,6 +170,7 @@ export function parseUpdate(self, str) {
                         case '2': self.data.autotrackingStatusLabel = 'Lost'; break
                     }
                     break
+                    case 'BC': self.data.tracking = str[2]; break // Tracking Start/Stop
             }
             break
         case 'OGS':
