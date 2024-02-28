@@ -122,7 +122,7 @@ export function getFeedbackDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.focusAuto) {
-		feedbacks.autoFocus = {
+		feedbacks.focusMode = {
 			type: 'boolean',
 			name: 'Lens - Focus Mode Auto',
 			description: 'Indicates if Auto Focus is currently enabled',
@@ -138,7 +138,7 @@ export function getFeedbackDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.irisAuto) {
-		feedbacks.autoIris = {
+		feedbacks.irisMode = {
 			type: 'boolean',
 			name: 'Lens - Iris Mode Auto',
 			description: 'Indicates if Auto Iris is currently enabled',

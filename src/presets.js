@@ -338,7 +338,7 @@ export function getPresetDefinitions(self) {
 			category: 'Pan/Tilt',
 			name: 'Speed',
 			style: {
-				text: 'P/T SPEED\\n$(Panasonic-PTZ:ptSpeed)',
+				text: 'P/T SPEED\\n$(generic-module:ptSpeed)',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -428,7 +428,7 @@ export function getPresetDefinitions(self) {
 			category: 'Lens',
 			name: 'Zoom Speed Up',
 			style: {
-				text: 'ZOOM\\nSPEED\\nUP\\n$(Panasonic-PTZ:zSpeed)',
+				text: 'ZOOM\\nSPEED\\nUP\\n$(generic-module:zSpeed)',
 				size: '7',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -485,7 +485,7 @@ export function getPresetDefinitions(self) {
 			category: 'Lens',
 			name: 'Focus Speed Up',
 			style: {
-				text: 'FOCUS\\nSPEED\\nUP\\n$(Panasonic-PTZ:fSpeed)',
+				text: 'FOCUS\\nSPEED\\nUP\\n$(generic-module:fSpeed)',
 				size: '7',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -558,9 +558,7 @@ export function getPresetDefinitions(self) {
 					down: [
 						{
 							actionId: 'focusPushAuto',
-							options: {
-								bol: 0,
-							},
+							options: {},
 						},
 					],
 					up: [],
@@ -568,6 +566,63 @@ export function getPresetDefinitions(self) {
 			],
 			feedbacks: [],
 		}
+	}
+
+	presets[`lens-ois-mode`] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'O.I.S. Mode',
+		style: {
+			text: 'O.I.S.\n$(generic-module:ois)',
+			size: '14',
+			color: colorWhite,
+			bgcolor: colorBlack,
+		},
+		options: {
+			rotaryActions: true
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'ois',
+						options: {
+							op: 't',
+						},
+					},
+				],
+				up: [],
+				rotate_left: [
+					{
+						actionId: 'ois',
+						options: {
+							op: -1,
+						},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: 'ois',
+						options: {
+							op: 1,
+						},
+					},
+				]
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'oisMode',
+				options: {
+					option: SERIES.capabilities.ois.dropdown[0].id,
+				},
+				isInverted: true,
+				style: {
+					color: colorWhite,
+					bgcolor: colorRed,
+				},
+			},
+		],
 	}
 
 	// ##########################
@@ -578,25 +633,57 @@ export function getPresetDefinitions(self) {
 		presets['exposure-iris'] = {
 			type: 'button',
 			category: 'Exposure',
-			name: 'Iris Up',
+			name: 'Iris',
 			style: {
-				text: 'IRIS\\nUP',
-				size: '18',
+				text: 'IRIS\\n$(generic-module:irisPosition)\\n$(generic-module:irisPositionBar)',
+				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
+			},
+			options: {
+				rotaryActions: true
 			},
 			steps: [
 				{
 					down: [
 						{
-							actionId: 'irisU',
-							options: {},
+							actionId: 'irisMode',
+							options: {
+								op: 't',
+							},
 						},
 					],
 					up: [],
+					rotate_left: [
+						{
+							actionId: 'iris',
+							options: {
+								op: -1,
+								step: 0x1E,
+							},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'iris',
+							options: {
+								op: 1,
+								step: 0x1E,
+							},
+						},
+					]
 				},
 			],
-			feedbacks: [],
+			feedbacks: [
+				{
+					feedbackId: 'irisMode',
+					options: {},
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
 		}
 
 		presets['exposure-iris-auto'] = {
@@ -637,7 +724,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (SERIES.capabilities.gain.cmd) {
+	if (SERIES.capabilities.gain) {
 		presets['exposure-gain'] = {
 			type: 'button',
 			category: 'Exposure',
@@ -664,7 +751,7 @@ export function getPresetDefinitions(self) {
 
 	}
 
-	if (SERIES.capabilities.shutter.cmd) {
+	if (SERIES.capabilities.shutter) {
 		presets['exposure-shutter-up'] = {
 			type: 'button',
 			category: 'Exposure',
@@ -714,7 +801,7 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (SERIES.capabilities.pedestal.cmd) {
+	if (SERIES.capabilities.pedestal) {
 		presets['exposure-pedestal'] = {
 			type: 'button',
 			category: 'Exposure',
@@ -768,7 +855,7 @@ export function getPresetDefinitions(self) {
 			category: 'Exposure',
 			name: 'ND Filter',
 			style: {
-				text: 'ND Filter\\n$(Panasonic-PTZ:filter)',
+				text: 'ND Filter\\n$(generic-module:filter)',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -1519,51 +1606,6 @@ export function getPresetDefinitions(self) {
 				],
 			}
 		}
-	}
-
-	// #####################################
-	// #### Image Stabilization Presets ####
-	// #####################################
-
-	let oissteps = []
-	for (const x in SERIES.capabilities.ois.dropdown) {
-		oissteps.push(
-			{
-				down: [
-					{
-						actionId: 'ois',
-						options: {
-							val: SERIES.capabilities.ois.dropdown[x].id,
-						},
-					},
-				],
-				up: [],
-			},
-		)
-	}
-	presets[`ois-mode`] = {
-		type: 'button',
-		category: 'Image Stabilization',
-		name: 'O.I.S. Mode',
-		style: {
-			text: 'Image Stabilizer\n$(generic-module:ois)',
-			size: '14',
-			color: colorWhite,
-			bgcolor: colorRed,
-		},
-		steps: oissteps,
-		feedbacks: [
-			{
-				feedbackId: 'oisMode',
-				options: {
-					option: SERIES.capabilities.ois.dropdown[0].id,
-				},
-				style: {
-					color: colorWhite,
-					bgcolor: colorBlack,
-				},
-			},
-		],
 	}
 
 	// ###############################
