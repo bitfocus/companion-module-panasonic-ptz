@@ -287,10 +287,10 @@ export function checkVariables(self) {
 		tally3: tally3,
 		whiteBalance: whiteBalance,
 
-		ptSpeedVar: self.ptSpeed,
-		pSpeedVar: self.pSpeed,
-		tSpeedVar: self.tSpeed,
-		zSpeedVar: self.zSpeed,
-		fSpeedVar: self.fSpeed,
+		ptSpeed: self.ptSpeed,
+		pSpeed: self.pSpeed,
+		tSpeed: self.tSpeed,
+		zSpeed: self.zSpeed,
+		fSpeed: self.fSpeed,
 	})
 }

@@ -43,14 +43,18 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'up',
-							options: {},
+							actionId: 'ptMove',
+							options: {
+								dir: '12'
+							},
 						},
 					],
 					up: [
 						{
-							actionId: 'stop',
-							options: {},
+							actionId: 'ptMove',
+							options: {
+								dir: '11'
+							},
 						},
 					],
 				},
@@ -74,14 +78,18 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'down',
-							options: {},
+							actionId: 'ptMove',
+							options: {
+								dir: '10'
+							},
 						},
 					],
 					up: [
 						{
-							actionId: 'stop',
-							options: {},
+							actionId: 'ptMove',
+							options: {
+								dir: '11'
+							},
 						},
 					],
 				},
@@ -105,14 +113,18 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'left',
-							options: {},
+							actionId: 'ptMove',
+							options: {
+								dir: '01'
+							},
 						},
 					],
 					up: [
 						{
-							actionId: 'stop',
-							options: {},
+							actionId: 'ptMove',
+							options: {
+								dir: '11'
+							},
 						},
 					],
 				},
@@ -136,14 +148,18 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'right',
-							options: {},
+							actionId: 'ptMove',
+							options: {
+								dir: '21'
+							},
 						},
 					],
 					up: [
 						{
-							actionId: 'stop',
-							options: {},
+							actionId: 'ptMove',
+							options: {
+								dir: '11'
+							},
 						},
 					],
 				},
@@ -167,14 +183,18 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'upRight',
-							options: {},
+							actionId: 'ptMove',
+							options: {
+								dir: '22'
+							},
 						},
 					],
 					up: [
 						{
-							actionId: 'stop',
-							options: {},
+							actionId: 'ptMove',
+							options: {
+								dir: '11'
+							},
 						},
 					],
 				},
@@ -198,14 +218,18 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'upLeft',
-							options: {},
+							actionId: 'ptMove',
+							options: {
+								dir: '02'
+							},
 						},
 					],
 					up: [
 						{
-							actionId: 'stop',
-							options: {},
+							actionId: 'ptMove',
+							options: {
+								dir: '11'
+							},
 						},
 					],
 				},
@@ -229,14 +253,18 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'downLeft',
-							options: {},
+							actionId: 'ptMove',
+							options: {
+								dir: '00'
+							},
 						},
 					],
 					up: [
 						{
-							actionId: 'stop',
-							options: {},
+							actionId: 'ptMove',
+							options: {
+								dir: '11'
+							},
 						},
 					],
 				},
@@ -260,14 +288,18 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'downRight',
-							options: {},
+							actionId: 'ptMove',
+							options: {
+								dir: '20'
+							},
 						},
 					],
 					up: [
 						{
-							actionId: 'stop',
-							options: {},
+							actionId: 'ptMove',
+							options: {
+								dir: '11'
+							},
 						},
 					],
 				},
@@ -301,127 +333,50 @@ export function getPresetDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.ptSpeed) {
-		presets['pan-tilt-speed-up'] = {
+		presets['pan-tilt-speed'] = {
 			type: 'button',
 			category: 'Pan/Tilt',
-			name: 'Speed Up',
+			name: 'Speed',
 			style: {
-				text: 'SPEED\\nUP\\n$(Panasonic-PTZ:ptSpeedVar)',
+				text: 'P/T SPEED\\n$(Panasonic-PTZ:ptSpeed)',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
+			},
+			options: {
+				rotaryActions: true
 			},
 			steps: [
 				{
 					down: [
 						{
-							actionId: 'ptSpeedU',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['pan-tilt-speed-down'] = {
-			type: 'button',
-			category: 'Pan/Tilt',
-			name: 'Speed Down',
-			style: {
-				text: 'SPEED\\nDOWN\\n$(Panasonic-PTZ:ptSpeedVar)',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'ptSpeedD',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['pan-tilt-speed-high'] = {
-			type: 'button',
-			category: 'Pan/Tilt',
-			name: 'Speed Set High',
-			style: {
-				text: 'SET\\nSPEED\\nHIGH',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'ptSpeedS',
+							actionId: 'ptSpeed',
 							options: {
-								speed: 40,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['pan-tilt-speed-mid'] = {
-			type: 'button',
-			category: 'Pan/Tilt',
-			name: 'Speed Set Mid',
-			style: {
-				text: 'SET\\nSPEED\\nMID',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'ptSpeedS',
-							options: {
+								scope: 'pt',
+								op: 's',
 								speed: 25,
 							},
 						},
 					],
 					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['pan-tilt-speed-low'] = {
-			type: 'button',
-			category: 'Pan/Tilt',
-			name: 'Speed Set Low',
-			style: {
-				text: 'SET\\nSPEED\\nLOW',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
+					rotate_left: [
 						{
-							actionId: 'ptSpeedS',
+							actionId: 'ptSpeed',
 							options: {
-								speed: 10,
+								scope: 'pt',
+								op: -1,
 							},
 						},
 					],
-					up: [],
+					rotate_right: [
+						{
+							actionId: 'ptSpeed',
+							options: {
+								scope: 'pt',
+								op: 1,
+							},
+						},
+					]
 				},
 			],
 			feedbacks: [],
@@ -433,7 +388,7 @@ export function getPresetDefinitions(self) {
 	// ######################
 
 	if (SERIES.capabilities.zoom) {
-		presets['lens-zoom-in'] = {
+		presets['lens-zoom'] = {
 			type: 'button',
 			category: 'Lens',
 			name: 'Zoom In',
@@ -447,43 +402,18 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'zoomI',
-							options: {},
+							actionId: 'zoom',
+							options: {
+								dir: 1
+							},
 						},
 					],
 					up: [
 						{
-							actionId: 'zoomS',
-							options: {},
-						},
-					],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['lens-zoom-out'] = {
-			type: 'button',
-			category: 'Lens',
-			name: 'Zoom Out',
-			style: {
-				text: 'ZOOM\\nOUT',
-				size: '18',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'zoomO',
-							options: {},
-						},
-					],
-					up: [
-						{
-							actionId: 'zoomS',
-							options: {},
+							actionId: 'zoom',
+							options: {
+								dir: 0
+							},
 						},
 					],
 				},
@@ -493,12 +423,12 @@ export function getPresetDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.zSpeed) {
-		presets['lens-zoom-speed-up'] = {
+		presets['lens-zoom-speed'] = {
 			type: 'button',
 			category: 'Lens',
 			name: 'Zoom Speed Up',
 			style: {
-				text: 'ZOOM\\nSPEED\\nUP\\n$(Panasonic-PTZ:zSpeedVar)',
+				text: 'ZOOM\\nSPEED\\nUP\\n$(Panasonic-PTZ:zSpeed)',
 				size: '7',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -516,112 +446,10 @@ export function getPresetDefinitions(self) {
 			],
 			feedbacks: [],
 		}
-
-		presets['lens-zoom-speed-down'] = {
-			type: 'button',
-			category: 'Lens',
-			name: 'Zoom Speed Down',
-			style: {
-				text: 'ZOOM\\nSPEED\\nDOWN\\n$(Panasonic-PTZ:zSpeedVar)',
-				size: '7',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'zSpeedD',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['lens-zoom-speed-high'] = {
-			type: 'button',
-			category: 'Lens',
-			name: 'Zoom Speed High',
-			style: {
-				text: 'ZOOM\\nSPEED\\nHIGH',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'zSpeedS',
-							options: {
-								speed: 40,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['lens-zoom-speed-mid'] = {
-			type: 'button',
-			category: 'Lens',
-			name: 'Zoom Speed Mid',
-			style: {
-				text: 'ZOOM\\nSPEED\\nMID',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'zSpeedS',
-							options: {
-								speed: 25,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['lens-zoom-speed-low'] = {
-			type: 'button',
-			category: 'Lens',
-			name: 'Zoom Speed Low',
-			style: {
-				text: 'ZOOM\\nSPEED\\nLOW',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'zSpeedS',
-							options: {
-								speed: 10,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
 	}
 
 	if (SERIES.capabilities.focus) {
-		presets['lens-focus-near'] = {
+		presets['lens-focus'] = {
 			type: 'button',
 			category: 'Lens',
 			name: 'Focus Near',
@@ -649,44 +477,15 @@ export function getPresetDefinitions(self) {
 			],
 			feedbacks: [],
 		}
-
-		presets['lens-focus-far'] = {
-			type: 'button',
-			category: 'Lens',
-			name: 'Focus Far',
-			style: {
-				text: 'FOCUS\\nFAR',
-				size: '18',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'focusF',
-							options: {},
-						},
-					],
-					up: [
-						{
-							actionId: 'focusS',
-							options: {},
-						},
-					],
-				},
-			],
-			feedbacks: [],
-		}
 	}
 
 	if (SERIES.capabilities.fSpeed) {
-		presets['lens-focus-speed-up'] = {
+		presets['lens-focus-speed'] = {
 			type: 'button',
 			category: 'Lens',
 			name: 'Focus Speed Up',
 			style: {
-				text: 'FOCUS\\nSPEED\\nUP\\n$(Panasonic-PTZ:fSpeedVar)',
+				text: 'FOCUS\\nSPEED\\nUP\\n$(Panasonic-PTZ:fSpeed)',
 				size: '7',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -704,147 +503,9 @@ export function getPresetDefinitions(self) {
 			],
 			feedbacks: [],
 		}
-
-		presets['lens-focus-speed-down'] = {
-			type: 'button',
-			category: 'Lens',
-			name: 'focusM Speed Down',
-			style: {
-				text: 'FOCUS\\nSPEED\\nDOWN\\n$(Panasonic-PTZ:fSpeedVar)',
-				size: '7',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'fSpeedD',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-		presets['lens-focus-speed-high'] = {
-			type: 'button',
-			category: 'Lens',
-			name: 'Focus Speed High',
-			style: {
-				text: 'FOCUS\\nSPEED\\nHIGH',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'fSpeedS',
-							options: {
-								speed: 40,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['lens-focus-speed-mid'] = {
-			type: 'button',
-			category: 'Lens',
-			name: 'Focus Speed Mid',
-			style: {
-				text: 'FOCUS\\nSPEED\\nMID',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'fSpeedS',
-							options: {
-								speed: 25,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['lens-focus-speed-low'] = {
-			type: 'button',
-			category: 'Lens',
-			name: 'Focus Speed Low',
-			style: {
-				text: 'FOCUS\\nSPEED\\nLOW',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'fSpeedS',
-							options: {
-								speed: 10,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
 	}
 
 	if (SERIES.capabilities.focusAuto) {
-		presets['lens-focus-manual'] = {
-			type: 'button',
-			category: 'Lens',
-			name: 'Manual Focus',
-			style: {
-				text: 'MANUAL\\nFOCUS',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'focusM',
-							options: {
-								bol: 1,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'autoFocus',
-					options: {
-						option: '0',
-					},
-					style: {
-						color: colorWhite,
-						bgcolor: colorRed,
-					},
-				},
-			],
-		}
-
 		presets['lens-focus-auto'] = {
 			type: 'button',
 			category: 'Lens',
@@ -914,7 +575,7 @@ export function getPresetDefinitions(self) {
 	// ##########################
 
 	if (SERIES.capabilities.iris) {
-		presets['exposure-iris-up'] = {
+		presets['exposure-iris'] = {
 			type: 'button',
 			category: 'Exposure',
 			name: 'Iris Up',
@@ -938,67 +599,6 @@ export function getPresetDefinitions(self) {
 			feedbacks: [],
 		}
 
-		presets['exposure-iris-down'] = {
-			type: 'button',
-			category: 'Exposure',
-			name: 'Iris Down',
-			style: {
-				text: 'IRIS\\nDOWN',
-				size: '18',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'irisD',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['exposure-iris-manual'] = {
-			type: 'button',
-			category: 'Exposure',
-			name: 'Manual Iris',
-			style: {
-				text: 'MANUAL\\nIRIS',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'irisM',
-							options: {
-								bol: 0,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'autoIris',
-					options: {
-						option: '0',
-					},
-					style: {
-						color: colorWhite,
-						bgcolor: colorRed,
-					},
-				},
-			],
-		}
-
 		presets['exposure-iris-auto'] = {
 			type: 'button',
 			category: 'Exposure',
@@ -1013,7 +613,7 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'irisM',
+							actionId: 'iris',
 							options: {
 								bol: 1,
 							},
@@ -1038,7 +638,7 @@ export function getPresetDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.gain.cmd) {
-		presets['exposure-gain-up'] = {
+		presets['exposure-gain'] = {
 			type: 'button',
 			category: 'Exposure',
 			name: 'Gain Up',
@@ -1062,29 +662,6 @@ export function getPresetDefinitions(self) {
 			feedbacks: [],
 		}
 
-		presets['exposure-gain-down'] = {
-			type: 'button',
-			category: 'Exposure',
-			name: 'Gain Down',
-			style: {
-				text: 'GAIN\\nDOWN',
-				size: '18',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'gainD',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
 	}
 
 	if (SERIES.capabilities.shutter.cmd) {
@@ -1153,149 +730,95 @@ export function getPresetDefinitions(self) {
 			},
 			steps: [
 				{
-					down: [],
+					down: [
+						{
+							actionId: 'ped',
+							options: {
+								op: 's',
+								speed: 0,
+							},
+						},
+					],
 					up: [],
 					rotate_left: [
 						{
-							actionId: 'pedD',
-							options: {},
+							actionId: 'ped',
+							options: {
+								op: -1,
+							},
 						},
 					],
 					rotate_right: [
 						{
-							actionId: 'pedU',
-							options: {},
+							actionId: 'ped',
+							options: {
+								op: 1,
+							},
 						},
-					],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['exposure-pedestal-up'] = {
-			type: 'button',
-			category: 'Exposure',
-			name: 'Pedestal Up',
-			style: {
-				text: 'Pedestal\\nUP',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'pedU',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['exposure-pedestal-down'] = {
-			type: 'button',
-			category: 'Exposure',
-			name: 'Pedestal Down',
-			style: {
-				text: 'Pedestal\\nDOWN',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'pedD',
-							options: {},
-						},
-					],
-					up: [],
+					]
 				},
 			],
 			feedbacks: [],
 		}
 	}
 
-	if (SERIES.capabilities.filter.cmd) {
-		presets['exposure-filter-up'] = {
+	if (SERIES.capabilities.filter) {
+		presets['exposure-filter'] = {
 			type: 'button',
 			category: 'Exposure',
-			name: 'ND Filter Up',
+			name: 'ND Filter',
 			style: {
-				text: 'ND Filter\\nUP',
+				text: 'ND Filter\\n$(Panasonic-PTZ:filter)',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
+			},
+			options: {
+				rotaryActions: true
 			},
 			steps: [
 				{
 					down: [
 						{
-							actionId: 'filterU',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['exposure-filter-down'] = {
-			type: 'button',
-			category: 'Exposure',
-			name: 'ND Filter Down',
-			style: {
-				text: 'ND Filter\\nDOWN',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'filterD',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-
-		for (const x in SERIES.capabilities.filter.dropdown) {
-			presets[`exposire-nd-filter-${x}`] = {
-				type: 'button',
-				category: 'Exposure',
-				name: 'ND Filter Set ' + SERIES.capabilities.filter.dropdown[x].label,
-				style: {
-					text: 'ND FILTER\\nSET\\n' + SERIES.capabilities.filter.dropdown[x].label,
-					size: '14',
-					color: colorWhite,
-					bgcolor: colorBlack,
-				},
-				steps: [
-					{
-						down: [
-							{
-								actionId: 'filterS',
-								options: {
-									val: SERIES.capabilities.filter.dropdown[x].id,
-								},
+							actionId: 'filter',
+							options: {
+								op: 's',
+								set: SERIES.capabilities.filter.dropdown[0].id,
 							},
-						],
-						up: [],
+						},
+					],
+					up: [],
+					rotate_left: [
+						{
+							actionId: 'filter',
+							options: {
+								op: -1,
+							},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'filter',
+							options: {
+								op: 1,
+							},
+						},
+					]
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'filterMode',
+					options: {
+						option: SERIES.capabilities.filter.dropdown[0].id,
 					},
-				],
-				feedbacks: [],
-			}
+					isInverted: true,
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
 		}
 	}
 
@@ -1304,7 +827,7 @@ export function getPresetDefinitions(self) {
 	// ########################
 
 	if (SERIES.capabilities.power) {
-		presets['system-power-off'] = {
+		presets['system-power'] = {
 			type: 'button',
 			category: 'System',
 			name: 'Power Off',
@@ -1330,41 +853,6 @@ export function getPresetDefinitions(self) {
 					feedbackId: 'powerState',
 					options: {
 						option: '0',
-					},
-					style: {
-						color: colorWhite,
-						bgcolor: colorRed,
-					},
-				},
-			],
-		}
-
-		presets['system-power-on'] = {
-			type: 'button',
-			category: 'System',
-			name: 'Power On',
-			style: {
-				text: 'Power\\nON',
-				size: '18',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'powerOn',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'powerState',
-					options: {
-						option: '1',
 					},
 					style: {
 						color: colorWhite,

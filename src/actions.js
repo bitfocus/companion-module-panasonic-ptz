@@ -51,13 +51,13 @@ const speedSetting = {
 	isVisible: ((options) => options.op === 's')
 }
 
-function btnMove(label_inc = '⬆', label_dec = '⬇') {
+function optMove(label_inc = '⬆', label_dec = '⬇') {
 	return [
 		{
 			type: 'dropdown',
 			label: 'Direction',
 			id: 'dir',
-			default: ACTION_STOP,
+			default: 0,
 			choices: [
 				{ id: ACTION_STOP, label: 'Stop' },
 				{ id: ACTION_INC, label: label_inc },
@@ -68,7 +68,7 @@ function btnMove(label_inc = '⬆', label_dec = '⬇') {
 	]
 }
 
-function btnSetToggle(choices, label = 'Setting', def = 0) {
+function optSetToggle(choices, label = 'Setting', def = 0) {
 	return [
 		{
 			type: 'dropdown',
@@ -91,7 +91,7 @@ function btnSetToggle(choices, label = 'Setting', def = 0) {
 	]
 }
 
-function btnSetToggleNextPrev(choices, label = 'Setting', def = 0) {
+function optSetToggleNextPrev(choices, label = 'Setting', def = 0) {
 	return [
 		{
 			type: 'dropdown',
@@ -116,7 +116,7 @@ function btnSetToggleNextPrev(choices, label = 'Setting', def = 0) {
 	]
 }
 
-function btnSetIncDecStep(label = 'Value', def, min, max, step = 1) {
+function optSetIncDecStep(label = 'Value', def, min, max, step = 1) {
 	return [
 		{
 			type: 'dropdown',
@@ -189,9 +189,9 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Direction',
 					id: 'dir',
-					default: ACTION_STOP,
+					default: '11',
 					choices: [
-						{ id: ACTION_STOP, label: 'Stop' },
+						{ id: '11', label: 'Stop' },
 						{ id: '21', label: '➡ Right' }, // +
 						{ id: '01', label: '⬅ Left' }, // -
 						{ id: '12', label: '⬆ Up' }, // +
@@ -199,23 +199,23 @@ export function getActionDefinitions(self) {
 						{ id: '22', label: '⬈ Up Right' }, // ++
 						{ id: '02', label: '⬉ Up Left' }, // -+
 						{ id: '00', label: '⬋ Down Left' }, // --
-						{ id: '20', label: '⬊ Up Right' }, // +-
+						{ id: '20', label: '⬊ Down Right' }, // +-
 					],
 				},
 				liveSpeed,
 			],
 			callback: async (action) => {
-				if (action.options.dir === ACTION_STOP) {
+				if (action.options.dir === '11') { // Stop
 					await self.getPTZ('PTS' + cmdSpeed(SPEED_OFFSET)+ cmdSpeed(SPEED_OFFSET))
 					if (self.speedChangeEmitter.listenerCount('ptSpeed')) self.speedChangeEmitter.removeAllListeners('ptSpeed')
 				} else {
 					let arr = Array.from(action.options.dir)
 					let pan = parseInt(arr[0]) - 1; let tilt = parseInt(arr[1]) - 1
-					await self.getPTZ('PTS' + cmdSpeed(pan * self.ptSpeed + SPEED_OFFSET) + cmdSpeed(tilt * self.ptSpeed + SPEED_OFFSET))
+					await self.getPTZ('PTS' + cmdSpeed(pan * self.pSpeed + SPEED_OFFSET) + cmdSpeed(tilt * self.tSpeed + SPEED_OFFSET))
 					if (action.options.liveSpeed) {
 						self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
 							self.speedChangeEmitter.on('ptSpeed', async () => {
-								await self.getPTZ('PTS' + cmdSpeed(pan * self.ptSpeed + SPEED_OFFSET) + cmdSpeed(tilt * self.ptSpeed + SPEED_OFFSET))
+								await self.getPTZ('PTS' + cmdSpeed(pan * self.pSpeed + SPEED_OFFSET) + cmdSpeed(tilt * self.tSpeed + SPEED_OFFSET))
 							})
 						)
 					}
@@ -249,26 +249,18 @@ export function getActionDefinitions(self) {
 				speedSetting,
 			],
 			callback: async (action) => {
-				if (action.options.op === ACTION_SET) {
-					switch (action.options.scope) {
-						case 'pt':
-							self.ptSpeed = action.options.speed
-							self.pSpeed = self.ptSpeed
-							self.tSpeed = self.ptSpeed
-							break
-						case 'p': self.pSpeed = action.options.speed; break
-						case 't': self.tSpeed = action.options.speed; break
-					}
-				} else {
-					switch (action.options.scope) {
-						case 'pt':
-							self.ptSpeed = getNextValue(self.ptSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
-							self.pSpeed = self.ptSpeed
-							self.tSpeed = self.ptSpeed
-							break
-						case 'p': self.pSpeed = getNextValue(self.pSpeed, SPEED_MIN, SPEED_MAX, action.options.op); break
-						case 't': self.tSpeed = getNextValue(self.tSpeed, SPEED_MIN, SPEED_MAX, action.options.op); break
-					}
+				switch (action.options.scope) {
+					case 'pt':
+						self.ptSpeed = (action.options.op === ACTION_SET) ? action.options.speed : getNextValue(self.ptSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
+						self.pSpeed = self.ptSpeed
+						self.tSpeed = self.ptSpeed
+						break
+					case 'p':
+						self.pSpeed = (action.options.op === ACTION_SET) ? action.options.speed : getNextValue(self.pSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
+						break
+					case 't':
+						self.tSpeed = (action.options.op === ACTION_SET) ? action.options.speed : getNextValue(self.tSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
+						break
 				}
 
 				if (self.pSpeed === self.tSpeed) self.ptSpeed = self.pSpeed
@@ -291,15 +283,15 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.zoom) {
 		actions.zoom = {
 			name: 'Lens - Zoom',
-			options: btnMove('⬆ In', '⬇ Out'),
+			options: optMove('⬆ In', '⬇ Out'),
 			callback: async (action) => {
-				await self.getPTZ('Z' + cmdSpeed(action.options.op * self.zSpeed + SPEED_OFFSET))
+				await self.getPTZ('Z' + cmdSpeed(action.options.dir * self.zSpeed + SPEED_OFFSET))
 
 				if (self.speedChangeEmitter.listenerCount('zSpeed')) self.speedChangeEmitter.removeAllListeners('zSpeed')
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.on('zSpeed', async () => {
-						await self.getPTZ('Z' + cmdSpeed(action.options.op * self.zSpeed + SPEED_OFFSET))
+						await self.getPTZ('Z' + cmdSpeed(action.options.dir * self.zSpeed + SPEED_OFFSET))
 					})
 				}
 			},
@@ -324,15 +316,15 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.focus) {
 		actions.focus = {
 			name: 'Lens - Focus',
-			options: btnMove('⬆ Far', '⬇ Near'),
+			options: optMove('⬆ Far', '⬇ Near'),
 			callback: async (action) => {
-				await self.getPTZ('F' + cmdSpeed(action.options.op * self.fSpeed + SPEED_OFFSET))
+				await self.getPTZ('F' + cmdSpeed(action.options.dir * self.fSpeed + SPEED_OFFSET))
 
 				if (self.speedChangeEmitter.listenerCount('fSpeed')) self.speedChangeEmitter.removeAllListeners('fSpeed')
 
 				if (action.options.liveSpeed) {
 					self.speedChangeEmitter.on('fSpeed', async () => {
-						await self.getPTZ('F' + cmdSpeed(action.options.op * self.fSpeed + SPEED_OFFSET))
+						await self.getPTZ('F' + cmdSpeed(action.options.dir * self.fSpeed + SPEED_OFFSET))
 					})
 				}
 			},
@@ -357,7 +349,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.focusAuto) {
 		actions.focusMode = {
 			name: 'Lens - Focus Mode',
-			options: btnSetToggle(e.ENUM_MAN_AUTO),
+			options: optSetToggle(e.ENUM_MAN_AUTO),
 			callback: async (action) => {
 				await self.getCam('OAF:' + cmdEnum(action, e.ENUM_MAN_AUTO, self.data.focusAuto))
 			},
@@ -381,7 +373,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.iris) {
 		actions.iris = {
 			name: 'Lens - Iris',
-			options: btnSetIncDecStep('Iris setting', 0x555, 0x0, 0xAAA, 0x1E),
+			options: optSetIncDecStep('Iris setting', 0x555, 0x0, 0xAAA, 0x1E),
 			callback: async (action) => {
 				await self.getPTZ('AXI' + cmdValue(action, 0x555, 0x0, 0xAAA, 0x1E, 3, self.data.irisPosition))
 			},
@@ -389,7 +381,7 @@ export function getActionDefinitions(self) {
 
 		actions.irisMode = {
 			name: 'Lens - Iris Mode',
-			options: btnSetToggle(e.ENUM_MAN_AUTO),
+			options: optSetToggle(e.ENUM_MAN_AUTO),
 			callback: async (action) => {
 				await self.getCam('ORS:' + cmdEnum(action, e.ENUM_MAN_AUTO, self.data.irisMode))
 			},
@@ -399,7 +391,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.filter) {
 		actions.filter = {
 			name: 'Lens - ND Filter',
-			options: btnSetToggleNextPrev(SERIES.capabilities.filter.dropdown),
+			options: optSetToggleNextPrev(SERIES.capabilities.filter.dropdown),
 			callback: async (action) => {
 				await self.getCam('OFT:' + cmdEnum(action, SERIES.capabilities.filter.dropdown, self.data.filter))
 			},
@@ -409,7 +401,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.ois) {
 		actions.ois = {
 			name: 'Lens - Image Stabilization Mode',
-			options: btnSetToggleNextPrev(SERIES.capabilities.ois.dropdown),
+			options: optSetToggleNextPrev(SERIES.capabilities.ois.dropdown),
 			callback: async (action) => {
 				await self.getCam('OIS:' + cmdEnum(action, SERIES.capabilities.ois.dropdown, self.data.ois))
 			},
@@ -420,7 +412,7 @@ export function getActionDefinitions(self) {
 		if (SERIES.capabilities.shutter) {
 			actions.shutter = {
 				name: 'Proc - Shutter',
-				options: btnSetToggleNextPrev(SERIES.capabilities.shutter.dropdown),
+				options: optSetToggleNextPrev(SERIES.capabilities.shutter.dropdown),
 				callback: async (action) => {
 					await self.getCam(SERIES.capabilities.shutter.cmd + ':' + cmdEnum(action, SERIES.capabilities.shutter.dropdown, self.data.shutter))
 				},
@@ -449,7 +441,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.gain.cmd) {
 		actions.gain = {
 			name: 'Proc - Master Gain',
-			options: btnSetToggleNextPrev(SERIES.capabilities.gain.dropdown),
+			options: optSetToggleNextPrev(SERIES.capabilities.gain.dropdown),
 			callback: async (action) => {
 				await self.getCam(SERIES.capabilities.gain.cmd + ':' + cmdEnum(action, SERIES.capabilities.gain.dropdown, self.data.gain))
 			},
@@ -460,7 +452,7 @@ export function getActionDefinitions(self) {
 		const caps = SERIES.capabilities.colorGain
 		actions.gainRed = {
 			name: 'Proc - Red Gain',
-			options: btnSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
+			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
 			callback: async (action) => {
 				await self.getCam(caps.cmd.red + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, caps.step, caps.hexlen, self.data.redGainValue))
 			},
@@ -471,7 +463,7 @@ export function getActionDefinitions(self) {
 		const caps = SERIES.capabilities.colorGain
 		actions.gainBlue = {
 			name: 'Proc - Blue Gain',
-			options: btnSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
+			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
 			callback: async (action) => {
 				await self.getCam(caps.cmd.blue + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, caps.step, caps.hexlen, self.data.blueGainValue))
 			},
@@ -482,7 +474,7 @@ export function getActionDefinitions(self) {
 		const caps = SERIES.capabilities.pedestal
 		actions.ped = {
 			name: 'Proc - Master Pedestal',
-			options: btnSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
+			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
 			callback: async (action) => {
 				await self.getCam(caps.cmd + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, caps.step, caps.hexlen, self.data.masterPedValue))
 			},
@@ -493,7 +485,7 @@ export function getActionDefinitions(self) {
 		const caps = SERIES.capabilities.colorPedestal
 		actions.pedRed = {
 			name: 'Proc - Red Pedestal',
-			options: btnSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
+			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
 			callback: async (action) => {
 				await self.getCam(caps.cmd.red + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, caps.step, caps.hexlen, self.data.redPedValue))
 			},
@@ -504,7 +496,7 @@ export function getActionDefinitions(self) {
 		const caps = SERIES.capabilities.colorPedestal
 		actions.pedBlue = {
 			name: 'Proc - Blue Pedestal',
-			options: btnSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
+			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
 			callback: async (action) => {
 				await self.getCam(caps.cmd.blue + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, caps.step, caps.hexlen, self.data.bluePedValue))
 			},
@@ -514,7 +506,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.whiteBalance) {
 		actions.whiteBalanceMode = {
 			name: 'White Balance Mode',
-			options: btnSetToggleNextPrev(SERIES.capabilities.whiteBalance.dropdown),
+			options: optSetToggleNextPrev(SERIES.capabilities.whiteBalance.dropdown),
 			callback: async (action) => {
 				await self.getCam('OAW:' + cmdEnum(action, SERIES.capabilities.whiteBalance.dropdown, self.data.whiteBalance))
 			},
@@ -540,7 +532,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.colorTemperature && SERIES.capabilities.colorTemperature.index) { 
 		actions.colorTemperature = {
 			name: 'White Balance - Color Temperature',
-			options: btnSetToggleNextPrev(SERIES.capabilities.colorTemperature.index.dropdown),
+			options: optSetToggleNextPrev(SERIES.capabilities.colorTemperature.index.dropdown),
 			callback: async (action) => {
 				await self.getCam(SERIES.capabilities.colorTemperature.index.cmd + ':' + cmdEnum(action, SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature))
 			},
@@ -551,7 +543,7 @@ export function getActionDefinitions(self) {
 		if (SERIES.capabilities.colorTemperature.advanced.set) {
 			actions.colorTemperature = {
 				name: 'White Balance - Color Temperature',
-				options: btnSetIncDecStep('Color Temperature [K]', 3200, SERIES.capabilities.colorTemperature.advanced.min, SERIES.capabilities.colorTemperature.advanced.max, 20),
+				options: optSetIncDecStep('Color Temperature [K]', 3200, SERIES.capabilities.colorTemperature.advanced.min, SERIES.capabilities.colorTemperature.advanced.max, 20),
 				callback: async (action) => {
 					switch (action.options.op) {
 						case ACTION_SET: await self.getCam(SERIES.capabilities.colorTemperature.advanced.set + ':' + toHexString(action.options.set, 5) + ':0'); break
@@ -597,7 +589,7 @@ export function getActionDefinitions(self) {
 
 		actions.presetRecallMode = {
 			name: 'Preset - Recall Scope',
-			options: btnSetToggleNextPrev(e.ENUM_PRESET_SCOPE, 'Preset Recall Scope'),
+			options: optSetToggleNextPrev(e.ENUM_PRESET_SCOPE, 'Preset Recall Scope'),
 			callback: async (action) => {
 				await self.getCam('OSE:71:' + cmdEnum(action, e.ENUM_PRESET_SCOPE, self.data.presetScope))
 			},
@@ -662,7 +654,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.trackingAuto) {
 		actions.autotracking = {
 			name: 'Auto Tracking On/Off',
-			options: btnSetToggle(e.ENUM_OFF_ON),
+			options: optSetToggle(e.ENUM_OFF_ON),
 			callback: async (action) => {
 				await self.getCam('OSL:B6:' + cmdEnum(action, e.ENUM_OFF_ON, self.data.autotracking))
 			},
@@ -670,7 +662,7 @@ export function getActionDefinitions(self) {
 
 		actions.autotrackingMode = {
 			name: 'Auto Tracking - Angle',
-			options: btnSetToggle(e.ENUM_AUTOTRACKING_ANGLE),
+			options: optSetToggle(e.ENUM_AUTOTRACKING_ANGLE),
 			callback: async (action) => {
 				await self.getCam('OSL:B6:' + cmdEnum(action, e.ENUM_AUTOTRACKING_ANGLE, self.data.autotrackingAngle))
 			},
@@ -678,7 +670,7 @@ export function getActionDefinitions(self) {
 
 		actions.trackingStartStop = {
 			name: 'Auto Tracking - Tracking Start/Stop',
-			options: btnSetToggle(e.ENUM_STOP_START),
+			options: optSetToggle(e.ENUM_STOP_START),
 			callback: async (action) => {
 				await self.getCam('OSL:BC:' + cmdEnum(action, e.ENUM_STOP_START, self.data.tracking))
 			},
@@ -717,14 +709,14 @@ export function getActionDefinitions(self) {
 		if (SERIES.capabilities.tally2) {
 			actions.tally = {
 				name: 'System - Red Tally',
-				options: btnSetToggle(e.ENUM_OFF_ON),
+				options: optSetToggle(e.ENUM_OFF_ON),
 				callback: async (action) => {
 					await self.getCam('TLR:' + cmdEnum(action, e.ENUM_OFF_ON, self.data.tally))
 				},
 			}
 			actions.tally2 = {
 				name: 'System - Green Tally',
-				options: btnSetToggle(e.ENUM_OFF_ON),
+				options: optSetToggle(e.ENUM_OFF_ON),
 				callback: async (action) => {
 					await self.getCam('TLG:' + cmdEnum(action, e.ENUM_OFF_ON, self.data.tally2))
 				},
@@ -732,7 +724,7 @@ export function getActionDefinitions(self) {
 			if (SERIES.capabilities.tally3) {
 				actions.tally3 = {
 					name: 'System - Yellow Tally',
-					options: btnSetToggle(e.ENUM_OFF_ON),
+					options: optSetToggle(e.ENUM_OFF_ON),
 					callback: async (action) => {
 						await self.getCam('TLY:' + cmdEnum(action, e.ENUM_OFF_ON, self.data.tally3))
 					},
@@ -741,7 +733,7 @@ export function getActionDefinitions(self) {
 		} else { // Use legacy PTZ Tally
 			actions.tally = {
 				name: 'System - Tally',
-				options: btnSetToggle(e.ENUM_OFF_ON),
+				options: optSetToggle(e.ENUM_OFF_ON),
 				callback: async (action) => {
 					await self.getPTZ('DA' + cmdEnum(action, e.ENUM_OFF_ON, self.data.tally))
 				},
@@ -752,7 +744,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.colorbar) {
 		actions.colorbar = {
 			name: 'System - Color Bar',
-			options: btnSetToggle(e.ENUM_OFF_ON),
+			options: optSetToggle(e.ENUM_OFF_ON),
 			callback: async (action) => {
 				await self.getCam('DCB:' + cmdEnum(action, e.ENUM_OFF_ON, self.data.colorbar))
 			},
@@ -762,7 +754,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.install) {
 		actions.installPosition = {
 			name: 'System - Installation Position',
-			options: btnSetToggle(e.ENUM_INSTALL_POSITION),
+			options: optSetToggle(e.ENUM_INSTALL_POSITION),
 			callback: async (action) => {
 				await self.getPTZ('INS' + cmdEnum(action, e.ENUM_INSTALL_POSITION, self.data.installMode))
 			},
