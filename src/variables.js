@@ -68,9 +68,9 @@ export function setVariables(self) {
 		variables.push({ variableId: 'ois', name: 'O.I.S.' })
 	}
 	if (SERIES.capabilities.panTilt) {
-		variables.push({ variableId: 'ptSpeedVar', name: 'Pan/Tilt Speed' })
-		variables.push({ variableId: 'pSpeedVar', name: 'Pan Speed' })
-		variables.push({ variableId: 'tSpeedVar', name: 'Tilt Speed' })
+		variables.push({ variableId: 'ptSpeed', name: 'Pan/Tilt Speed' })
+		variables.push({ variableId: 'pSpeed', name: 'Pan Speed' })
+		variables.push({ variableId: 'tSpeed', name: 'Tilt Speed' })
 		variables.push({ variableId: 'panPosition', name: 'Pan Position' })
 		variables.push({ variableId: 'tiltPosition', name: 'Tilt Position' })
 		variables.push({ variableId: 'panPositionDeg', name: 'Pan Position °' })
@@ -80,13 +80,13 @@ export function setVariables(self) {
 		variables.push({ variableId: 'zoomPosition', name: 'Zoom Position' })
 		variables.push({ variableId: 'zoomPositionPct', name: 'Zoom Position %' })
 		variables.push({ variableId: 'zoomPositionBar', name: 'Zoom Position' })
-		variables.push({ variableId: 'zSpeedVar', name: 'Zoom Speed' })
+		variables.push({ variableId: 'zSpeed', name: 'Zoom Speed' })
 	}
 	if (SERIES.capabilities.focus) {
 		variables.push({ variableId: 'focusPosition', name: 'Focus Position' })
 		variables.push({ variableId: 'focusPositionPct', name: 'Focus Position %' })
 		variables.push({ variableId: 'focusPositionBar', name: 'Focus Position' })
-		variables.push({ variableId: 'fSpeedVar', name: 'Focus Speed' })
+		variables.push({ variableId: 'fSpeed', name: 'Focus Speed' })
 	}
 	if (SERIES.capabilities.iris) {
 		//variables.push({ variableId: 'iris', name: 'Iris' })

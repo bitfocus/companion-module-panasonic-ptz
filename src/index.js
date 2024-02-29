@@ -1,5 +1,5 @@
 import { runEntrypoint, InstanceBase, InstanceStatus } from '@companion-module/base'
-import { UpgradeScripts } from './upgrades.js'
+import { upgradeScripts } from './upgrades.js'
 import { getActionDefinitions } from './actions.js'
 import { getFeedbackDefinitions } from './feedbacks.js'
 import { getPresetDefinitions } from './presets.js'
@@ -388,7 +388,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.config.host = this.config.host || ''
 		this.config.httpPort = this.config.httpPort || 80
 		this.config.timeout = this.config.timeout || 1000
-		this.config.pollAllow = this.config.pollAllow || true
+		//this.config.pollAllow = this.config.pollAllow || false
 		this.config.pollDelay = this.config.pollDelay || 100
 		this.config.tcpPort = this.config.tcpPort || 31004
 		this.config.autoTCP = this.config.autoTCP || true
@@ -500,4 +500,4 @@ class PanasonicPTZInstance extends InstanceBase {
 	}
 }
 
-runEntrypoint(PanasonicPTZInstance, UpgradeScripts)
+runEntrypoint(PanasonicPTZInstance, upgradeScripts)

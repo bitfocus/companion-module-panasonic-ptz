@@ -83,7 +83,7 @@ export const ConfigFields = [
 		id: 'pollAllow',
 		width: 1,
 		label: 'Allow',
-		default: true,
+		default: false,
 	},
 	{
 		type: 'static-text',

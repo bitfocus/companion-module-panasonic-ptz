@@ -1,6 +1,11 @@
 import { combineRgb } from '@companion-module/base'
 import { getAndUpdateSeries } from './common.js'
 import { e } from './enum.js'
+import got from 'got'
+import JimpRaw from 'jimp'
+
+// Webpack makes a mess..
+const Jimp = JimpRaw.default || JimpRaw
 
 // ##########################
 // #### Define Feedbacks ####
@@ -175,6 +180,7 @@ export function getFeedbackDefinitions(self) {
 				return self.data.presetScope === feedback.options.option
 			},
 		}
+
 		feedbacks.presetSelected = {
 			type: 'boolean',
 			name: 'Preset - Selected / Active',
@@ -196,6 +202,7 @@ export function getFeedbackDefinitions(self) {
 				return self.data.presetSelectedIdx === parseInt(feedback.options.option)
 			},
 		}
+
 		feedbacks.presetComplete = {
 			type: 'boolean',
 			name: 'Preset - Recall Completion Notification',
@@ -217,6 +224,7 @@ export function getFeedbackDefinitions(self) {
 				return self.data.presetCompletedIdx === parseInt(feedback.options.option)
 			},
 		}
+
 		feedbacks.presetMemory = {
 			type: 'boolean',
 			name: 'Preset - Memory State',
@@ -238,6 +246,50 @@ export function getFeedbackDefinitions(self) {
 				return self.data.presetEntries[parseInt(feedback.options.option)] === '1'
 			},
 		}
+/* 
+		if (SERIES.capabilities.presetThumbnails) {
+			feedbacks.presetThumbnail = {
+				type: 'advanced',
+				name: 'Preset - Thumbnail',
+				description: 'Provides selected preset thumbnail as background image',
+				options: [
+					{
+						type: 'dropdown',
+						label: 'Preset',
+						id: 'option',
+						default: e.ENUM_PRESET[0].id,
+						choices: e.ENUM_PRESET,
+					},
+				],
+				callback: async (feedback, context) => {
+					const id = (parseInt(feedback.options.option)+1).toString()
+					const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/get_preset_thumbnail?preset_number=${id}`
+
+					if (self.config.debug) {
+						self.log('info', 'Thumbnail request: ' + url)
+					}
+
+					try {
+						const response = await got.get(url, { timeout: { request: self.config.timeout } } )
+
+						// Scale image to a sensible size
+						const img = await Jimp.read(response.rawBody)
+						const png64 = await img
+							.scaleToFit(feedback.image?.width ?? 72, feedback.image?.height ?? 72)
+							.getBase64Async('image/png')
+							//self.log('info', png64)
+						return {
+							png64,
+						}
+					} catch (err) {
+						// Image failed to load so log it and output nothing
+						self.log('error', 'Thumbnail request ' + url + ' failed: ' + String(err))
+						return {}
+					}
+				},
+			}
+		}
+*/
 	}
 
 	if (SERIES.capabilities.ois) {
