@@ -153,6 +153,7 @@ export function parseUpdate(self, str) {
                 case '0F': self.data.masterPedValue = parseInt(str[2], 16) - 0x800; break
                 //case '10': self.data.greenPedValue = parseInt(str[2], 16) - 0x96; break
                 case '29': self.data.presetSpeedUnit = str[2]; break
+                //case '3C': break; // Preset Name / Preset Thumbnail Counter
                 case '4A': self.data.colorTempLabel = parseInt(str[2], 16).toString() + 'K'; break // AWB A/B
                 //case '4B': self.data.redGainValue = parseInt(str[2], 16) - 0x800; break // AWB A/B
                 //case '4C': self.data.blueGainValue = parseInt(str[2], 16) - 0x800; break // AWB A/B

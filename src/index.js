@@ -7,10 +7,14 @@ import { setVariables, checkVariables } from './variables.js'
 import { ConfigFields } from './config.js'
 import * as net from 'net'
 import got from 'got'
+import JimpRaw from 'jimp'
 import EventEmitter from 'events'
 import { getAndUpdateSeries } from './common.js'
 import { parseUpdate, parseWeb } from './parser.js'
 import { pollCameraStatus, pullCameraStatus } from './polling.js'
+
+// Webpack makes a mess..
+const Jimp = JimpRaw.default || JimpRaw
 
 // ########################
 // #### Instance setup ####
@@ -294,6 +298,28 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 	}
 
+	async getThumbnail(feedback, id, width, height) {
+		const n = id + 1
+		const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/get_preset_thumbnail?preset_number=${n}`
+
+		if (this.config.debug) {
+			this.log('info', 'Thumbnail request: ' + url)
+		}
+
+		try {
+			const response = await got.get(url, { timeout: { request: this.config.timeout } } )
+
+			const img = await Jimp.read(response.rawBody)
+			const png = await img.scaleToFit(width, height).getBase64Async('image/png')
+
+			this.data.presetThumbnails[id] = png
+
+			this.checkFeedbacksById(feedback.id)
+		} catch (err) {
+			this.log('error', 'Thumbnail request ' + url + ' failed: ' + String(err))
+		}		
+	}
+
 	// Initalize module
 	async init(config) {
 		this.config = config
@@ -375,6 +401,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			presetEntries1: Array(40),
 			presetEntries2: Array(20),
 			presetEntries: Array(100),
+			presetThumbnails: Array(100),
 		}
 
 		this.ptSpeed = 25
@@ -462,6 +489,8 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.init_presets()
 		this.init_variables()
 		this.init_feedbacks()
+
+		this.subscribeFeedbacks()
 	}
 
 	// Return config fields for web config

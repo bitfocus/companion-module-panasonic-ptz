@@ -1,11 +1,6 @@
 import { combineRgb } from '@companion-module/base'
 import { getAndUpdateSeries } from './common.js'
 import { e } from './enum.js'
-import got from 'got'
-import JimpRaw from 'jimp'
-
-// Webpack makes a mess..
-const Jimp = JimpRaw.default || JimpRaw
 
 // ##########################
 // #### Define Feedbacks ####
@@ -246,7 +241,7 @@ export function getFeedbackDefinitions(self) {
 				return self.data.presetEntries[parseInt(feedback.options.option)] === '1'
 			},
 		}
-/* 
+
 		if (SERIES.capabilities.presetThumbnails) {
 			feedbacks.presetThumbnail = {
 				type: 'advanced',
@@ -261,35 +256,19 @@ export function getFeedbackDefinitions(self) {
 						choices: e.ENUM_PRESET,
 					},
 				],
-				callback: async (feedback, context) => {
-					const id = (parseInt(feedback.options.option)+1).toString()
-					const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/get_preset_thumbnail?preset_number=${id}`
+				subscribe: function (feedback) {
+					const id = parseInt(feedback.options.option)
+					const width = feedback.image?.width ?? 72
+					const height = feedback.image?.height ?? 72
 
-					if (self.config.debug) {
-						self.log('info', 'Thumbnail request: ' + url)
-					}
-
-					try {
-						const response = await got.get(url, { timeout: { request: self.config.timeout } } )
-
-						// Scale image to a sensible size
-						const img = await Jimp.read(response.rawBody)
-						const png64 = await img
-							.scaleToFit(feedback.image?.width ?? 72, feedback.image?.height ?? 72)
-							.getBase64Async('image/png')
-							//self.log('info', png64)
-						return {
-							png64,
-						}
-					} catch (err) {
-						// Image failed to load so log it and output nothing
-						self.log('error', 'Thumbnail request ' + url + ' failed: ' + String(err))
-						return {}
-					}
+					self.getThumbnail(feedback, id, width, height)
+				},
+				callback: function (feedback) {
+					const id = parseInt(feedback.options.option)
+					return { png64: self.data.presetThumbnails[id] }
 				},
 			}
 		}
-*/
 	}
 
 	if (SERIES.capabilities.ois) {
