@@ -1541,7 +1541,7 @@ export function getPresetDefinitions(self) {
 			presets[`recall-preset-${i}`] = {
 				type: 'button',
 				category: 'Preset Memory',
-				name: 'Recall (or Store) Preset ' + (i + 1).toString(),
+				name: 'Recall, Store or Clear Preset ' + (i + 1).toString(),
 				style: {
 					text: 'PRESET\\n' + (i + 1).toString(),
 					size: '14',
@@ -1549,27 +1549,49 @@ export function getPresetDefinitions(self) {
 					bgcolor: colorBlack,
 				},
 				options: {
-					relativeDelay: true,
+					relativeDelay: false,
 				},
 				steps: [
 					{
 						down: [
 							{
-								actionId: 'savePset',
-								delay: 2000,
-								options: {
-									val: i.toString(10).padStart(2, '0'),
-								},
+								actionId: 'presetResetSelectedCompletedState',
+								options: {},
 							},
 						],
 						up: [
 							{
-								actionId: 'recallPset',
+								actionId: 'presetMem',
 								options: {
-									val: i.toString(10).padStart(2, '0'),
+									op: 'R',
+									val: i.toString(10).padStart(2, '0')
 								},
 							},
 						],
+						1000: {
+							options: { runWhileHeld: true },
+							actions: [
+								{   
+									actionId: 'presetMem',
+									options: {
+										op: 'M',
+										val: i.toString(10).padStart(2, '0')
+									}
+								},
+							]
+						},
+						2000: {
+							options: { runWhileHeld: true },
+							actions: [
+								{
+									actionId: 'presetMem',
+									options: {
+										op: 'C',
+										val: i.toString(10).padStart(2, '0')
+									}
+								},
+							]
+						}
 					},
 				],
 				feedbacks: [
@@ -1581,6 +1603,12 @@ export function getPresetDefinitions(self) {
 						style: {
 							color: colorWhite,
 							bgcolor: colorGrey,
+						},
+					},
+					{
+						feedbackId: 'presetThumbnail',
+						options: {
+							option: i.toString(10).padStart(2, '0'),
 						},
 					},
 					{

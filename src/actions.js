@@ -587,6 +587,17 @@ export function getActionDefinitions(self) {
 			},
 		}
 
+		actions.presetResetSelectedCompletedState = {
+			name: 'Preset - Reset Selected / Completed State',
+			options: [],
+			callback: async () => {
+				self.data.presetSelectedIdx = null
+				self.data.presetCompletedIdx = null
+				self.checkVariables()
+				self.checkFeedbacks()
+			},
+		}
+
 		actions.presetRecallMode = {
 			name: 'Preset - Recall Scope',
 			options: optSetToggleNextPrev(e.ENUM_PRESET_SCOPE, 'Preset Recall Scope'),

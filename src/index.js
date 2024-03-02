@@ -298,7 +298,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 	}
 
-	async getThumbnail(feedback, id, width, height) {
+	async getThumbnail(id) {
 		const n = id + 1
 		const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/get_preset_thumbnail?preset_number=${n}`
 
@@ -310,11 +310,13 @@ class PanasonicPTZInstance extends InstanceBase {
 			const response = await got.get(url, { timeout: { request: this.config.timeout } } )
 
 			const img = await Jimp.read(response.rawBody)
-			const png = await img.scaleToFit(width, height).getBase64Async('image/png')
+			const png64 = await img.scaleToFit(288, 288).getBase64Async('image/png')
 
-			this.data.presetThumbnails[id] = png
+			this.data.presetThumbnails[id] = png64
+			
+			this.checkFeedbacks()
 
-			this.checkFeedbacksById(feedback.id)
+			this.updateStatus(InstanceStatus.Ok)
 		} catch (err) {
 			this.log('error', 'Thumbnail request ' + url + ' failed: ' + String(err))
 		}		

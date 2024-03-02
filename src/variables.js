@@ -235,8 +235,8 @@ export function checkVariables(self) {
 
 		recording: self.data.recording,
 
-		presetSelected: (self.data.presetSelectedIdx + 1).toString(),
-		presetCompleted: (self.data.presetCompletedIdx + 1).toString(),
+		presetSelected: self.data.presetSelectedIdx ? (self.data.presetSelectedIdx + 1).toString() : null,
+		presetCompleted: self.data.presetCompletedIdx ? (self.data.presetCompletedIdx + 1).toString() : null,
 
 		panPosition: self.data.panPosition,
 		tiltPosition: self.data.tiltPosition,

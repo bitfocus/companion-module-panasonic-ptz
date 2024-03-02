@@ -27,7 +27,7 @@ export function getFeedbackDefinitions(self) {
 				bgcolor: colorRed,
 			},
 			options: [],
-			callback: function (feedback) {
+			callback: function () {
 				return self.data.power === '1'
 			}
 		}
@@ -43,7 +43,7 @@ export function getFeedbackDefinitions(self) {
 				bgcolor: colorRed,
 			},
 			options: [],
-			callback: function (feedback) {
+			callback: function () {
 				return self.data.colorbar === '1'
 			},
 		}
@@ -59,7 +59,7 @@ export function getFeedbackDefinitions(self) {
 				bgcolor: colorRed,
 			},
 			options: [],
-			callback: function (feedback) {
+			callback: function () {
 				return self.data.tally === '1'
 			},
 		}
@@ -75,7 +75,7 @@ export function getFeedbackDefinitions(self) {
 				bgcolor: colorGreen,
 			},
 			options: [],
-			callback: function (feedback) {
+			callback: function () {
 				return self.data.tally2 === '1'
 			},
 		}
@@ -91,7 +91,7 @@ export function getFeedbackDefinitions(self) {
 				bgcolor: colorOrange,
 			},
 			options: [],
-			callback: function (feedback) {
+			callback: function () {
 				return self.data.tally3 === '1'
 			},
 		}
@@ -131,7 +131,7 @@ export function getFeedbackDefinitions(self) {
 				bgcolor: colorRed,
 			},
 			options: [],
-			callback: function (feedback) {
+			callback: function () {
 				return self.data.focusMode === '1'
 			},
 		}
@@ -147,7 +147,7 @@ export function getFeedbackDefinitions(self) {
 				bgcolor: colorRed,
 			},
 			options: [],
-			callback: function (feedback) {
+			callback: function () {
 				return self.data.irisMode === '1'
 			},
 		}
@@ -194,7 +194,7 @@ export function getFeedbackDefinitions(self) {
 				},
 			],
 			callback: function (feedback) {
-				return self.data.presetSelectedIdx === parseInt(feedback.options.option)
+				return self.data.presetEntries[parseInt(feedback.options.option)] === '1' && self.data.presetSelectedIdx === parseInt(feedback.options.option)
 			},
 		}
 
@@ -216,7 +216,7 @@ export function getFeedbackDefinitions(self) {
 				},
 			],
 			callback: function (feedback) {
-				return self.data.presetCompletedIdx === parseInt(feedback.options.option)
+				return self.data.presetEntries[parseInt(feedback.options.option)] === '1' && self.data.presetCompletedIdx === parseInt(feedback.options.option)
 			},
 		}
 
@@ -256,13 +256,13 @@ export function getFeedbackDefinitions(self) {
 						choices: e.ENUM_PRESET,
 					},
 				],
-				subscribe: function (feedback) {
+/* 				subscribe: function (feedback) {
 					const id = parseInt(feedback.options.option)
 					const width = feedback.image?.width ?? 72
 					const height = feedback.image?.height ?? 72
 
 					self.getThumbnail(feedback, id, width, height)
-				},
+				}, */
 				callback: function (feedback) {
 					const id = parseInt(feedback.options.option)
 					return { png64: self.data.presetThumbnails[id] }
@@ -401,7 +401,7 @@ export function getFeedbackDefinitions(self) {
 				bgcolor: colorRed,
 			},
 			options: [],
-			callback: function (feedback) {
+			callback: function () {
 				return self.data.recording
 			},
 		}
@@ -417,7 +417,7 @@ export function getFeedbackDefinitions(self) {
 				bgcolor: colorGreen,
 			},
 			options: [],
-			callback: function (feedback) {
+			callback: function () {
 				return self.data.sdInserted || self.data.sd2Inserted
 			},
 		}
@@ -433,7 +433,7 @@ export function getFeedbackDefinitions(self) {
 				bgcolor: colorRed,
 			},
 			options: [],
-			callback: function (feedback) {
+			callback: function () {
 				return self.data.rtmp
 			},
 		}
@@ -449,7 +449,7 @@ export function getFeedbackDefinitions(self) {
 				bgcolor: colorRed,
 			},
 			options: [],
-			callback: function (feedback) {
+			callback: function () {
 				return self.data.srt
 			},
 		}

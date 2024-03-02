@@ -41,14 +41,16 @@ export function parseUpdate(self, str) {
     if (str[0].substring(0, 1) === 'q') {
         const q = str[0].match(/q(\d\d)/)
         if (q) {
-            self.data.presetCompletedIdx = parseInt(q[1])
+            const i = parseInt(q[1])
+            self.data.presetCompletedIdx = self.data.presetEntries[i] === '1' ? i : null
         }
     }
 
     if (str[0].substring(0, 1) === 's') {
         const s = str[0].match(/s(\d\d)/)
         if (s) {
-            self.data.presetSelectedIdx = parseInt(s[1])
+            const i = parseInt(s[1])
+            self.data.presetSelectedIdx = self.data.presetEntries[i] === '1' ? i : null
         }
     }
 
@@ -56,15 +58,30 @@ export function parseUpdate(self, str) {
         switch (str[0].substring(2, 4)) {
             case '00': 
                 self.data.presetEntries0 = parseInt(str[0].substring(4), 16).toString(2).padStart(40, 0).split("").reverse()
+                self.data.presetEntries0.forEach((p, i) => p === '1' ? self.getThumbnail(i) : self.data.presetThumbnails[i] = undefined);
                 break
             case '01':
                 self.data.presetEntries1 = parseInt(str[0].substring(4), 16).toString(2).padStart(40, 0).split("").reverse()
+                self.data.presetEntries1.forEach((p, i) => p === '1' ? self.getThumbnail(i+40) : self.data.presetThumbnails[i+40] = undefined);
                 break
             case '02':
                 self.data.presetEntries2 = parseInt(str[0].substring(4), 16).toString(2).padStart(20, 0).split("").reverse()
+                self.data.presetEntries2.forEach((p, i) => p === '1' ? self.getThumbnail(i+80) : self.data.presetThumbnails[i+80] = undefined);
                 break
         }
+
         self.data.presetEntries = self.data.presetEntries0.concat(self.data.presetEntries1.concat(self.data.presetEntries2))
+
+        if (self.data.presetSelectedIdx) {
+            if (self.data.presetEntries[self.data.presetSelectedIdx] === '0') {
+                self.data.presetSelectedIdx = null
+            }
+        }
+        if (self.data.presetCompletedIdx) {
+            if (self.data.presetEntries[self.data.presetCompletedIdx] === '0') {
+                self.data.presetCompletedIdx = null
+            }
+        }        
     }
 
     if (str[0].substring(0, 3) === 'pST') {
