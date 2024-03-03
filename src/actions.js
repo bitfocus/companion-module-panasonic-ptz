@@ -351,7 +351,7 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Focus Mode',
 			options: optSetToggle(e.ENUM_MAN_AUTO),
 			callback: async (action) => {
-				await self.getCam('OAF:' + cmdEnum(action, e.ENUM_MAN_AUTO, self.data.focusAuto))
+				await self.getCam('OAF:' + cmdEnum(action, e.ENUM_MAN_AUTO, self.data.focusMode))
 			},
 		}
 	}
@@ -366,38 +366,6 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	// ##########################
-	// #### Exposure Actions ####
-	// ##########################
-
-	if (SERIES.capabilities.iris) {
-		actions.iris = {
-			name: 'Lens - Iris',
-			options: optSetIncDecStep('Iris setting', 0x555, 0x0, 0xAAA, 0x1E),
-			callback: async (action) => {
-				await self.getPTZ('AXI' + cmdValue(action, 0x555, 0x0, 0xAAA, 0x1E, 3, self.data.irisPosition))
-			},
-		}
-
-		actions.irisMode = {
-			name: 'Lens - Iris Mode',
-			options: optSetToggle(e.ENUM_MAN_AUTO),
-			callback: async (action) => {
-				await self.getCam('ORS:' + cmdEnum(action, e.ENUM_MAN_AUTO, self.data.irisMode))
-			},
-		}
-	}
-
-	if (SERIES.capabilities.filter) {
-		actions.filter = {
-			name: 'Lens - ND Filter',
-			options: optSetToggleNextPrev(SERIES.capabilities.filter.dropdown),
-			callback: async (action) => {
-				await self.getCam('OFT:' + cmdEnum(action, SERIES.capabilities.filter.dropdown, self.data.filter))
-			},
-		}
-	}
-
 	if (SERIES.capabilities.ois) {
 		actions.ois = {
 			name: 'Lens - Image Stabilization Mode',
@@ -408,10 +376,42 @@ export function getActionDefinitions(self) {
 		}
 	}
 
+	// ##########################
+	// #### Exposure Actions ####
+	// ##########################
+
+	if (SERIES.capabilities.iris) {
+		actions.iris = {
+			name: 'Exposure - Iris',
+			options: optSetIncDecStep('Iris setting', 0x555, 0x0, 0xAAA, 0x1E),
+			callback: async (action) => {
+				await self.getPTZ('AXI' + cmdValue(action, 0x555, 0x0, 0xAAA, 0x1E, 3, self.data.irisPosition))
+			},
+		}
+
+		actions.irisMode = {
+			name: 'Exposure - Iris Mode',
+			options: optSetToggle(e.ENUM_MAN_AUTO),
+			callback: async (action) => {
+				await self.getCam('ORS:' + cmdEnum(action, e.ENUM_MAN_AUTO, self.data.irisMode))
+			},
+		}
+	}
+
+	if (SERIES.capabilities.filter) {
+		actions.filter = {
+			name: 'Exposure - ND Filter',
+			options: optSetToggleNextPrev(SERIES.capabilities.filter.dropdown),
+			callback: async (action) => {
+				await self.getCam('OFT:' + cmdEnum(action, SERIES.capabilities.filter.dropdown, self.data.filter))
+			},
+		}
+	}
+
 	if (SERIES.capabilities.shutter) {
 		if (SERIES.capabilities.shutter) {
 			actions.shutter = {
-				name: 'Proc - Shutter',
+				name: 'Exposure - Shutter',
 				options: optSetToggleNextPrev(SERIES.capabilities.shutter.dropdown),
 				callback: async (action) => {
 					await self.getCam(SERIES.capabilities.shutter.cmd + ':' + cmdEnum(action, SERIES.capabilities.shutter.dropdown, self.data.shutter))
@@ -421,7 +421,7 @@ export function getActionDefinitions(self) {
 
 		if (SERIES.capabilities.shutter.inc && SERIES.capabilities.shutter.dec) {
 			actions.shutterStepU = {
-				name: 'Proc - Shutter Step Up',
+				name: 'Exposure - Shutter Step Up',
 				options: [],
 				callback: async (action) => {
 					await self.getCam(SERIES.capabilities.shutter.inc + ':0x01')
@@ -429,7 +429,7 @@ export function getActionDefinitions(self) {
 			}
 
 			actions.shutterStepD = {
-				name: 'Proc - Shutter Step Down',
+				name: 'Exposure - Shutter Step Down',
 				options: [],
 				callback: async (action) => {
 					await self.getCam(SERIES.capabilities.shutter.dec + ':0x01')
@@ -438,9 +438,13 @@ export function getActionDefinitions(self) {
 		}
 	}
 
+	// ##################################
+	// #### Color Correction Actions ####
+	// ##################################
+
 	if (SERIES.capabilities.gain.cmd) {
 		actions.gain = {
-			name: 'Proc - Master Gain',
+			name: 'Color Correction - Gain',
 			options: optSetToggleNextPrev(SERIES.capabilities.gain.dropdown),
 			callback: async (action) => {
 				await self.getCam(SERIES.capabilities.gain.cmd + ':' + cmdEnum(action, SERIES.capabilities.gain.dropdown, self.data.gain))
@@ -448,32 +452,10 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (SERIES.capabilities.colorGain && SERIES.capabilities.colorGain.cmd.red) {
-		const caps = SERIES.capabilities.colorGain
-		actions.gainRed = {
-			name: 'Proc - Red Gain',
-			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
-			callback: async (action) => {
-				await self.getCam(caps.cmd.red + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, caps.step, caps.hexlen, self.data.redGainValue))
-			},
-		}
-	}
-
-	if (SERIES.capabilities.colorGain && SERIES.capabilities.colorGain.cmd.blue) {
-		const caps = SERIES.capabilities.colorGain
-		actions.gainBlue = {
-			name: 'Proc - Blue Gain',
-			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
-			callback: async (action) => {
-				await self.getCam(caps.cmd.blue + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, caps.step, caps.hexlen, self.data.blueGainValue))
-			},
-		}
-	}	
-
 	if (SERIES.capabilities.pedestal.cmd) {
 		const caps = SERIES.capabilities.pedestal
 		actions.ped = {
-			name: 'Proc - Master Pedestal',
+			name: 'Color Correction - Pedestal',
 			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
 			callback: async (action) => {
 				await self.getCam(caps.cmd + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, caps.step, caps.hexlen, self.data.masterPedValue))
@@ -484,7 +466,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.colorPedestal && SERIES.capabilities.colorPedestal.cmd.red) {
 		const caps = SERIES.capabilities.colorPedestal
 		actions.pedRed = {
-			name: 'Proc - Red Pedestal',
+			name: 'Color Correction - Red Pedestal',
 			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
 			callback: async (action) => {
 				await self.getCam(caps.cmd.red + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, caps.step, caps.hexlen, self.data.redPedValue))
@@ -495,7 +477,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.colorPedestal && SERIES.capabilities.colorPedestal.cmd.blue) {
 		const caps = SERIES.capabilities.colorPedestal
 		actions.pedBlue = {
-			name: 'Proc - Blue Pedestal',
+			name: 'Color Correction - Blue Pedestal',
 			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
 			callback: async (action) => {
 				await self.getCam(caps.cmd.blue + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, caps.step, caps.hexlen, self.data.bluePedValue))
@@ -503,9 +485,31 @@ export function getActionDefinitions(self) {
 		}
 	}
 
+	if (SERIES.capabilities.colorGain && SERIES.capabilities.colorGain.cmd.red) {
+		const caps = SERIES.capabilities.colorGain
+		actions.gainRed = {
+			name: 'Color Correction - Red Gain',
+			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
+			callback: async (action) => {
+				await self.getCam(caps.cmd.red + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, caps.step, caps.hexlen, self.data.redGainValue))
+			},
+		}
+	}
+
+	if (SERIES.capabilities.colorGain && SERIES.capabilities.colorGain.cmd.blue) {
+		const caps = SERIES.capabilities.colorGain
+		actions.gainBlue = {
+			name: 'Color Correction - Blue Gain',
+			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
+			callback: async (action) => {
+				await self.getCam(caps.cmd.blue + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, caps.step, caps.hexlen, self.data.blueGainValue))
+			},
+		}
+	}	
+
 	if (SERIES.capabilities.whiteBalance) {
 		actions.whiteBalanceMode = {
-			name: 'White Balance Mode',
+			name: 'Color Correction - White Balance Mode',
 			options: optSetToggleNextPrev(SERIES.capabilities.whiteBalance.dropdown),
 			callback: async (action) => {
 				await self.getCam('OAW:' + cmdEnum(action, SERIES.capabilities.whiteBalance.dropdown, self.data.whiteBalance))
@@ -513,7 +517,7 @@ export function getActionDefinitions(self) {
 		}
 
 		actions.whiteBalanceExecAWB = {
-			name: 'White Balance - Execute AWC/AWB',
+			name: 'Color Correction - Execute AWC/AWB',
 			options: [],
 			callback: async (action) => {
 				await self.getCam('OWS')
@@ -521,7 +525,7 @@ export function getActionDefinitions(self) {
 		}
 
 		actions.whiteBalanceExecABB = {
-			name: 'White Balance - Execute ABC/ABB',
+			name: 'Color Correction - Execute ABC/ABB',
 			options: [],
 			callback: async (action) => {
 				await self.getCam('OAS')
@@ -531,7 +535,7 @@ export function getActionDefinitions(self) {
 
 	if (SERIES.capabilities.colorTemperature && SERIES.capabilities.colorTemperature.index) { 
 		actions.colorTemperature = {
-			name: 'White Balance - Color Temperature',
+			name: 'Color Correction - Color Temperature',
 			options: optSetToggleNextPrev(SERIES.capabilities.colorTemperature.index.dropdown),
 			callback: async (action) => {
 				await self.getCam(SERIES.capabilities.colorTemperature.index.cmd + ':' + cmdEnum(action, SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature))
@@ -542,7 +546,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.colorTemperature && SERIES.capabilities.colorTemperature.advanced) { 
 		if (SERIES.capabilities.colorTemperature.advanced.set) {
 			actions.colorTemperature = {
-				name: 'White Balance - Color Temperature',
+				name: 'Color Correction - Color Temperature',
 				options: optSetIncDecStep('Color Temperature [K]', 3200, SERIES.capabilities.colorTemperature.advanced.min, SERIES.capabilities.colorTemperature.advanced.max, 20),
 				callback: async (action) => {
 					switch (action.options.op) {
@@ -561,7 +565,7 @@ export function getActionDefinitions(self) {
 
 	if (SERIES.capabilities.preset) {
 		actions.presetMem = {
-			name: 'Preset Memory',
+			name: 'Preset - Memory Operation',
 			options: [
 				{
 					type: 'dropdown',
@@ -569,9 +573,9 @@ export function getActionDefinitions(self) {
 					id: 'op',
 					default: e.ENUM_PRESET[0].id,
 					choices: [
-						{ id: 'R', label: 'Recall' },
-						{ id: 'M', label: 'Save' },
-						{ id: 'C', label: 'Clear' },
+						{ id: 'R', label: 'Recall / Play' },
+						{ id: 'M', label: 'Memorize / Save' },
+						{ id: 'C', label: 'Clear / Delete' },
 					],
 				},
 				{
@@ -664,7 +668,7 @@ export function getActionDefinitions(self) {
 
 	if (SERIES.capabilities.trackingAuto) {
 		actions.autotracking = {
-			name: 'Auto Tracking On/Off',
+			name: 'Auto Tracking',
 			options: optSetToggle(e.ENUM_OFF_ON),
 			callback: async (action) => {
 				await self.getCam('OSL:B6:' + cmdEnum(action, e.ENUM_OFF_ON, self.data.autotracking))
@@ -672,7 +676,7 @@ export function getActionDefinitions(self) {
 		}
 
 		actions.autotrackingMode = {
-			name: 'Auto Tracking - Angle',
+			name: 'Auto Tracking - Tracking Angle',
 			options: optSetToggle(e.ENUM_AUTOTRACKING_ANGLE),
 			callback: async (action) => {
 				await self.getCam('OSL:B6:' + cmdEnum(action, e.ENUM_AUTOTRACKING_ANGLE, self.data.autotrackingAngle))
@@ -695,7 +699,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.power) {
 		actions.power = {
 			name: 'System - Power',
-			options: [],
+			options: optSetToggle(e.ENUM_OFF_ON),
 			callback: async (action) => {
 				await self.getPTZ('O' + cmdEnum(action, e.ENUM_OFF_ON, self.data.power))
 			},
@@ -778,7 +782,7 @@ export function getActionDefinitions(self) {
 			options: [
 				{
 					type: 'dropdown',
-					label: 'SD Card Action',
+					label: 'Action',
 					id: 'val',
 					default: e.ENUM_RECORDING[0].id,
 					choices: e.ENUM_RECORDING,
@@ -844,12 +848,13 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	actions.sendCustom = {
-		name: 'Send Custom Command',
+	actions.customCommand = {
+		name: 'Custom Command',
+		description: 'Sends an custom command to the camera. This enables at least basic operations that are not (yet) covered by this module.. Please read the public protocol specifications for details!',
 		options: [
 			{
 				type: 'dropdown',
-				label: 'Custom command destination',
+				label: 'Target',
 				id: 'dest',
 				default: 0,
 				choices: [
@@ -861,7 +866,7 @@ export function getActionDefinitions(self) {
 			{
 				id: 'cmd',
 				type: 'textinput',
-				label: 'Custom Command (without leading # for PTZ commands)',
+				label: 'Command (without leading # for PTZ commands)',
 				default: ''
 			}
 		],

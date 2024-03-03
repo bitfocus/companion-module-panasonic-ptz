@@ -17,6 +17,22 @@ export function getFeedbackDefinitions(self) {
 	const colorBlue = combineRgb(0, 51, 204)
 	const colorGrey = combineRgb(51, 51, 51)
 
+	if (SERIES.capabilities.error) {
+		feedbacks.error = {
+			type: 'boolean',
+			name: 'System - Error Condition',
+			description: 'Indicates if an error condition currently exists',
+			defaultStyle: {
+				color: colorWhite,
+				bgcolor: colorRed,
+			},
+			options: [],
+			callback: function () {
+				return self.data.error !== '00'
+			},
+		}
+	}
+
 	if (SERIES.capabilities.power) {
 		feedbacks.powerState = {
 			type: 'boolean',
@@ -153,6 +169,66 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
+	if (SERIES.capabilities.trackingAuto) {
+		feedbacks.autotracking = {
+			type: 'boolean',
+			name: 'Auto Tracking - On/Off',
+			description: 'Indicates if Auto Tracking is enabled',
+			defaultStyle: {
+				color: colorWhite,
+				bgcolor: colorRed,
+			},
+			options: [],
+			callback: function () {
+				return self.data.autotracking === '1'
+			},
+		}
+
+		feedbacks.autotrackingMode = {
+			type: 'boolean',
+			name: 'Auto Tracking - Angle',
+			description: 'Indicates if the selected angle is currently active',
+			defaultStyle: {
+				color: colorWhite,
+				bgcolor: colorRed,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'State',
+					id: 'option',
+					default: e.ENUM_AUTOTRACKING_ANGLE[2].id,
+					choices: e.ENUM_AUTOTRACKING_ANGLE,
+				},
+			],
+			callback: function (feedback) {
+				return self.data.autotrackingMode === feedback.options.option
+			},
+		}
+
+		feedbacks.trackingState = {
+			type: 'boolean',
+			name: 'Auto Tracking - Tracking State',
+			description: 'Indicates if the selected tracking state is currently active',
+			defaultStyle: {
+				color: colorWhite,
+				bgcolor: colorRed,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'State',
+					id: 'option',
+					default: e.ENUM_AUTOTRACKING_STATE[1].id,
+					choices: e.ENUM_AUTOTRACKING_STATE,
+				},
+			],
+			callback: function (feedback) {
+				return self.data.trackingState === feedback.options.option
+			},
+		}
+	}
+
 	if (SERIES.capabilities.preset) {
 		feedbacks.recallModePset = {
 			type: 'boolean',
@@ -223,7 +299,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.presetMemory = {
 			type: 'boolean',
 			name: 'Preset - Memory State',
-			description: 'Indicates if the selected preset memory slot is used',
+			description: 'Indicates if the selected preset memory is in use',
 			defaultStyle: {
 				color: colorWhite,
 				bgcolor: colorGrey,
@@ -246,7 +322,7 @@ export function getFeedbackDefinitions(self) {
 			feedbacks.presetThumbnail = {
 				type: 'advanced',
 				name: 'Preset - Thumbnail',
-				description: 'Provides selected preset thumbnail as background image',
+				description: 'Provides the thumbnail of the selected preset as the button background image',
 				options: [
 					{
 						type: 'dropdown',
@@ -256,13 +332,6 @@ export function getFeedbackDefinitions(self) {
 						choices: e.ENUM_PRESET,
 					},
 				],
-/* 				subscribe: function (feedback) {
-					const id = parseInt(feedback.options.option)
-					const width = feedback.image?.width ?? 72
-					const height = feedback.image?.height ?? 72
-
-					self.getThumbnail(feedback, id, width, height)
-				}, */
 				callback: function (feedback) {
 					const id = parseInt(feedback.options.option)
 					return { png64: self.data.presetThumbnails[id] }
@@ -275,7 +344,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.oisMode = {
 			type: 'boolean',
 			name: 'Image Stabilization - Mode',
-			description: 'Indicates whether the selected image stabilization mode is currently active',
+			description: 'Indicates if the selected image stabilization mode is currently active',
 			defaultStyle: {
 				color: colorWhite,
 				bgcolor: colorRed,
@@ -299,7 +368,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.filterMode = {
 			type: 'boolean',
 			name: 'Exposure - ND Filter',
-			description: 'Indicates whether the selected ND filter is currently active',
+			description: 'Indicates if the selected ND filter is currently active',
 			defaultStyle: {
 				color: colorWhite,
 				bgcolor: colorRed,
@@ -323,7 +392,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.gainMode = {
 			type: 'boolean',
 			name: 'Exposure - Gain Mode',
-			description: 'Indicates whether the selected gain mode is currently active',
+			description: 'Indicates if the selected gain mode is currently active',
 			defaultStyle: {
 				color: colorWhite,
 				bgcolor: colorRed,
@@ -347,7 +416,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.shutterMode = {
 			type: 'boolean',
 			name: 'Exposure - Shutter Mode',
-			description: 'Indicates whether the selected shutter mode is currently active',
+			description: 'Indicates if the selected shutter mode is currently active',
 			defaultStyle: {
 				color: colorWhite,
 				bgcolor: colorRed,
@@ -371,7 +440,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.whiteBalanceMode = {
 			type: 'boolean',
 			name: 'White Balance - Mode',
-			description: 'Indicates whether the selected white balance mode is currently active',
+			description: 'Indicates if the selected white balance mode is currently active',
 			defaultStyle: {
 				color: colorWhite,
 				bgcolor: colorRed,
@@ -395,7 +464,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.recState = {
 			type: 'boolean',
 			name: 'Recording - State',
-			description: 'Indicates if currently recording on the camera',
+			description: 'Indicates if recording is currently in progress',
 			defaultStyle: {
 				color: colorWhite,
 				bgcolor: colorRed,
@@ -411,7 +480,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.sdState = {
 			type: 'boolean',
 			name: 'Recording - SD card inserted',
-			description: 'Indicates if at least one SD card it inserted in a slot on the camera',
+			description: 'Indicates if at least one SD card is inserted into a slot on the camera',
 			defaultStyle: {
 				color: colorWhite,
 				bgcolor: colorGreen,
@@ -427,7 +496,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.streamStateRTMP = {
 			type: 'boolean',
 			name: 'Streaming - RTMP Client State',
-			description: 'Indicates if streaming in RTMP Client Mode is currently active',
+			description: 'Indicates if streaming in RTMP client mode is currently active',
 			defaultStyle: {
 				color: colorWhite,
 				bgcolor: colorRed,
@@ -443,7 +512,7 @@ export function getFeedbackDefinitions(self) {
 		feedbacks.streamStateSRT = {
 			type: 'boolean',
 			name: 'Streaming - SRT Caller State',
-			description: 'Indicates if streaming in SRT Caller Mode is currently active',
+			description: 'Indicates if streaming in SRT caller mode is currently active',
 			defaultStyle: {
 				color: colorWhite,
 				bgcolor: colorRed,
@@ -451,6 +520,22 @@ export function getFeedbackDefinitions(self) {
 			options: [],
 			callback: function () {
 				return self.data.srt
+			},
+		}
+	}
+
+	if (SERIES.capabilities.streamTS) {
+		feedbacks.streamStateTS = {
+			type: 'boolean',
+			name: 'Streaming - MPEG-TS Output State',
+			description: 'Indicates if streaming in MPEG-TS output mode is currently active',
+			defaultStyle: {
+				color: colorWhite,
+				bgcolor: colorRed,
+			},
+			options: [],
+			callback: function () {
+				return self.data.ts
 			},
 		}
 	}

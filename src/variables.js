@@ -127,6 +127,9 @@ export function setVariables(self) {
 	if (SERIES.capabilities.streamSRT) {
 		variables.push({ variableId: 'streamingSRT', name: 'SRT Caller Status' })
 	}
+	if (SERIES.capabilities.streamTS) {
+		variables.push({ variableId: 'streamingTS', name: 'MPEG-TS Output Status' })
+	}
 
 	return variables
 }
@@ -142,6 +145,9 @@ export function checkVariables(self) {
 
 	const colorTemperature = SERIES.capabilities.colorTemperature.index
 		? getLabel(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature) : null
+
+	const error = SERIES.capabilities.error
+		? getLabel(e.ENUM_ERROR, self.data.error) : null
 
 	const filter = SERIES.capabilities.filter
 		? getLabel(SERIES.capabilities.filter.dropdown, self.data.filter) : null
@@ -196,6 +202,9 @@ export function checkVariables(self) {
 
 	const tally3 = SERIES.capabilities.tally3
 		? getLabel(e.ENUM_OFF_ON, self.data.tally3) : null
+
+	const ts = SERIES.capabilities.streamTS
+		? getLabel(e.ENUM_OFF_ON, self.data.ts) : null
 
 	const whiteBalance = SERIES.capabilities.whiteBalance
 		? getLabel(SERIES.capabilities.whiteBalance.dropdown, self.data.whiteBalance) : null
@@ -259,7 +268,6 @@ export function checkVariables(self) {
 		bluePed: self.data.bluePedValue,
 		masterPed: self.data.masterPedValue,
 		
-		error: self.data.errorLabel,
 		irisF: self.data.irisLabel,
 		//recordingTime: self.data.recordingTime,
 		shutterStep: self.data.shutterStepLabel,
@@ -267,6 +275,7 @@ export function checkVariables(self) {
 		colorTemperature: self.data.colorTempLabel?self.data.colorTempLabel:colorTemperature,
 
 		colorbar: colorbar,
+		error: error,
 		filter: filter,
 		focusMode: focusMode,
 		gain: gain,
@@ -282,6 +291,7 @@ export function checkVariables(self) {
 		shutter: shutter,
 		streamingRTMP: rtmp,
 		streamingSRT: srt,
+		streamingTS: ts,
 		tally: tally,
 		tally2: tally2,
 		tally3: tally3,

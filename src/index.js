@@ -346,6 +346,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			autotrackingAngle: null,
 			colorbar: null,
 			colorTemperature: null,
+			error: null,
 			filter: null,
 			focusMode: null,
 			gain: null,
@@ -393,7 +394,6 @@ class PanasonicPTZInstance extends InstanceBase {
 			// other strings
 			autotrackingStatusLabel: null,
 			colorTempLabel: null,
-			errorLabel: null,
 			irisLabel: null,
 			shutterStepLabel: null,
 			recordingTime: null,

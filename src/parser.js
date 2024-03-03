@@ -1,9 +1,6 @@
 export function parseUpdate(self, str) {
-    // Store Values from Events
     if (str[0].substring(0, 3) === 'rER') {
-        str[0] === 'rER00'
-            ? (self.data.errorLabel = 'No Error')
-            : (self.data.errorLabel = str[0].substring(1))
+        self.data.error = str[0].substring(3)
     }
 
     if (str[0].substring(0, 1) === 'g') {
