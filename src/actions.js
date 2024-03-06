@@ -24,7 +24,7 @@ const liveSpeed = {
 	id: 'liveSpeed',
 	type: 'checkbox',
 	label: 'Adjust the velocity on speed change',
-	default: false
+	default: false,
 }
 
 const speedOperation = {
@@ -48,7 +48,7 @@ const speedSetting = {
 	max: SPEED_MAX,
 	required: true,
 	range: true,
-	isVisible: ((options) => options.op === 's')
+	isVisible: (options) => options.op === 's',
 }
 
 function optMove(label_inc = '⬆', label_dec = '⬇') {
@@ -86,7 +86,7 @@ function optSetToggle(choices, label = 'Setting', def = 0) {
 			id: 'set',
 			default: choices[def].id,
 			choices: choices,
-			isVisible: ((options) => options.op === 's')
+			isVisible: (options) => options.op === 's',
 		},
 	]
 }
@@ -111,7 +111,7 @@ function optSetToggleNextPrev(choices, label = 'Setting', def = 0) {
 			id: 'set',
 			default: choices[def].id,
 			choices: choices,
-			isVisible: ((options) => options.op === 's')
+			isVisible: (options) => options.op === 's',
 		},
 	]
 }
@@ -139,7 +139,7 @@ function optSetIncDecStep(label = 'Value', def, min, max, step = 1) {
 			step: step,
 			required: true,
 			range: true,
-			isVisible: ((options) => options.op === 's')
+			isVisible: (options) => options.op === 's',
 		},
 		{
 			id: 'step',
@@ -147,9 +147,9 @@ function optSetIncDecStep(label = 'Value', def, min, max, step = 1) {
 			label: 'Step size',
 			default: step,
 			min: 1,
-			max: max-min,
+			max: max - min,
 			required: true,
-			isVisible: ((options) => options.op !== 's')
+			isVisible: (options) => options.op !== 's',
 		},
 	]
 }
@@ -205,12 +205,14 @@ export function getActionDefinitions(self) {
 				liveSpeed,
 			],
 			callback: async (action) => {
-				if (action.options.dir === '11') { // Stop
-					await self.getPTZ('PTS' + cmdSpeed(SPEED_OFFSET)+ cmdSpeed(SPEED_OFFSET))
+				if (action.options.dir === '11') {
+					// Stop
+					await self.getPTZ('PTS' + cmdSpeed(SPEED_OFFSET) + cmdSpeed(SPEED_OFFSET))
 					if (self.speedChangeEmitter.listenerCount('ptSpeed')) self.speedChangeEmitter.removeAllListeners('ptSpeed')
 				} else {
 					let arr = Array.from(action.options.dir)
-					let pan = parseInt(arr[0]) - 1; let tilt = parseInt(arr[1]) - 1
+					let pan = parseInt(arr[0]) - 1
+					let tilt = parseInt(arr[1]) - 1
 					await self.getPTZ('PTS' + cmdSpeed(pan * self.pSpeed + SPEED_OFFSET) + cmdSpeed(tilt * self.tSpeed + SPEED_OFFSET))
 					if (action.options.liveSpeed) {
 						self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
@@ -244,22 +246,22 @@ export function getActionDefinitions(self) {
 						{ id: 'p', label: 'Pan only' },
 						{ id: 't', label: 'Tilt only' },
 					],
-				},	
+				},
 				speedOperation,
 				speedSetting,
 			],
 			callback: async (action) => {
 				switch (action.options.scope) {
 					case 'pt':
-						self.ptSpeed = (action.options.op === ACTION_SET) ? action.options.speed : getNextValue(self.ptSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
+						self.ptSpeed = action.options.op === ACTION_SET ? action.options.speed : getNextValue(self.ptSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
 						self.pSpeed = self.ptSpeed
 						self.tSpeed = self.ptSpeed
 						break
 					case 'p':
-						self.pSpeed = (action.options.op === ACTION_SET) ? action.options.speed : getNextValue(self.pSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
+						self.pSpeed = action.options.op === ACTION_SET ? action.options.speed : getNextValue(self.pSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
 						break
 					case 't':
-						self.tSpeed = (action.options.op === ACTION_SET) ? action.options.speed : getNextValue(self.tSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
+						self.tSpeed = action.options.op === ACTION_SET ? action.options.speed : getNextValue(self.tSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
 						break
 				}
 
@@ -299,14 +301,9 @@ export function getActionDefinitions(self) {
 
 		actions.zoomSpeed = {
 			name: 'Lens - Zoom Speed',
-			options: [
-				speedOperation,
-				speedSetting,
-			],
+			options: [speedOperation, speedSetting],
 			callback: async (action) => {
-				self.zSpeed = action.options.op !== ACTION_SET
-					? getNextValue(self.zSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
-					: action.options.speed
+				self.zSpeed = action.options.op !== ACTION_SET ? getNextValue(self.zSpeed, SPEED_MIN, SPEED_MAX, action.options.op) : action.options.speed
 				self.setVariableValues({ zSpeedVar: self.zSpeed })
 				self.speedChangeEmitter.emit('zSpeed')
 			},
@@ -332,14 +329,9 @@ export function getActionDefinitions(self) {
 
 		actions.focusSpeed = {
 			name: 'Lens - Focus Speed',
-			options: [
-				speedOperation,
-				speedSetting,
-			],
+			options: [speedOperation, speedSetting],
 			callback: async (action) => {
-				self.fSpeed = action.options.op !== ACTION_SET
-					? getNextValue(self.fSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
-					: action.options.speed
+				self.fSpeed = action.options.op !== ACTION_SET ? getNextValue(self.fSpeed, SPEED_MIN, SPEED_MAX, action.options.op) : action.options.speed
 				self.setVariableValues({ fSpeedVar: self.fSpeed })
 				self.speedChangeEmitter.emit('fSpeed')
 			},
@@ -383,9 +375,9 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.iris) {
 		actions.iris = {
 			name: 'Exposure - Iris',
-			options: optSetIncDecStep('Iris setting', 0x555, 0x0, 0xAAA, 0x1E),
+			options: optSetIncDecStep('Iris setting', 0x555, 0x0, 0xaaa, 0x1e),
 			callback: async (action) => {
-				await self.getPTZ('AXI' + cmdValue(action, 0x555, 0x0, 0xAAA, 0x1E, 3, self.data.irisPosition))
+				await self.getPTZ('AXI' + cmdValue(action, 0x555, 0x0, 0xaaa, 0x1e, 3, self.data.irisPosition))
 			},
 		}
 
@@ -505,7 +497,7 @@ export function getActionDefinitions(self) {
 				await self.getCam(caps.cmd.blue + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, caps.step, caps.hexlen, self.data.blueGainValue))
 			},
 		}
-	}	
+	}
 
 	if (SERIES.capabilities.whiteBalance) {
 		actions.whiteBalanceMode = {
@@ -533,7 +525,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (SERIES.capabilities.colorTemperature && SERIES.capabilities.colorTemperature.index) { 
+	if (SERIES.capabilities.colorTemperature && SERIES.capabilities.colorTemperature.index) {
 		actions.colorTemperature = {
 			name: 'Color Correction - Color Temperature',
 			options: optSetToggleNextPrev(SERIES.capabilities.colorTemperature.index.dropdown),
@@ -543,16 +535,22 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (SERIES.capabilities.colorTemperature && SERIES.capabilities.colorTemperature.advanced) { 
+	if (SERIES.capabilities.colorTemperature && SERIES.capabilities.colorTemperature.advanced) {
 		if (SERIES.capabilities.colorTemperature.advanced.set) {
 			actions.colorTemperature = {
 				name: 'Color Correction - Color Temperature',
 				options: optSetIncDecStep('Color Temperature [K]', 3200, SERIES.capabilities.colorTemperature.advanced.min, SERIES.capabilities.colorTemperature.advanced.max, 20),
 				callback: async (action) => {
 					switch (action.options.op) {
-						case ACTION_SET: await self.getCam(SERIES.capabilities.colorTemperature.advanced.set + ':' + toHexString(action.options.set, 5) + ':0'); break
-						case ACTION_INC: await self.getCam(SERIES.capabilities.colorTemperature.advanced.inc + ':1'); break
-						case ACTION_DEC: await self.getCam(SERIES.capabilities.colorTemperature.advanced.dec + ':1'); break
+						case ACTION_SET:
+							await self.getCam(SERIES.capabilities.colorTemperature.advanced.set + ':' + toHexString(action.options.set, 5) + ':0')
+							break
+						case ACTION_INC:
+							await self.getCam(SERIES.capabilities.colorTemperature.advanced.inc + ':1')
+							break
+						case ACTION_DEC:
+							await self.getCam(SERIES.capabilities.colorTemperature.advanced.dec + ':1')
+							break
 					}
 				},
 			}
@@ -633,7 +631,7 @@ export function getActionDefinitions(self) {
 			callback: async (action) => {
 				const r = parseInt(action.options.speed, 16)
 				const s = r < 0x001 || r > 0x063
-				if (SERIES.capabilities.presetTime) await self.getCam('OSJ:29:' + (s?'0':'1'))
+				if (SERIES.capabilities.presetTime) await self.getCam('OSJ:29:' + (s ? '0' : '1'))
 				if (s) await self.getPTZ('PST' + action.options.table)
 				await self.getPTZ('UPVS' + action.options.speed)
 			},
@@ -745,7 +743,8 @@ export function getActionDefinitions(self) {
 					},
 				}
 			}
-		} else { // Use legacy PTZ Tally
+		} else {
+			// Use legacy PTZ Tally
 			actions.tally = {
 				name: 'System - Tally',
 				options: optSetToggle(e.ENUM_OFF_ON),
@@ -867,14 +866,20 @@ export function getActionDefinitions(self) {
 				id: 'cmd',
 				type: 'textinput',
 				label: 'Command (without leading # for PTZ commands)',
-				default: ''
-			}
+				default: '',
+			},
 		],
 		callback: async (action) => {
 			switch (action.options.dest) {
-				case 0: await self.getCam(action.options.cmd); break
-				case 1: await self.getPTZ(action.options.cmd); break
-				case 2: await self.getWeb(action.options.cmd); break
+				case 0:
+					await self.getCam(action.options.cmd)
+					break
+				case 1:
+					await self.getPTZ(action.options.cmd)
+					break
+				case 2:
+					await self.getWeb(action.options.cmd)
+					break
 			}
 		},
 	}

@@ -6,8 +6,7 @@ export const ConfigFields = [
 		id: 'info',
 		width: 12,
 		label: 'Information',
-		value:
-			"This module controls Panasonic PTZ cameras, you can find supported models in the dropdown below.<br/>If your camera isn't in the list below yet, feel free to try it anyway by option 'Other Cameras'. This should still support some basic operation.",
+		value: "This module controls Panasonic PTZ cameras, you can find supported models in the dropdown below.<br/>If your camera isn't in the list below yet, feel free to try it anyway by option 'Other Cameras'. This should still support some basic operation.",
 	},
 	{
 		type: 'textinput',
@@ -90,7 +89,8 @@ export const ConfigFields = [
 		id: 'pollInfo',
 		width: 9,
 		label: 'Polling',
-		value: 'Allows periodic querying of data that is not automatically updated by the camera. In theory, this may add a slight additional load on command processing, but is mandatory to obtain updated operational data from camera models that do not support update notification subscription. Additionally allows any operating status values ​​to be kept in sync that never have an update notification. The delay setting specifies the waiting time between individual pull requests.',
+		value:
+			'Allows periodic querying of data that is not automatically updated by the camera. In theory, this may add a slight additional load on command processing, but is mandatory to obtain updated operational data from camera models that do not support update notification subscription. Additionally allows any operating status values ​​to be kept in sync that never have an update notification. The delay setting specifies the waiting time between individual pull requests.',
 	},
 	{
 		type: 'number',

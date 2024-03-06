@@ -45,7 +45,7 @@ export function getFeedbackDefinitions(self) {
 			options: [],
 			callback: function () {
 				return self.data.power === '1'
-			}
+			},
 		}
 	}
 
@@ -451,7 +451,7 @@ export function getFeedbackDefinitions(self) {
 					label: 'Mode',
 					id: 'option',
 					default: SERIES.capabilities.whiteBalance.dropdown[0].id,
-					choices: SERIES.capabilities.whiteBalance.dropdown
+					choices: SERIES.capabilities.whiteBalance.dropdown,
 				},
 			],
 			callback: function (feedback) {

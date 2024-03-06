@@ -46,12 +46,11 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 
 		try {
-			await got.get(url, { timeout: { request: this.config.timeout } } )
+			await got.get(url, { timeout: { request: this.config.timeout } })
 
 			this.log('info', 'un-subscribed: ' + url)
 		} catch (err) {
-			if (this.handleConnectionError(err))
-				this.log('error', 'Error on TCP unsubscribe: ' + String(err))
+			if (this.handleConnectionError(err)) this.log('error', 'Error on TCP unsubscribe: ' + String(err))
 		}
 	}
 
@@ -63,7 +62,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 
 		try {
-			await got.get(url, { timeout: { request: this.config.timeout } } )
+			await got.get(url, { timeout: { request: this.config.timeout } })
 
 			this.log('info', 'subscribed: ' + url)
 
@@ -71,8 +70,7 @@ class PanasonicPTZInstance extends InstanceBase {
 
 			await this.getPTZ('LPC1') // enable Lens Position Information updates
 		} catch (err) {
-			if (this.handleConnectionError(err))
-				this.log('error', 'Error on subscribe: ' + String(err))
+			if (this.handleConnectionError(err)) this.log('error', 'Error on subscribe: ' + String(err))
 			//this.updateStatus(InstanceStatus.UnknownWarning, 'TCP subscription failed')
 		}
 	}
@@ -181,7 +179,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			}
 
 			try {
-				const response = await got.get(url, { timeout: { request: this.config.timeout } } )
+				const response = await got.get(url, { timeout: { request: this.config.timeout } })
 				if (response.body) {
 					const lines = response.body.trim().split('\r\n')
 
@@ -201,8 +199,7 @@ class PanasonicPTZInstance extends InstanceBase {
 					this.updateStatus(InstanceStatus.Ok)
 				}
 			} catch (err) {
-				if (this.handleConnectionError(err))
-					this.log('error', 'camdata request  ' + url + ' failed: ' + String(err))
+				if (this.handleConnectionError(err)) this.log('error', 'camdata request  ' + url + ' failed: ' + String(err))
 			}
 		}
 	}
@@ -214,7 +211,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 
 		try {
-			const response = await got.get(url, { timeout: { request: this.config.timeout } } )
+			const response = await got.get(url, { timeout: { request: this.config.timeout } })
 			if (response.body) {
 				const str = response.body.trim()
 
@@ -230,11 +227,10 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.updateStatus(InstanceStatus.Ok)
 			}
 		} catch (err) {
-			if (this.handleConnectionError(err))
-				this.log('error', 'PTZ request ' + url + ' failed: ' + String(err))
+			if (this.handleConnectionError(err)) this.log('error', 'PTZ request ' + url + ' failed: ' + String(err))
 		}
 	}
-	
+
 	async getCam(cmd) {
 		const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/aw_cam?cmd=${cmd}&res=1`
 
@@ -243,7 +239,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 
 		try {
-			const response = await got.get(url, { timeout: { request: this.config.timeout } } )
+			const response = await got.get(url, { timeout: { request: this.config.timeout } })
 			if (response.body) {
 				const str = response.body.trim()
 
@@ -259,11 +255,10 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.updateStatus(InstanceStatus.Ok)
 			}
 		} catch (err) {
-			if (this.handleConnectionError(err))
-				this.log('error', 'Cam request ' + url + ' failed: ' + String(err))
+			if (this.handleConnectionError(err)) this.log('error', 'Cam request ' + url + ' failed: ' + String(err))
 		}
 	}
-	
+
 	// Currently only for web commands that don't require admin rights
 	async getWeb(cmd) {
 		const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/${cmd}`
@@ -273,7 +268,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 
 		try {
-			const response = await got.get(url, { timeout: { request: this.config.timeout } } )
+			const response = await got.get(url, { timeout: { request: this.config.timeout } })
 			if (response.body) {
 				const lines = response.body.trim().split('\r\n')
 
@@ -293,8 +288,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.updateStatus(InstanceStatus.Ok)
 			}
 		} catch (err) {
-			if (this.handleConnectionError(err))
-				this.log('error', 'Web request ' + url + ' failed: ' + String(err))
+			if (this.handleConnectionError(err)) this.log('error', 'Web request ' + url + ' failed: ' + String(err))
 		}
 	}
 
@@ -307,19 +301,19 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 
 		try {
-			const response = await got.get(url, { timeout: { request: this.config.timeout } } )
+			const response = await got.get(url, { timeout: { request: this.config.timeout } })
 
 			const img = await Jimp.read(response.rawBody)
 			const png64 = await img.scaleToFit(288, 288).getBase64Async('image/png')
 
 			this.data.presetThumbnails[id] = png64
-			
+
 			this.checkFeedbacks()
 
 			this.updateStatus(InstanceStatus.Ok)
 		} catch (err) {
 			this.log('error', 'Thumbnail request ' + url + ' failed: ' + String(err))
-		}		
+		}
 	}
 
 	// Initalize module
@@ -436,7 +430,10 @@ class PanasonicPTZInstance extends InstanceBase {
 
 		if (config.host.length > 0) {
 			this.timeoutID = clearTimeout(this.timeoutID)
-			this.timeoutID = setTimeout(() => {	this.config = config; this.reInitAll(); }, this.config.timeout + this.config.pollDelay)
+			this.timeoutID = setTimeout(() => {
+				this.config = config
+				this.reInitAll()
+			}, this.config.timeout + this.config.pollDelay)
 		} else this.updateStatus(InstanceStatus.BadConfig)
 	}
 
@@ -448,7 +445,9 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.updateStatus(InstanceStatus.Disconnected, 'Timeout')
 
 				this.timeoutID = clearTimeout(this.timeoutID)
-				this.timeoutID = setTimeout(() => {	this.reInitAll(); }, this.config.timeout + this.config.pollDelay)
+				this.timeoutID = setTimeout(() => {
+					this.reInitAll()
+				}, this.config.timeout + this.config.pollDelay)
 				break
 			case 'ERR_NON_2XX_3XX_RESPONSE':
 				return this.config.debug // hide error
@@ -462,7 +461,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.poll = false
 
 		this.updateStatus(InstanceStatus.Connecting, this.config.host + ':' + this.config.httpPort)
-		
+
 		await this.getCam('QID') // pull model
 
 		this.SERIES = getAndUpdateSeries(this)
@@ -476,7 +475,7 @@ class PanasonicPTZInstance extends InstanceBase {
 
 		if (this.SERIES.capabilities.subscription) {
 			//if (!this.SERIES.capabilities.pull) { // prefer explicit pull
-				this.getCameraStatus() // initial bulk retrieve of all data 
+			this.getCameraStatus() // initial bulk retrieve of all data
 			//}
 
 			this.init_tcp() // setup tcp push updates

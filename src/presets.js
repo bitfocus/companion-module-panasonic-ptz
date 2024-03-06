@@ -1,6 +1,6 @@
 import { combineRgb } from '@companion-module/base'
 import { getAndUpdateSeries } from './common.js'
-import ICONS from './icons.js';
+import ICONS from './icons.js'
 
 export function getPresetDefinitions(self) {
 	const presets = {}
@@ -17,7 +17,6 @@ export function getPresetDefinitions(self) {
 	const colorDarkBlue = combineRgb(0, 0, 102)
 	const colorGrey = combineRgb(51, 51, 51)
 	const colorBlack = combineRgb(0, 0, 0)
-
 
 	const SERIES = getAndUpdateSeries(self)
 	// console.log(SERIES);
@@ -45,7 +44,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'ptMove',
 							options: {
-								dir: '12'
+								dir: '12',
 							},
 						},
 					],
@@ -53,7 +52,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'ptMove',
 							options: {
-								dir: '11'
+								dir: '11',
 							},
 						},
 					],
@@ -80,7 +79,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'ptMove',
 							options: {
-								dir: '10'
+								dir: '10',
 							},
 						},
 					],
@@ -88,7 +87,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'ptMove',
 							options: {
-								dir: '11'
+								dir: '11',
 							},
 						},
 					],
@@ -115,7 +114,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'ptMove',
 							options: {
-								dir: '01'
+								dir: '01',
 							},
 						},
 					],
@@ -123,7 +122,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'ptMove',
 							options: {
-								dir: '11'
+								dir: '11',
 							},
 						},
 					],
@@ -150,7 +149,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'ptMove',
 							options: {
-								dir: '21'
+								dir: '21',
 							},
 						},
 					],
@@ -158,7 +157,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'ptMove',
 							options: {
-								dir: '11'
+								dir: '11',
 							},
 						},
 					],
@@ -185,7 +184,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'ptMove',
 							options: {
-								dir: '22'
+								dir: '22',
 							},
 						},
 					],
@@ -193,7 +192,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'ptMove',
 							options: {
-								dir: '11'
+								dir: '11',
 							},
 						},
 					],
@@ -220,7 +219,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'ptMove',
 							options: {
-								dir: '02'
+								dir: '02',
 							},
 						},
 					],
@@ -228,7 +227,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'ptMove',
 							options: {
-								dir: '11'
+								dir: '11',
 							},
 						},
 					],
@@ -255,7 +254,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'ptMove',
 							options: {
-								dir: '00'
+								dir: '00',
 							},
 						},
 					],
@@ -263,7 +262,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'ptMove',
 							options: {
-								dir: '11'
+								dir: '11',
 							},
 						},
 					],
@@ -290,7 +289,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'ptMove',
 							options: {
-								dir: '20'
+								dir: '20',
 							},
 						},
 					],
@@ -298,7 +297,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'ptMove',
 							options: {
-								dir: '11'
+								dir: '11',
 							},
 						},
 					],
@@ -344,7 +343,7 @@ export function getPresetDefinitions(self) {
 				bgcolor: colorBlack,
 			},
 			options: {
-				rotaryActions: true
+				rotaryActions: true,
 			},
 			steps: [
 				{
@@ -376,7 +375,7 @@ export function getPresetDefinitions(self) {
 								op: 1,
 							},
 						},
-					]
+					],
 				},
 			],
 			feedbacks: [],
@@ -404,7 +403,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'zoom',
 							options: {
-								dir: 1
+								dir: 1,
 							},
 						},
 					],
@@ -412,7 +411,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'zoom',
 							options: {
-								dir: 0
+								dir: 0,
 							},
 						},
 					],
@@ -579,7 +578,7 @@ export function getPresetDefinitions(self) {
 			bgcolor: colorBlack,
 		},
 		options: {
-			rotaryActions: true
+			rotaryActions: true,
 		},
 		steps: [
 			{
@@ -607,7 +606,7 @@ export function getPresetDefinitions(self) {
 							op: 1,
 						},
 					},
-				]
+				],
 			},
 		],
 		feedbacks: [
@@ -641,7 +640,7 @@ export function getPresetDefinitions(self) {
 				bgcolor: colorBlack,
 			},
 			options: {
-				rotaryActions: true
+				rotaryActions: true,
 			},
 			steps: [
 				{
@@ -659,7 +658,7 @@ export function getPresetDefinitions(self) {
 							actionId: 'iris',
 							options: {
 								op: -1,
-								step: 0x1E,
+								step: 0x1e,
 							},
 						},
 					],
@@ -668,10 +667,10 @@ export function getPresetDefinitions(self) {
 							actionId: 'iris',
 							options: {
 								op: 1,
-								step: 0x1E,
+								step: 0x1e,
 							},
 						},
-					]
+					],
 				},
 			],
 			feedbacks: [
@@ -748,7 +747,6 @@ export function getPresetDefinitions(self) {
 			],
 			feedbacks: [],
 		}
-
 	}
 
 	if (SERIES.capabilities.shutter) {
@@ -813,7 +811,7 @@ export function getPresetDefinitions(self) {
 				bgcolor: colorGrey,
 			},
 			options: {
-				rotaryActions: true
+				rotaryActions: true,
 			},
 			steps: [
 				{
@@ -842,7 +840,7 @@ export function getPresetDefinitions(self) {
 								op: 1,
 							},
 						},
-					]
+					],
 				},
 			],
 			feedbacks: [],
@@ -861,7 +859,7 @@ export function getPresetDefinitions(self) {
 				bgcolor: colorBlack,
 			},
 			options: {
-				rotaryActions: true
+				rotaryActions: true,
 			},
 			steps: [
 				{
@@ -890,7 +888,7 @@ export function getPresetDefinitions(self) {
 								op: 1,
 							},
 						},
-					]
+					],
 				},
 			],
 			feedbacks: [
@@ -1564,21 +1562,21 @@ export function getPresetDefinitions(self) {
 								actionId: 'presetMem',
 								options: {
 									op: 'R',
-									val: i.toString(10).padStart(2, '0')
+									val: i.toString(10).padStart(2, '0'),
 								},
 							},
 						],
 						1000: {
 							options: { runWhileHeld: true },
 							actions: [
-								{   
+								{
 									actionId: 'presetMem',
 									options: {
 										op: 'M',
-										val: i.toString(10).padStart(2, '0')
-									}
+										val: i.toString(10).padStart(2, '0'),
+									},
 								},
-							]
+							],
 						},
 						2000: {
 							options: { runWhileHeld: true },
@@ -1587,11 +1585,11 @@ export function getPresetDefinitions(self) {
 									actionId: 'presetMem',
 									options: {
 										op: 'C',
-										val: i.toString(10).padStart(2, '0')
-									}
+										val: i.toString(10).padStart(2, '0'),
+									},
 								},
-							]
-						}
+							],
+						},
 					},
 				],
 				feedbacks: [
@@ -1642,19 +1640,17 @@ export function getPresetDefinitions(self) {
 
 	let steps = []
 	for (const x in SERIES.capabilities.whiteBalance.dropdown) {
-		steps.push(
-			{
-				down: [
-					{
-						actionId: 'whiteBalanceMode',
-						options: {
-							val: SERIES.capabilities.whiteBalance.dropdown[x].id,
-						},
+		steps.push({
+			down: [
+				{
+					actionId: 'whiteBalanceMode',
+					options: {
+						val: SERIES.capabilities.whiteBalance.dropdown[x].id,
 					},
-				],
-				up: [],
-			},
-		)
+				},
+			],
+			up: [],
+		})
 	}
 	presets[`whitebalance-mode`] = {
 		type: 'button',
@@ -1693,7 +1689,7 @@ export function getPresetDefinitions(self) {
 				bgcolor: colorWhite,
 			},
 			options: {
-				rotaryActions: true
+				rotaryActions: true,
 			},
 			steps: [
 				{
@@ -1729,7 +1725,7 @@ export function getPresetDefinitions(self) {
 				bgcolor: colorRed,
 			},
 			options: {
-				rotaryActions: true
+				rotaryActions: true,
 			},
 			steps: [
 				{
@@ -1763,7 +1759,7 @@ export function getPresetDefinitions(self) {
 				bgcolor: colorBlue,
 			},
 			options: {
-				rotaryActions: true
+				rotaryActions: true,
 			},
 			steps: [
 				{
@@ -1799,7 +1795,7 @@ export function getPresetDefinitions(self) {
 				bgcolor: colorDarkRed,
 			},
 			options: {
-				rotaryActions: true
+				rotaryActions: true,
 			},
 			steps: [
 				{
@@ -1833,7 +1829,7 @@ export function getPresetDefinitions(self) {
 				bgcolor: colorDarkBlue,
 			},
 			options: {
-				rotaryActions: true
+				rotaryActions: true,
 			},
 			steps: [
 				{

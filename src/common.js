@@ -13,9 +13,7 @@ export function getAndUpdateSeries(self) {
 	}
 
 	// Find the specific commands for a given series
-	let SERIES = self.data.series !== 'Auto' && self.data.series !== 'Other'
-		? SERIES_SPECS.find((SERIES_SPECS) => SERIES_SPECS.id === self.data.series)
-		: undefined
+	let SERIES = self.data.series !== 'Auto' && self.data.series !== 'Other' ? SERIES_SPECS.find((SERIES_SPECS) => SERIES_SPECS.id === self.data.series) : undefined
 
 	return SERIES || SERIES_SPECS.find((SERIES_SPECS) => SERIES_SPECS.id === 'Other')
 }
@@ -34,13 +32,13 @@ export function getNext(values, key, step = 1, overrun = true) {
 }
 
 export function getNextValue(value, min, max, step = 1) {
-	let v = value += step
+	let v = (value += step)
 	if (v > max) {
 		v = max
 	}
 	if (v < min) {
 		v = min
-	}	
+	}
 	return v
 }
 

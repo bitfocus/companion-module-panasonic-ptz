@@ -52,7 +52,6 @@ export const MODELS = [
 // Other
 // HE2
 // HE40
-// HE42
 // HE50
 // HE60
 // HE120
@@ -139,7 +138,7 @@ export const SERIES_SPECS = [
 			presetSpeed: { dropdown: e.ENUM_PSSPEED_TABLE_2 },
 			presetThumbnails: false,
 			presetTime: false,
-			pull: { ptz: ['O','PE00','PE01','PE02','DA','INS','LPI','PST','RER','S','UPVS'], cam: ['QAF','QAW','QBR','QGB','QGU','QIS','QGR','QRS','QSH','QTD','QSD:4F','QSD:B1','QSE:71'], web: ['get_state'] },
+			pull: { ptz: ['O', 'PE00', 'PE01', 'PE02', 'DA', 'INS', 'LPI', 'PST', 'RER', 'S', 'UPVS'], cam: ['QAF', 'QAW', 'QBR', 'QGB', 'QGU', 'QIS', 'QGR', 'QRS', 'QSH', 'QTD', 'QSD:4F', 'QSD:B1', 'QSE:71'], web: ['get_state'] },
 			recordSD: true,
 			restart: true,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE40 },
@@ -265,7 +264,7 @@ export const SERIES_SPECS = [
 			ois: { dropdown: e.ENUM_OIS_OTHER },
 			panTilt: true,
 			pedestal: { cmd: 'OSJ:0F', offset: 0x800, limit: 200, step: 1, hexlen: 3 },
-			poll: { ptz: false, cam: false, web: ['get_rtmp_status','get_srt_status','get_ts_status'] },
+			poll: { ptz: false, cam: false, web: ['get_rtmp_status', 'get_srt_status', 'get_ts_status'] },
 			power: true,
 			preset: 100,
 			presetSpeed: { dropdown: e.ENUM_PSSPEED_TABLE_2 },
@@ -309,7 +308,7 @@ export const SERIES_SPECS = [
 			ois: { dropdown: e.ENUM_OIS_UE160 },
 			panTilt: true,
 			pedestal: { cmd: 'OSJ:0F', offset: 0x800, limit: 200, step: 1, hexlen: 3 },
-			poll: { ptz: false, cam: false, web: ['get_rtmp_status','get_srt_status','get_ts_status'] },
+			poll: { ptz: false, cam: false, web: ['get_rtmp_status', 'get_srt_status', 'get_ts_status'] },
 			power: true,
 			preset: 100,
 			presetSpeed: { dropdown: e.ENUM_PSSPEED_TABLE_2 },
@@ -579,7 +578,7 @@ export const SERIES_SPECS = [
 			presetSpeed: { dropdown: e.ENUM_PSSPEED_TABLE_2 },
 			presetThumbnails: false,
 			presetTime: false,
-			pull: { ptz: ['O','PE00','PE01','PE02','DA','INS','LPI','PST','RER','S','UPVS'], cam: ['QAF','QAW','QBR','QBI','QBP','QFT','QGU','QIS','QRI','QRP','QSV','QTP','QSD:4F','QSD:B1','QSE:71'], web: false },
+			pull: { ptz: ['O', 'PE00', 'PE01', 'PE02', 'DA', 'INS', 'LPI', 'PST', 'RER', 'S', 'UPVS'], cam: ['QAF', 'QAW', 'QBR', 'QBI', 'QBP', 'QFT', 'QGU', 'QIS', 'QRI', 'QRP', 'QSV', 'QTP', 'QSD:4F', 'QSD:B1', 'QSE:71'], web: false },
 			recordSD: false,
 			restart: true,
 			shutter: { cmd: 'OSH', dropdown: e.ENUM_SHUTTER_HE130 },
@@ -705,13 +704,13 @@ export const SERIES_SPECS = [
 			ois: { dropdown: e.ENUM_OIS_OTHER },
 			panTilt: false,
 			pedestal: { cmd: 'OSJ:0F', offset: 0x800, limit: 200, step: 1, hexlen: 3 },
-			poll: { ptz: ['GF','GI','GZ'], cam: ['QAF','QAW','QBR','QBP','QFT','QGU','QIS','QRP','QLR','QLG','QSD:4F','QSG:39','QSG:3A','QSI:20','QSJ:0F'], web: ['get_state'] },
+			poll: { ptz: ['GF', 'GI', 'GZ'], cam: ['QAF', 'QAW', 'QBR', 'QBP', 'QFT', 'QGU', 'QIS', 'QRP', 'QLR', 'QLG', 'QSD:4F', 'QSG:39', 'QSG:3A', 'QSI:20', 'QSJ:0F'], web: ['get_state'] },
 			power: false,
 			preset: false,
 			presetSpeed: false,
 			presetThumbnails: false,
 			presetTime: false,
-			pull: { ptz: ['GF','GI','GZ'], cam: ['QAF','QAW','QBR','QBP','QFT','QGU','QIS','QRP','QLR','QLG','QSD:4F','QSG:39','QSG:3A','QSI:20','QSJ:0F'], web: ['get_state'] },
+			pull: { ptz: ['GF', 'GI', 'GZ'], cam: ['QAF', 'QAW', 'QBR', 'QBP', 'QFT', 'QGU', 'QIS', 'QRP', 'QLR', 'QLG', 'QSD:4F', 'QSG:39', 'QSG:3A', 'QSI:20', 'QSJ:0F'], web: ['get_state'] },
 			recordSD: true,
 			restart: false,
 			shutter: false,

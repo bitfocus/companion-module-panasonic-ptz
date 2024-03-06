@@ -140,79 +140,57 @@ export function setVariables(self) {
 export function checkVariables(self) {
 	const SERIES = getAndUpdateSeries(self)
 
-	const colorbar = SERIES.capabilities.colorbar
-		? getLabel(e.ENUM_OFF_ON, self.data.colorbar) : null
+	const colorbar = SERIES.capabilities.colorbar ? getLabel(e.ENUM_OFF_ON, self.data.colorbar) : null
 
-	const colorTemperature = SERIES.capabilities.colorTemperature.index
-		? getLabel(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature) : null
+	const colorTemperature = SERIES.capabilities.colorTemperature.index ? getLabel(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature) : null
 
-	const error = SERIES.capabilities.error
-		? getLabel(e.ENUM_ERROR, self.data.error) : null
+	const error = SERIES.capabilities.error ? getLabel(e.ENUM_ERROR, self.data.error) : null
 
-	const filter = SERIES.capabilities.filter
-		? getLabel(SERIES.capabilities.filter.dropdown, self.data.filter) : null
+	const filter = SERIES.capabilities.filter ? getLabel(SERIES.capabilities.filter.dropdown, self.data.filter) : null
 
-	const focusMode = SERIES.capabilities.focusAuto
-		? getLabel(e.ENUM_MAN_AUTO, self.data.focusMode) : null
+	const focusMode = SERIES.capabilities.focusAuto ? getLabel(e.ENUM_MAN_AUTO, self.data.focusMode) : null
 
-	const gain = SERIES.capabilities.gain
-		? getLabel(SERIES.capabilities.gain.dropdown, self.data.gain) : null
+	const gain = SERIES.capabilities.gain ? getLabel(SERIES.capabilities.gain.dropdown, self.data.gain) : null
 
-	const installMode = SERIES.capabilities.install
-		? getLabel(e.ENUM_INSTALL_POSITION, self.data.installMode) : null
+	const installMode = SERIES.capabilities.install ? getLabel(e.ENUM_INSTALL_POSITION, self.data.installMode) : null
 
 	//const iris = SERIES.capabilities.iris
 	//	? getLabel(e.ENUM_IRIS, self.data.iris) : null
 
-	const irisMode = SERIES.capabilities.irisAuto
-		? getLabel(e.ENUM_MAN_AUTO, self.data.irisMode) : null
+	const irisMode = SERIES.capabilities.irisAuto ? getLabel(e.ENUM_MAN_AUTO, self.data.irisMode) : null
 
-	const ois = SERIES.capabilities.ois
-		? getLabel(SERIES.capabilities.ois.dropdown, self.data.ois) : null
+	const ois = SERIES.capabilities.ois ? getLabel(SERIES.capabilities.ois.dropdown, self.data.ois) : null
 
-	const power = SERIES.capabilities.power
-		? getLabel(e.ENUM_OFF_ON, self.data.power) : null
+	const power = SERIES.capabilities.power ? getLabel(e.ENUM_OFF_ON, self.data.power) : null
 
-	const presetScope = SERIES.capabilities.preset
-		? getLabel(e.ENUM_PRESET_SCOPE, self.data.presetScope) : null
-	
-	const presetSpeed = SERIES.capabilities.presetSpeed
-		? getLabel(e.ENUM_PSSPEED, self.data.presetSpeed) : null
+	const presetScope = SERIES.capabilities.preset ? getLabel(e.ENUM_PRESET_SCOPE, self.data.presetScope) : null
 
-	const presetSpeedTable = SERIES.capabilities.presetSpeed
-		? getLabel(SERIES.capabilities.presetSpeed.dropdown, self.data.presetSpeedTable) : null
+	const presetSpeed = SERIES.capabilities.presetSpeed ? getLabel(e.ENUM_PSSPEED, self.data.presetSpeed) : null
 
-	const presetSpeedUnit = SERIES.capabilities.presetTime
-		? getLabel(e.ENUM_PSSPEED_UNIT, self.data.presetSpeedUnit) : null
+	const presetSpeedTable = SERIES.capabilities.presetSpeed ? getLabel(SERIES.capabilities.presetSpeed.dropdown, self.data.presetSpeedTable) : null
 
-	const rtmp = SERIES.capabilities.streamRTMP
-		? getLabel(e.ENUM_OFF_ON, self.data.rtmp) : null
+	const presetSpeedUnit = SERIES.capabilities.presetTime ? getLabel(e.ENUM_PSSPEED_UNIT, self.data.presetSpeedUnit) : null
 
-	const shutter = SERIES.capabilities.shutter
-		? getLabel(SERIES.capabilities.shutter.dropdown, self.data.shutter) : null
+	const rtmp = SERIES.capabilities.streamRTMP ? getLabel(e.ENUM_OFF_ON, self.data.rtmp) : null
 
-	const srt = SERIES.capabilities.streamSRT
-		? getLabel(e.ENUM_OFF_ON, self.data.srt) : null
+	const shutter = SERIES.capabilities.shutter ? getLabel(SERIES.capabilities.shutter.dropdown, self.data.shutter) : null
 
-	const tally = SERIES.capabilities.tally
-		? getLabel(e.ENUM_OFF_ON, self.data.tally) : null
+	const srt = SERIES.capabilities.streamSRT ? getLabel(e.ENUM_OFF_ON, self.data.srt) : null
 
-	const tally2 = SERIES.capabilities.tally2
-		? getLabel(e.ENUM_OFF_ON, self.data.tally2) : null
+	const tally = SERIES.capabilities.tally ? getLabel(e.ENUM_OFF_ON, self.data.tally) : null
 
-	const tally3 = SERIES.capabilities.tally3
-		? getLabel(e.ENUM_OFF_ON, self.data.tally3) : null
+	const tally2 = SERIES.capabilities.tally2 ? getLabel(e.ENUM_OFF_ON, self.data.tally2) : null
 
-	const ts = SERIES.capabilities.streamTS
-		? getLabel(e.ENUM_OFF_ON, self.data.ts) : null
+	const tally3 = SERIES.capabilities.tally3 ? getLabel(e.ENUM_OFF_ON, self.data.tally3) : null
 
-	const whiteBalance = SERIES.capabilities.whiteBalance
-		? getLabel(SERIES.capabilities.whiteBalance.dropdown, self.data.whiteBalance) : null
+	const ts = SERIES.capabilities.streamTS ? getLabel(e.ENUM_OFF_ON, self.data.ts) : null
+
+	const whiteBalance = SERIES.capabilities.whiteBalance ? getLabel(SERIES.capabilities.whiteBalance.dropdown, self.data.whiteBalance) : null
 
 	const progressBar = (pct, width = 20, start = '', end = '') => {
 		if (pct && pct >= 0 && pct <= 100) {
-			const flr = Math.floor(pct * width / 100)
-			return start + (".").repeat(flr) + ("|") + (".").repeat(width-flr) + end
+			const flr = Math.floor((pct * width) / 100)
+			return start + '.'.repeat(flr) + '|' + '.'.repeat(width - flr) + end
 			//return start + ("|").repeat(flr).padEnd(width, ".") + end
 		}
 		return '---'
@@ -220,12 +198,12 @@ export function checkVariables(self) {
 
 	const normalizePct = (val, low = 0, high = 100, limit = false, fractionDigits = 0) => {
 		if (limit) {
-			val = (val < low) ? low : val
-			val = (val > high) ? high : val
+			val = val < low ? low : val
+			val = val > high ? high : val
 		}
-		return (val < low || val > high) ? null : (((val - low) / (high - low)) * 100).toFixed(fractionDigits)
+		return val < low || val > high ? null : (((val - low) / (high - low)) * 100).toFixed(fractionDigits)
 	}
-/* 
+	/* 
 	const norm = (val, low = 0, high = 100) => {
 		return (val < low || val > high) ? null : (((val - low) / (high - low)) * 2) - 1
 	}
@@ -249,30 +227,30 @@ export function checkVariables(self) {
 
 		panPosition: self.data.panPosition,
 		tiltPosition: self.data.tiltPosition,
-		panPositionDeg: (-self.data.panPosition * (29.7/3600)).toFixed(1),
-		tiltPositionDeg: (-self.data.tiltPosition * (29.7/3600)).toFixed(1),
+		panPositionDeg: (-self.data.panPosition * (29.7 / 3600)).toFixed(1),
+		tiltPositionDeg: (-self.data.tiltPosition * (29.7 / 3600)).toFixed(1),
 		focusPosition: self.data.focusPosition,
 		irisPosition: self.data.irisPosition,
 		irisFollowPosition: self.data.irisFollowPosition,
 		zoomPosition: self.data.zoomPosition,
-		focusPositionPct: normalizePct(self.data.focusPosition, 0x0, 0xAAA, false),
-		irisPositionPct: normalizePct(self.data.irisPosition, 0x0, 0xAAA, false),
-		zoomPositionPct: normalizePct(self.data.zoomPosition, 0x0, 0xAAA, false, 1),
-		zoomPositionBar: progressBar(normalizePct(self.data.zoomPosition, 0x0, 0xAAA), 10, 'W', 'T'),
-		focusPositionBar: progressBar(normalizePct(self.data.focusPosition, 0x0, 0xAAA), 10, 'N', 'F'),
-		irisPositionBar: progressBar(normalizePct(self.data.irisPosition, 0x0, 0xAAA), 10, 'C', 'O'),
+		focusPositionPct: normalizePct(self.data.focusPosition, 0x0, 0xaaa, false),
+		irisPositionPct: normalizePct(self.data.irisPosition, 0x0, 0xaaa, false),
+		zoomPositionPct: normalizePct(self.data.zoomPosition, 0x0, 0xaaa, false, 1),
+		zoomPositionBar: progressBar(normalizePct(self.data.zoomPosition, 0x0, 0xaaa), 10, 'W', 'T'),
+		focusPositionBar: progressBar(normalizePct(self.data.focusPosition, 0x0, 0xaaa), 10, 'N', 'F'),
+		irisPositionBar: progressBar(normalizePct(self.data.irisPosition, 0x0, 0xaaa), 10, 'C', 'O'),
 
 		redGain: self.data.redGainValue,
 		blueGain: self.data.blueGainValue,
 		redPed: self.data.redPedValue,
 		bluePed: self.data.bluePedValue,
 		masterPed: self.data.masterPedValue,
-		
+
 		irisF: self.data.irisLabel,
 		//recordingTime: self.data.recordingTime,
 		shutterStep: self.data.shutterStepLabel,
 
-		colorTemperature: self.data.colorTempLabel?self.data.colorTempLabel:colorTemperature,
+		colorTemperature: self.data.colorTempLabel ? self.data.colorTempLabel : colorTemperature,
 
 		colorbar: colorbar,
 		error: error,

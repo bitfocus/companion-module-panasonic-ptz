@@ -961,7 +961,7 @@ export const e = {
 		{ id: '4', label: 'Preset 3200K' },
 		{ id: '5', label: 'Preset 5600K' },
 		{ id: '6', label: 'Preset 4500K' },
-		{ id: '7', label: 'Preset 6000K' },	
+		{ id: '7', label: 'Preset 6000K' },
 		{ id: '8', label: 'Preset 2800K' },
 	],
 	ENUM_WHITEBALANCE_SET_CX350: [
@@ -980,7 +980,7 @@ export const e = {
 		{ id: '4', label: 'Preset 3200K' },
 		{ id: '5', label: 'Preset 5600K' },
 		{ id: '6', label: 'Preset 4500K' },
-		{ id: '7', label: 'Preset 6000K' },	
+		{ id: '7', label: 'Preset 6000K' },
 		{ id: '8', label: 'Preset 2800K' },
 		{ id: '9', label: 'VAR' },
 	],
@@ -1169,5 +1169,5 @@ export const e = {
 		{ id: '61', label: 'Update Hardware Error' },
 		{ id: '62', label: 'Update Error' },
 		{ id: '63', label: 'Update Fan Error' },
-	]
+	],
 }
