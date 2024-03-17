@@ -617,8 +617,8 @@ export function getActionDefinitions(self) {
 					type: 'dropdown',
 					label: 'Speed',
 					id: 'speed',
-					default: e.ENUM_PSSPEED[0].id,
-					choices: e.ENUM_PSSPEED,
+					default: e.ENUM_PRESET_SPEED[0].id,
+					choices: e.ENUM_PRESET_SPEED,
 				},
 				{
 					type: 'dropdown',

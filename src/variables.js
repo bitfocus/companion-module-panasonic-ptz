@@ -165,7 +165,7 @@ export function checkVariables(self) {
 
 	const presetScope = SERIES.capabilities.preset ? getLabel(e.ENUM_PRESET_SCOPE, self.data.presetScope) : null
 
-	const presetSpeed = SERIES.capabilities.presetSpeed ? getLabel(e.ENUM_PSSPEED, self.data.presetSpeed) : null
+	const presetSpeed = SERIES.capabilities.presetSpeed ? getLabel(e.ENUM_PRESET_SPEED_TIME, self.data.presetSpeed) : null
 
 	const presetSpeedTable = SERIES.capabilities.presetSpeed ? getLabel(SERIES.capabilities.presetSpeed.dropdown, self.data.presetSpeedTable) : null
 
