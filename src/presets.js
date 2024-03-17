@@ -399,24 +399,9 @@ export function getPresetDefinitions(self) {
 			},
 			steps: [
 				{
-					down: [
-						{
-							actionId: 'zoom',
-							options: {
-								dir: 1,
-							},
-						},
-					],
-					up: [
-						{
-							actionId: 'zoom',
-							options: {
-								dir: 0,
-							},
-						},
-					],
-				},
-			],
+					down: [ { actionId: 'zoom', options: { dir: 1 } } ],
+					up: [ { actionId: 'zoom', options: { dir: 0 } } ]
+				}],
 			feedbacks: [],
 		}
 	}
