@@ -253,24 +253,24 @@ export function getActionDefinitions(self) {
 			callback: async (action) => {
 				switch (action.options.scope) {
 					case 'pt':
-						self.ptSpeed = action.options.op === ACTION_SET ? action.options.speed : getNextValue(self.ptSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
+						self.ptSpeed = action.options.op === ACTION_SET ? action.options.set : getNextValue(self.ptSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
 						self.pSpeed = self.ptSpeed
 						self.tSpeed = self.ptSpeed
 						break
 					case 'p':
-						self.pSpeed = action.options.op === ACTION_SET ? action.options.speed : getNextValue(self.pSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
+						self.pSpeed = action.options.op === ACTION_SET ? action.options.set : getNextValue(self.pSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
 						break
 					case 't':
-						self.tSpeed = action.options.op === ACTION_SET ? action.options.speed : getNextValue(self.tSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
+						self.tSpeed = action.options.op === ACTION_SET ? action.options.set : getNextValue(self.tSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
 						break
 				}
 
 				if (self.pSpeed === self.tSpeed) self.ptSpeed = self.pSpeed
 
 				self.setVariableValues({
-					ptSpeedVar: self.ptSpeed,
-					pSpeedVar: self.pSpeed,
-					tSpeedVar: self.tSpeed,
+					ptSpeed: self.ptSpeed,
+					pSpeed: self.pSpeed,
+					tSpeed: self.tSpeed,
 				})
 
 				self.speedChangeEmitter.emit('ptSpeed')
@@ -303,8 +303,8 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Zoom Speed',
 			options: [speedOperation, speedSetting],
 			callback: async (action) => {
-				self.zSpeed = action.options.op !== ACTION_SET ? getNextValue(self.zSpeed, SPEED_MIN, SPEED_MAX, action.options.op) : action.options.speed
-				self.setVariableValues({ zSpeedVar: self.zSpeed })
+				self.zSpeed = action.options.op !== ACTION_SET ? getNextValue(self.zSpeed, SPEED_MIN, SPEED_MAX, action.options.op) : action.options.set
+				self.setVariableValues({ zSpeed: self.zSpeed })
 				self.speedChangeEmitter.emit('zSpeed')
 			},
 		}
@@ -331,8 +331,8 @@ export function getActionDefinitions(self) {
 			name: 'Lens - Focus Speed',
 			options: [speedOperation, speedSetting],
 			callback: async (action) => {
-				self.fSpeed = action.options.op !== ACTION_SET ? getNextValue(self.fSpeed, SPEED_MIN, SPEED_MAX, action.options.op) : action.options.speed
-				self.setVariableValues({ fSpeedVar: self.fSpeed })
+				self.fSpeed = action.options.op !== ACTION_SET ? getNextValue(self.fSpeed, SPEED_MIN, SPEED_MAX, action.options.op) : action.options.set
+				self.setVariableValues({ fSpeed: self.fSpeed })
 				self.speedChangeEmitter.emit('fSpeed')
 			},
 		}
@@ -416,7 +416,7 @@ export function getActionDefinitions(self) {
 				name: 'Exposure - Shutter Step Up',
 				options: [],
 				callback: async (action) => {
-					await self.getCam(SERIES.capabilities.shutter.inc + ':0x01')
+					await self.getCam(SERIES.capabilities.shutter.inc + ':01')
 				},
 			}
 
@@ -424,7 +424,7 @@ export function getActionDefinitions(self) {
 				name: 'Exposure - Shutter Step Down',
 				options: [],
 				callback: async (action) => {
-					await self.getCam(SERIES.capabilities.shutter.dec + ':0x01')
+					await self.getCam(SERIES.capabilities.shutter.dec + ':01')
 				},
 			}
 		}

@@ -340,12 +340,12 @@ export const e = {
 		{ id: '2A', label: '34 dB' },
 		{ id: '2B', label: '35 dB' },
 		{ id: '2C', label: '36 dB' },
-		{ id: '2D', label: '37 dB' },
-		{ id: '2E', label: '38 dB' },
-		{ id: '2F', label: '39 dB' },
-		{ id: '30', label: '40 dB' },
-		{ id: '31', label: '41 dB' },
-		{ id: '32', label: '42 dB' },
+		{ id: '2D', label: '37 dB' }, // needs Super Gain On
+		{ id: '2E', label: '38 dB' }, // needs Super Gain On
+		{ id: '2F', label: '39 dB' }, // needs Super Gain On
+		{ id: '30', label: '40 dB' }, // needs Super Gain On
+		{ id: '31', label: '41 dB' }, // needs Super Gain On
+		{ id: '32', label: '42 dB' }, // needs Super Gain On
 	],
 	ENUM_GAIN_CX350: [
 		{ id: '80', label: 'Auto' },
