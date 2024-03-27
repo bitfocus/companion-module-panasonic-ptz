@@ -20,9 +20,9 @@ for (let i = 0; i < 100; ++i) {
 // #### Send Actions ####
 // ######################
 
-export async function sendPTZ(self, str) {
+export async function sendPTZ(self, str, res = "1") {
 	if (str) {
-		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/aw_ptz?cmd=%23${str}&res=1`
+		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/aw_ptz?cmd=%23${str}&res=${res}`
 		if (self.config.debug) {
 			self.log('debug', `Sending : ${url}`)
 		}
@@ -37,9 +37,9 @@ export async function sendPTZ(self, str) {
 	}
 }
 
-export async function sendCam(self, str) {
+export async function sendCam(self, str, res = "1") {
 	if (str) {
-		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/aw_cam?cmd=${str}&res=1`
+		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/aw_cam?cmd=${str}&res=${res}`
 
 		if (self.config.debug) {
 			self.log('debug', `Sending : ${url}`)
