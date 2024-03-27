@@ -1131,14 +1131,13 @@ export function getActionDefinitions(self) {
 					self.redGainIndex = index
 				}
 
-				if (self.redGainIndex == 0) {
-					self.redGainIndex = 0
-				} else if (self.redGainIndex > 0) {
-					self.redGainIndex++
-				}
-				self.redGainIndex = seriesActions.redGain.dropdown[self.redGainIndex].id
+				self.redGainIndex = self.redGainIndex == seriesActions.redGain.dropdown.length - 1
+					? seriesActions.redGain.dropdown.length - 1
+					: self.redGainIndex + 1
 
-				await sendCam(self, seriesActions.redGain.cmd + self.redGainIndex.toUpperCase(), "1")
+				const newRedGainVal = seriesActions.redGain.dropdown[self.redGainIndex].id
+
+				await sendCam(self, seriesActions.redGain.cmd + newRedGainVal.toUpperCase(), "1")
 			}
 		}
 
@@ -1151,14 +1150,13 @@ export function getActionDefinitions(self) {
 					self.redGainIndex = index
 				}
 
-				if (self.redGainIndex == 0) {
-					self.redGainIndex = 0
-				} else if (self.redGainIndex > 0) {
-					self.redGainIndex--
-				}
-				self.redGainIndex = seriesActions.redGain.dropdown[self.redGainIndex].id
+				self.redGainIndex = self.redGainIndex == 0
+					? 0
+					: self.redGainIndex - 1
 
-				await sendCam(self, seriesActions.redGain.cmd + self.redGainIndex.toUpperCase(), "1")
+				const newRedGainVal = seriesActions.redGain.dropdown[self.redGainIndex].id
+
+				await sendCam(self, seriesActions.redGain.cmd + newRedGainVal.toUpperCase(), "1")
 			}
 		}
 	}
@@ -1173,13 +1171,13 @@ export function getActionDefinitions(self) {
 					self.blueGainIndex = index
 				}
 
-				if (self.blueGainIndex == 0) {
-					self.blueGainIndex = 0
-				} else if (self.blueGainIndex > 0) {
-					self.blueGainIndex++
-				}
-				self.blueGainIndex = seriesActions.blueGain.dropdown[self.blueGainIndex].id
-				await sendCam(self, seriesActions.blueGain.cmd + self.blueGainIndex.toUpperCase(), "1")
+				self.blueGainIndex = self.blueGainIndex == seriesActions.blueGain.dropdown.length - 1
+					? seriesActions.blueGain.dropdown.length - 1
+					: self.blueGainIndex + 1
+
+				const newBlueGainVal = seriesActions.blueGain.dropdown[self.blueGainIndex].id
+
+				await sendCam(self, seriesActions.blueGain.cmd + newBlueGainVal.toUpperCase(), "1")
 			}
 		}
 
@@ -1192,14 +1190,13 @@ export function getActionDefinitions(self) {
 					self.blueGainIndex = index
 				}
 
-				if (self.blueGainIndex == 0) {
-					self.blueGainIndex = 0
-				} else if (self.blueGainIndex > 0) {
-					self.blueGainIndex--
-				}
-				self.blueGainIndex = seriesActions.blueGain.dropdown[self.blueGainIndex].id
+				self.blueGainIndex = self.blueGainIndex == 0
+					? 0
+					: self.blueGainIndex - 1
 
-				await sendCam(self, seriesActions.blueGain.cmd + self.blueGainIndex.toUpperCase(), "1")
+				const newBlueGainVal = seriesActions.blueGain.dropdown[self.blueGainIndex].id
+
+				await sendCam(self, seriesActions.blueGain.cmd + newBlueGainVal.toUpperCase(), "1")
 			}
 		}
 	}
