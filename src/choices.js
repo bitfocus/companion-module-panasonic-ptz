@@ -275,6 +275,25 @@ export const c = {
 		{ id: '32', label: '42dB' },
 	],
 
+	CHOICES_GAIN_HE60: function () {
+		return this.CHOICES_GAIN_HE50
+	},
+	CHOICES_GAIN_UE150: function () {
+		return this.CHOICES_GAIN_HR140
+	},
+	CHOICES_GAIN_UE70: function () {
+		return this.CHOICES_GAIN_HE40
+	},
+	CHOICES_GAIN_HE42: function () {
+		return this.CHOICES_GAIN_HE40
+	},
+	CHOICES_GAIN_CX350: function () {
+		return this.CHOICES_GAIN_CX350
+	},
+	CHOICES_GAIN_OTHER: function () {
+		return this.CHOICES_GAIN_HR140
+	},
+
 	CHOICES_COLOR_GAIN_HE42: [
 		{ id: '00', label: '-30' },
 		{ id: '01', label: '-29' },
@@ -339,26 +358,6 @@ export const c = {
 		{ id: '3C', label: '30' }
 
 	],
-
-	CHOICES_GAIN_HE60: function () {
-		return this.CHOICES_GAIN_HE50
-	},
-	CHOICES_GAIN_UE150: function () {
-		return this.CHOICES_GAIN_HR140
-	},
-	CHOICES_GAIN_UE70: function () {
-		return this.CHOICES_GAIN_HE40
-	},
-	CHOICES_GAIN_HE42: function () {
-		return this.CHOICES_GAIN_HE40
-	},
-	CHOICES_GAIN_CX350: function () {
-		return this.CHOICES_GAIN_CX350
-	},
-	CHOICES_GAIN_OTHER: function () {
-		return this.CHOICES_GAIN_HR140
-	},
-
 	CHOICES_COLOR_GAIN_UE70: function () {
 		return this.CHOICES_COLOR_GAIN_HE42
 	},
