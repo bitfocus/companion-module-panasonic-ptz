@@ -74,6 +74,8 @@ export const SERIES_SPECS = [
 			OAF: true, // Has Auto Focus (OAF:1 or OAF:0)
 			iris: true, // Has Auto Iris (d30 or d31)
 			gainValue: true,
+			redGainValue: true, // Support for red gain control
+			blueGainValue: true,// Support for blue gain control
 			preset: true,
 			colorTemperature: false,
 		},
@@ -102,6 +104,8 @@ export const SERIES_SPECS = [
 			OTAF: true, // Has One Touch Auto Focus Support (OSE:69:1)
 			iris: true, // Has Iris Support (manual and auto) (Ixx)
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_OTHER() }, // Has Gain Support
+			redGain: { cmd: 'ORG:', dropdown: c.CHOICES_COLOR_GAIN_HE42 },
+			blueGain: { cmd: 'OBG:', dropdown: c.CHOICES_COLOR_GAIN_HE42 },
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_OTHER }, // Has Shutter Support
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_OTHER() }, // Has Pedistal Support
 			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_OTHER() }, // Has ND Filter Support
@@ -254,6 +258,8 @@ export const SERIES_SPECS = [
 			OAF: true,
 			iris: true,
 			gainValue: true,
+			redGainValue: true,
+			blueGainValue: true,
 			preset: true,
 			colorTemperature: false,
 		},
@@ -281,6 +287,8 @@ export const SERIES_SPECS = [
 			OTAF: true,
 			iris: true,
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_UE70() },
+			redGain: { cmd: 'ORG:', dropdown: c.CHOICES_COLOR_GAIN_UE70() },
+			blueGain: { cmd: 'OBG:', dropdown: c.CHOICES_COLOR_GAIN_UE70() },
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_UE70() },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_UE70() },
 			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_UE70 },

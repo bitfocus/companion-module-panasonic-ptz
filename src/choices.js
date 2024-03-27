@@ -349,9 +349,6 @@ export const c = {
 	CHOICES_GAIN_UE70: function () {
 		return this.CHOICES_GAIN_HE40
 	},
-	// CHOICES_COLOR_GAIN_HE42: function () {
-	// 	return this.CHOICES_COLOR_GAIN_HE42
-	// },
 	CHOICES_GAIN_HE42: function () {
 		return this.CHOICES_GAIN_HE40
 	},
@@ -360,6 +357,10 @@ export const c = {
 	},
 	CHOICES_GAIN_OTHER: function () {
 		return this.CHOICES_GAIN_HR140
+	},
+
+	CHOICES_COLOR_GAIN_UE70: function () {
+		return this.CHOICES_COLOR_GAIN_HE42
 	},
 
 	// ##########################
