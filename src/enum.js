@@ -295,8 +295,8 @@ export const e = {
 		{ id: '26', label: '30 dB' },
 		{ id: '29', label: '33 dB' },
 		{ id: '2C', label: '36 dB' },
-		{ id: '2F', label: '39 dB' },
-		{ id: '32', label: '42 dB' },
+		{ id: '2F', label: '39 dB' }, // needs Super Gain On
+		{ id: '32', label: '42 dB' }, // needs Super Gain On
 	],
 	ENUM_GAIN_UE150: [
 		{ id: '80', label: 'Auto' },

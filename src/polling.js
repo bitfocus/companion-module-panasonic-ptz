@@ -27,7 +27,7 @@ export async function pollCameraStatus(self) {
 }
 
 export async function pullCameraStatus(self) {
-	const pull = {
+	const pullall = {
 		ptz: [
 			'O', // Power
 			'PE00', // Preset Entry 0
@@ -52,7 +52,7 @@ export async function pullCameraStatus(self) {
 			'PTV', // Get Pan/Tilt/Zoom/Focus/Iris
 			'RER', // Latest Error Information
 			'S', // Request Latest Recall Preset No.
-			'TAA', // Tally Infomation
+			//'TAA', // Tally Infomation
 			'UPVS', // Preset Speed
 		],
 		cam: [
@@ -117,6 +117,9 @@ export async function pullCameraStatus(self) {
 		],
 		web: ['get_state', 'get_rtmp_status', 'get_srt_status', 'get_ts_status'],
 	}
+
+	var pull = pullall
+	//var pull = self.SERIES.pull
 
 	if (pull) {
 		if (pull.ptz) {
