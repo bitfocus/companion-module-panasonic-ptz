@@ -1062,7 +1062,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.colorTemperature) { 
+	if (seriesActions.colorTemperature) {
 		actions.colorTemperatureUp = {
 			name: 'Color Temperature Up',
 			options: [],
@@ -1078,7 +1078,7 @@ export function getActionDefinitions(self) {
 			},
 		}
 	}
-	
+
 	if (seriesActions.colorTemperature) {
 		actions.colorTemperatureDown = {
 			name: 'Color Temperature Down',
@@ -1109,7 +1109,7 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				
+
 				let id = action.options.val.toUpperCase();
 				let index = seriesActions.colorTemperature.dropdown.findIndex((colorTemperature) => colorTemperature.id == id);
 
@@ -1120,6 +1120,90 @@ export function getActionDefinitions(self) {
 			},
 		}
 	}
+
+	if (seriesActions.redGain) {
+		actions.redGainUp = {
+			name: 'Red Gain Up',
+			options: [],
+			callback: async (action) => {
+				let index = seriesActions.redGain.dropdown.findIndex((REDGAIN) => REDGAIN.id == self.data.redGainValue)
+				if (index !== -1) {
+					self.redGainIndex = index
+				}
+
+				if (self.redGainIndex == 0) {
+					self.redGainIndex = 0
+				} else if (self.redGainIndex > 0) {
+					self.redGainIndex++
+				}
+				self.redGainIndex = seriesActions.redGain.dropdown[self.redGainIndex].id
+
+				await sendCam(self, seriesActions.redGain.cmd + self.redGainIndex.toUpperCase(), "1")
+			}
+		}
+
+		actions.redGainDown = {
+			name: 'Red Gain Down',
+			options: [],
+			callback: async (action) => {
+				let index = seriesActions.redGain.dropdown.findIndex((REDGAIN) => REDGAIN.id == self.data.redGainValue)
+				if (index !== -1) {
+					self.redGainIndex = index
+				}
+
+				if (self.redGainIndex == 0) {
+					self.redGainIndex = 0
+				} else if (self.redGainIndex > 0) {
+					self.redGainIndex--
+				}
+				self.redGainIndex = seriesActions.redGain.dropdown[self.redGainIndex].id
+
+				await sendCam(self, seriesActions.redGain.cmd + self.redGainIndex.toUpperCase(), "1")
+			}
+		}
+	}
+
+	if (seriesActions.blueGain) {
+		actions.blueGainUp = {
+			name: 'Blue Gain Up',
+			options: [],
+			callback: async (action) => {
+				let index = seriesActions.blueGain.dropdown.findIndex((BLUEGAIN) => BLUEGAIN.id == self.data.blueGainValue)
+				if (index !== -1) {
+					self.blueGainIndex = index
+				}
+
+				if (self.blueGainIndex == 0) {
+					self.blueGainIndex = 0
+				} else if (self.blueGainIndex > 0) {
+					self.blueGainIndex++
+				}
+				self.blueGainIndex = seriesActions.blueGain.dropdown[self.blueGainIndex].id
+				await sendCam(self, seriesActions.blueGain.cmd + self.blueGainIndex.toUpperCase(), "1")
+			}
+		}
+
+		actions.blueGainDown = {
+			name: 'Blue Gain Down',
+			options: [],
+			callback: async (action) => {
+				let index = seriesActions.blueGain.dropdown.findIndex((BLUEGAIN) => BLUEGAIN.id == self.data.blueGainValue)
+				if (index !== -1) {
+					self.blueGainIndex = index
+				}
+
+				if (self.blueGainIndex == 0) {
+					self.blueGainIndex = 0
+				} else if (self.blueGainIndex > 0) {
+					self.blueGainIndex--
+				}
+				self.blueGainIndex = seriesActions.blueGain.dropdown[self.blueGainIndex].id
+
+				await sendCam(self, seriesActions.blueGain.cmd + self.blueGainIndex.toUpperCase(), "1")
+			}
+		}
+	}
+
 
 	if (seriesActions.filter.cmd) {
 		actions.filterU = {
@@ -1314,8 +1398,8 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.tally)  {
-		if (seriesActions.tally2)  {
+	if (seriesActions.tally) {
+		if (seriesActions.tally2) {
 			actions.tallyOff = {
 				name: 'System - Red Tally Off',
 				options: [],
