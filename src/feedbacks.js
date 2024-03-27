@@ -540,5 +540,161 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
+	if (SERIES.feedbacks.colorBarsState) {
+		feedbacks.colorBarsState = {
+			type: 'boolean',
+			name: 'System - Color Bars State',
+			description: 'Indicate if color bars are shown or not',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorRed,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Indicate in X State',
+					id: 'state',
+					default: '0',
+					choices: [
+						{ id: '0', label: 'OFF' },
+						{ id: '1', label: 'ON' },
+					],
+				},
+			],
+			callback: function (feedback) {
+				const opt = feedback.options
+				if (self.data.colorBarsState === opt.state) {
+					return true;
+				}
+				return false
+			},
+		}
+
+		if (SERIES.feedbacks.colorBarsStatusState) {
+			feedbacks.colorBarsSetupState = {
+				type: 'boolean',
+				name: 'System - Color Bars Setup',
+				description: 'Indicate if color bars setup is ON (7.5IRE) or OFF (0.0IRE)',
+				defaultStyle: {
+					color: foregroundColor,
+					bgcolor: backgroundColorRed,
+				},
+				options: [
+					{
+						type: 'dropdown',
+						label: 'Indicate in X State',
+						id: 'state',
+						default: '0',
+						choices: [
+							{ id: '0', label: 'OFF (0.0IRE)' },
+							{ id: '1', label: 'ON (7.5IRE)' },
+						],
+					},
+				],
+				callback: function (feedback) {
+					const opt = feedback.options
+					if (self.data.colorBarsSetupState === opt.state) {
+						return true;
+					}
+					return false
+				},
+			}
+		}
+
+		if (SERIES.feedbacks.colorBarsTitleState) {
+			feedbacks.colorBarsTitleState = {
+				type: 'boolean',
+				name: 'System - Color Bars Title',
+				description: 'Indicate if color bars title is ON or OFF',
+				defaultStyle: {
+					color: foregroundColor,
+					bgcolor: backgroundColorRed,
+				},
+				options: [
+					{
+						type: 'dropdown',
+						label: 'Indicate in X State',
+						id: 'state',
+						default: '0',
+						choices: [
+							{ id: '0', label: 'OFF' },
+							{ id: '1', label: 'ON' },
+						],
+					},
+				],
+				callback: function (feedback) {
+					const opt = feedback.options
+					if (self.data.colorBarsTitleState === opt.state) {
+						return true;
+					}
+					return false
+				},
+			}
+		}
+
+		if (SERIES.feedbacks.colorBarsToneState) {
+			feedbacks.colorBarsToneState = {
+				type: 'boolean',
+				name: 'System - Color Bars Tone',
+				description: 'Indicate what color bars tone is selected on camera',
+				defaultStyle: {
+					color: foregroundColor,
+					bgcolor: backgroundColorRed,
+				},
+				options: [
+					{
+						type: 'dropdown',
+						label: 'Indicate in X State',
+						id: 'state',
+						default: '0h',
+						choices: [
+							{ id: '0h', label: 'Off' },
+							{ id: '1h', label: 'Low' },
+							{ id: '2h', label: 'Normal' },
+						],
+					},
+				],
+				callback: function (feedback) {
+					const opt = feedback.options
+					if (self.data.colorBarsToneState === opt.state) {
+						return true;
+					}
+					return false
+				},
+			}
+		}
+		
+		if (SERIES.feedbacks.colorBarsTypeState) {
+			feedbacks.colorBarsToneState = {
+				type: 'boolean',
+				name: 'System - Color Bars Type',
+				description: 'Indicate what color bars type is selected on camera',
+				defaultStyle: {
+					color: foregroundColor,
+					bgcolor: backgroundColorRed,
+				},
+				options: [
+					{
+						type: 'dropdown',
+						label: 'Indicate in X State',
+						id: 'state',
+						default: '1',
+						choices: [
+							{ id: '1', label: 'Type 1' },
+							{ id: '0', label: 'Type 2' },
+						],
+					},
+				],
+				callback: function (feedback) {
+					const opt = feedback.options
+					if (self.data.colorBarsTypeState === opt.state) {
+						return true;
+					}
+					return false
+				},
+			}
+		}
+	}
+
 	return feedbacks
 }
