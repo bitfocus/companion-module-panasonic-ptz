@@ -299,6 +299,8 @@ class PanasonicPTZInstance extends InstanceBase {
 			case 'OBG':
 				this.data.blueGainValue = str[1].toString().replace('0x', '')
 				break
+			case 'OAW':
+				this.data.whiteBalanceModeValue = str[1]
 			default:
 				break
 		}
@@ -341,7 +343,8 @@ class PanasonicPTZInstance extends InstanceBase {
 			colorBarTone: 'NaN',
 			colorBarType: 'Nan',
 			redGainValue: 'NaN',
-			blueGainValue: 'NaN'
+			blueGainValue: 'NaN',
+			whiteBalanceModeValue: 'AWB'
 		}
 
 		this.ptSpeed = 25
@@ -358,6 +361,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.gainIndex = 0
 		this.redGainIndex = 30
 		this.blueGainIndex = 30
+		this.whiteBalanceModeIndex = 0
 		this.irisVal = 50
 		this.irisIndex = 50
 		this.filterVal = 0

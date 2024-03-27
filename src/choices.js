@@ -362,6 +362,17 @@ export const c = {
 		return this.CHOICES_COLOR_GAIN_HE42
 	},
 
+	CHOICES_AWB_MODE_HE42: [
+		{ id: '0', label: 'ATW' },
+		{ id: '1', label: 'AWB A' },
+		{ id: '2', label: 'AWB B' },
+		{ id: '4', label: 'PRESET 3200K' },
+		{ id: '5', label: 'PRESET 5600K' },
+		{ id: '9', label: 'VAR' },
+	],
+
+	CHOICES_AWB_MODE_UE70: function () { return this.CHOICES_AWB_MODE_HE42 },
+
 	// ##########################
 	// #### Shutter Look Ups ####
 	// ##########################

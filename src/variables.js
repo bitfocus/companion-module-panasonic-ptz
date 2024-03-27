@@ -56,6 +56,9 @@ export function setVariables(self) {
 	if (SERIES.variables.preset) {
 		variables.push({ variableId: 'presetMode', name: 'Preset Mode' })
 	}
+	if (SERIES.variables.whiteBalanceMode) {
+		variables.push({ variableId: 'whiteBalanceMode', name: 'White Balance Mode' })
+	}
 	variables.push({ variableId: 'ptSpeedVar', name: 'Pan/Tilt Speed' })
 	variables.push({ variableId: 'pSpeedVar', name: 'Pan Speed' })
 	variables.push({ variableId: 'tSpeedVar', name: 'Tilt Speed' })
@@ -86,6 +89,11 @@ export function checkVariables(self) {
 		? SERIES.actions.colorTemperature.dropdown.find((colorTemperature) => colorTemperature.id == self.data.colorTemperature)
 		: null
 
+	const whiteBalanceModeValue = SERIES.actions.whiteBalanceMode
+		? SERIES.actions.whiteBalanceMode.dropdown.find((WBM) => WBM.id == self.data.whiteBalanceModeValue)
+		: null
+
+
 
 	self.setVariableValues({
 		series: self.data.series,
@@ -103,6 +111,7 @@ export function checkVariables(self) {
 		gainValue: gainValue?.label,
 		redGainValue: redGainValue?.label,
 		blueGainValue: blueGainValue?.label,
+		whiteBalanceMode: whiteBalanceModeValue?.label,
 		presetMode: self.data.recallModePset,
 		ptSpeedVar: self.ptSpeed,
 		pSpeedVar: self.pSpeed,

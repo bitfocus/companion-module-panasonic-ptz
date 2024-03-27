@@ -1121,6 +1121,63 @@ export function getActionDefinitions(self) {
 		}
 	}
 
+	if (seriesActions.whiteBalanceMode) {
+		actions.whiteBalanceModeNext = {
+			name: 'Next White Balance Mode',
+			options: [],
+			callback: async (action) => {
+				let index = seriesActions.whiteBalanceMode.dropdown.findIndex((WBM) => WBM.id == self.data.whiteBalanceModeValue)
+				if (index !== -1) {
+					self.whiteBalanceModeIndex = index
+				}
+
+				self.whiteBalanceModeIndex = self.whiteBalanceModeIndex == seriesActions.whiteBalanceMode.dropdown.length - 1
+					? seriesActions.whiteBalanceMode.dropdown.length - 1
+					: self.whiteBalanceModeIndex + 1
+
+				const whiteBalanceModeVal = seriesActions.whiteBalanceMode.dropdown[self.whiteBalanceModeIndex].id
+
+				await sendCam(self, seriesActions.whiteBalanceMode.cmd + whiteBalanceModeVal.toUpperCase(), "1")
+			}
+		}
+
+		actions.whiteBalanceModePrev = {
+			name: 'Previous White Balance Mode',
+			options: [],
+			callback: async (action) => {
+				let index = seriesActions.whiteBalanceMode.dropdown.findIndex((WBM) => WBM.id == self.data.whiteBalanceModeValue)
+				if (index !== -1) {
+					self.whiteBalanceModeIndex = index
+				}
+
+				self.whiteBalanceModeIndex = self.whiteBalanceModeIndex == 0
+					? 0
+					: self.whiteBalanceModeIndex - 1
+
+				const whiteBalanceModeVal = seriesActions.whiteBalanceMode.dropdown[self.whiteBalanceModeIndex].id
+
+				await sendCam(self, seriesActions.whiteBalanceMode.cmd + whiteBalanceModeVal.toUpperCase(), "1")
+			}
+		}
+
+		actions.whiteBalanceModeSet = {
+			name: 'Set White Balance Mode',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'White Balance Mode',
+					id: 'val',
+					default: seriesActions.whiteBalanceMode.dropdown[0].id,
+					choices: seriesActions.whiteBalanceMode.dropdown,
+				}],
+			callback: async (action) => {
+
+				await sendCam(self, seriesActions.whiteBalanceMode.cmd + action.options.val.toUpperCase(), "1")
+			}
+
+		}
+	}
+
 	if (seriesActions.redGain) {
 		actions.redGainUp = {
 			name: 'Red Gain Up',
