@@ -388,30 +388,6 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
-	if (SERIES.capabilities.gain) {
-		feedbacks.gainMode = {
-			type: 'boolean',
-			name: 'Exposure - Gain Mode',
-			description: 'Indicates if the selected gain mode is currently active',
-			defaultStyle: {
-				color: colorWhite,
-				bgcolor: colorRed,
-			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Mode',
-					id: 'option',
-					default: SERIES.capabilities.gain.dropdown[0].id,
-					choices: SERIES.capabilities.gain.dropdown,
-				},
-			],
-			callback: function (feedback) {
-				return self.data.gain === feedback.options.option
-			},
-		}
-	}
-
 	if (SERIES.capabilities.shutter) {
 		feedbacks.shutter = {
 			type: 'boolean',
@@ -432,6 +408,30 @@ export function getFeedbackDefinitions(self) {
 			],
 			callback: function (feedback) {
 				return self.data.shutter === feedback.options.option
+			},
+		}
+	}
+
+	if (SERIES.capabilities.gain) {
+		feedbacks.gain = {
+			type: 'boolean',
+			name: 'Picture - Gain',
+			description: 'Indicates if the selected gain mode is currently active',
+			defaultStyle: {
+				color: colorWhite,
+				bgcolor: colorRed,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'option',
+					default: SERIES.capabilities.gain.dropdown[0].id,
+					choices: SERIES.capabilities.gain.dropdown,
+				},
+			],
+			callback: function (feedback) {
+				return self.data.gain === feedback.options.option
 			},
 		}
 	}

@@ -1013,38 +1013,70 @@ export function getPresetDefinitions(self) {
 	// #########################
 
 	if (SERIES.capabilities.gain) {
-		presets['exposure-gain'] = {
+		presets[`exposure-gain`] = {
 			type: 'button',
-			category: 'Exposure',
-			name: 'Gain Up',
+			category: 'Picture',
+			name: 'Gain',
 			style: {
-				text: 'GAIN\\nUP',
-				size: '18',
+				text: 'GAIN\\n$(generic-module:gain)',
+				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
+			},
+			options: {
+				rotaryActions: true,
 			},
 			steps: [
 				{
 					down: [
 						{
-							actionId: 'gainU',
-							options: {},
+							actionId: 'gain',
+							options: {
+								op: 't',
+							},
 						},
 					],
 					up: [],
+					rotate_left: [
+						{
+							actionId: 'gain',
+							options: {
+								op: -1,
+							},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'gain',
+							options: {
+								op: 1,
+							},
+						},
+					],
 				},
 			],
-			feedbacks: [],
+			feedbacks: [
+				{
+					feedbackId: 'gain',
+					options: {
+						option: SERIES.capabilities.gain.dropdown[0].id,
+					},
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
 		}
 	}
 
 	if (SERIES.capabilities.pedestal) {
 		presets['exposure-pedestal'] = {
 			type: 'button',
-			category: 'Exposure',
-			name: 'Master Pedestal',
+			category: 'Picture',
+			name: 'Pedestal',
 			style: {
-				text: 'Pedestal\\n$(generic-module:masterPed)',
+				text: 'Total Ped.\\n$(generic-module:masterPed)',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorGrey,
@@ -1059,7 +1091,7 @@ export function getPresetDefinitions(self) {
 							actionId: 'ped',
 							options: {
 								op: 's',
-								speed: 0,
+								set: 0,
 							},
 						},
 					],
@@ -1069,6 +1101,7 @@ export function getPresetDefinitions(self) {
 							actionId: 'ped',
 							options: {
 								op: -1,
+								step: 1,
 							},
 						},
 					],
@@ -1077,6 +1110,7 @@ export function getPresetDefinitions(self) {
 							actionId: 'ped',
 							options: {
 								op: 1,
+								step: 1,
 							},
 						},
 					],
