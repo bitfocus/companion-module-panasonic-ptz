@@ -6,13 +6,12 @@ export const ConfigFields = [
 		id: 'info',
 		width: 12,
 		label: 'Information',
-		value:
-			"This module controls Panasonic PTZ cameras, you can find supported models in the dropdown below.<br/>If your camera isn't in the list below, feel free to try it anyway the option 'Other Cameras'.",
+		value: "This module controls Panasonic PTZ cameras, you can find supported models in the dropdown below.<br/>If your camera isn't in the list below yet, feel free to try it anyway by option 'Other Cameras'. This should still support some basic operation.",
 	},
 	{
 		type: 'textinput',
 		id: 'host',
-		label: 'Camera IP',
+		label: 'Camera IP / Hostname',
 		width: 4,
 		// regex: Regex.IP
 	},
@@ -37,7 +36,7 @@ export const ConfigFields = [
 		id: 'modelInfo',
 		width: 12,
 		label: 'Camera Model',
-		value: 'Please Select the camera model or feel free to leave it on auto.',
+		value: "Please select the camera model or feel free to leave it on 'Auto Detect'.",
 	},
 	{
 		type: 'dropdown',
@@ -57,28 +56,51 @@ export const ConfigFields = [
 	},
 	{
 		type: 'static-text',
-		id: 'info',
-		width: 12,
-		label: 'Tally On (Basic)',
-		value:
-			'Support for Tally On is no longer possible. Instead you can set this up as a trigger, and get additional control',
-	},
-	{
-		type: 'static-text',
-		id: 'dummy3',
-		width: 12,
-		label: ' ',
-		value: ' ',
-	},
-	{
-		type: 'static-text',
 		id: 'Info',
 		width: 12,
 		label: 'Other Settings',
-		value:
-			'These setting can be left on the default values and should give you a consistent setup, but they are there for you to use if need be.',
+		value: 'These setting can be left on the default values and should give you a consistent setup, but they are there for you to use if need be.',
 	},
-
+	{
+		type: 'number',
+		id: 'timeout',
+		label: 'Timeout (ms)',
+		width: 3,
+		default: 1000,
+		min: 100,
+		max: 2500,
+	},
+	{
+		type: 'static-text',
+		id: 'timeoutInfo',
+		width: 9,
+		label: '',
+		value: 'Sets the maximum amount of time to wait for a response from the camera after a request command. Otherwise the connection is considered lost and repeated attempts are made to reinitialize the connection.',
+	},
+	{
+		type: 'checkbox',
+		id: 'pollAllow',
+		width: 1,
+		label: 'Allow',
+		default: false,
+	},
+	{
+		type: 'static-text',
+		id: 'pollInfo',
+		width: 9,
+		label: 'Polling',
+		value:
+			'Allows periodic querying of data that is not automatically updated by the camera. In theory, this may add a slight additional load on command processing, but is mandatory to obtain updated operational data from camera models that do not support update notification subscription. Additionally allows any operating status values ​​to be kept in sync that never have an update notification. The delay setting specifies the waiting time between individual pull requests.',
+	},
+	{
+		type: 'number',
+		id: 'pollDelay',
+		label: 'Poll Delay (ms)',
+		width: 2,
+		default: 100,
+		min: 1,
+		max: 1000,
+	},
 	{
 		type: 'checkbox',
 		id: 'autoTCP',
@@ -90,8 +112,8 @@ export const ConfigFields = [
 		type: 'static-text',
 		id: 'autoTCPInfo',
 		width: 4,
-		label: 'Auto TCP',
-		value: 'This will ignore the port selected and find a port Automaticly',
+		label: 'Automatic local TCP port assignment',
+		value: 'This will ignore the manual port selection and find a free port automatically',
 	},
 	{
 		type: 'number',
@@ -99,15 +121,15 @@ export const ConfigFields = [
 		label: 'TCP Port',
 		width: 3,
 		default: 31004,
-		min: 1,
+		min: 1024,
 		max: 65535,
 	},
 	{
 		type: 'static-text',
 		id: 'manualTCPInfo',
 		width: 4,
-		label: 'Manual TCP Port',
-		value: 'TCP Port (Default: 31004) only used when "Auto TCP" is OFF/Disabled',
+		label: 'Manual local TCP port assignment',
+		value: 'TCP Port (Default: 31004) only used when "Automatic TCP port assignment" is disabled',
 	},
 	{
 		type: 'checkbox',
@@ -120,8 +142,7 @@ export const ConfigFields = [
 		type: 'static-text',
 		id: 'debugInfo',
 		width: 11,
-		label: 'Enable Debug To Log Window',
-		value:
-			'Requires Companion to be restarted. But this will allow you the see what is being sent from the module and what is being received from the camera.',
+		label: 'Debug To Log Window',
+		value: 'Requires Companion to be restarted. But this will allow you the see what is being sent from the module and what is being received from the camera.',
 	},
 ]

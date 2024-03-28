@@ -1,78 +1,172 @@
 /* eslint-disable no-unused-vars */
-import { c } from './choices.js'
-import { getAndUpdateSeries } from './common.js'
-import got from 'got'
+import { e } from './enum.js'
+import { getAndUpdateSeries, getNext, getNextValue, toHexString } from './common.js'
 
-// ########################
-// #### Value Look Ups ####
-// ########################
-const CHOICES_IRIS = []
-for (let i = 0; i < 100; ++i) {
-	CHOICES_IRIS.push({ id: ('0' + i.toString(10)).substr(-2, 2), label: 'Iris ' + i })
+const SPEED_OFFSET = 50
+const SPEED_MIN = 0
+const SPEED_MAX = 49
+const SPEED_DEFAULT = 25
+
+const ACTION_SET = 's'
+const ACTION_TOGGLE = 't'
+const ACTION_STOP = 0
+const ACTION_HOLD = 0
+const ACTION_RAISE = 1
+const ACTION_LOWER = -1
+const ACTION_UP = 1
+const ACTION_DOWN = -1
+const ACTION_INC = 1
+const ACTION_DEC = -1
+const ACTION_NEXT = 1
+const ACTION_PREV = -1
+
+const liveSpeed = {
+	id: 'liveSpeed',
+	type: 'checkbox',
+	label: 'Adjust the velocity on speed change',
+	default: false,
 }
 
-const CHOICES_PRESET = []
-for (let i = 0; i < 100; ++i) {
-	CHOICES_PRESET.push({ id: ('0' + i.toString(10)).substr(-2, 2), label: 'Preset ' + (i + 1) })
+const speedOperation = {
+	type: 'dropdown',
+	label: 'Speed Change',
+	id: 'op',
+	default: ACTION_SET,
+	choices: [
+		{ id: ACTION_SET, label: 'Set Speed' },
+		{ id: ACTION_RAISE, label: 'Raise Speed' },
+		{ id: ACTION_LOWER, label: 'Lower Speed' },
+	],
 }
 
-// ######################
-// #### Send Actions ####
-// ######################
-
-export async function sendPTZ(self, str) {
-	if (str) {
-		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/aw_ptz?cmd=%23${str}&res=1`
-		if (self.config.debug) {
-			self.log('debug', `Sending : ${url}`)
-		}
-
-		try {
-			const response = await got.get(url)
-
-			// console.log("Result from REST:" + result.data);
-		} catch (err) {
-			throw new Error(`Action failed: ${url}`)
-		}
-	}
+const speedSetting = {
+	type: 'number',
+	label: 'Speed setting',
+	id: 'set',
+	default: SPEED_DEFAULT,
+	min: SPEED_MIN,
+	max: SPEED_MAX,
+	required: true,
+	range: true,
+	isVisible: (options) => options.op === 's',
 }
 
-export async function sendCam(self, str) {
-	if (str) {
-		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/aw_cam?cmd=${str}&res=1`
-
-		if (self.config.debug) {
-			self.log('debug', `Sending : ${url}`)
-		}
-
-		try {
-			const response = await got.get(url)
-
-			// console.log("Result from REST:" + result.data);
-		} catch (err) {
-			throw new Error(`Action failed: ${url}`)
-		}
-	}
+function optMove(label_inc = '⬆', label_dec = '⬇') {
+	return [
+		{
+			type: 'dropdown',
+			label: 'Direction',
+			id: 'dir',
+			default: 0,
+			choices: [
+				{ id: ACTION_STOP, label: 'Stop' },
+				{ id: ACTION_INC, label: label_inc },
+				{ id: ACTION_DEC, label: label_dec },
+			],
+		},
+		liveSpeed,
+	]
 }
 
-export async function sendWeb(self, str) {
-	// Currently Only for web commands that don't requre Admin rights
+function optSetToggle(choices, label = 'Setting', def = 0) {
+	return [
+		{
+			type: 'dropdown',
+			label: 'Action',
+			id: 'op',
+			default: ACTION_SET,
+			choices: [
+				{ id: ACTION_SET, label: 'Set' },
+				{ id: ACTION_TOGGLE, label: 'Toggle' },
+			],
+		},
+		{
+			type: 'dropdown',
+			label: label,
+			id: 'set',
+			default: choices[def].id,
+			choices: choices,
+			isVisible: (options) => options.op === 's',
+		},
+	]
+}
 
-	if (str) {
-		const url = `http://${self.config.host}:${self.config.httpPort}/cgi-bin/${str}`
+function optSetToggleNextPrev(choices, label = 'Setting', def = 0) {
+	return [
+		{
+			type: 'dropdown',
+			label: 'Action',
+			id: 'op',
+			default: ACTION_SET,
+			choices: [
+				{ id: ACTION_SET, label: 'Set' },
+				{ id: ACTION_TOGGLE, label: 'Toggle' },
+				{ id: ACTION_NEXT, label: 'Next' },
+				{ id: ACTION_PREV, label: 'Previous' },
+			],
+		},
+		{
+			type: 'dropdown',
+			label: label,
+			id: 'set',
+			default: choices[def].id,
+			choices: choices,
+			isVisible: (options) => options.op === 's',
+		},
+	]
+}
 
-		if (self.config.debug) {
-			self.log('debug', `Sending : ${url}`)
-		}
+function optSetIncDecStep(label = 'Value', def, min, max, step = 1) {
+	return [
+		{
+			type: 'dropdown',
+			label: 'Action',
+			id: 'op',
+			default: ACTION_SET,
+			choices: [
+				{ id: ACTION_SET, label: 'Set' },
+				{ id: ACTION_INC, label: 'Increase' },
+				{ id: ACTION_DEC, label: 'Decrease' },
+			],
+		},
+		{
+			id: 'set',
+			type: 'number',
+			label: label,
+			default: def,
+			min: min,
+			max: max,
+			step: step,
+			required: true,
+			range: true,
+			isVisible: (options) => options.op === 's',
+		},
+		{
+			id: 'step',
+			type: 'number',
+			label: 'Step size',
+			default: step,
+			min: 1,
+			max: max - min,
+			required: true,
+			isVisible: (options) => options.op !== 's',
+		},
+	]
+}
 
-		try {
-			const response = await got.get(url)
+function cmdValue(action, offset, min, max, step, hexlen, data) {
+	if (action.options.op === ACTION_SET) return toHexString(offset + action.options.set, hexlen)
+	return toHexString(offset + getNextValue(data, min, max, action.options.op * step), hexlen)
+}
 
-			// console.log("Result from REST:" + result.data);
-		} catch (err) {
-			throw new Error(`Action failed: ${url}`)
-		}
-	}
+function cmdEnum(action, dropdown, data) {
+	if (action.options.op === ACTION_SET) return action.options.set
+	if (action.options.op === ACTION_TOGGLE) return getNext(dropdown, data).id
+	return getNext(dropdown, data, action.options.op, false).id
+}
+
+function cmdSpeed(speed) {
+	return speed.toString().padStart(2, '0')
 }
 
 // ##########################
@@ -83,452 +177,102 @@ export function getActionDefinitions(self) {
 
 	const SERIES = getAndUpdateSeries(self)
 
-	const seriesActions = SERIES.actions
-
 	// ##########################
 	// #### Pan/Tilt Actions ####
 	// ##########################
 
-	if (seriesActions.panTilt) {
-		actions.left = {
-			name: 'Pan/Tilt - Pan Left',
+	if (SERIES.capabilities.panTilt) {
+		actions.ptMove = {
+			name: 'Pan/Tilt - Move',
 			options: [
 				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of panning left on speed change',
-					default: false
-				}
+					type: 'dropdown',
+					label: 'Direction',
+					id: 'dir',
+					default: '11',
+					choices: [
+						{ id: '11', label: 'Stop' },
+						{ id: '21', label: '➡ Right' }, // +
+						{ id: '01', label: '⬅ Left' }, // -
+						{ id: '12', label: '⬆ Up' }, // +
+						{ id: '10', label: '⬇ Down' }, // -
+						{ id: '22', label: '⬈ Up Right' }, // ++
+						{ id: '02', label: '⬉ Up Left' }, // -+
+						{ id: '00', label: '⬋ Down Left' }, // --
+						{ id: '20', label: '⬊ Down Right' }, // +-
+					],
+				},
+				liveSpeed,
 			],
 			callback: async (action) => {
-				let n = parseInt(50 - self.ptSpeed)
-				let string = '' + (n < 10 ? '0' + n : n)
-
-				await sendPTZ(self, 'PTS' + string + '50')
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
-						self.speedChangeEmitter.on('ptSpeed', async () => {
-							n = parseInt(50 - self.ptSpeed)
-							string = '' + (n < 10 ? '0' + n : n)
-							await sendPTZ(self, 'PTS' + string + '50')
-						})
-					)
+				if (action.options.dir === '11') {
+					// Stop
+					await self.getPTZ('PTS' + cmdSpeed(SPEED_OFFSET) + cmdSpeed(SPEED_OFFSET))
+					if (self.speedChangeEmitter.listenerCount('ptSpeed')) self.speedChangeEmitter.removeAllListeners('ptSpeed')
+				} else {
+					let arr = Array.from(action.options.dir)
+					let pan = parseInt(arr[0]) - 1
+					let tilt = parseInt(arr[1]) - 1
+					await self.getPTZ('PTS' + cmdSpeed(pan * self.pSpeed + SPEED_OFFSET) + cmdSpeed(tilt * self.tSpeed + SPEED_OFFSET))
+					if (action.options.liveSpeed) {
+						self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
+							self.speedChangeEmitter.on('ptSpeed', async () => {
+								await self.getPTZ('PTS' + cmdSpeed(pan * self.pSpeed + SPEED_OFFSET) + cmdSpeed(tilt * self.tSpeed + SPEED_OFFSET))
+							})
+						)
+					}
 				}
 			},
 		}
-	}
 
-	if (seriesActions.panTilt) {
-		actions.right = {
-			name: 'Pan/Tilt - Pan Right',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of panning right on speed change',
-					default: false
-				}
-			],
-			callback: async (action) => {
-				await sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + '50')
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
-						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + '50')
-						})
-					)
-				}
-			},
-		}
-	}
-
-	if (seriesActions.panTilt) {
-		actions.up = {
-			name: 'Pan/Tilt - Tilt Up',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of tilting up on speed change',
-					default: false
-				}
-			],
-			callback: async (action) => {
-				await sendPTZ(self, 'PTS50' + parseInt(50 + self.ptSpeed))
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
-						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await sendPTZ(self, 'PTS50' + parseInt(50 + self.ptSpeed))
-						})
-					)
-				}
-			},
-		}
-	}
-
-	if (seriesActions.panTilt) {
-		actions.down = {
-			name: 'Pan/Tilt - Tilt Down',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of tilting down on speed change',
-					default: false
-				}
-			],
-			callback: async (action) => {
-				let n = parseInt(50 - self.ptSpeed)
-				let string = '' + (n < 10 ? '0' + n : n)
-
-				await sendPTZ(self, 'PTS50' + string)
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
-						self.speedChangeEmitter.on('ptSpeed', async () => {
-							n = parseInt(50 - self.ptSpeed)
-							string = '' + (n < 10 ? '0' + n : n)
-							await sendPTZ(self, 'PTS50' + string)
-						})
-					)
-				}
-			},
-		}
-	}
-
-	if (seriesActions.panTilt) {
-		actions.upLeft = {
-			name: 'Pan/Tilt - Up Left',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of the up left movement on speed change',
-					default: false
-				}
-			],
-			callback: async (action) => {
-				let n = parseInt(50 - self.pSpeed)
-				let string = '' + (n < 10 ? '0' + n : n)
-
-				await sendPTZ(self, 'PTS' + string + parseInt(50 + self.tSpeed))
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
-						self.speedChangeEmitter.on('ptSpeed', async () => {
-							n = parseInt(50 - self.pSpeed)
-							string = '' + (n < 10 ? '0' + n : n)
-							await sendPTZ(self, 'PTS' + string + parseInt(50 + self.tSpeed))
-						})
-					)
-				}
-			},
-		}
-	}
-
-	if (seriesActions.panTilt) {
-		actions.upRight = {
-			name: 'Pan/Tilt - Up Right',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of the up right movement on speed change',
-					default: false
-				}
-			],
-			callback: async (action) => {
-				await sendPTZ(self, 'PTS' + parseInt(50 + self.pSpeed) + parseInt(50 + self.tSpeed))
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
-						self.speedChangeEmitter.on('ptSpeed', async () => {
-							await sendPTZ(self, 'PTS' + parseInt(50 + self.pSpeed) + parseInt(50 + self.tSpeed))
-						})
-					)
-				}
-			},
-		}
-	}
-
-	if (seriesActions.panTilt) {
-		actions.downLeft = {
-			name: 'Pan/Tilt - Down Left',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of the down left movement on speed change',
-					default: false
-				}
-			],
-			callback: async (action) => {
-				let np = parseInt(50 - self.pSpeed)
-				let nt = parseInt(50 - self.tSpeed)
-				let pString = '' + (np < 10 ? '0' + np : np)
-				let tString = '' + (nt < 10 ? '0' + nt : nt)
-
-				await sendPTZ(self, 'PTS' + pString + tString)
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
-						self.speedChangeEmitter.on('ptSpeed', async () => {
-							np = parseInt(50 - self.pSpeed)
-							nt = parseInt(50 - self.tSpeed)
-							pString = '' + (np < 10 ? '0' + np : np)
-							tString = '' + (nt < 10 ? '0' + nt : nt)
-							await sendPTZ(self, 'PTS' + pString + tString)
-						})
-					)
-				}
-			},
-		}
-	}
-
-	if (seriesActions.panTilt) {
-		actions.downRight = {
-			name: 'Pan/Tilt - Down Right',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of the down right movement on speed change',
-					default: false
-				}
-			],
-			callback: async (action) => {
-				let n = parseInt(50 - self.tSpeed)
-				let string = '' + (n < 10 ? '0' + n : n)
-
-				await sendPTZ(self, 'PTS' + parseInt(50 + self.pSpeed) + string)
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('ptSpeed').then(
-						self.speedChangeEmitter.on('ptSpeed', async () => {
-							n = parseInt(50 - self.tSpeed)
-							string = '' + (n < 10 ? '0' + n : n)
-							await sendPTZ(self, 'PTS' + parseInt(50 + self.pSpeed) + string)
-						})
-					)
-				}
-			},
-		}
-	}
-
-	if (seriesActions.panTilt) {
-		actions.stop = {
-			name: 'Pan/Tilt - Stop',
-			options: [],
-			callback: async (action) => {
-				await sendPTZ(self, 'PTS5050')
-				if (self.speedChangeEmitter.listenerCount('ptSpeed')) self.speedChangeEmitter.removeAllListeners('ptSpeed')
-			},
-		}
-	}
-
-	if (seriesActions.panTilt) {
 		actions.home = {
-			name: 'Pan/Tilt - Home',
+			name: 'Pan/Tilt - Home Position',
 			options: [],
 			callback: async (action) => {
-				await sendPTZ(self, 'APC7FFF7FFF')
+				await self.getPTZ('APC80008000')
 			},
 		}
-	}
 
-	if (seriesActions.ptSpeed) {
-		actions.ptSpeedS = {
+		actions.ptSpeed = {
 			name: 'Pan/Tilt - Speed',
 			options: [
 				{
-					type: 'checkbox',
-					label: 'Advanced mode - set independent speed for panning and tilting',
-					id: 'advanced',
-					default: false,
-				},
-				{
 					type: 'dropdown',
-					label: 'Speed setting',
-					id: 'speed',
-					default: 25,
-					choices: c.CHOICES_SPEED,
-					isVisible: ((options) => options.advanced ? false : true)
+					label: 'Scope',
+					id: 'scope',
+					default: 'pt',
+					choices: [
+						{ id: 'pt', label: 'Pan/Tilt' },
+						{ id: 'p', label: 'Pan only' },
+						{ id: 't', label: 'Tilt only' },
+					],
 				},
-				{
-					type: 'dropdown',
-					label: 'Pan speed setting',
-					id: 'pSpeed',
-					default: 25,
-					choices: c.CHOICES_SPEED,
-					isVisible: ((options) => options.advanced ? true : false)
-				},
-				{
-					type: 'dropdown',
-					label: 'Tilt speed setting',
-					id: 'tSpeed',
-					default: 25,
-					choices: c.CHOICES_SPEED,
-					isVisible: ((options) => options.advanced ? true : false)
-				},
+				speedOperation,
+				speedSetting,
 			],
 			callback: async (action) => {
-				if (action.options.advanced === false) {
-					const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === action.options.speed)
-
-					if (i > -1) self.ptSpeedIndex = i
-					self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
-					self.pSpeed = self.ptSpeed
-					self.tSpeed = self.ptSpeed
-				} else {
-					const j = c.CHOICES_SPEED.findIndex((speed) => speed.id === action.options.pSpeed)
-					const k = c.CHOICES_SPEED.findIndex((speed) => speed.id === action.options.tSpeed)
-
-					if (j > -1) self.pSpeedIndex = j
-					if (k > -1) self.tSpeedIndex = k
-					self.pSpeed = c.CHOICES_SPEED[self.pSpeedIndex].id
-					self.tSpeed = c.CHOICES_SPEED[self.tSpeedIndex].id
-					if (self.pSpeed === self.tSpeed) {
-						self.ptSpeed = self.pSpeed
-					}
-				}
-				self.setVariableValues({
-					ptSpeedVar: self.ptSpeed,
-					pSpeedVar: self.pSpeed,
-					tSpeedVar: self.tSpeed,
-				})
-				self.speedChangeEmitter.emit('ptSpeed')
-			},
-		}
-	}
-
-	if (seriesActions.ptSpeed) {
-		actions.ptSpeedU = {
-			name: 'Pan/Tilt - Speed Up',
-			options: [],
-			callback: async () => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.ptSpeed)
-				if (i > 0) {
-					self.ptSpeedIndex = i - 1
+				switch (action.options.scope) {
+					case 'pt':
+						self.ptSpeed = action.options.op === ACTION_SET ? action.options.set : getNextValue(self.ptSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
+						self.pSpeed = self.ptSpeed
+						self.tSpeed = self.ptSpeed
+						break
+					case 'p':
+						self.pSpeed = action.options.op === ACTION_SET ? action.options.set : getNextValue(self.pSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
+						break
+					case 't':
+						self.tSpeed = action.options.op === ACTION_SET ? action.options.set : getNextValue(self.tSpeed, SPEED_MIN, SPEED_MAX, action.options.op)
+						break
 				}
 
-				self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
-				self.pSpeed = self.ptSpeed
-				self.tSpeed = self.ptSpeed
-				self.setVariableValues({
-					ptSpeedVar: self.ptSpeed,
-					pSpeedVar: self.pSpeed,
-					tSpeedVar: self.tSpeed,
-				})
-				self.speedChangeEmitter.emit('ptSpeed')
-			},
-		}
-	}
-
-	if (seriesActions.ptSpeed) {
-		actions.pSpeedU = {
-			name: 'Pan/Tilt - Pan - Speed Up',
-			options: [],
-			callback: async () => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.pSpeed)
-				if (i > 0) {
-					self.pSpeedIndex = i - 1
-				}
-
-				self.pSpeed = c.CHOICES_SPEED[self.pSpeedIndex].id
 				if (self.pSpeed === self.tSpeed) self.ptSpeed = self.pSpeed
+
 				self.setVariableValues({
-					pSpeedVar: self.pSpeed,
-					ptSpeedVar: self.ptSpeed,
+					ptSpeed: self.ptSpeed,
+					pSpeed: self.pSpeed,
+					tSpeed: self.tSpeed,
 				})
-				self.speedChangeEmitter.emit('ptSpeed')
-			},
-		}
-	}
 
-	if (seriesActions.ptSpeed) {
-		actions.tSpeedU = {
-			name: 'Pan/Tilt - Tilt - Speed Up',
-			options: [],
-			callback: async () => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.tSpeed)
-				if (i > 0) {
-					self.tSpeedIndex = i - 1
-				}
-
-				self.tSpeed = c.CHOICES_SPEED[self.tSpeedIndex].id
-				if (self.tSpeed === self.pSpeed) self.ptSpeed = self.tSpeed
-				self.setVariableValues({
-					tSpeedVar: self.tSpeed,
-					ptSpeedVar: self.ptSpeed,
-				})
-				self.speedChangeEmitter.emit('ptSpeed')
-			},
-		}
-	}
-
-	if (seriesActions.ptSpeed) {
-		actions.ptSpeedD = {
-			name: 'Pan/Tilt - Speed Down',
-			options: [],
-			callback: async () => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.ptSpeed)
-				if (i < 49) {
-					self.ptSpeedIndex = i + 1
-				}
-
-				self.ptSpeed = c.CHOICES_SPEED[self.ptSpeedIndex].id
-				self.pSpeed = self.ptSpeed
-				self.tSpeed = self.ptSpeed
-				self.setVariableValues({
-					ptSpeedVar: self.ptSpeed,
-					pSpeedVar: self.pSpeed,
-					tSpeedVar: self.tSpeed,
-				})
-				self.speedChangeEmitter.emit('ptSpeed')
-			},
-		}
-	}
-
-	if (seriesActions.ptSpeed) {
-		actions.pSpeedD = {
-			name: 'Pan/Tilt - Pan - Speed Down',
-			options: [],
-			callback: async () => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.pSpeed)
-				if (i < 49) {
-					self.pSpeedIndex = i + 1
-				}
-
-				self.pSpeed = c.CHOICES_SPEED[self.pSpeedIndex].id
-				if (self.pSpeed === self.tSpeed) self.ptSpeed = self.pSpeed
-				self.setVariableValues({
-					pSpeedVar: self.pSpeed,
-					ptSpeedVar: self.ptSpeed,
-				})
-				self.speedChangeEmitter.emit('ptSpeed')
-			},
-		}
-	}
-
-	if (seriesActions.ptSpeed) {
-		actions.tSpeedD = {
-			name: 'Pan/Tilt - Tilt - Speed Down',
-			options: [],
-			callback: async () => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.tSpeed)
-				if (i < 49) {
-					self.tSpeedIndex = i + 1
-				}
-
-				self.tSpeed = c.CHOICES_SPEED[self.tSpeedIndex].id
-				if (self.tSpeed === self.pSpeed) self.ptSpeed = self.tSpeed
-				self.setVariableValues({
-					tSpeedVar: self.tSpeed,
-					ptSpeedVar: self.ptSpeed,
-				})
 				self.speedChangeEmitter.emit('ptSpeed')
 			},
 		}
@@ -538,283 +282,96 @@ export function getActionDefinitions(self) {
 	// #### Lens Actions ####
 	// ######################
 
-	if (seriesActions.zoom) {
-		actions.zoomI = {
-			name: 'Lens - Zoom In',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of zooming in on speed change',
-					default: false
-				}
-			],
+	if (SERIES.capabilities.zoom) {
+		actions.zoom = {
+			name: 'Lens - Zoom',
+			options: optMove('⬆ In', '⬇ Out'),
 			callback: async (action) => {
-				await sendPTZ(self, 'Z' + parseInt(50 + self.zSpeed))
+				await self.getPTZ('Z' + cmdSpeed(action.options.dir * self.zSpeed + SPEED_OFFSET))
 
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('zSpeed').then(
-						self.speedChangeEmitter.on('zSpeed', async () => {
-							await sendPTZ(self, 'Z' + parseInt(50 + self.zSpeed))
-						})
-					)
-				}
-			},
-		}
-	}
-
-	if (seriesActions.zoom) {
-		actions.zoomO = {
-			name: 'Lens - Zoom Out',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the velocity of zooming out on speed change',
-					default: false
-				}
-			],
-			callback: async (action) => {
-				let n = parseInt(50 - self.zSpeed)
-				let string = '' + (n < 10 ? '0' + n : n)
-
-				await sendPTZ(self, 'Z' + string)
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('zSpeed').then(
-						self.speedChangeEmitter.on('zSpeed', async () => {
-							n = parseInt(50 - self.zSpeed)
-							string = '' + (n < 10 ? '0' + n : n)
-							await sendPTZ(self, 'Z' + string)
-						})
-					)
-				}
-			},
-		}
-	}
-
-	if (seriesActions.zoom) {
-		actions.zoomS = {
-			name: 'Lens - Zoom Stop',
-			options: [],
-			callback: async (action) => {
-				await sendPTZ(self, 'Z50')
 				if (self.speedChangeEmitter.listenerCount('zSpeed')) self.speedChangeEmitter.removeAllListeners('zSpeed')
+
+				if (action.options.liveSpeed) {
+					self.speedChangeEmitter.on('zSpeed', async () => {
+						await self.getPTZ('Z' + cmdSpeed(action.options.dir * self.zSpeed + SPEED_OFFSET))
+					})
+				}
 			},
 		}
-	}
 
-	if (seriesActions.zSpeed) {
-		actions.zSpeedS = {
+		actions.zoomSpeed = {
 			name: 'Lens - Zoom Speed',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Speed setting',
-					id: 'speed',
-					default: 25,
-					choices: c.CHOICES_SPEED,
-				},
-			],
+			options: [speedOperation, speedSetting],
 			callback: async (action) => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === action.options.speed)
-				if (i > -1) {
-					self.zSpeedIndex = i
-				}
-
-				self.zSpeed = c.CHOICES_SPEED[self.zSpeedIndex].id
-				self.setVariableValues({ zSpeedVar: self.zSpeed })
+				self.zSpeed = action.options.op !== ACTION_SET ? getNextValue(self.zSpeed, SPEED_MIN, SPEED_MAX, action.options.op) : action.options.set
+				self.setVariableValues({ zSpeed: self.zSpeed })
 				self.speedChangeEmitter.emit('zSpeed')
 			},
 		}
 	}
 
-	if (seriesActions.zSpeed) {
-		actions.zSpeedU = {
-			name: 'Lens - Zoom Speed Up',
-			options: [],
-			callback: async () => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.zSpeed)
-				if (i > 0) {
-					self.zSpeedIndex = i - 1
-				}
-
-				self.zSpeed = c.CHOICES_SPEED[self.zSpeedIndex].id
-				self.setVariableValues({ zSpeedVar: self.zSpeed })
-				self.speedChangeEmitter.emit('zSpeed')
-			},
-		}
-	}
-
-	if (seriesActions.zSpeed) {
-		actions.zSpeedD = {
-			name: 'Lens - Zoom Speed Down',
-			options: [],
-			callback: async () => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.zSpeed)
-				if (i < 49) {
-					self.zSpeedIndex = i + 1
-				}
-
-				self.zSpeed = c.CHOICES_SPEED[self.zSpeedIndex].id
-				self.setVariableValues({ zSpeedVar: self.zSpeed })
-				self.speedChangeEmitter.emit('zSpeed')
-			},
-		}
-	}
-
-	if (seriesActions.focus) {
-		actions.focusN = {
-			name: 'Lens - Focus Near',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the quickness of near focusing on speed change',
-					default: false
-				}
-			],
+	if (SERIES.capabilities.focus) {
+		actions.focus = {
+			name: 'Lens - Focus',
+			options: optMove('⬆ Far', '⬇ Near'),
 			callback: async (action) => {
-				let n = parseInt(50 - self.fSpeed)
-				let string = '' + (n < 10 ? '0' + n : n)
+				await self.getPTZ('F' + cmdSpeed(action.options.dir * self.fSpeed + SPEED_OFFSET))
 
-				await sendPTZ(self, 'F' + string)
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('fSpeed').then(
-						self.speedChangeEmitter.on('fSpeed', async () => {
-							n = parseInt(50 - self.fSpeed)
-							string = '' + (n < 10 ? '0' + n : n)
-							await sendPTZ(self, 'F' + string)
-						})
-					)
-				}
-			},
-		}
-	}
-
-	if (seriesActions.focus) {
-		actions.focusF = {
-			name: 'Lens - Focus Far',
-			options: [
-				{
-					id: 'liveSpeed',
-					type: 'checkbox',
-					label: 'Adjust the quickness of far focusing on speed change',
-					default: false
-				}
-			],
-			callback: async (action) => {
-				await sendPTZ(self, 'F' + parseInt(50 + self.fSpeed))
-
-				if (action.options.liveSpeed) {
-					self.speedChangeEmitter.removeAllListeners('fSpeed').then(
-						self.speedChangeEmitter.on('fSpeed', async () => {
-							await sendPTZ(self, 'F' + parseInt(50 + self.fSpeed))
-						})
-					)
-				}
-			},
-		}
-	}
-
-	if (seriesActions.focus) {
-		actions.focusS = {
-			name: 'Lens - Focus Stop',
-			options: [],
-			callback: async (action) => {
-				await sendPTZ(self, 'F50')
 				if (self.speedChangeEmitter.listenerCount('fSpeed')) self.speedChangeEmitter.removeAllListeners('fSpeed')
+
+				if (action.options.liveSpeed) {
+					self.speedChangeEmitter.on('fSpeed', async () => {
+						await self.getPTZ('F' + cmdSpeed(action.options.dir * self.fSpeed + SPEED_OFFSET))
+					})
+				}
 			},
 		}
-	}
 
-	if (seriesActions.fSpeed) {
-		actions.fSpeedS = {
+		actions.focusSpeed = {
 			name: 'Lens - Focus Speed',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Speed setting',
-					id: 'speed',
-					default: 25,
-					choices: c.CHOICES_SPEED,
-				},
-			],
+			options: [speedOperation, speedSetting],
 			callback: async (action) => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === action.options.speed)
-				if (i > -1) {
-					self.fSpeedIndex = i
-				}
-
-				self.fSpeed = c.CHOICES_SPEED[self.fSpeedIndex].id
-				self.setVariableValues({ fSpeedVar: self.fSpeed })
+				self.fSpeed = action.options.op !== ACTION_SET ? getNextValue(self.fSpeed, SPEED_MIN, SPEED_MAX, action.options.op) : action.options.set
+				self.setVariableValues({ fSpeed: self.fSpeed })
 				self.speedChangeEmitter.emit('fSpeed')
 			},
 		}
-	}
 
-	if (seriesActions.fSpeed) {
-		actions.fSpeedU = {
-			name: 'Lens - Focus Speed Up',
-			options: [],
-			callback: async () => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.fSpeed)
-				if (i > 0) {
-					self.fSpeedIndex = i - 1
-				}
-
-				self.fSpeed = c.CHOICES_SPEED[self.fSpeedIndex].id
-				self.setVariableValues({ fSpeedVar: self.fSpeed })
-				self.speedChangeEmitter.emit('fSpeed')
+		actions.focusFollow = {
+			name: 'Lens - Follow Focus',
+			options: optSetIncDecStep('Focus setting', 0x555, 0x0, 0xaaa, 10),
+			callback: async (action) => {
+				await self.getPTZ('AXF' + cmdValue(action, 0x555, 0x0, 0xaaa, action.options.step, 3, self.data.focusPosition))
 			},
 		}
 	}
 
-	if (seriesActions.fSpeed) {
-		actions.fSpeedD = {
-			name: 'Lens - Focus Speed Down',
-			options: [],
+	if (SERIES.capabilities.focusAuto) {
+		actions.focusMode = {
+			name: 'Lens - Focus Mode',
+			options: optSetToggle(e.ENUM_MAN_AUTO),
 			callback: async (action) => {
-				const i = c.CHOICES_SPEED.findIndex((speed) => speed.id === self.fSpeed)
-				if (i < 49) {
-					self.fSpeedIndex = i + 1
-				}
-
-				self.fSpeed = c.CHOICES_SPEED[self.fSpeedIndex].id
-				self.setVariableValues({ fSpeedVar: self.fSpeed })
-				self.speedChangeEmitter.emit('fSpeed')
+				await self.getCam('OAF:' + cmdEnum(action, e.ENUM_MAN_AUTO, self.data.focusMode))
 			},
 		}
 	}
 
-	if (seriesActions.OAF) {
-		actions.focusM = {
-			name: 'Lens - Focus Mode (Auto Focus)',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Auto / Manual Focus',
-					id: 'bol',
-					default: 0,
-					choices: [
-						{ id: 0, label: 'Auto Focus' },
-						{ id: 1, label: 'Manual Focus' },
-					],
-				},
-			],
+	if (SERIES.capabilities.focusPushAuto) {
+		actions.focusPushAuto = {
+			name: 'Lens - Focus Push Auto',
+			options: [],
 			callback: async (action) => {
-				await sendPTZ(self, action.options.bol == 0 ? 'D11' : 'D10')
+				await self.getCam('OSE:69:1')
 			},
 		}
 	}
 
-	if (seriesActions.OTAF) {
-		actions.focusOTAF = {
-			name: 'Lens - Focus One Touch Auto (OTAF)',
-			options: [],
+	if (SERIES.capabilities.ois) {
+		actions.ois = {
+			name: 'Lens - Image Stabilization Mode',
+			options: optSetToggleNextPrev(SERIES.capabilities.ois.dropdown),
 			callback: async (action) => {
-				await sendCam(self, 'OSE:69:1')
+				await self.getCam('OIS:' + cmdEnum(action, SERIES.capabilities.ois.dropdown, self.data.ois))
 			},
 		}
 	}
@@ -823,469 +380,320 @@ export function getActionDefinitions(self) {
 	// #### Exposure Actions ####
 	// ##########################
 
-	if (seriesActions.iris) {
-		actions.irisU = {
-			name: 'Exposure - Iris Up',
-			options: [],
+	if (SERIES.capabilities.iris) {
+		actions.iris = {
+			name: 'Exposure - Iris',
+			options: optSetIncDecStep('Iris setting', 0x555, 0x0, 0xaaa, 0x1e),
 			callback: async (action) => {
-				if (self.irisIndex == CHOICES_IRIS.length) {
-					self.irisIndex = CHOICES_IRIS.length
-				} else if (self.irisIndex < CHOICES_IRIS.length) {
-					self.irisIndex++
-				}
-				self.irisVal = CHOICES_IRIS[self.irisIndex].id
-				await sendPTZ(self, 'I' + self.irisVal.toUpperCase())
+				await self.getPTZ('AXI' + cmdValue(action, 0x555, 0x0, 0xaaa, action.options.step, 3, self.data.irisPosition))
+			},
+		}
+
+		actions.irisMode = {
+			name: 'Exposure - Iris Mode',
+			options: optSetToggle(e.ENUM_MAN_AUTO),
+			callback: async (action) => {
+				await self.getCam('ORS:' + cmdEnum(action, e.ENUM_MAN_AUTO, self.data.irisMode))
 			},
 		}
 	}
 
-	if (seriesActions.iris) {
-		actions.irisD = {
-			name: 'Exposure - Iris Down',
-			options: [],
+	if (SERIES.capabilities.filter) {
+		actions.filter = {
+			name: 'Exposure - ND Filter',
+			options: optSetToggleNextPrev(SERIES.capabilities.filter.dropdown),
 			callback: async (action) => {
-				if (self.irisIndex == 0) {
-					self.irisIndex = 0
-				} else if (self.irisIndex > 0) {
-					self.irisIndex--
-				}
-				self.irisVal = CHOICES_IRIS[self.irisIndex].id
-				await sendPTZ(self, 'I' + self.irisVal.toUpperCase())
+				await self.getCam('OFT:' + cmdEnum(action, SERIES.capabilities.filter.dropdown, self.data.filter))
 			},
 		}
 	}
 
-	if (seriesActions.iris) {
-		actions.irisS = {
-			name: 'Exposure - Set Iris',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Iris setting',
-					id: 'val',
-					default: CHOICES_IRIS[0].id,
-					choices: CHOICES_IRIS,
+	if (SERIES.capabilities.shutter) {
+		if (SERIES.capabilities.shutter) {
+			actions.shutter = {
+				name: 'Exposure - Shutter',
+				options: optSetToggleNextPrev(SERIES.capabilities.shutter.dropdown),
+				callback: async (action) => {
+					await self.getCam(SERIES.capabilities.shutter.cmd + ':' + cmdEnum(action, SERIES.capabilities.shutter.dropdown, self.data.shutter))
 				},
-			],
-			callback: async (action) => {
-				await sendPTZ(self, 'I' + action.options.val)
-				self.irisVal = action.options.val
-				self.irisIndex = action.options.val
-			},
+			}
 		}
-	}
 
-	if (seriesActions.iris) {
-		actions.irisM = {
-			name: 'Exposure - Iris Mode (Auto Iris)',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Auto / Manual Iris',
-					id: 'bol',
-					default: 0,
-					choices: [
-						{ id: 0, label: 'Auto Iris' },
-						{ id: 1, label: 'Manual Iris' },
-					],
+		if (SERIES.capabilities.shutter.inc && SERIES.capabilities.shutter.dec) {
+			actions.shutterStepU = {
+				name: 'Exposure - Shutter Step Up',
+				options: [],
+				callback: async (action) => {
+					await self.getCam(SERIES.capabilities.shutter.inc + ':01')
 				},
-			],
-			callback: async (action) => {
-				await sendPTZ(self, action.options.bol == 0 ? 'D30' : 'D31')
-			},
-		}
-	}
+			}
 
-	if (seriesActions.gain.cmd) {
-		actions.gainU = {
-			name: 'Exposure - Gain Up',
-			options: [],
-			callback: async (action) => {
-				const index = seriesActions.gain.dropdown.findIndex((GAIN) => GAIN.id == self.data.gainValue)
-				if (index !== -1) {
-					self.gainIndex = index
-				}
-
-				if (self.gainIndex == seriesActions.gain.dropdown.length) {
-					self.gainIndex = seriesActions.gain.dropdown.length
-				} else if (self.gainIndex < seriesActions.gain.dropdown.length) {
-					self.gainIndex++
-				}
-				self.gainVal = seriesActions.gain.dropdown[self.gainIndex].id
-
-				await sendCam(self, seriesActions.gain.cmd + self.gainVal.toUpperCase())
-			},
-		}
-	}
-
-	if (seriesActions.gain.cmd) {
-		actions.gainD = {
-			name: 'Exposure - Gain Down',
-			options: [],
-			callback: async (action) => {
-				let index = seriesActions.gain.dropdown.findIndex((GAIN) => GAIN.id == self.data.gainValue)
-				if (index !== -1) {
-					self.gainIndex = index
-				}
-
-				if (self.gainIndex == 0) {
-					self.gainIndex = 0
-				} else if (self.gainIndex > 0) {
-					self.gainIndex--
-				}
-				self.gainVal = seriesActions.gain.dropdown[self.gainIndex].id
-
-				await sendCam(self, seriesActions.gain.cmd + self.gainVal.toUpperCase())
-			},
-		}
-	}
-
-	if (seriesActions.gain.cmd) {
-		actions.gainS = {
-			name: 'Exposure - Set Gain',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Gain setting',
-					id: 'val',
-					default: seriesActions.gain.dropdown[0].id,
-					choices: seriesActions.gain.dropdown,
+			actions.shutterStepD = {
+				name: 'Exposure - Shutter Step Down',
+				options: [],
+				callback: async (action) => {
+					await self.getCam(SERIES.capabilities.shutter.dec + ':01')
 				},
-			],
-			callback: async (action) => {
-				await sendCam(self, seriesActions.gain.cmd + action.options.val)
-			},
-		}
-	}
-
-	if (seriesActions.shut.cmd) {
-		actions.shutU = {
-			name: 'Exposure - Shutter Up',
-			options: [],
-			callback: async (action) => {
-				if (self.shutIndex == seriesActions.shut.dropdown.length) {
-					self.shutIndex = seriesActions.shut.dropdown.length
-				} else if (self.shutIndex < seriesActions.shut.dropdown.length) {
-					self.shutIndex++
-				}
-				self.shutVal = seriesActions.shut.dropdown[self.shutIndex].id
-
-				await sendCam(self, seriesActions.shut.cmd + self.shutVal.toUpperCase())
-			},
-		}
-	}
-
-	if (seriesActions.shut.cmd) {
-		actions.shutD = {
-			name: 'Exposure - Shutter Down',
-			options: [],
-			callback: async (action) => {
-				if (self.shutIndex == 0) {
-					self.shutIndex = 0
-				} else if (self.shutIndex > 0) {
-					self.shutIndex--
-				}
-				self.shutVal = seriesActions.shut.dropdown[self.shutIndex].id
-
-				await sendCam(self, seriesActions.shut.cmd + self.shutVal.toUpperCase())
-			},
-		}
-	}
-
-	if (seriesActions.shut.cmd) {
-		actions.shutS = {
-			name: 'Exposure - Set Shutter',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Shutter setting',
-					id: 'val',
-					default: seriesActions.shut.dropdown[0].id,
-					choices: seriesActions.shut.dropdown,
-				},
-			],
-			callback: async (action) => {
-				await sendCam(self, seriesActions.shut.cmd + action.options.val.toUpperCase())
-			},
-		}
-	}
-
-	if (seriesActions.ped.cmd) {
-		actions.pedU = {
-			name: 'Exposure - Pedestal Up',
-			options: [],
-			callback: async (action) => {
-				if (self.pedestalIndex == seriesActions.ped.dropdown.length) {
-					self.pedestalIndex = seriesActions.ped.dropdown.length
-				} else if (self.pedestalIndex < seriesActions.ped.dropdown.length) {
-					self.pedestalIndex++
-				}
-				self.pedestalVal = seriesActions.ped.dropdown[self.pedestalIndex].id
-
-				await sendCam(self, seriesActions.ped.cmd + self.pedestalVal.toUpperCase())
-			},
-		}
-	}
-
-	if (seriesActions.ped.cmd) {
-		actions.pedD = {
-			name: 'Exposure - Pedestal Down',
-			options: [],
-			callback: async (action) => {
-				if (self.pedestalIndex == 0) {
-					self.pedestalIndex = 0
-				} else if (self.pedestalIndex > 0) {
-					self.pedestalIndex--
-				}
-				self.pedestalVal = seriesActions.ped.dropdown[self.pedestalIndex].id
-
-				await sendCam(self, seriesActions.ped.cmd + self.pedestalVal.toUpperCase())
-			},
-		}
-	}
-
-	if (seriesActions.ped.cmd) {
-		actions.pedS = {
-			name: 'Exposure - Set Pedestal',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Pedestal setting',
-					id: 'val',
-					default: seriesActions.ped.dropdown[0].id,
-					choices: seriesActions.ped.dropdown,
-				},
-			],
-			callback: async (action) => {
-				await sendCam(self, seriesActions.ped.cmd + action.options.val.toUpperCase())
-			},
-		}
-	}
-
-	if (seriesActions.colorTemperature) { 
-		actions.colorTemperatureUp = {
-			name: 'Color Temperature Up',
-			options: [],
-			callback: async (action) => {
-				if (self.colorTemperatureIndex == seriesActions.colorTemperature.dropdown.length) {
-					self.colorTemperatureIndex = seriesActions.colorTemperature.dropdown.length
-				} else if (self.colorTemperatureIndex < seriesActions.colorTemperature.dropdown.length) {
-					self.colorTemperatureIndex++
-				}
-				self.colorTemperatureValue = seriesActions.colorTemperature.dropdown[self.colorTemperatureIndex].id
-
-				await sendCam(self, seriesActions.colorTemperature.cmd + self.colorTemperatureValue.toUpperCase())
-			},
-		}
-	}
-	
-	if (seriesActions.colorTemperature) {
-		actions.colorTemperatureDown = {
-			name: 'Color Temperature Down',
-			options: [],
-			callback: async (action) => {
-				if (self.colorTemperatureIndex == 0) {
-					self.colorTemperatureIndex = 0
-				} else if (self.colorTemperatureIndex > 0) {
-					self.colorTemperatureIndex--
-				}
-				self.colorTemperatureValue = seriesActions.colorTemperature.dropdown[self.colorTemperatureIndex].id
-
-				await sendCam(self, seriesActions.colorTemperature.cmd + self.colorTemperatureValue.toUpperCase())
-			},
-		}
-	}
-
-	if (seriesActions.colorTemperature) {
-		actions.colorTemperatureSet = {
-			name: 'Set Color Temperature',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Color Temperature',
-					id: 'val',
-					default: seriesActions.colorTemperature.dropdown[0].id,
-					choices: seriesActions.colorTemperature.dropdown,
-				},
-			],
-			callback: async (action) => {
-				
-				let id = action.options.val.toUpperCase();
-				let index = seriesActions.colorTemperature.dropdown.findIndex((colorTemperature) => colorTemperature.id == id);
-
-				self.colorTemperatureIndex = index;
-				self.colorTemperatureValue = id;
-
-				await sendCam(self, seriesActions.colorTemperature.cmd + id)
-			},
-		}
-	}
-
-	if (seriesActions.filter.cmd) {
-		actions.filterU = {
-			name: 'Exposure - ND Filter Up',
-			options: [],
-			callback: async (action) => {
-				if (self.filterIndex == seriesActions.filter.dropdown.length) {
-					self.filterIndex = seriesActions.filter.dropdown.length
-				} else if (self.filterIndex < seriesActions.filter.dropdown.length) {
-					self.filterIndex++
-				}
-				self.filterVal = seriesActions.filter.dropdown[self.filterIndex].id
-
-				await sendCam(self, seriesActions.filter.cmd + self.filterVal)
-			},
-		}
-	}
-
-	if (seriesActions.filter.cmd) {
-		actions.filterD = {
-			name: 'Exposure - ND Filter Down',
-			options: [],
-			callback: async (action) => {
-				if (self.filterIndex == 0) {
-					self.filterIndex = 0
-				} else if (self.filterIndex > 0) {
-					self.filterIndex--
-				}
-				self.filterVal = seriesActions.filter.dropdown[self.filterIndex].id
-
-				await sendCam(self, seriesActions.filter.cmd + self.filterVal)
-			},
-		}
-	}
-
-	if (seriesActions.filter.cmd) {
-		actions.filterS = {
-			name: 'Exposure - Set ND Filter',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'ND Filter setting',
-					id: 'val',
-					default: seriesActions.filter.dropdown[0].id,
-					choices: seriesActions.filter.dropdown,
-				},
-			],
-			callback: async (action) => {
-				await sendCam(self, seriesActions.filter.dropdown + action.options.val)
-			},
+			}
 		}
 	}
 
 	// #########################
-	// #### Presets Actions ####
+	// #### Picture Actions ####
 	// #########################
 
-	if (seriesActions.preset) {
-		actions.savePset = {
-			name: 'Preset - Save',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Preset Nr.',
-					id: 'val',
-					default: CHOICES_PRESET[0].id,
-					choices: CHOICES_PRESET,
-				},
-			],
+	if (SERIES.capabilities.gain.cmd) {
+		actions.gain = {
+			name: 'Picture - Gain',
+			options: optSetToggleNextPrev(SERIES.capabilities.gain.dropdown),
 			callback: async (action) => {
-				await sendPTZ(self, 'M' + action.options.val)
-			},
-		}
-	}
-	if (seriesActions.preset) {
-		actions.recallPset = {
-			name: 'Preset - Recall',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Preset Nr.',
-					id: 'val',
-					default: CHOICES_PRESET[0].id,
-					choices: CHOICES_PRESET,
-				},
-			],
-			callback: async (action) => {
-				await sendPTZ(self, 'R' + action.options.val)
-			},
-		}
-	}
-	if (seriesActions.preset) {
-		actions.recallModePset = {
-			name: 'Preset - Mode A, B, C',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Preset Mode',
-					id: 'val',
-					default: '0',
-					choices: [
-						{ id: '0', label: 'Mode A - PTZ + Iris + WB/Color' },
-						{ id: '1', label: 'Mode B - PTZ + Iris' },
-						{ id: '2', label: 'Mode C - PTZ only' },
-					],
-				},
-			],
-			callback: async (action) => {
-				await sendCam(self, 'OSE:71:' + action.options.val)
-			},
-		}
-	}
-	if (seriesActions.speedPset) {
-		actions.speedPset = {
-			name: 'Preset - Drive Speed',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'speed setting',
-					id: 'speed',
-					default: 999,
-					choices: c.CHOICES_PSSPEED,
-				},
-			],
-			callback: async (action) => {
-				await sendPTZ(self, 'UPVS' + action.options.speed)
-			},
-		}
-	}
-	if (seriesActions.timePset) {
-		actions.timePset = {
-			// TODO: currently only works when in Time mode.
-			name: 'Preset - Drive Time',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Time Secconds',
-					id: 'speed',
-					default: '001',
-					choices: c.CHOICES_PSTIME(),
-				},
-			],
-			callback: async (action) => {
-				await sendPTZ(self, 'UPVS' + action.options.speed)
+				await self.getCam(SERIES.capabilities.gain.cmd + ':' + cmdEnum(action, SERIES.capabilities.gain.dropdown, self.data.gain))
 			},
 		}
 	}
 
-	if (seriesActions.timePset) {
-		actions.modePset = {
-			// TODO: currently only works when in Time mode.
-			name: 'Preset - Drive Speed/Time Mode',
+	if (SERIES.capabilities.pedestal.cmd) {
+		const caps = SERIES.capabilities.pedestal
+		actions.ped = {
+			name: 'Picture - Pedestal',
+			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
+			callback: async (action) => {
+				await self.getCam(caps.cmd + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, action.options.step, caps.hexlen, self.data.masterPedValue))
+			},
+		}
+	}
+
+	if (SERIES.capabilities.colorPedestal && SERIES.capabilities.colorPedestal.cmd.red) {
+		const caps = SERIES.capabilities.colorPedestal
+		actions.pedRed = {
+			name: 'Picture - Red Pedestal',
+			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
+			callback: async (action) => {
+				await self.getCam(caps.cmd.red + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, action.options.step, caps.hexlen, self.data.redPedValue))
+			},
+		}
+	}
+
+	if (SERIES.capabilities.colorPedestal && SERIES.capabilities.colorPedestal.cmd.blue) {
+		const caps = SERIES.capabilities.colorPedestal
+		actions.pedBlue = {
+			name: 'Picture - Blue Pedestal',
+			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
+			callback: async (action) => {
+				await self.getCam(caps.cmd.blue + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, action.options.step, caps.hexlen, self.data.bluePedValue))
+			},
+		}
+	}
+
+	if (SERIES.capabilities.colorGain && SERIES.capabilities.colorGain.cmd.red) {
+		const caps = SERIES.capabilities.colorGain
+		actions.gainRed = {
+			name: 'Picture - Red Gain',
+			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
+			callback: async (action) => {
+				await self.getCam(caps.cmd.red + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, action.options.step, caps.hexlen, self.data.redGainValue))
+			},
+		}
+	}
+
+	if (SERIES.capabilities.colorGain && SERIES.capabilities.colorGain.cmd.blue) {
+		const caps = SERIES.capabilities.colorGain
+		actions.gainBlue = {
+			name: 'Picture - Blue Gain',
+			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
+			callback: async (action) => {
+				await self.getCam(caps.cmd.blue + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, action.options.step, caps.hexlen, self.data.blueGainValue))
+			},
+		}
+	}
+
+	if (SERIES.capabilities.whiteBalance) {
+		actions.whiteBalanceMode = {
+			name: 'Picture - White Balance Mode',
+			options: optSetToggleNextPrev(SERIES.capabilities.whiteBalance.dropdown),
+			callback: async (action) => {
+				await self.getCam('OAW:' + cmdEnum(action, SERIES.capabilities.whiteBalance.dropdown, self.data.whiteBalance))
+			},
+		}
+
+		actions.whiteBalanceExecAWB = {
+			name: 'Picture - Execute AWC/AWB',
+			options: [],
+			callback: async (action) => {
+				await self.getCam('OWS')
+			},
+		}
+
+		actions.whiteBalanceExecABB = {
+			name: 'Picture - Execute ABC/ABB',
+			options: [],
+			callback: async (action) => {
+				await self.getCam('OAS')
+			},
+		}
+	}
+
+	if (SERIES.capabilities.colorTemperature && SERIES.capabilities.colorTemperature.index) {
+		actions.colorTemperature = {
+			name: 'Picture - Color Temperature',
+			options: optSetToggleNextPrev(SERIES.capabilities.colorTemperature.index.dropdown),
+			callback: async (action) => {
+				await self.getCam(SERIES.capabilities.colorTemperature.index.cmd + ':' + cmdEnum(action, SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature))
+			},
+		}
+	}
+
+	if (SERIES.capabilities.colorTemperature && SERIES.capabilities.colorTemperature.advanced) {
+		if (SERIES.capabilities.colorTemperature.advanced.set) {
+			actions.colorTemperature = {
+				name: 'Picture - Color Temperature',
+				options: optSetIncDecStep('Color Temperature [K]', 3200, SERIES.capabilities.colorTemperature.advanced.min, SERIES.capabilities.colorTemperature.advanced.max, 20),
+				callback: async (action) => {
+					switch (action.options.op) {
+						case ACTION_SET:
+							await self.getCam(SERIES.capabilities.colorTemperature.advanced.set + ':' + toHexString(action.options.set, 5) + ':0')
+							break
+						case ACTION_INC:
+							await self.getCam(SERIES.capabilities.colorTemperature.advanced.inc + ':1')
+							break
+						case ACTION_DEC:
+							await self.getCam(SERIES.capabilities.colorTemperature.advanced.dec + ':1')
+							break
+					}
+				},
+			}
+		}
+	}
+
+	// ########################
+	// #### Preset Actions ####
+	// ########################
+
+	if (SERIES.capabilities.preset) {
+		actions.presetMem = {
+			name: 'Preset - Memory Operation',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Select mode',
-					id: 'mode',
-					default: '0',
+					label: 'Action',
+					id: 'op',
+					default: e.ENUM_PRESET[0].id,
 					choices: [
-						{ id: '0', label: 'Speed mode' },
-						{ id: '1', label: 'Time mode' },
+						{ id: 'R', label: 'Recall / Play' },
+						{ id: 'M', label: 'Memorize / Save' },
+						{ id: 'C', label: 'Clear / Delete' },
 					],
+				},
+				{
+					type: 'dropdown',
+					label: 'Preset Nr.',
+					id: 'val',
+					default: e.ENUM_PRESET[0].id,
+					choices: e.ENUM_PRESET,
 				},
 			],
 			callback: async (action) => {
-				await sendCam(self, 'OSJ:29:' + action.options.mode)
+				await self.getPTZ(action.options.op + action.options.val)
+			},
+		}
+
+		actions.presetResetSelectedCompletedState = {
+			name: 'Preset - Reset Selected / Completed State',
+			options: [],
+			callback: async () => {
+				self.data.presetSelectedIdx = null
+				self.data.presetCompletedIdx = null
+				self.checkVariables()
+				self.checkFeedbacks()
+			},
+		}
+
+		actions.presetRecallMode = {
+			name: 'Preset - Recall Scope',
+			options: optSetToggleNextPrev(e.ENUM_PRESET_SCOPE, 'Preset Recall Scope'),
+			callback: async (action) => {
+				await self.getCam('OSE:71:' + cmdEnum(action, e.ENUM_PRESET_SCOPE, self.data.presetScope))
+			},
+		}
+	}
+
+	if (SERIES.capabilities.presetSpeed) {
+		actions.presetSpeed = {
+			name: 'Preset - Recall Speed',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Speed',
+					id: 'speed',
+					default: e.ENUM_PRESET_SPEED[0].id,
+					choices: e.ENUM_PRESET_SPEED,
+				},
+				{
+					type: 'dropdown',
+					label: 'Table',
+					id: 'table',
+					default: SERIES.capabilities.presetSpeed.dropdown[0].id,
+					choices: SERIES.capabilities.presetSpeed.dropdown,
+				},
+			],
+			callback: async (action) => {
+				const r = parseInt(action.options.speed, 16)
+				const s = r < 0x001 || r > 0x063
+				if (SERIES.capabilities.presetTime) await self.getCam('OSJ:29:' + (s ? '0' : '1'))
+				if (s) await self.getPTZ('PST' + action.options.table)
+				await self.getPTZ('UPVS' + action.options.speed)
+			},
+		}
+	}
+
+	if (SERIES.capabilities.presetTime) {
+		actions.presetTime = {
+			name: 'Preset - Recall Time',
+			options: [
+				{
+					id: 'val',
+					type: 'number',
+					label: 'Time Seconds',
+					default: 1,
+					min: 1,
+					max: 99,
+					required: true,
+					range: true,
+				},
+			],
+			callback: async (action) => {
+				await self.getCam('OSJ:29:1')
+				await self.getPTZ('UPVS' + toHexString(action.options.val, 3))
+			},
+		}
+	}
+
+	// ##############################
+	// #### Autotracking Actions ####
+	// ##############################
+
+	if (SERIES.capabilities.trackingAuto) {
+		actions.autotracking = {
+			name: 'Auto Tracking',
+			options: optSetToggle(e.ENUM_OFF_ON),
+			callback: async (action) => {
+				await self.getCam('OSL:B6:' + cmdEnum(action, e.ENUM_OFF_ON, self.data.autotracking))
+			},
+		}
+
+		actions.autotrackingMode = {
+			name: 'Auto Tracking - Tracking Angle',
+			options: optSetToggle(e.ENUM_AUTOTRACKING_ANGLE),
+			callback: async (action) => {
+				await self.getCam('OSL:B6:' + cmdEnum(action, e.ENUM_AUTOTRACKING_ANGLE, self.data.autotrackingAngle))
+			},
+		}
+
+		actions.trackingStartStop = {
+			name: 'Auto Tracking - Tracking Start/Stop',
+			options: optSetToggle(e.ENUM_STOP_START),
+			callback: async (action) => {
+				await self.getCam('OSL:BC:' + cmdEnum(action, e.ENUM_STOP_START, self.data.tracking))
 			},
 		}
 	}
@@ -1294,204 +702,194 @@ export function getActionDefinitions(self) {
 	// #### System Actions ####
 	// ########################
 
-	if (seriesActions.power) {
-		actions.powerOff = {
-			name: 'System - Power Off',
+	if (SERIES.capabilities.power) {
+		actions.power = {
+			name: 'System - Power',
+			options: optSetToggle(e.ENUM_OFF_ON),
+			callback: async (action) => {
+				await self.getPTZ('O' + cmdEnum(action, e.ENUM_OFF_ON, self.data.power))
+			},
+		}
+	}
+
+	//ToDo: POST with Admin auth
+	/*
+ 	if (SERIES.capabilities.restart) {
+		actions.restart = {
+			name: 'System - Restart Camera',
 			options: [],
 			callback: async (action) => {
-				await sendPTZ(self, 'O0')
+				//ToDo: POST with Admin auth
+				await self.getWeb('initial?cmd=reset&Randomnum=0123456789ABCDEF')
 			},
 		}
 	}
+	*/
 
-	if (seriesActions.power) {
-		actions.powerOn = {
-			name: 'System - Power On',
-			options: [],
+	if (SERIES.capabilities.tally) {
+		if (SERIES.capabilities.tally2) {
+			actions.tally = {
+				name: 'System - Red Tally',
+				options: optSetToggle(e.ENUM_OFF_ON),
+				callback: async (action) => {
+					await self.getCam('TLR:' + cmdEnum(action, e.ENUM_OFF_ON, self.data.tally))
+				},
+			}
+			actions.tally2 = {
+				name: 'System - Green Tally',
+				options: optSetToggle(e.ENUM_OFF_ON),
+				callback: async (action) => {
+					await self.getCam('TLG:' + cmdEnum(action, e.ENUM_OFF_ON, self.data.tally2))
+				},
+			}
+			if (SERIES.capabilities.tally3) {
+				actions.tally3 = {
+					name: 'System - Yellow Tally',
+					options: optSetToggle(e.ENUM_OFF_ON),
+					callback: async (action) => {
+						await self.getCam('TLY:' + cmdEnum(action, e.ENUM_OFF_ON, self.data.tally3))
+					},
+				}
+			}
+		} else {
+			// Use legacy PTZ Tally
+			actions.tally = {
+				name: 'System - Tally',
+				options: optSetToggle(e.ENUM_OFF_ON),
+				callback: async (action) => {
+					await self.getPTZ('DA' + cmdEnum(action, e.ENUM_OFF_ON, self.data.tally))
+				},
+			}
+		}
+	}
+
+	if (SERIES.capabilities.colorbar) {
+		actions.colorbar = {
+			name: 'System - Color Bar',
+			options: optSetToggle(e.ENUM_OFF_ON),
 			callback: async (action) => {
-				await sendPTZ(self, 'O1')
+				await self.getCam('DCB:' + cmdEnum(action, e.ENUM_OFF_ON, self.data.colorbar))
 			},
 		}
 	}
 
-	if (seriesActions.tally)  {
-		if (seriesActions.tally2)  {
-			actions.tallyOff = {
-				name: 'System - Red Tally Off',
-				options: [],
-				callback: async (action) => {
-					await sendCam(self, 'TLR:0')
-				},
-			}
-			actions.tallyOn = {
-				name: 'System - Red Tally On',
-				options: [],
-				callback: async (action) => {
-					await sendCam(self, 'TLR:1')
-				},
-			}
-			actions.tally2Off = {
-				name: 'System - Green Tally Off',
-				options: [],
-				callback: async (action) => {
-					await sendCam(self, 'TLG:0')
-				},
-			}
-			actions.tally2On = {
-				name: 'System - Green Tally On',
-				options: [],
-				callback: async (action) => {
-					await sendCam(self, 'TLG:1')
-				},
-			}
-		} else { // Use legacy PTZ Tally
-			actions.tallyOff = {
-				name: 'System - Tally Off',
-				options: [],
-				callback: async (action) => {
-					await sendPTZ(self, 'DA0')
-				},
-			}
-			actions.tallyOn = {
-				name: 'System - Tally On',
-				options: [],
-				callback: async (action) => {
-					await sendPTZ(self, 'DA1')
-				},
-			}
-		}
-	}
-
-	if (seriesActions.ins) {
-		actions.insPosition = {
-			name: 'System - Installation position',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Position',
-					id: 'position',
-					default: 0,
-					choices: [
-						{ id: '0', label: 'Desktop' },
-						{ id: '1', label: 'Hanging' },
-					],
-				},
-			],
+	if (SERIES.capabilities.install) {
+		actions.installPosition = {
+			name: 'System - Installation Position',
+			options: optSetToggle(e.ENUM_INSTALL_POSITION),
 			callback: async (action) => {
-				await sendPTZ(self, 'INS' + action.options.position)
+				await self.getPTZ('INS' + cmdEnum(action, e.ENUM_INSTALL_POSITION, self.data.installMode))
 			},
 		}
 	}
 
-	if (seriesActions.sdCard) {
+	if (SERIES.capabilities.recordSD) {
 		actions.sdCardRec = {
 			name: 'System - SD Card Recording',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Option',
-					id: 'value',
-					default: 'start',
-					choices: [
-						{ id: 'start', label: 'Start Recording' },
-						{ id: 'end', label: 'Stop Recording' },
-					],
+					label: 'Action',
+					id: 'val',
+					default: e.ENUM_RECORDING[0].id,
+					choices: e.ENUM_RECORDING,
 				},
 			],
 			callback: async (action) => {
-				await sendWeb(self, 'sdctrl?save=' + action.options.value)
+				await self.getWeb('sdctrl?save=' + action.options.val)
 			},
 		}
 	}
 
-	if (seriesActions.colorBars) {
-		actions.colorBarsOn = {
-			name: 'Color Bars - Enable',
-			options: [],
+	if (SERIES.capabilities.streamSRT) {
+		actions.srtStreamCtrl = {
+			name: 'Streaming - SRT Stream Control',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'SRT Action (Caller)',
+					id: 'val',
+					default: e.ENUM_STREAMING[0].id,
+					choices: e.ENUM_STREAMING,
+				},
+			],
 			callback: async (action) => {
-				await sendCam(self, 'DCB:1');
+				await self.getWeb('srt_ctrl?cmd=' + action.options.val)
 			},
 		}
-		actions.colorBarsOff = {
-			name: 'Color Bars - Disable',
-			options: [],
+	}
+
+	if (SERIES.capabilities.streamTS) {
+		actions.tsStreamCtrl = {
+			name: 'Streaming - TS Stream Control',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'MPEG-TS Action',
+					id: 'val',
+					default: e.ENUM_STREAMING[0].id,
+					choices: e.ENUM_STREAMING,
+				},
+			],
 			callback: async (action) => {
-				await sendCam(self, 'DCB:0');
+				await self.getWeb('ts_ctrl?cmd=' + action.options.val)
 			},
 		}
-		if (seriesActions.colorBarsSetup) {
-			actions.colorBarSetupsOn = {
-				name: 'Color Bars - Setup On (7.5IRE)',
-				options: [],
-				callback: async (action) => {
-					await sendCam(self, 'DCS:1');
+	}
+
+	if (SERIES.capabilities.streamRTMP) {
+		actions.rtmpStreamCtrl = {
+			name: 'Streaming - RTMP Stream Control',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'RTMP Action (Push)',
+					id: 'val',
+					default: e.ENUM_STREAMING[0].id,
+					choices: e.ENUM_STREAMING,
 				},
-			}
-			actions.colorBarsSetupOff = {
-				name: 'Color Bars - Setup Off (0.0IRE)',
-				options: [],
-				callback: async (action) => {
-					await sendCam(self, 'DCS:0');
-				},
-			}
+			],
+			callback: async (action) => {
+				await self.getWeb('rtmp_ctrl?cmd=' + action.options.val)
+			},
 		}
-		if (seriesActions.colorBarsTitle) {
-			actions.colorBarsTitleOn = {
-				name: 'Color Bars - Title On',
-				options: [],
-				callback: async (action) => {
-					await sendCam(self, 'OSD:BE:1');
-				},
-			}
-			actions.colorBarsTitleOff = {
-				name: 'Color Bars - Title Off',
-				options: [],
-				callback: async (action) => {
-					await sendCam(self, 'OSD:BE:0');
-				},
-			}
-		}
-		if (seriesActions.colorBarsTone) {
-			actions.colorBarsTone = {
-				name: 'Color Bars - Tone',
-				options: [
-					{
-						type: 'dropdown',
-						label: 'Tone',
-						id: 'tone',
-						default: 0,
-						choices: [
-							{ id: '0h', label: 'Off' },
-							{ id: '1h', label: 'Low' },
-							{ id: '2h', label: 'Normal' },
-						],
-					},
+	}
+
+	actions.customCommand = {
+		name: 'Custom Command',
+		description: 'Sends an custom command to the camera. This enables at least basic operations that are not (yet) covered by this module.. Please read the public protocol specifications for details!',
+		options: [
+			{
+				type: 'dropdown',
+				label: 'Target',
+				id: 'dest',
+				default: 0,
+				choices: [
+					{ id: 0, label: 'Cam' },
+					{ id: 1, label: 'PTZ' },
+					{ id: 2, label: 'Web' },
 				],
-				callback: async (action) => {
-					await sendCam(self, 'OSJ:27:' + action.options.tone);
-				},
+			},
+			{
+				id: 'cmd',
+				type: 'textinput',
+				label: 'Command (without leading # for PTZ commands)',
+				default: '',
+			},
+		],
+		callback: async (action) => {
+			switch (action.options.dest) {
+				case 0:
+					await self.getCam(action.options.cmd)
+					break
+				case 1:
+					await self.getPTZ(action.options.cmd)
+					break
+				case 2:
+					await self.getWeb(action.options.cmd)
+					break
 			}
-		}
-		if (seriesActions.colorBarsType) {
-			actions.colorBarsType = {
-				name: 'Color Bars - Type',
-				options: [
-					{
-						type: 'dropdown',
-						label: 'Type',
-						id: 'type',
-						default: 1,
-						choices: [
-							{ id: '1', label: 'Type 1' },
-							{ id: '0', label: 'Type 2' },
-						],
-					},
-				],
-				callback: async (action) => {
-					await sendCam(self, 'OSD:BA:' + action.options.type);
-				},
-			}
-		}
+		},
 	}
 
 	return actions

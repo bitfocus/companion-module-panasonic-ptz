@@ -1,5 +1,5 @@
 import { runEntrypoint, InstanceBase, InstanceStatus } from '@companion-module/base'
-import { UpgradeScripts } from './upgrades.js'
+import { upgradeScripts } from './upgrades.js'
 import { getActionDefinitions } from './actions.js'
 import { getFeedbackDefinitions } from './feedbacks.js'
 import { getPresetDefinitions } from './presets.js'
@@ -7,25 +7,50 @@ import { setVariables, checkVariables } from './variables.js'
 import { ConfigFields } from './config.js'
 import * as net from 'net'
 import got from 'got'
+import JimpRaw from 'jimp'
 import EventEmitter from 'events'
+import { getAndUpdateSeries } from './common.js'
+import { parseUpdate, parseWeb } from './parser.js'
+import { pollCameraStatus, pullCameraStatus } from './polling.js'
+
+// Webpack makes a mess..
+const Jimp = JimpRaw.default || JimpRaw
 
 // ########################
 // #### Instance setup ####
 // ########################
 class PanasonicPTZInstance extends InstanceBase {
+	constructor(internal) {
+		super(internal)
+	}
+
+	// When module gets deleted
+	async destroy() {
+		this.poll = false
+		// Remove TCP Server and close all connections
+		if (this.server) {
+			// Stop getting Status Updates
+			await this.unsubscribeTCPEvents(this.tcpPortSelected)
+
+			// Close and delete server
+			this.server.close()
+			delete this.server
+		}
+	}
+
 	async unsubscribeTCPEvents(port) {
 		const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/event?connect=stop&my_port=${port}&uid=0`
 
 		if (this.config.debug) {
-			this.log('debug', `Sending : ${url}`)
+			this.log('debug', 'TCP unsubscription request: ' + url)
 		}
 
 		try {
-			await got.get(url)
+			await got.get(url, { timeout: { request: this.config.timeout } })
 
 			this.log('info', 'un-subscribed: ' + url)
 		} catch (err) {
-			this.log('error', 'Error from PTZ: ' + String(err))
+			if (this.handleConnectionError(err)) this.log('error', 'Error on TCP unsubscribe: ' + String(err))
 		}
 	}
 
@@ -33,19 +58,20 @@ class PanasonicPTZInstance extends InstanceBase {
 		const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/event?connect=start&my_port=${port}&uid=0`
 
 		if (this.config.debug) {
-			this.log('debug', `Sending : ${url}`)
+			this.log('debug', 'TCP subscription request: ' + url)
 		}
 
 		try {
-			await got.get(url)
+			await got.get(url, { timeout: { request: this.config.timeout } })
 
 			this.log('info', 'subscribed: ' + url)
 
 			this.updateStatus(InstanceStatus.Ok)
-		} catch (err) {
-			this.log('error', 'Error from PTZ: ' + String(err))
 
-			this.updateStatus(InstanceStatus.Disconnected)
+			await this.getPTZ('LPC1') // enable Lens Position Information updates
+		} catch (err) {
+			if (this.handleConnectionError(err)) this.log('error', 'Error on subscribe: ' + String(err))
+			//this.updateStatus(InstanceStatus.UnknownWarning, 'TCP subscription failed')
 		}
 	}
 
@@ -64,8 +90,6 @@ class PanasonicPTZInstance extends InstanceBase {
 			delete this.server
 		}
 
-		this.updateStatus(InstanceStatus.Connecting)
-
 		if (this.config.host) {
 			// Create a new TCP server.
 			this.server = net.createServer((socket) => {
@@ -77,7 +101,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				// common error handler
 				socket.on('error', () => {
 					this.clients.splice(this.clients.indexOf(socket), 1)
-					this.log('error', 'PTZ errored/died: ' + socket.name)
+					this.log('error', 'Update notification channel errored/died: ' + socket.name)
 				})
 
 				socket.name = socket.remoteAddress + ':' + socket.remotePort
@@ -87,19 +111,19 @@ class PanasonicPTZInstance extends InstanceBase {
 
 				// Receive data from the client.
 				socket.on('data', (data) => {
-					// TODO - TCP doesn't guarantee messages will be chunked sensibly. When it doesnt, this logic will breaks
-					let str_raw = data.toString()
-					str_raw = str_raw.split('\r\n') // Split Data in order to remove data before and after command
-					let str = str_raw[1].trim() // remove new line, carage return and so on.
+					// TODO - TCP doesn't guarantee messages will be chunked sensibly. When it doesnt, this logic will break
+
+					// Data layout in buffer: [22 Bytes][2 Bytes][4 Bytes][CR][LF]>>>DATA<<<[CR][LF]*optional Bytes*[24 Bytes]
+					// Convert binary buffer to string, split data in order to remove binary data before and after command
+					const str = data.toString().split('\r\n', 3)[1]
+
 					if (this.config.debug) {
-						this.log('info', 'Recived CMD: ' + String(str))
+						this.log('info', 'Received Update: ' + str)
 					}
-					str = str.split(':') // Split Commands and data
 
-					// Store Data
-					this.storeData(str)
+					parseUpdate(this, str.split(':'))
 
-					// Update Varibles and Feedbacks
+					// Update Variables and Feedbacks
 					this.checkVariables()
 					this.checkFeedbacks()
 				})
@@ -109,7 +133,6 @@ class PanasonicPTZInstance extends InstanceBase {
 			this.server.on('error', (err) => {
 				// Catch uncaught Exception"EADDRINUSE" error that orcures if the port is already in use
 				if (err.code === 'EADDRINUSE') {
-					// self.log('error', "TCP error: " + String(err));
 					this.log('error', 'TCP error: Please use another TCP port, ' + tcpPortSelected + ' is already in use')
 					this.log('error', 'TCP error: The TCP port must be unique between instances')
 					this.log('error', 'TCP error: Please change it and click apply in ALL PTZ instances')
@@ -118,7 +141,7 @@ class PanasonicPTZInstance extends InstanceBase {
 					// Cancel the subscription of info from the PTZ
 					this.unsubscribeTCPEvents(tcpPortSelected).catch(() => null)
 				} else {
-					this.log('error', 'TCP error: ' + String(err))
+					this.log('error', 'TCP server error: ' + String(err))
 				}
 			})
 
@@ -142,256 +165,333 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.log('error', "Couldn't bind to TCP port " + tcpPortSelected + ' on localhost: ' + String(err))
 				this.updateStatus(InstanceStatus.UnknownError, 'TCP Port failure')
 			}
-
-			// Catch uncaught Exception errors that orcure
-			// process.on('uncaughtException',  (err) => {
-			// 	debug(err)
-			// 	console.log(err)
-			// 	// process.exit(1)
-			// })
 		}
 
 		return this
 	}
-	getCameraInformation() {
+
+	async getCameraStatus() {
 		if (this.config.host) {
 			const url = `http://${this.config.host}:${this.config.httpPort}/live/camdata.html`
 
-			got
-				.get(url)
-				.then((response) => {
-					if (response.body) {
-						const lines = response.body.split('\r\n') // Split Data in order to remove data before and after command
+			if (this.config.debug) {
+				this.log('info', 'camdata request: ' + url)
+			}
 
-						for (let line of lines) {
-							// remove new line, carage return and so on.
-							const str = line.trim().split(':') // Split Commands and data
-							if (this.config.debug) {
-								this.log('info', 'Received CMD: ' + String(str))
-							}
-							// Store Data
-							this.storeData(str)
+			try {
+				const response = await got.get(url, { timeout: { request: this.config.timeout } })
+				if (response.body) {
+					const lines = response.body.trim().split('\r\n')
+
+					for (let line of lines) {
+						const str = line.replace(':0x', ':').trim()
+
+						if (this.config.debug) {
+							this.log('info', 'camdata response: ' + str)
 						}
 
-						this.checkVariables()
-						this.checkFeedbacks()
+						parseUpdate(this, str.split(':'))
 					}
-				})
-				.catch((err) => {
-					this.log('error', 'Error from PTZ: ' + String(err))
-				})
-		}
-	}
-	storeData(str) {	
-		if (str[0].substring(0, 3) === 'rER') {
-			if (str[0] === 'rER00') {
-				this.data.error = 'No Errors'
-			} else {
-				this.data.error = str[0]
+
+					this.checkVariables()
+					this.checkFeedbacks()
+
+					this.updateStatus(InstanceStatus.Ok)
+				}
+			} catch (err) {
+				if (this.handleConnectionError(err)) this.log('error', 'camdata request  ' + url + ' failed: ' + String(err))
 			}
 		}
+	}
 
-		// Store Firmware Version (not supported for the AK-UB300.)
-		if (str[0].substring(0, 4) === 'qSV3') {
-			this.data.version = str[0].substring(4)
+	async getPTZ(cmd) {
+		const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/aw_ptz?cmd=%23${cmd}&res=1`
+		if (this.config.debug) {
+			this.log('info', 'PTZ request: ' + url)
 		}
 
-		// Store Values from Events
-		switch (str[0]) {
-			case 'OID':
-				this.data.modelTCP = str[1]
-				// if a new model is detected or selected, re-initialise all actions, variable and feedbacks
-				if (this.data.modelTCP !== this.data.model) {
-					this.init_actions() // export actions
-					this.init_presets()
-					this.init_variables()
-					this.checkVariables()
-					this.init_feedbacks()
-					this.checkFeedbacks()
+		try {
+			const response = await got.get(url, { timeout: { request: this.config.timeout } })
+			if (response.body) {
+				const str = response.body.trim()
+
+				if (this.config.debug) {
+					this.log('info', 'PTZ response: ' + str)
 				}
-				break
-			case 'TITLE':
-				this.data.name = str[1]
-				break
-			case 'p1':
-				this.data.power = 'ON'
-				break
-			case 'p0':
-				this.data.power = 'OFF'
-				break
-			case 'dA0':
-				this.data.tally = 'OFF'
-				break
-			case 'dA1':
-				this.data.tally = 'ON'
-				break
-			case 'TLR':
-				if (str[1] == '0') {
-					this.data.tally = 'OFF'
-				} else if (str[1] == '1') {
-					this.data.tally = 'ON'
+
+				parseUpdate(this, str.split(':'))
+
+				this.checkVariables()
+				this.checkFeedbacks()
+
+				this.updateStatus(InstanceStatus.Ok)
+			}
+		} catch (err) {
+			if (this.handleConnectionError(err)) this.log('error', 'PTZ request ' + url + ' failed: ' + String(err))
+		}
+	}
+
+	async getCam(cmd) {
+		const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/aw_cam?cmd=${cmd}&res=1`
+
+		if (this.config.debug) {
+			this.log('info', 'Cam request: ' + url)
+		}
+
+		try {
+			const response = await got.get(url, { timeout: { request: this.config.timeout } })
+			if (response.body) {
+				const str = response.body.trim()
+
+				if (this.config.debug) {
+					this.log('info', 'Cam response: ' + str)
 				}
-				break
-			case 'TLG':
-				if (str[1] == '0') {
-					this.data.tally2 = 'OFF'
-				} else if (str[1] == '1') {
-					this.data.tally2 = 'ON'
-				}
-				break
-			case 'iNS0':
-				this.data.ins = 'Desktop'
-				break
-			case 'iNS1':
-				this.data.ins = 'Hanging'
-				break
-			case 'OAF':
-				if (str[1] == '0') {
-					this.data.oaf = 'Manual'
-				} else if (str[1] == '1') {
-					this.data.oaf = 'Auto'
-				}
-				break
-			case 'OSD':
-				if(str[1] == 'B1') {
-					this.data.colorTemperature = str[2];
-				} else if (str[1] == 'BA') {
-					this.data.colorBarType = str[2];
-				} else if (str[1] == 'BE') {
-					this.data.colorBarTitle = str[2];
-				}
-				break
-			case 'OSJ':
-				if(str[1] == '27') {
-					this.data.colorBarTone = str[2];
-				}
-				break
-			case 'DCB':
-				this.data.colorBar = str[1];
-				break
-			case 'DCS':
-				this.data.colorBarSetup = str[1];
-				break
-			case 'd30':
-				this.data.irisMode = 'Manual'
-				break
-			case 'd31':
-				this.data.irisMode = 'Auto'
-				break
-			case 'OSE': // All OSE:xx Commands
-				if (str[1] == '71') {
-					// OSE:71:
-					if (str[2] == '0') {
-						this.data.recallModePset = 'Mode A'
-					} else if (str[2] == '1') {
-						this.data.recallModePset = 'Mode B'
-					} else if (str[2] == '2') {
-						this.data.recallModePset = 'Mode C'
+
+				parseUpdate(this, str.split(':'))
+
+				this.checkVariables()
+				this.checkFeedbacks()
+
+				this.updateStatus(InstanceStatus.Ok)
+			}
+		} catch (err) {
+			if (this.handleConnectionError(err)) this.log('error', 'Cam request ' + url + ' failed: ' + String(err))
+		}
+	}
+
+	// Currently only for web commands that don't require admin rights
+	async getWeb(cmd) {
+		const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/${cmd}`
+
+		if (this.config.debug) {
+			this.log('info', 'Web request: ' + url)
+		}
+
+		try {
+			const response = await got.get(url, { timeout: { request: this.config.timeout } })
+			if (response.body) {
+				const lines = response.body.trim().split('\r\n')
+
+				for (let line of lines) {
+					const str = line.trim()
+
+					if (this.config.debug) {
+						this.log('info', 'Web response [' + cmd + ']: ' + str)
 					}
-				}
-				break
-			case 'OGU':
-				this.data.gainValue = str[1].toString().replace('0x', '')
-				break
-			default:
-				break
-		}
-	}
-	// When module gets deleted
-	async destroy() {
-		// Remove TCP Server and close all connections
-		if (this.server) {
-			// Stop getting Status Updates
-			await this.unsubscribeTCPEvents(this.tcpPortSelected)
 
-			// Close and delete server
-			this.server.close()
-			delete this.server
+					parseWeb(this, str.split('='), cmd)
+				}
+
+				this.checkVariables()
+				this.checkFeedbacks()
+
+				this.updateStatus(InstanceStatus.Ok)
+			}
+		} catch (err) {
+			if (this.handleConnectionError(err)) this.log('error', 'Web request ' + url + ' failed: ' + String(err))
 		}
 	}
+
+	async getThumbnail(id) {
+		const n = id + 1
+		const url = `http://${this.config.host}:${this.config.httpPort}/cgi-bin/get_preset_thumbnail?preset_number=${n}`
+
+		if (this.config.debug) {
+			this.log('info', 'Thumbnail request: ' + url)
+		}
+
+		try {
+			const response = await got.get(url, { timeout: { request: this.config.timeout } })
+
+			const img = await Jimp.read(response.rawBody)
+			const png64 = await img.scaleToFit(288, 288).getBase64Async('image/png')
+
+			this.data.presetThumbnails[id] = png64
+
+			this.checkFeedbacks()
+
+			this.updateStatus(InstanceStatus.Ok)
+		} catch (err) {
+			this.log('error', 'Thumbnail request ' + url + ' failed: ' + String(err))
+		}
+	}
+
 	// Initalize module
 	async init(config) {
 		this.config = config
 
 		this.data = {
 			debug: false,
-			modelTCP: 'NaN',
+
+			modelAuto: null,
 			model: 'Auto',
-			series: 'Auto',
-			name: 'NaN',
-			version: 'NaN',
-			error: 'NaN',
-			power: 'NaN',
-			ins: 'NaN',
-			tally: 'NaN',
-			tally2: 'NaN',
-			oaf: 'NaN',
-			colorTemperature: 'Unknown',
-			irisMode: 'NaN',
-			recallModePset: 'NaN',
-			colorBar: 'NaN',
-			colorBarSetup: 'NaN',
-			colorBarTitle: 'NaN',
-			colorBarTone: 'NaN',
-			colorBarType: 'Nan',
+			series: null,
+
+			mac: null,
+			serial: null,
+			title: null,
+			version: null,
+
+			// booleans
+			recording: null,
+
+			// unresolved enums
+			autotracking: null,
+			autotrackingAngle: null,
+			colorbar: null,
+			colorTemperature: null,
+			error: null,
+			filter: null,
+			focusMode: null,
+			gain: null,
+			installMode: null,
+			iris: null,
+			irisMode: null,
+			ois: null,
+			power: null,
+			presetScope: null,
+			presetSpeed: null,
+			presetSpeedTable: null,
+			presetSpeedUnit: '0',
+			rtmp: null,
+			sdInserted: null,
+			sd2Inserted: null,
+			shutter: null,
+			srt: null,
+			tally: null,
+			tally2: null,
+			tally3: null,
+			tracking: null,
+			ts: null,
+			whiteBalance: null,
+
+			// numeric index
+			presetSelectedIdx: null,
+			presetCompletedIdx: null,
+
+			// numeric unsigned values
+			focusPosition: null,
+			irisPosition: null,
+			irisFollowPosition: null,
+			panPosition: null,
+			tiltPosition: null,
+			zoomPosition: null,
+
+			// numeric signed values
+			redGainValue: 0,
+			blueGainValue: 0,
+			redPedValue: 0,
+			bluePedValue: 0,
+			//greenPedValue: 0,
+			masterPedValue: 0,
+
+			// other strings
+			autotrackingStatusLabel: null,
+			colorTempLabel: null,
+			irisLabel: null,
+			shutterStepLabel: null,
+			recordingTime: null,
+
+			// arrays
+			presetEntries0: Array(40),
+			presetEntries1: Array(40),
+			presetEntries2: Array(20),
+			presetEntries: Array(100),
+			presetThumbnails: Array(100),
 		}
 
 		this.ptSpeed = 25
-		this.ptSpeedIndex = 25
 		this.pSpeed = 25
-		this.pSpeedIndex = 25
 		this.tSpeed = 25
-		this.tSpeedIndex = 25
 		this.zSpeed = 25
-		this.zSpeedIndex = 25
 		this.fSpeed = 25
-		this.fSpeedIndex = 25
-		this.gainVal = '08'
-		this.gainIndex = 0
-		this.irisVal = 50
-		this.irisIndex = 50
-		this.filterVal = 0
-		this.filterIndex = 0
-		this.shutVal = 0
-		this.shutIndex = 0
-		this.pedestalVal = '096'
-		this.pedestalIndex = 150
-		this.colorTemperatureValue = '000'
-		this.colorTemperatureIndex = 0
 		this.tcpPortSelected = 31004
 		this.tcpPortOld = this.config.tcpPort || 31004
 
 		this.config.host = this.config.host || ''
 		this.config.httpPort = this.config.httpPort || 80
+		this.config.timeout = this.config.timeout || 1000
+		//this.config.pollAllow = this.config.pollAllow || false
+		this.config.pollDelay = this.config.pollDelay || 100
 		this.config.tcpPort = this.config.tcpPort || 31004
 		this.config.autoTCP = this.config.autoTCP || true
 		this.config.model = this.config.model || 'Auto'
 		this.config.debug = this.config.debug || false
 
-		this.updateStatus(InstanceStatus.Connecting)
-		this.getCameraInformation()
-		this.init_tcp()
-		this.init_actions() // export actions
-		this.init_presets()
-		this.init_variables()
-		this.checkVariables()
-		this.init_feedbacks()
-		this.checkFeedbacks()
+		this.config.host.length > 0 ? this.reInitAll() : this.updateStatus(InstanceStatus.BadConfig)
 
-		this.speedChangeEmitter = new EventEmitter();
+		this.speedChangeEmitter = new EventEmitter()
 	}
+
 	// Update module after a config change
 	async configUpdated(config) {
-		this.config = config
-		this.updateStatus(InstanceStatus.Connecting)
-		this.getCameraInformation()
-		this.init_tcp()
-		this.init_actions() // export actions
+		this.poll = false
+		this.updateStatus(InstanceStatus.Disconnected, 'Config changed')
+
+		if (config.host.length > 0) {
+			this.timeoutID = clearTimeout(this.timeoutID)
+			this.timeoutID = setTimeout(() => {
+				this.config = config
+				this.reInitAll()
+			}, this.config.timeout + this.config.pollDelay)
+		} else this.updateStatus(InstanceStatus.BadConfig)
+	}
+
+	// Handle timout and hide HTTP errors
+	handleConnectionError(err) {
+		switch (err.code) {
+			case 'ETIMEDOUT':
+				this.poll = false
+				this.updateStatus(InstanceStatus.Disconnected, 'Timeout')
+
+				this.timeoutID = clearTimeout(this.timeoutID)
+				this.timeoutID = setTimeout(() => {
+					this.reInitAll()
+				}, this.config.timeout + this.config.pollDelay)
+				break
+			case 'ERR_NON_2XX_3XX_RESPONSE':
+				return this.config.debug // hide error
+		}
+
+		this.updateStatus(InstanceStatus.ConnectionFailure, String(err))
+		return true // print error
+	}
+
+	async reInitAll() {
+		this.poll = false
+
+		this.updateStatus(InstanceStatus.Connecting, this.config.host + ':' + this.config.httpPort)
+
+		await this.getCam('QID') // pull model
+
+		this.SERIES = getAndUpdateSeries(this)
+
+		this.getWeb('getinfo?FILE=1') // pull model, mac, version and serial
+		this.getWeb('get_basic') // pull cam_title
+
+		if (this.SERIES.capabilities.pull) {
+			pullCameraStatus(this) // initial pull all
+		}
+
+		if (this.SERIES.capabilities.subscription) {
+			//if (!this.SERIES.capabilities.pull) { // prefer explicit pull
+			this.getCameraStatus() // initial bulk retrieve of all data
+			//}
+
+			this.init_tcp() // setup tcp push updates
+		}
+
+		if (this.SERIES.capabilities.poll && this.config.pollAllow) {
+			this.poll = true
+			pollCameraStatus(this) // enable explicit poll
+		}
+
+		this.init_actions()
 		this.init_presets()
 		this.init_variables()
-		this.checkVariables()
 		this.init_feedbacks()
-		this.checkFeedbacks()
+
+		this.subscribeFeedbacks()
 	}
 
 	// Return config fields for web config
@@ -405,16 +505,19 @@ class PanasonicPTZInstance extends InstanceBase {
 	init_presets() {
 		this.setPresetDefinitions(getPresetDefinitions(this))
 	}
+
 	// ############################
 	// #### Instance Variables ####
 	// ############################
 	init_variables() {
 		this.setVariableDefinitions(setVariables(this))
 	}
-	// Setup Initial Values
+
+	// Update Values
 	checkVariables() {
 		checkVariables(this)
 	}
+
 	// ############################
 	// #### Instance Feedbacks ####
 	// ############################
@@ -427,4 +530,4 @@ class PanasonicPTZInstance extends InstanceBase {
 	}
 }
 
-runEntrypoint(PanasonicPTZInstance, UpgradeScripts)
+runEntrypoint(PanasonicPTZInstance, upgradeScripts)

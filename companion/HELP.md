@@ -1,8 +1,10 @@
 Panasonic PTZ Cameras
 
-## This module supports the following Panasonic PTZ cameras.
+## This module supports all Panasonic PTZ cameras with IP interface and some of the lastest non-PTZ cameras.
 
-**AW-HE2, AW-HE50, AW-HE60, AW-HE120, AW-HE130, AW-HR140, AW-UE4, AW-SFU01, AK-UB300, <br/>AW-HE40 series, AW-HE42 series, AW-UE70 series, AW-UE150 series**
+**AW-HE2, AW-HE50, AW-HE60, AW-HE120, AW-HE130, AW-HR140<br/>
+AW-UE4, AW-UE20, AW-UE100, AW-UE160, AW-UR100, AK-UB300<br/>
+AW-HE40 series, AW-HE42/UE70 series, AW-UE80 series, AW-UE150 series, AG-CX350/AJ-CX4000 series**
 
 **HE40 series**
 
@@ -19,133 +21,31 @@ Panasonic PTZ Cameras
 - AW-UE63, AW-UE65, AW-UE70
 - AW-UN70
 
+**UE80 series**
+
+- AW-UE40, AW-UE50, AW-UE80
+
 **UE150 series**
 
-- AW-UE100, AW-UE150, AW-UE155
+- AW-UE150, AW-UE155
 - AW-UN145
+
+**CX350/4000 series**
+
+- AG-CX350, AG-CX200
+- AJ-CX4000
+- AJ-UPX360, AJ-UPX900
 
 **Disclaimer, not all models supports all actions, variables and feedbacks. But it should be auto sorted so that you can only use actions, feedbacks, variables and presets that works with your model**
 
-## When using more than on PTZ
+## When using more than one PTZ camera
 
 **When Configuring** more than one instance, please make sure you have **"AUTO TCP"** enabled or change the **TCP** port accordingly, this is a port used in companion, and you will not find a setting for it on the cameras. The TCP port **NEEDS** to be unique for each PTZ instance you add. It's strongly recomended to leave **"Auto TCP"** turned on.
 
-## Actions
 
-The actions are separated into the following categories.
-It's recommended to use the presets as much as possible as there is a lot of actions.
-
-**Pan/Tilt**
-
-- Up, Down, Left, Right, UpLeft, UpRight, DownLeft, DownRight
-- Set Pan/Tilt Speed
-- Set Pan and Tilt speeds independently
-- Pan/Tilt Speed Up
-- Pan Speed Up
-- Tilt Speed Up
-- Pan/Tilt Speed Down
-- Pan Speed Down
-- Tilt Speed Down
-- Pan/Tilt Home
-- Adjust pan/tilt velocity on speed change
-
-**Lens**
-
-- Zoom In
-- Zoom Out
-- Set Zoom Speed
-- Zoom Speed Up
-- Zoom Speed Down
-- Adjust zoom quickness on speed change
-- Focus Far, Focus Near
-- Set Focus Speed
-- Focus Speed Up
-- Focus Speed Down
-- Adjust focus quickness on speed change
-- Focus Mode (Auto/Manual)
-- One Touch Auto Focus (OTAF)
-
-**Exposure**
-
-- Set Iris
-- Iris Open
-- Iris Close
-- Iris Mode (Auto/Manual)
-- Set Gain
-- Gain Up
-- Gain Down
-- Set Shutter
-- Shutter Up
-- Shutter Down
-- Set Pedestal
-- Pedestal Up
-- Pedestal Down
-- Set ND Filter
-- ND Filter Up
-- ND Filter Down
-
-**System**
-
-- Power Off
-- Power On
-- Installation position Desktop and Hanging
-- Tally Off
-- Tally On
-- SD Card Recording Start/Stop
-
-**Save presets**
-
-- Save Preset 1-100
-
-**Recall Presets**
-
-- Recall Preset 1-100
-- Set Preset Playback Speed
-- Set Preset Playback Time (AW-UE150)
-- Set Preset Playback Mode (AW-UE150)
-
-## Variables
-
-A list of all the available Variables in this module sorted into the following categories. For their correct naming, refer to the list under "Edit" "Instance".
-
-**System**
-
-- PTZ Series
-- PTZ Model
-- PTZ Name
-- Firmware Version
-- PTZ Error Codes
-- Power ON/OFF
-- Install Position
-- Tally State
-
-**Lens**
-
-- Auto Focus Mode
-- Pan/Tilt, Zoom and Focus Speed
-
-**Exposure**
-
-- Auto Iris Mode
-
-## Feedbacks
-
-A list of all the available Feedbacks in this module sorted into the following categories.
-
-**System**
-
-- Power ON/OFF
-- Tally State
-- Install Position
-
-**Lens**
-
-- Auto Focus Mode
-
-**Exposure**
-
-- Auto Iris Mode
-
-Current support is based on "HD/4K Integrated Camera Interface Specifications" version 1.12 from Apr. 27, 2020.
+Current camera support is mainly based on "HD/4K Integrated Camera Interface Specifications" version 1.12 from Apr. 27, 2020,
+"HD/4K Integrated Camera Interface Specifications" Compatible model Table from Dec. 1, 2023,
+"CX350/CX4000 Control Using PTZ Control Protocol" Rev.3.00 from Jan. 25, 2022
+and the model specific "Supplement for Web Control" specifications.
 
 For additional actions, please raise a feature request on [GitHub](https://github.com/bitfocus/companion-module-panasonic-ptz/).

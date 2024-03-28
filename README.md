@@ -75,3 +75,8 @@ For more information on the Panasonic API, please refer to:
 - Fixed Tally follow variable option
 - cleaned up the subscription codebase Init_tcp()
 - Changed "Auto TCP" port, to be handled by node instead of an offset
+
+**V3.0.0**
+
+- To be done
+WORK IN PROGRESS

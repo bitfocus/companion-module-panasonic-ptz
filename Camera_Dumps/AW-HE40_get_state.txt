@@ -1,0 +1,12 @@
+rec=off
+rec_counter=00:00:00
+ftp_send=off
+play=off
+del_file=off
+download=off
+sd_format=off
+sd_insert=off
+sd_repair=off
+sd_error=off
+sd_rem=-----
+sd_org=-----
