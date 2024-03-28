@@ -76,6 +76,7 @@ export const SERIES_SPECS = [
 			gainValue: true,
 			redGainValue: true, // Support for red gain control
 			blueGainValue: true,// Support for blue gain control
+			whiteBalanceMode: true, // Support for setting the AWB mode - AWB/VAR/PRESETs
 			preset: true,
 			colorTemperature: false,
 		},
@@ -118,6 +119,7 @@ export const SERIES_SPECS = [
 			ins: true, // Has Install Position Control (INSx)
 			sdCard: true, // Has SD Card Recording Control (sdctrl?save=start or sdctrl?save=end)
 			colorTemperature: false, // Setting Color temperature OSD:B1:A8h
+			whiteBalanceMode: { cmd: 'OAW:', dropdown: c.CHOICES_AWB_MODE_HE42 },
 			colorBars: false,
 			colorBarsSetup: false,
 			colorBarsType: false,
@@ -262,6 +264,7 @@ export const SERIES_SPECS = [
 			gainValue: true,
 			redGainValue: true,
 			blueGainValue: true,
+			whiteBalanceMode: true,
 			preset: true,
 			colorTemperature: false,
 		},
@@ -302,6 +305,7 @@ export const SERIES_SPECS = [
 			ins: true,
 			sdCard: true,
 			colorTemperature: false,
+			whiteBalanceMode: { cmd: 'OAW:', dropdown: c.CHOICES_AWB_MODE_HE42 },
 			colorBars: true,
 			colorBarsSetup: false,
 			colorBarsType: true,
