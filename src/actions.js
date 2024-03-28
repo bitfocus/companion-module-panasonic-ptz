@@ -336,6 +336,14 @@ export function getActionDefinitions(self) {
 				self.speedChangeEmitter.emit('fSpeed')
 			},
 		}
+
+		actions.focusFollow = {
+			name: 'Lens - Follow Focus',
+			options: optSetIncDecStep('Focus setting', 0x555, 0x0, 0xaaa, 10),
+			callback: async (action) => {
+				await self.getPTZ('AXF' + cmdValue(action, 0x555, 0x0, 0xaaa, action.options.step, 3, self.data.focusPosition))
+			},
+		}
 	}
 
 	if (SERIES.capabilities.focusAuto) {
@@ -377,7 +385,7 @@ export function getActionDefinitions(self) {
 			name: 'Exposure - Iris',
 			options: optSetIncDecStep('Iris setting', 0x555, 0x0, 0xaaa, 0x1e),
 			callback: async (action) => {
-				await self.getPTZ('AXI' + cmdValue(action, 0x555, 0x0, 0xaaa, 0x1e, 3, self.data.irisPosition))
+				await self.getPTZ('AXI' + cmdValue(action, 0x555, 0x0, 0xaaa, action.options.step, 3, self.data.irisPosition))
 			},
 		}
 
@@ -430,13 +438,13 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	// ##################################
-	// #### Color Correction Actions ####
-	// ##################################
+	// #########################
+	// #### Picture Actions ####
+	// #########################
 
 	if (SERIES.capabilities.gain.cmd) {
 		actions.gain = {
-			name: 'Color Correction - Gain',
+			name: 'Picture - Gain',
 			options: optSetToggleNextPrev(SERIES.capabilities.gain.dropdown),
 			callback: async (action) => {
 				await self.getCam(SERIES.capabilities.gain.cmd + ':' + cmdEnum(action, SERIES.capabilities.gain.dropdown, self.data.gain))
@@ -447,10 +455,10 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.pedestal.cmd) {
 		const caps = SERIES.capabilities.pedestal
 		actions.ped = {
-			name: 'Color Correction - Pedestal',
+			name: 'Picture - Pedestal',
 			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
 			callback: async (action) => {
-				await self.getCam(caps.cmd + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, caps.step, caps.hexlen, self.data.masterPedValue))
+				await self.getCam(caps.cmd + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, action.options.step, caps.hexlen, self.data.masterPedValue))
 			},
 		}
 	}
@@ -458,10 +466,10 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.colorPedestal && SERIES.capabilities.colorPedestal.cmd.red) {
 		const caps = SERIES.capabilities.colorPedestal
 		actions.pedRed = {
-			name: 'Color Correction - Red Pedestal',
+			name: 'Picture - Red Pedestal',
 			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
 			callback: async (action) => {
-				await self.getCam(caps.cmd.red + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, caps.step, caps.hexlen, self.data.redPedValue))
+				await self.getCam(caps.cmd.red + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, action.options.step, caps.hexlen, self.data.redPedValue))
 			},
 		}
 	}
@@ -469,10 +477,10 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.colorPedestal && SERIES.capabilities.colorPedestal.cmd.blue) {
 		const caps = SERIES.capabilities.colorPedestal
 		actions.pedBlue = {
-			name: 'Color Correction - Blue Pedestal',
+			name: 'Picture - Blue Pedestal',
 			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
 			callback: async (action) => {
-				await self.getCam(caps.cmd.blue + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, caps.step, caps.hexlen, self.data.bluePedValue))
+				await self.getCam(caps.cmd.blue + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, action.options.step, caps.hexlen, self.data.bluePedValue))
 			},
 		}
 	}
@@ -480,10 +488,10 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.colorGain && SERIES.capabilities.colorGain.cmd.red) {
 		const caps = SERIES.capabilities.colorGain
 		actions.gainRed = {
-			name: 'Color Correction - Red Gain',
+			name: 'Picture - Red Gain',
 			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
 			callback: async (action) => {
-				await self.getCam(caps.cmd.red + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, caps.step, caps.hexlen, self.data.redGainValue))
+				await self.getCam(caps.cmd.red + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, action.options.step, caps.hexlen, self.data.redGainValue))
 			},
 		}
 	}
@@ -491,17 +499,17 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.colorGain && SERIES.capabilities.colorGain.cmd.blue) {
 		const caps = SERIES.capabilities.colorGain
 		actions.gainBlue = {
-			name: 'Color Correction - Blue Gain',
+			name: 'Picture - Blue Gain',
 			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
 			callback: async (action) => {
-				await self.getCam(caps.cmd.blue + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, caps.step, caps.hexlen, self.data.blueGainValue))
+				await self.getCam(caps.cmd.blue + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, action.options.step, caps.hexlen, self.data.blueGainValue))
 			},
 		}
 	}
 
 	if (SERIES.capabilities.whiteBalance) {
 		actions.whiteBalanceMode = {
-			name: 'Color Correction - White Balance Mode',
+			name: 'Picture - White Balance Mode',
 			options: optSetToggleNextPrev(SERIES.capabilities.whiteBalance.dropdown),
 			callback: async (action) => {
 				await self.getCam('OAW:' + cmdEnum(action, SERIES.capabilities.whiteBalance.dropdown, self.data.whiteBalance))
@@ -509,7 +517,7 @@ export function getActionDefinitions(self) {
 		}
 
 		actions.whiteBalanceExecAWB = {
-			name: 'Color Correction - Execute AWC/AWB',
+			name: 'Picture - Execute AWC/AWB',
 			options: [],
 			callback: async (action) => {
 				await self.getCam('OWS')
@@ -517,7 +525,7 @@ export function getActionDefinitions(self) {
 		}
 
 		actions.whiteBalanceExecABB = {
-			name: 'Color Correction - Execute ABC/ABB',
+			name: 'Picture - Execute ABC/ABB',
 			options: [],
 			callback: async (action) => {
 				await self.getCam('OAS')
@@ -527,7 +535,7 @@ export function getActionDefinitions(self) {
 
 	if (SERIES.capabilities.colorTemperature && SERIES.capabilities.colorTemperature.index) {
 		actions.colorTemperature = {
-			name: 'Color Correction - Color Temperature',
+			name: 'Picture - Color Temperature',
 			options: optSetToggleNextPrev(SERIES.capabilities.colorTemperature.index.dropdown),
 			callback: async (action) => {
 				await self.getCam(SERIES.capabilities.colorTemperature.index.cmd + ':' + cmdEnum(action, SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature))
@@ -538,7 +546,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.colorTemperature && SERIES.capabilities.colorTemperature.advanced) {
 		if (SERIES.capabilities.colorTemperature.advanced.set) {
 			actions.colorTemperature = {
-				name: 'Color Correction - Color Temperature',
+				name: 'Picture - Color Temperature',
 				options: optSetIncDecStep('Color Temperature [K]', 3200, SERIES.capabilities.colorTemperature.advanced.min, SERIES.capabilities.colorTemperature.advanced.max, 20),
 				callback: async (action) => {
 					switch (action.options.op) {

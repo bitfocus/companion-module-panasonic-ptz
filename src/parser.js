@@ -42,7 +42,7 @@ export function parseUpdate(self, str) {
 	}
 
 	//if (str[0].substring(0, 2) === 'iC') {
-	//    self.data.iris = str[0].substring(2)
+	//    self.data.iris2 = str[0].substring(2)
 	//}
 
 	if (str[0].substring(0, 1) === 'q') {

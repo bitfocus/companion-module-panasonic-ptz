@@ -78,55 +78,5 @@ For more information on the Panasonic API, please refer to:
 
 **V3.0.0**
 
-- Complete rewrite of the module with initial focus on full support for modern non-PTZ cameras
-- Added support for UE80/UE50/UE40 series
-- Added support for CX350/4000 series
-- Added and fixed support for many other camera models by walking through lots of specs
-- Added Colorbar control
-- Added on-camera Autotracking features (on recent camera models like UE50)
-- Added preset thumbnail as button background by feedback
-- Added preset selected and completed status feedback
-- Added preset memory save and clear actions
-- Added nice multi-action preset memory recall/memorize/clear button presets
-- Added support for rotary control actions where applicable
-- Added instant command return code feedback
-- Added Streaming control actions and feedbacks for SRT Caller, RTMP Client and MPEG-TS Output modes
-- Added Recording control actions and feedbacks incl. SD card slot usage
-- Fixed many protocol glitches and model specific data layouts
-- Completly refactored camera model properties
-- Add common color correction actions und variables (gain, pedestal, white balance, ...)
-- Add all feedbacks for operational states
-- Unified button actions for set/toggle/up/down where applicable
-- Add polling of data from camera which is not included in push events
-- Add inital explicit data pull from camera where bulk retrieval is not available or does report wrong data
-- Add decoding of error codes
-- Big rewrite of presets to hopefully better fit common production needs and allow them to change easily
-- Add graphical focus/zoom/iris position bar and numeric absolute and relative position
-- Add iris F-value decode on supported models
-- Add absolute pan/tilt position (angle)
-- Fixed firmware version retrieval
-- Add camera title
-- Fixed connection handling and reconnect behavior
-- Add config switch and delay setting for polling
-- Add Image Stabilization (O.I.S.)
-
-...and many more things that I stumbled upon but can't remember in detail ;)
-
-
-Attention:
-Since this is more or less a complete rewrite of this module with clean-ups, refactoring and
-is also an attempt to achieve simplification of names, variables, actions, feedback, etc., there is unfortunately no upgrade script (yet?) for automatically updating or migrating existing companion configurations.
-In most cases, you will therefore have to start from scratch with your companion configuration for functions of this module. I'm very sorry, but the changes (and improvements) are too large to be migrated automatically with reasonable effort. But I also have to admit that I still don't understand enough how upgrade scripts work. Maybe someone can support me?
-
-
-Testing by myself on HR140, UE50, UE150, UE100, HE40, CX350
-
-Open things that still need to be done and others that are being worked on:
-[ ] Upgrade, improve, clean and fix all Presets
-[ ] Check and fix Preset buttons with two variables
-[ ] Add UE80 and UE100 model properties
-[ ] Double check all camera model properties and variables, action, feedback conditions
-[ ] Testing, testing, testing
-
-
+- To be done
 WORK IN PROGRESS

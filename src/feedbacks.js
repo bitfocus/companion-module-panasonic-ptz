@@ -365,7 +365,7 @@ export function getFeedbackDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.filter) {
-		feedbacks.filterMode = {
+		feedbacks.filter = {
 			type: 'boolean',
 			name: 'Exposure - ND Filter',
 			description: 'Indicates if the selected ND filter is currently active',
@@ -413,9 +413,9 @@ export function getFeedbackDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.shutter) {
-		feedbacks.shutterMode = {
+		feedbacks.shutter = {
 			type: 'boolean',
-			name: 'Exposure - Shutter Mode',
+			name: 'Exposure - Shutter',
 			description: 'Indicates if the selected shutter mode is currently active',
 			defaultStyle: {
 				color: colorWhite,

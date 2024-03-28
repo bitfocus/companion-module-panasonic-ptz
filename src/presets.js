@@ -306,13 +306,13 @@ export function getPresetDefinitions(self) {
 			feedbacks: [],
 		}
 
-		presets['pan-tilt-home'] = {
+		presets['pan-tilt-position'] = {
 			type: 'button',
 			category: 'Pan/Tilt',
-			name: 'Home',
+			name: 'Pan/Tilt Position',
 			style: {
-				text: 'HOME',
-				size: '18',
+				text: 'P/T Pos.\\n$(generic-module:panPositionDeg)°\\n$(generic-module:tiltPositionDeg)°',
+				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
 			},
@@ -331,13 +331,116 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (SERIES.capabilities.ptSpeed) {
-		presets['pan-tilt-speed'] = {
+	presets['pan-tilt-speed'] = {
+		type: 'button',
+		category: 'Pan/Tilt',
+		name: 'Speed',
+		style: {
+			text: 'P/T Speed\\n$(generic-module:ptSpeed)',
+			size: '14',
+			color: colorWhite,
+			bgcolor: colorBlack,
+		},
+		options: {
+			rotaryActions: true,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'ptSpeed',
+						options: {
+							scope: 'pt',
+							op: 's',
+							set: 25,
+						},
+					},
+				],
+				up: [],
+				rotate_left: [
+					{
+						actionId: 'ptSpeed',
+						options: {
+							scope: 'pt',
+							op: -1,
+						},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: 'ptSpeed',
+						options: {
+							scope: 'pt',
+							op: 1,
+						},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// ######################
+	// #### Lens Presets ####
+	// ######################
+
+	if (SERIES.capabilities.zoom) {
+		presets['lens-zoom'] = {
 			type: 'button',
-			category: 'Pan/Tilt',
-			name: 'Speed',
+			category: 'Lens',
+			name: 'Zoom',
 			style: {
-				text: 'P/T SPEED\\n$(generic-module:ptSpeed)',
+				text: 'ZOOM\\n$(generic-module:zoomPosition)\\n$(generic-module:zoomPositionBar)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [],
+			feedbacks: [],
+		}
+
+		presets['lens-zoom-in'] = {
+			type: 'button',
+			category: 'Lens',
+			name: 'Zoom In',
+			style: {
+				text: 'ZOOM\\nIN',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [ { actionId: 'zoom', options: { dir: 1 } } ],
+					up: [ { actionId: 'zoom', options: { dir: 0 } } ]
+				}],
+			feedbacks: [],
+		}
+
+		presets['lens-zoom-out'] = {
+			type: 'button',
+			category: 'Lens',
+			name: 'Zoom Out',
+			style: {
+				text: 'ZOOM\\nOUT',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [ { actionId: 'zoom', options: { dir: -1 } } ],
+					up: [ { actionId: 'zoom', options: { dir: 0 } } ]
+				}],
+			feedbacks: [],
+		}
+
+		presets['lens-zoom-speed'] = {
+			type: 'button',
+			category: 'Lens',
+			name: 'Zoom Speed',
+			style: {
+				text: 'Zoom\\nSpeed\\n$(generic-module:zSpeed)',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -349,83 +452,23 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'ptSpeed',
-							options: {
-								scope: 'pt',
-								op: 's',
-								speed: 25,
-							},
+							actionId: 'zoomSpeed',
+							options: { op: 's',	set: 25 },
 						},
 					],
 					up: [],
 					rotate_left: [
 						{
-							actionId: 'ptSpeed',
-							options: {
-								scope: 'pt',
-								op: -1,
-							},
+							actionId: 'zoomSpeed',
+							options: { op: -1 },
 						},
 					],
 					rotate_right: [
 						{
-							actionId: 'ptSpeed',
-							options: {
-								scope: 'pt',
-								op: 1,
-							},
+							actionId: 'zoomSpeed',
+							options: { op: 1 },
 						},
 					],
-				},
-			],
-			feedbacks: [],
-		}
-	}
-
-	// ######################
-	// #### Lens Presets ####
-	// ######################
-
-	if (SERIES.capabilities.zoom) {
-		presets['lens-zoom'] = {
-			type: 'button',
-			category: 'Lens',
-			name: 'Zoom In',
-			style: {
-				text: 'ZOOM\\nIN',
-				size: '18',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [ { actionId: 'zoom', options: { dir: 1 } } ],
-					up: [ { actionId: 'zoom', options: { dir: 0 } } ]
-				}],
-			feedbacks: [],
-		}
-	}
-
-	if (SERIES.capabilities.zSpeed) {
-		presets['lens-zoom-speed'] = {
-			type: 'button',
-			category: 'Lens',
-			name: 'Zoom Speed Up',
-			style: {
-				text: 'ZOOM\\nSPEED\\nUP\\n$(generic-module:zSpeed)',
-				size: '7',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'zSpeedU',
-							options: {},
-						},
-					],
-					up: [],
 				},
 			],
 			feedbacks: [],
@@ -436,119 +479,180 @@ export function getPresetDefinitions(self) {
 		presets['lens-focus'] = {
 			type: 'button',
 			category: 'Lens',
-			name: 'Focus Near',
+			name: 'Focus',
 			style: {
-				text: 'FOCUS\\nNEAR',
-				size: '18',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'focusN',
-							options: {},
-						},
-					],
-					up: [
-						{
-							actionId: 'focusS',
-							options: {},
-						},
-					],
-				},
-			],
-			feedbacks: [],
-		}
-	}
-
-	if (SERIES.capabilities.fSpeed) {
-		presets['lens-focus-speed'] = {
-			type: 'button',
-			category: 'Lens',
-			name: 'Focus Speed Up',
-			style: {
-				text: 'FOCUS\\nSPEED\\nUP\\n$(generic-module:fSpeed)',
-				size: '7',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'fSpeedU',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-	}
-
-	if (SERIES.capabilities.focusAuto) {
-		presets['lens-focus-auto'] = {
-			type: 'button',
-			category: 'Lens',
-			name: 'Auto Focus',
-			style: {
-				text: 'AUTO\\nFOCUS',
+				text: 'FOCUS\\n$(generic-module:focusPosition)\\n$(generic-module:focusPositionBar)',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
 			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'focusM',
-							options: {
-								bol: 0,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'autoFocus',
-					options: {
-						option: '1',
-					},
-					style: {
-						color: colorWhite,
-						bgcolor: colorRed,
-					},
-				},
-			],
-		}
-
-		presets['lens-focus-push-auto'] = {
-			type: 'button',
-			category: 'Lens',
-			name: 'Push Auto Focus',
-			style: {
-				text: 'PUSH\\nAUTO\\nFOCUS',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
+			options: {
+				rotaryActions: true,
 			},
 			steps: [
 				{
 					down: [
 						{
 							actionId: 'focusPushAuto',
-							options: {},
 						},
 					],
 					up: [],
+					rotate_left: [
+						{
+							actionId: 'focusFollow',
+							options: {
+								op: -1,
+								step: 10,
+							},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'focusFollow',
+							options: {
+								op: 1,
+								step: 10,
+							},
+						},
+					],
 				},
 			],
 			feedbacks: [],
+		}
+
+		presets['lens-focus-far'] = {
+			type: 'button',
+			category: 'Lens',
+			name: 'Focus Far',
+			style: {
+				text: 'FOCUS\\nFAR',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [ { actionId: 'focus', options: { dir: 1 } } ],
+					up: [ { actionId: 'focus', options: { dir: 0 } } ]
+				}],
+			feedbacks: [],
+		}
+
+		presets['lens-focus-near'] = {
+			type: 'button',
+			category: 'Lens',
+			name: 'Focus Near',
+			style: {
+				text: 'FOCUS\\nNEAR',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [ { actionId: 'focus', options: { dir: -1 } } ],
+					up: [ { actionId: 'focus', options: { dir: 0 } } ]
+				}],
+			feedbacks: [],
+		}
+
+		presets['lens-focus-speed'] = {
+			type: 'button',
+			category: 'Lens',
+			name: 'Focus Speed',
+			style: {
+				text: 'Focus\\nSpeed\\n$(generic-module:zSpeed)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			options: {
+				rotaryActions: true,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'focusSpeed',
+							options: { op: 's',	set: 25 },
+						},
+					],
+					up: [],
+					rotate_left: [
+						{
+							actionId: 'focusSpeed',
+							options: { op: -1 },
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'focusSpeed',
+							options: { op: 1 },
+						},
+					],
+				},
+			],
+			feedbacks: [],
+		}
+
+		if (SERIES.capabilities.focusAuto) {
+			presets['lens-focus-mode'] = {
+				type: 'button',
+				category: 'Lens',
+				name: 'Focus Mode',
+				style: {
+					text: 'FOCUS MODE\\n$(generic-module:focusMode)',
+					size: '14',
+					color: colorWhite,
+					bgcolor: colorBlack,
+				},
+				steps: [
+					{
+						down: [
+							{
+								actionId: 'focusMode',
+								options: { op: 't' },
+							},
+						],
+						up: [],
+					},
+				],
+				feedbacks: [
+					{
+						feedbackId: 'focusMode',
+						style: {
+							color: colorWhite,
+							bgcolor: colorRed,
+						},
+					},
+				],
+			}
+		}
+
+		if (SERIES.capabilities.focusPushAuto) {
+			presets['lens-focus-push-auto'] = {
+				type: 'button',
+				category: 'Lens',
+				name: 'Push Auto Focus',
+				style: {
+					text: 'PUSH\\nAUTO\\nFOCUS',
+					size: '14',
+					color: colorWhite,
+					bgcolor: colorBlack,
+				},
+				steps: [
+					{
+						down: [
+							{
+								actionId: 'focusPushAuto',
+								options: {},
+							},
+						],
+						up: [],
+					},
+				],
+				feedbacks: [],
+			}
 		}
 	}
 
@@ -619,7 +723,7 @@ export function getPresetDefinitions(self) {
 			category: 'Exposure',
 			name: 'Iris',
 			style: {
-				text: 'IRIS\\n$(generic-module:irisPosition)\\n$(generic-module:irisPositionBar)',
+				text: 'IRIS\\n$(generic-module:irisPosition) $(generic-module:irisF)\\n$(generic-module:irisPositionBar)',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -643,7 +747,7 @@ export function getPresetDefinitions(self) {
 							actionId: 'iris',
 							options: {
 								op: -1,
-								step: 0x1e,
+								step: 30,
 							},
 						},
 					],
@@ -652,30 +756,21 @@ export function getPresetDefinitions(self) {
 							actionId: 'iris',
 							options: {
 								op: 1,
-								step: 0x1e,
+								step: 30,
 							},
 						},
 					],
 				},
 			],
-			feedbacks: [
-				{
-					feedbackId: 'irisMode',
-					options: {},
-					style: {
-						color: colorWhite,
-						bgcolor: colorRed,
-					},
-				},
-			],
+			feedbacks: [],
 		}
 
-		presets['exposure-iris-auto'] = {
+		presets['exposure-iris-up'] = {
 			type: 'button',
 			category: 'Exposure',
-			name: 'Auto Iris',
+			name: 'Iris Up',
 			style: {
-				text: 'AUTO\\nIRIS',
+				text: 'IRIS\\nUP',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -686,7 +781,63 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'iris',
 							options: {
-								bol: 1,
+								op: 1,
+								step: 0x1e,
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [],
+		}
+
+		presets['exposure-iris-down'] = {
+			type: 'button',
+			category: 'Exposure',
+			name: 'Iris Down',
+			style: {
+				text: 'IRIS\\nDOWN',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'iris',
+							options: {
+								op: -1,
+								step: 0x1e,
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [],
+		}
+	}
+
+	if (SERIES.capabilities.irisAuto) {
+		presets['exposure-iris-mode'] = {
+			type: 'button',
+			category: 'Exposure',
+			name: 'Iris Mode',
+			style: {
+				text: 'IRIS MODE\\n$(generic-module:irisMode)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'irisMode',
+							options: {
+								op: 't',
 							},
 						},
 					],
@@ -695,10 +846,7 @@ export function getPresetDefinitions(self) {
 			],
 			feedbacks: [
 				{
-					feedbackId: 'autoIris',
-					options: {
-						option: '1',
-					},
+					feedbackId: 'irisMode',
 					style: {
 						color: colorWhite,
 						bgcolor: colorRed,
@@ -707,6 +855,162 @@ export function getPresetDefinitions(self) {
 			],
 		}
 	}
+
+	if (SERIES.capabilities.shutter) {
+		presets[`exposure-shutter`] = {
+			type: 'button',
+			category: 'Exposure',
+			name: 'Shutter',
+			style: {
+				text: 'Shutter\\n$(generic-module:shutter)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			options: {
+				rotaryActions: true,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'shutter',
+							options: {
+								op: 't',
+							},
+						},
+					],
+					up: [],
+					rotate_left: [
+						{
+							actionId: 'shutter',
+							options: {
+								op: -1,
+							},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'shutter',
+							options: {
+								op: 1,
+							},
+						},
+					],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'shutter',
+					options: {
+						option: SERIES.capabilities.shutter.dropdown[0].id,
+					},
+					isInverted: true,
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
+		}
+
+		if (SERIES.capabilities.shutter.inc && SERIES.capabilities.shutter.dec) {
+			presets[`exposure-shutter-step`] = {
+				type: 'button',
+				category: 'Exposure',
+				name: 'Shutter Step',
+				style: {
+					text: 'Shutter Step\\n$(generic-module:shutterStep)',
+					size: '14',
+					color: colorWhite,
+					bgcolor: colorBlack,
+				},
+				options: {
+					rotaryActions: true,
+				},
+				steps: [
+					{
+						down: [],
+						up: [],
+						rotate_left: [
+							{
+								actionId: 'shutterStepD',
+							},
+						],
+						rotate_right: [
+							{
+								actionId: 'shutterStepU',
+							},
+						],
+					},
+				],
+				feedbacks: [],
+			}
+		}
+	}
+
+	if (SERIES.capabilities.filter) {
+		presets['exposure-filter'] = {
+			type: 'button',
+			category: 'Exposure',
+			name: 'ND Filter',
+			style: {
+				text: 'ND Filter\\n$(generic-module:filter)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			options: {
+				rotaryActions: true,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'filter',
+							options: {
+								op: 't',
+							},
+						},
+					],
+					up: [],
+					rotate_left: [
+						{
+							actionId: 'filter',
+							options: {
+								op: -1,
+							},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'filter',
+							options: {
+								op: 1,
+							},
+						},
+					],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'filter',
+					options: {
+						option: SERIES.capabilities.filter.dropdown[0].id,
+					},
+					isInverted: true,
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
+		}
+	}
+
+	// #########################
+	// #### Picture Presets ####
+	// #########################
 
 	if (SERIES.capabilities.gain) {
 		presets['exposure-gain'] = {
@@ -724,56 +1028,6 @@ export function getPresetDefinitions(self) {
 					down: [
 						{
 							actionId: 'gainU',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-	}
-
-	if (SERIES.capabilities.shutter) {
-		presets['exposure-shutter-up'] = {
-			type: 'button',
-			category: 'Exposure',
-			name: 'Shutter Up',
-			style: {
-				text: 'Shut\\nUP',
-				size: '18',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'shutU',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['exposure-shutter-down'] = {
-			type: 'button',
-			category: 'Exposure',
-			name: 'Shutter Down',
-			style: {
-				text: 'Shut\\nDOWN',
-				size: '18',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'shutD',
 							options: {},
 						},
 					],
@@ -832,63 +1086,218 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (SERIES.capabilities.filter) {
-		presets['exposure-filter'] = {
+	let steps = []
+	for (const x in SERIES.capabilities.whiteBalance.dropdown) {
+		steps.push({
+			down: [
+				{
+					actionId: 'whiteBalanceMode',
+					options: {
+						val: SERIES.capabilities.whiteBalance.dropdown[x].id,
+					},
+				},
+			],
+			up: [],
+		})
+	}
+	presets[`whitebalance-mode`] = {
+		type: 'button',
+		category: 'White Balance',
+		name: 'White Balance Mode',
+		style: {
+			text: 'WB MODE\\n$(generic-module:whiteBalance)',
+			size: '14',
+			color: colorWhite,
+			bgcolor: colorBlack,
+		},
+		steps: steps,
+		feedbacks: [
+			{
+				feedbackId: 'whiteBalanceMode',
+				options: {
+					option: SERIES.capabilities.whiteBalance.dropdown[0].id,
+				},
+				style: {
+					color: colorWhite,
+					bgcolor: colorRed,
+				},
+			},
+		],
+	}
+
+	if (SERIES.capabilities.colorGain) {
+		presets['whitebalance-color-temp'] = {
 			type: 'button',
-			category: 'Exposure',
-			name: 'ND Filter',
+			category: 'White Balance',
+			name: 'Color Temperature',
 			style: {
-				text: 'ND Filter\\n$(generic-module:filter)',
+				text: 'Temp.\\n$(generic-module:colorTemperature)',
 				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
+				color: colorBlack,
+				bgcolor: colorWhite,
 			},
 			options: {
 				rotaryActions: true,
 			},
 			steps: [
 				{
-					down: [
-						{
-							actionId: 'filter',
-							options: {
-								op: 's',
-								set: SERIES.capabilities.filter.dropdown[0].id,
-							},
-						},
-					],
+					down: [],
 					up: [],
 					rotate_left: [
 						{
-							actionId: 'filter',
-							options: {
-								op: -1,
-							},
+							actionId: 'colorTemperatureDown',
+							options: {},
 						},
 					],
 					rotate_right: [
 						{
-							actionId: 'filter',
-							options: {
-								op: 1,
-							},
+							actionId: 'colorTemperatureUp',
+							options: {},
 						},
 					],
 				},
 			],
-			feedbacks: [
+			feedbacks: [],
+		}
+	}
+
+	if (SERIES.capabilities.colorGain) {
+		presets['whitebalance-red-gain'] = {
+			type: 'button',
+			category: 'White Balance',
+			name: 'Red Gain',
+			style: {
+				text: 'Red Gain\\n$(generic-module:redGain)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorRed,
+			},
+			options: {
+				rotaryActions: true,
+			},
+			steps: [
 				{
-					feedbackId: 'filterMode',
-					options: {
-						option: SERIES.capabilities.filter.dropdown[0].id,
-					},
-					isInverted: true,
-					style: {
-						color: colorWhite,
-						bgcolor: colorRed,
-					},
+					down: [],
+					up: [],
+					rotate_left: [
+						{
+							actionId: 'gainRedD',
+							options: {},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'gainRedU',
+							options: {},
+						},
+					],
 				},
 			],
+			feedbacks: [],
+		}
+
+		presets['whitebalance-blue-gain'] = {
+			type: 'button',
+			category: 'White Balance',
+			name: 'Blue Gain',
+			style: {
+				text: 'Blue Gain\\n$(generic-module:blueGain)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlue,
+			},
+			options: {
+				rotaryActions: true,
+			},
+			steps: [
+				{
+					down: [],
+					up: [],
+					rotate_left: [
+						{
+							actionId: 'gainBlueD',
+							options: {},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'gainBlueU',
+							options: {},
+						},
+					],
+				},
+			],
+			feedbacks: [],
+		}
+	}
+
+	if (SERIES.capabilities.colorPedestal) {
+		presets['whitebalance-red-ped'] = {
+			type: 'button',
+			category: 'White Balance',
+			name: 'Red Pedestal',
+			style: {
+				text: 'Red Ped.\\n$(generic-module:redPed)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorDarkRed,
+			},
+			options: {
+				rotaryActions: true,
+			},
+			steps: [
+				{
+					down: [],
+					up: [],
+					rotate_left: [
+						{
+							actionId: 'pedRedD',
+							options: {},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'pedRedU',
+							options: {},
+						},
+					],
+				},
+			],
+			feedbacks: [],
+		}
+
+		presets['whitebalance-blue-ped'] = {
+			type: 'button',
+			category: 'White Balance',
+			name: 'Blue Pedestal',
+			style: {
+				text: 'Blue Ped.\\n$(generic-module:bluePed)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorDarkBlue,
+			},
+			options: {
+				rotaryActions: true,
+			},
+			steps: [
+				{
+					down: [],
+					up: [],
+					rotate_left: [
+						{
+							actionId: 'pedBlueD',
+							options: {},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'pedBlueU',
+							options: {},
+						},
+					],
+				},
+			],
+			feedbacks: [],
 		}
 	}
 
@@ -1616,225 +2025,6 @@ export function getPresetDefinitions(self) {
 					},
 				],
 			}
-		}
-	}
-
-	// ###############################
-	// #### White Balance Presets ####
-	// ###############################
-
-	let steps = []
-	for (const x in SERIES.capabilities.whiteBalance.dropdown) {
-		steps.push({
-			down: [
-				{
-					actionId: 'whiteBalanceMode',
-					options: {
-						val: SERIES.capabilities.whiteBalance.dropdown[x].id,
-					},
-				},
-			],
-			up: [],
-		})
-	}
-	presets[`whitebalance-mode`] = {
-		type: 'button',
-		category: 'White Balance',
-		name: 'White Balance Mode',
-		style: {
-			text: 'WB MODE\\n$(generic-module:whiteBalance)',
-			size: '14',
-			color: colorWhite,
-			bgcolor: colorBlack,
-		},
-		steps: steps,
-		feedbacks: [
-			{
-				feedbackId: 'whiteBalanceMode',
-				options: {
-					option: SERIES.capabilities.whiteBalance.dropdown[0].id,
-				},
-				style: {
-					color: colorWhite,
-					bgcolor: colorRed,
-				},
-			},
-		],
-	}
-
-	if (SERIES.capabilities.colorGain) {
-		presets['whitebalance-color-temp'] = {
-			type: 'button',
-			category: 'White Balance',
-			name: 'Color Temperature',
-			style: {
-				text: 'Temp.\\n$(generic-module:colorTemperature)',
-				size: '14',
-				color: colorBlack,
-				bgcolor: colorWhite,
-			},
-			options: {
-				rotaryActions: true,
-			},
-			steps: [
-				{
-					down: [],
-					up: [],
-					rotate_left: [
-						{
-							actionId: 'colorTemperatureDown',
-							options: {},
-						},
-					],
-					rotate_right: [
-						{
-							actionId: 'colorTemperatureUp',
-							options: {},
-						},
-					],
-				},
-			],
-			feedbacks: [],
-		}
-	}
-
-	if (SERIES.capabilities.colorGain) {
-		presets['whitebalance-red-gain'] = {
-			type: 'button',
-			category: 'White Balance',
-			name: 'Red Gain',
-			style: {
-				text: 'Red Gain\\n$(generic-module:redGain)',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorRed,
-			},
-			options: {
-				rotaryActions: true,
-			},
-			steps: [
-				{
-					down: [],
-					up: [],
-					rotate_left: [
-						{
-							actionId: 'gainRedD',
-							options: {},
-						},
-					],
-					rotate_right: [
-						{
-							actionId: 'gainRedU',
-							options: {},
-						},
-					],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['whitebalance-blue-gain'] = {
-			type: 'button',
-			category: 'White Balance',
-			name: 'Blue Gain',
-			style: {
-				text: 'Blue Gain\\n$(generic-module:blueGain)',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlue,
-			},
-			options: {
-				rotaryActions: true,
-			},
-			steps: [
-				{
-					down: [],
-					up: [],
-					rotate_left: [
-						{
-							actionId: 'gainBlueD',
-							options: {},
-						},
-					],
-					rotate_right: [
-						{
-							actionId: 'gainBlueU',
-							options: {},
-						},
-					],
-				},
-			],
-			feedbacks: [],
-		}
-	}
-
-	if (SERIES.capabilities.colorPedestal) {
-		presets['whitebalance-red-ped'] = {
-			type: 'button',
-			category: 'White Balance',
-			name: 'Red Pedestal',
-			style: {
-				text: 'Red Ped.\\n$(generic-module:redPed)',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorDarkRed,
-			},
-			options: {
-				rotaryActions: true,
-			},
-			steps: [
-				{
-					down: [],
-					up: [],
-					rotate_left: [
-						{
-							actionId: 'pedRedD',
-							options: {},
-						},
-					],
-					rotate_right: [
-						{
-							actionId: 'pedRedU',
-							options: {},
-						},
-					],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['whitebalance-blue-ped'] = {
-			type: 'button',
-			category: 'White Balance',
-			name: 'Blue Pedestal',
-			style: {
-				text: 'Blue Ped.\\n$(generic-module:bluePed)',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorDarkBlue,
-			},
-			options: {
-				rotaryActions: true,
-			},
-			steps: [
-				{
-					down: [],
-					up: [],
-					rotate_left: [
-						{
-							actionId: 'pedBlueD',
-							options: {},
-						},
-					],
-					rotate_right: [
-						{
-							actionId: 'pedBlueU',
-							options: {},
-						},
-					],
-				},
-			],
-			feedbacks: [],
 		}
 	}
 

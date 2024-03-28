@@ -27,7 +27,8 @@ export async function pollCameraStatus(self) {
 }
 
 export async function pullCameraStatus(self) {
-	const pullall = {
+	//const pull = self.SERIES.pull
+	const pull = {
 		ptz: [
 			'O', // Power
 			'PE00', // Preset Entry 0
@@ -39,7 +40,7 @@ export async function pullCameraStatus(self) {
 			'GF', // Request Focus Position
 			'GI', // Request Iris Position (+Mode)
 			'GZ', // Request Zoom Position
-			//'I', // Iris Position (1-99)
+			'I', // Iris Position (1-99)
 			//'D1', // Focus Mode
 			//'D3', // Iris Mode
 			'DA', // Tally
@@ -117,9 +118,6 @@ export async function pullCameraStatus(self) {
 		],
 		web: ['get_state', 'get_rtmp_status', 'get_srt_status', 'get_ts_status'],
 	}
-
-	var pull = pullall
-	//var pull = self.SERIES.pull
 
 	if (pull) {
 		if (pull.ptz) {

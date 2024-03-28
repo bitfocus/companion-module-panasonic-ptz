@@ -89,7 +89,6 @@ export function setVariables(self) {
 		variables.push({ variableId: 'fSpeed', name: 'Focus Speed' })
 	}
 	if (SERIES.capabilities.iris) {
-		//variables.push({ variableId: 'iris', name: 'Iris' })
 		variables.push({ variableId: 'irisF', name: 'Iris F-Stop' })
 		variables.push({ variableId: 'irisPosition', name: 'Iris Position' })
 		variables.push({ variableId: 'irisPositionPct', name: 'Iris Position %' })
@@ -153,9 +152,6 @@ export function checkVariables(self) {
 	const gain = SERIES.capabilities.gain ? getLabel(SERIES.capabilities.gain.dropdown, self.data.gain) : null
 
 	const installMode = SERIES.capabilities.install ? getLabel(e.ENUM_INSTALL_POSITION, self.data.installMode) : null
-
-	//const iris = SERIES.capabilities.iris
-	//	? getLabel(e.ENUM_IRIS, self.data.iris) : null
 
 	const irisMode = SERIES.capabilities.irisAuto ? getLabel(e.ENUM_MAN_AUTO, self.data.irisMode) : null
 
@@ -258,7 +254,6 @@ export function checkVariables(self) {
 		focusMode: focusMode,
 		gain: gain,
 		installMode: installMode,
-		//iris: iris,
 		irisMode: irisMode,
 		ois: ois,
 		power: power,
