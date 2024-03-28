@@ -437,9 +437,9 @@ export function getFeedbackDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.whiteBalance) {
-		feedbacks.whiteBalanceMode = {
+		feedbacks.whiteBalance = {
 			type: 'boolean',
-			name: 'White Balance - Mode',
+			name: 'Picture - White Balance',
 			description: 'Indicates if the selected white balance mode is currently active',
 			defaultStyle: {
 				color: colorWhite,

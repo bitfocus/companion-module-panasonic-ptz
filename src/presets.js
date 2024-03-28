@@ -1013,7 +1013,7 @@ export function getPresetDefinitions(self) {
 	// #########################
 
 	if (SERIES.capabilities.gain) {
-		presets[`exposure-gain`] = {
+		presets[`picture-gain`] = {
 			type: 'button',
 			category: 'Picture',
 			name: 'Gain',
@@ -1071,7 +1071,7 @@ export function getPresetDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.pedestal) {
-		presets['exposure-pedestal'] = {
+		presets['picture-pedestal'] = {
 			type: 'button',
 			category: 'Picture',
 			name: 'Pedestal',
@@ -1120,85 +1120,10 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	let steps = []
-	for (const x in SERIES.capabilities.whiteBalance.dropdown) {
-		steps.push({
-			down: [
-				{
-					actionId: 'whiteBalanceMode',
-					options: {
-						val: SERIES.capabilities.whiteBalance.dropdown[x].id,
-					},
-				},
-			],
-			up: [],
-		})
-	}
-	presets[`whitebalance-mode`] = {
-		type: 'button',
-		category: 'White Balance',
-		name: 'White Balance Mode',
-		style: {
-			text: 'WB MODE\\n$(generic-module:whiteBalance)',
-			size: '14',
-			color: colorWhite,
-			bgcolor: colorBlack,
-		},
-		steps: steps,
-		feedbacks: [
-			{
-				feedbackId: 'whiteBalanceMode',
-				options: {
-					option: SERIES.capabilities.whiteBalance.dropdown[0].id,
-				},
-				style: {
-					color: colorWhite,
-					bgcolor: colorRed,
-				},
-			},
-		],
-	}
-
 	if (SERIES.capabilities.colorGain) {
-		presets['whitebalance-color-temp'] = {
+		presets['picture-red-gain'] = {
 			type: 'button',
-			category: 'White Balance',
-			name: 'Color Temperature',
-			style: {
-				text: 'Temp.\\n$(generic-module:colorTemperature)',
-				size: '14',
-				color: colorBlack,
-				bgcolor: colorWhite,
-			},
-			options: {
-				rotaryActions: true,
-			},
-			steps: [
-				{
-					down: [],
-					up: [],
-					rotate_left: [
-						{
-							actionId: 'colorTemperatureDown',
-							options: {},
-						},
-					],
-					rotate_right: [
-						{
-							actionId: 'colorTemperatureUp',
-							options: {},
-						},
-					],
-				},
-			],
-			feedbacks: [],
-		}
-	}
-
-	if (SERIES.capabilities.colorGain) {
-		presets['whitebalance-red-gain'] = {
-			type: 'button',
-			category: 'White Balance',
+			category: 'Picture',
 			name: 'Red Gain',
 			style: {
 				text: 'Red Gain\\n$(generic-module:redGain)',
@@ -1211,18 +1136,32 @@ export function getPresetDefinitions(self) {
 			},
 			steps: [
 				{
-					down: [],
+					down: [
+						{
+							actionId: 'gainRed',
+							options: {
+								op: 's',
+								set: 0,
+							},
+						},
+					],
 					up: [],
 					rotate_left: [
 						{
-							actionId: 'gainRedD',
-							options: {},
+							actionId: 'gainRed',
+							options: {
+								op: -1,
+								step: 1,
+							},
 						},
 					],
 					rotate_right: [
 						{
-							actionId: 'gainRedU',
-							options: {},
+							actionId: 'gainRed',
+							options: {
+								op: 1,
+								step: 1,
+							},
 						},
 					],
 				},
@@ -1230,9 +1169,9 @@ export function getPresetDefinitions(self) {
 			feedbacks: [],
 		}
 
-		presets['whitebalance-blue-gain'] = {
+		presets['picture-blue-gain'] = {
 			type: 'button',
-			category: 'White Balance',
+			category: 'Picture',
 			name: 'Blue Gain',
 			style: {
 				text: 'Blue Gain\\n$(generic-module:blueGain)',
@@ -1245,18 +1184,32 @@ export function getPresetDefinitions(self) {
 			},
 			steps: [
 				{
-					down: [],
+					down: [
+						{
+							actionId: 'gainBlue',
+							options: {
+								op: 's',
+								set: 0,
+							},
+						},
+					],
 					up: [],
 					rotate_left: [
 						{
-							actionId: 'gainBlueD',
-							options: {},
+							actionId: 'gainBlue',
+							options: {
+								op: -1,
+								step: 1,
+							},
 						},
 					],
 					rotate_right: [
 						{
-							actionId: 'gainBlueU',
-							options: {},
+							actionId: 'gainBlue',
+							options: {
+								op: 1,
+								step: 1,
+							},
 						},
 					],
 				},
@@ -1266,9 +1219,9 @@ export function getPresetDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.colorPedestal) {
-		presets['whitebalance-red-ped'] = {
+		presets['picture-red-ped'] = {
 			type: 'button',
-			category: 'White Balance',
+			category: 'Picture',
 			name: 'Red Pedestal',
 			style: {
 				text: 'Red Ped.\\n$(generic-module:redPed)',
@@ -1281,18 +1234,32 @@ export function getPresetDefinitions(self) {
 			},
 			steps: [
 				{
-					down: [],
+					down: [
+						{
+							actionId: 'pedRed',
+							options: {
+								op: 's',
+								set: 0,
+							},
+						},
+					],
 					up: [],
 					rotate_left: [
 						{
-							actionId: 'pedRedD',
-							options: {},
+							actionId: 'pedRed',
+							options: {
+								op: -1,
+								step: 1,
+							},
 						},
 					],
 					rotate_right: [
 						{
-							actionId: 'pedRedU',
-							options: {},
+							actionId: 'pedRed',
+							options: {
+								op: 1,
+								step: 1,
+							},
 						},
 					],
 				},
@@ -1300,9 +1267,9 @@ export function getPresetDefinitions(self) {
 			feedbacks: [],
 		}
 
-		presets['whitebalance-blue-ped'] = {
+		presets['picture-blue-ped'] = {
 			type: 'button',
-			category: 'White Balance',
+			category: 'Picture',
 			name: 'Blue Pedestal',
 			style: {
 				text: 'Blue Ped.\\n$(generic-module:bluePed)',
@@ -1315,20 +1282,180 @@ export function getPresetDefinitions(self) {
 			},
 			steps: [
 				{
-					down: [],
+					down: [
+						{
+							actionId: 'pedBlue',
+							options: {
+								op: 's',
+								set: 0,
+							},
+						},
+					],
 					up: [],
 					rotate_left: [
 						{
-							actionId: 'pedBlueD',
-							options: {},
+							actionId: 'pedBlue',
+							options: {
+								op: -1,
+								step: 1,
+							},
 						},
 					],
 					rotate_right: [
 						{
-							actionId: 'pedBlueU',
-							options: {},
+							actionId: 'pedBlue',
+							options: {
+								op: 1,
+								step: 1,
+							},
 						},
 					],
+				},
+			],
+			feedbacks: [],
+		}
+	}
+
+	if (SERIES.capabilities.whiteBalance) {
+		presets[`picture-whitebalance`] = {
+			type: 'button',
+			category: 'Picture',
+			name: 'White Balance',
+			style: {
+				text: 'WB Mode\\n$(generic-module:whiteBalance)',
+				size: '14',
+				color: colorBlack,
+				bgcolor: colorWhite,
+			},
+			options: {
+				rotaryActions: true,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'whiteBalanceMode',
+							options: {
+								op: 't',
+							},
+						},
+					],
+					up: [],
+					rotate_left: [
+						{
+							actionId: 'whiteBalanceMode',
+							options: {
+								op: -1,
+							},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'whiteBalanceMode',
+							options: {
+								op: 1,
+							},
+						},
+					],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'whiteBalance',
+					options: {
+						option: SERIES.capabilities.whiteBalance.dropdown[0].id,
+					},
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
+		}
+
+		if (SERIES.capabilities.colorTemperature) {
+			presets['picture-colortemp'] = {
+				type: 'button',
+				category: 'Picture',
+				name: 'Color Temperature',
+				style: {
+					text: 'Temp.\\n$(generic-module:colorTemperature)',
+					size: '14',
+					color: colorBlack,
+					bgcolor: colorWhite,
+				},
+				options: {
+					rotaryActions: true,
+				},
+				steps: [
+					{
+						down: [],
+						up: [],
+						rotate_left: [
+							{
+								actionId: 'colorTemperature',
+								options: {
+									op: -1,
+									step: 20,
+								},
+							},
+						],
+						rotate_right: [
+							{
+								actionId: 'colorTemperature',
+								options: {
+									op: 1,
+									step: 20,
+								},
+							},
+						],
+					},
+				],
+				feedbacks: [],
+			}
+		}
+
+		presets['picture-awb'] = {
+			type: 'button',
+			category: 'Picture',
+			name: 'Execute Auto White Balance',
+			style: {
+				text: 'Execute\\nAWB',
+				size: '14',
+				color: colorBlack,
+				bgcolor: colorWhite,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'whiteBalanceExecAWB',
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [],
+		}
+
+		presets['picture-abb'] = {
+			type: 'button',
+			category: 'Picture',
+			name: 'Execute Auto Black Balance',
+			style: {
+				text: 'Execute\\nABB',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'whiteBalanceExecABB',
+						},
+					],
+					up: [],
 				},
 			],
 			feedbacks: [],
