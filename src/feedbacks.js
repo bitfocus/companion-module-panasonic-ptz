@@ -1,6 +1,7 @@
 import { combineRgb } from '@companion-module/base'
 import { getAndUpdateSeries } from './common.js'
 import { e } from './enum.js'
+import ICONS from './icons.js'
 
 // ##########################
 // #### Define Feedbacks ####
@@ -55,6 +56,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'System - Color Bar State',
 			description: 'Indicates if the color bar is currently enabled',
 			defaultStyle: {
+				png64: ICONS.COLORBAR,
+				pngalignment: 'center:center',
 				color: colorWhite,
 				bgcolor: colorRed,
 			},
@@ -230,10 +233,10 @@ export function getFeedbackDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.preset) {
-		feedbacks.recallModePset = {
+		feedbacks.presetRecallScope = {
 			type: 'boolean',
-			name: 'Preset - Recall Mode',
-			description: 'Indicates if the selected preset recall mode is currently active',
+			name: 'Preset - Recall Scope',
+			description: 'Indicates if the selected preset recall scope is currently active',
 			defaultStyle: {
 				color: colorWhite,
 				bgcolor: colorRed,
@@ -241,7 +244,7 @@ export function getFeedbackDefinitions(self) {
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Mode',
+					label: 'Scope',
 					id: 'option',
 					default: e.ENUM_PRESET_SCOPE[0].id,
 					choices: e.ENUM_PRESET_SCOPE,

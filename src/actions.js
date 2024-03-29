@@ -608,7 +608,7 @@ export function getActionDefinitions(self) {
 			},
 		}
 
-		actions.presetRecallMode = {
+		actions.presetRecallScope = {
 			name: 'Preset - Recall Scope',
 			options: optSetToggleNextPrev(e.ENUM_PRESET_SCOPE, 'Preset Recall Scope'),
 			callback: async (action) => {

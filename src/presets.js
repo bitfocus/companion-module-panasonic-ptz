@@ -15,6 +15,7 @@ export function getPresetDefinitions(self) {
 	const colorBlue = combineRgb(0, 51, 204)
 	const colorDarkRed = combineRgb(102, 0, 0)
 	const colorDarkBlue = combineRgb(0, 0, 102)
+	const colorDarkGreen = combineRgb(0, 102, 0)
 	const colorGrey = combineRgb(51, 51, 51)
 	const colorBlack = combineRgb(0, 0, 0)
 
@@ -1470,19 +1471,21 @@ export function getPresetDefinitions(self) {
 		presets['system-power'] = {
 			type: 'button',
 			category: 'System',
-			name: 'Power Off',
+			name: 'Power',
 			style: {
-				text: 'Power\\nOFF',
-				size: '18',
+				text: 'Power\\n$(generic-module:power)',
+				size: '14',
 				color: colorWhite,
-				bgcolor: colorBlack,
+				bgcolor: colorOrange,
 			},
 			steps: [
 				{
 					down: [
 						{
-							actionId: 'powerOff',
-							options: {},
+							actionId: 'power',
+							options: {
+								op: 't',
+							},
 						},
 					],
 					up: [],
@@ -1491,12 +1494,9 @@ export function getPresetDefinitions(self) {
 			feedbacks: [
 				{
 					feedbackId: 'powerState',
-					options: {
-						option: '0',
-					},
 					style: {
 						color: colorWhite,
-						bgcolor: colorRed,
+						bgcolor: colorDarkGreen,
 					},
 				},
 			],
@@ -1509,7 +1509,7 @@ export function getPresetDefinitions(self) {
 			category: 'System',
 			name: 'Color Bar',
 			style: {
-				text: 'Color Bar',
+				text: 'Color Bar\\n$(generic-module:colorbar)',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -1518,17 +1518,10 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'colorbarOff',
-							options: {},
-						},
-					],
-					up: [],
-				},
-				{
-					down: [
-						{
-							actionId: 'colorbarOn',
-							options: {},
+							actionId: 'colorbar',
+							options: {
+								op: 't',
+							},
 						},
 					],
 					up: [],
@@ -1537,10 +1530,9 @@ export function getPresetDefinitions(self) {
 			feedbacks: [
 				{
 					feedbackId: 'colorbarState',
-					options: {
-						option: '1',
-					},
 					style: {
+						png64: ICONS.COLORBAR,
+						pngalignment: 'center:center',
 						color: colorWhite,
 						bgcolor: colorRed,
 					},
@@ -1556,7 +1548,7 @@ export function getPresetDefinitions(self) {
 			name: 'Red Tally',
 			style: {
 				text: 'TALLY',
-				size: '18',
+				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
 			},
@@ -1564,9 +1556,6 @@ export function getPresetDefinitions(self) {
 			feedbacks: [
 				{
 					feedbackId: 'tallyState',
-					options: {
-						option: '1',
-					},
 					style: {
 						color: colorWhite,
 						bgcolor: colorRed,
@@ -1583,7 +1572,7 @@ export function getPresetDefinitions(self) {
 			name: 'Green Tally',
 			style: {
 				text: 'TALLY',
-				size: '18',
+				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
 			},
@@ -1591,9 +1580,6 @@ export function getPresetDefinitions(self) {
 			feedbacks: [
 				{
 					feedbackId: 'tally2State',
-					options: {
-						option: '1',
-					},
 					style: {
 						color: colorWhite,
 						bgcolor: colorGreen,
@@ -1610,7 +1596,7 @@ export function getPresetDefinitions(self) {
 			name: 'Yellow Tally',
 			style: {
 				text: 'TALLY',
-				size: '18',
+				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
 			},
@@ -1618,9 +1604,6 @@ export function getPresetDefinitions(self) {
 			feedbacks: [
 				{
 					feedbackId: 'tally3State',
-					options: {
-						option: '1',
-					},
 					style: {
 						color: colorWhite,
 						bgcolor: colorYellow,
@@ -1630,14 +1613,14 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (SERIES.capabilities.ins) {
-		presets['system-ins-desktop'] = {
+	if (SERIES.capabilities.install) {
+		presets['system-install-position'] = {
 			type: 'button',
 			category: 'System',
-			name: 'INS Desktop',
+			name: 'Installation Position',
 			style: {
-				text: 'INS\\nDesk',
-				size: '18',
+				text: 'INSTALL. POS.\\n$(generic-module:installMode)',
+				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
 			},
@@ -1645,64 +1628,16 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'insPosition',
+							actionId: 'installPosition',
 							options: {
-								position: 0,
+								op: 't',
 							},
 						},
 					],
 					up: [],
 				},
 			],
-			feedbacks: [
-				{
-					feedbackId: 'insState',
-					options: {
-						option: '0',
-					},
-					style: {
-						color: colorWhite,
-						bgcolor: colorRed,
-					},
-				},
-			],
-		}
-
-		presets['system-ins-hanging'] = {
-			type: 'button',
-			category: 'System',
-			name: 'INS Hanging',
-			style: {
-				text: 'INS\\nHang',
-				size: '18',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'insPosition',
-							options: {
-								position: 1,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'insState',
-					options: {
-						option: '1',
-					},
-					style: {
-						color: colorWhite,
-						bgcolor: colorRed,
-					},
-				},
-			],
+			feedbacks: [],
 		}
 	}
 
@@ -1779,7 +1714,7 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'modePset',
+							actionId: 'presetSpeed',
 							options: {
 								mode: 0,
 							},
@@ -1805,7 +1740,7 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'modePset',
+							actionId: 'presetTime',
 							options: {
 								mode: 1,
 							},
@@ -1898,93 +1833,13 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	if (SERIES.capabilities.presetTime) {
-		presets['recall-preset-time-high'] = {
-			type: 'button',
-			category: 'Preset Memory',
-			name: 'Set Recall Time High',
-			style: {
-				text: 'RECALL\\nTIME\\n5 Sec',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'speedPset',
-							options: {
-								speed: 5,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['recall-preset-time-mid'] = {
-			type: 'button',
-			category: 'Preset Memory',
-			name: 'Set Recall Time Mid',
-			style: {
-				text: 'RECALL\\nTIME\\n10 Sec',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'speedPset',
-							options: {
-								speed: 10,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['recall-preset-time-low'] = {
-			type: 'button',
-			category: 'Preset Memory',
-			name: 'Set Recall Time Low',
-			style: {
-				text: 'RECALL\\nTIME\\n30 Sec',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'speedPset',
-							options: {
-								speed: 30,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-	}
-
 	if (SERIES.capabilities.preset) {
-		presets['recall-preset-mode-a'] = {
+		presets['recall-preset-scope-a'] = {
 			type: 'button',
 			category: 'Preset Memory',
-			name: 'Preset Mode A',
+			name: 'Preset Recall Scope A',
 			style: {
-				text: 'Preset\\nMode A',
+				text: 'Preset Recall Scope\\nA',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -1993,9 +1848,10 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'recallModePset',
+							actionId: 'presetRecallScope',
 							options: {
-								val: '0',
+								op: 's',
+								set: '0',
 							},
 						},
 					],
@@ -2004,7 +1860,7 @@ export function getPresetDefinitions(self) {
 			],
 			feedbacks: [
 				{
-					feedbackId: 'recallModePset',
+					feedbackId: 'presetRecallScope',
 					options: {
 						option: '0',
 					},
@@ -2016,12 +1872,12 @@ export function getPresetDefinitions(self) {
 			],
 		}
 
-		presets['recall-preset-mode-b'] = {
+		presets['recall-preset-scope-b'] = {
 			type: 'button',
 			category: 'Preset Memory',
-			name: 'Preset Mode B',
+			name: 'Preset Recall Scope B',
 			style: {
-				text: 'Preset\\nMode B',
+				text: 'Preset Recall Scope\\nB',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -2030,9 +1886,10 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'recallModePset',
+							actionId: 'presetRecallScope',
 							options: {
-								val: '1',
+								op: 's',
+								set: '1',
 							},
 						},
 					],
@@ -2041,7 +1898,7 @@ export function getPresetDefinitions(self) {
 			],
 			feedbacks: [
 				{
-					feedbackId: 'recallModePset',
+					feedbackId: 'presetRecallScope',
 					options: {
 						option: '1',
 					},
@@ -2053,12 +1910,12 @@ export function getPresetDefinitions(self) {
 			],
 		}
 
-		presets['recall-preset-mode-c'] = {
+		presets['recall-preset-scope-c'] = {
 			type: 'button',
 			category: 'Preset Memory',
-			name: 'Preset Mode C',
+			name: 'Preset Recall Scope C',
 			style: {
-				text: 'Preset\\nMode C',
+				text: 'Preset Recall Scope\\nC',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -2067,9 +1924,10 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'recallModePset',
+							actionId: 'presetRecallScope',
 							options: {
-								val: '2',
+								op: 's',
+								set: '2',
 							},
 						},
 					],
@@ -2078,7 +1936,7 @@ export function getPresetDefinitions(self) {
 			],
 			feedbacks: [
 				{
-					feedbackId: 'recallModePset',
+					feedbackId: 'presetRecallScope',
 					options: {
 						option: '2',
 					},
