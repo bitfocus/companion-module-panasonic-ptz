@@ -618,35 +618,36 @@ export function getActionDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.presetSpeed) {
-		actions.presetSpeed = {
-			name: 'Preset - Recall Speed',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Speed',
-					id: 'speed',
-					default: e.ENUM_PRESET_SPEED[0].id,
-					choices: e.ENUM_PRESET_SPEED,
-				},
-				{
-					type: 'dropdown',
-					label: 'Table',
-					id: 'table',
-					default: SERIES.capabilities.presetSpeed.dropdown[0].id,
-					choices: SERIES.capabilities.presetSpeed.dropdown,
-				},
-			],
+		actions.presetSpeedTime = {
+			name: 'Preset - Recall Velocity',
+			options: optSetToggleNextPrev(SERIES.capabilities.presetTime ? e.ENUM_PRESET_SPEED_TIME : e.ENUM_PRESET_SPEED, 'Speed / Time'),
 			callback: async (action) => {
-				const r = parseInt(action.options.speed, 16)
+				const v = cmdEnum(action, SERIES.capabilities.presetTime ? e.ENUM_PRESET_SPEED_TIME : e.ENUM_PRESET_SPEED, self.data.presetSpeed)
+				const r = parseInt(v, 16)
 				const s = r < 0x001 || r > 0x063
 				if (SERIES.capabilities.presetTime) await self.getCam('OSJ:29:' + (s ? '0' : '1'))
-				if (s) await self.getPTZ('PST' + action.options.table)
-				await self.getPTZ('UPVS' + action.options.speed)
+				await self.getPTZ('UPVS' + v)
+			},
+		}
+
+		actions.presetSpeedTable = {
+			name: 'Preset - Recall Speed Table',
+			options: optSetToggleNextPrev(SERIES.capabilities.presetSpeed.dropdown),
+			callback: async (action) => {
+				await self.getPTZ('PST' + cmdEnum(action, SERIES.capabilities.presetSpeed.dropdown, self.data.presetSpeedTable))
 			},
 		}
 	}
 
 	if (SERIES.capabilities.presetTime) {
+		actions.presetSpeedTimeUnit = {
+			name: 'Preset - Recall Velocity Unit',
+			options: optSetToggleNextPrev(e.ENUM_PSSPEED_UNIT),
+			callback: async (action) => {
+				await self.getCam('OSJ:29:' + cmdEnum(action, e.ENUM_PSSPEED_UNIT, self.data.presetSpeedUnit))
+			},
+		}
+
 		actions.presetTime = {
 			name: 'Preset - Recall Time',
 			options: [
@@ -857,7 +858,7 @@ export function getActionDefinitions(self) {
 
 	actions.customCommand = {
 		name: 'Custom Command',
-		description: 'Sends an custom command to the camera. This enables at least basic operations that are not (yet) covered by this module.. Please read the public protocol specifications for details!',
+		description: 'Sends a custom command to the camera. This enables operations that are not (yet) covered by this module. Please read the public protocol specifications for details!',
 		options: [
 			{
 				type: 'dropdown',

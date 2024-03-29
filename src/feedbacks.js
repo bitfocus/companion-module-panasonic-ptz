@@ -233,6 +233,28 @@ export function getFeedbackDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.preset) {
+		feedbacks.presetSpeedTime = {
+			type: 'boolean',
+			name: 'Preset - Recall Velocity',
+			description: 'Indicates if the selected preset recall velocity is currently set',
+			defaultStyle: {
+				color: colorWhite,
+				bgcolor: colorRed,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Speed / Time',
+					id: 'option',
+					default: SERIES.capabilities.presetTime ? e.ENUM_PRESET_SPEED_TIME[0].id : e.ENUM_PRESET_SPEED[0].id,
+					choices: SERIES.capabilities.presetTime ? e.ENUM_PRESET_SPEED_TIME : e.ENUM_PRESET_SPEED,
+				},
+			],
+			callback: function (feedback) {
+				return self.data.presetSpeed === feedback.options.option
+			},
+		}
+		
 		feedbacks.presetRecallScope = {
 			type: 'boolean',
 			name: 'Preset - Recall Scope',

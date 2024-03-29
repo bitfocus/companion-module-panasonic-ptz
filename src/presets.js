@@ -1700,12 +1700,12 @@ export function getPresetDefinitions(self) {
 	// #################
 
 	if (SERIES.capabilities.presetSpeed && SERIES.capabilities.presetTime) {
-		presets['recall-preset-preset-mode-speed'] = {
+		presets['preset-recall-mode'] = {
 			type: 'button',
 			category: 'Preset Memory',
-			name: 'Preset Mode Speed',
+			name: 'Preset Recall Mode',
 			style: {
-				text: 'PRESET\\nMODE\\nSPEED',
+				text: 'RECALL MODE\\n$(generic-module:presetSpeedUnit)',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -1714,9 +1714,9 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'presetSpeed',
+							actionId: 'presetSpeedTimeUnit',
 							options: {
-								mode: 0,
+								op: 't',
 							},
 						},
 					],
@@ -1726,12 +1726,12 @@ export function getPresetDefinitions(self) {
 			feedbacks: [],
 		}
 
-		presets['recall-preset-preset-mode-time'] = {
+		presets['preset-speed-table'] = {
 			type: 'button',
 			category: 'Preset Memory',
-			name: 'Preset Mode Time',
+			name: 'Preset Recall Speed Table',
 			style: {
-				text: 'PRESET\\nMODE\\nTIME',
+				text: 'SPEED TABLE\\n$(generic-module:presetSpeedTable)',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -1740,9 +1740,9 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'presetTime',
+							actionId: 'presetSpeedTable',
 							options: {
-								mode: 1,
+								op: 't',
 							},
 						},
 					],
@@ -1754,12 +1754,57 @@ export function getPresetDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.presetSpeed) {
-		presets['recall-preset-speed-high'] = {
+		presets[`preset-recall-velocity`] = {
+			type: 'button',
+			category: 'Preset Memory',
+			name: 'Preset Recall Velocity',
+			style: {
+				text: 'RECALL SPD/TM\\n$(generic-module:presetSpeed)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			options: {
+				rotaryActions: true,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'presetSpeedTime',
+							options: {
+								op: 't',
+							},
+						},
+					],
+					up: [],
+					rotate_left: [
+						{
+							actionId: 'presetSpeedTime',
+							options: {
+								op: -1,
+							},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'presetSpeedTime',
+							options: {
+								op: 1,
+							},
+						},
+					],
+				},
+			],
+			feedbacks: [],
+		}
+
+		presets['preset-recall-speed-high'] = {
 			type: 'button',
 			category: 'Preset Memory',
 			name: 'Set Recall Speed High',
 			style: {
-				text: 'RECALL\\nSPEED\\nHIGH',
+				text: 'RECALL SPEED\\nHIGH',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -1768,24 +1813,36 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'speedPset',
+							actionId: 'presetSpeedTime',
 							options: {
-								speed: 25,
+								op: 's',
+								set: '875',
 							},
 						},
 					],
 					up: [],
 				},
 			],
-			feedbacks: [],
+			feedbacks: [
+				{
+					feedbackId: 'presetSpeedTime',
+					options: {
+						option: '875',
+					},
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
 		}
 
-		presets['recall-preset-speed-mid'] = {
+		presets['preset-recall-speed-mid'] = {
 			type: 'button',
 			category: 'Preset Memory',
 			name: 'Set Recall Speed Mid',
 			style: {
-				text: 'RECALL\\nSPEED\\nMID',
+				text: 'RECALL SPEED\\nMID',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -1794,24 +1851,36 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'speedPset',
+							actionId: 'presetSpeedTime',
 							options: {
-								speed: 15,
+								op: 's',
+								set: '625',
 							},
 						},
 					],
 					up: [],
 				},
 			],
-			feedbacks: [],
+			feedbacks: [
+				{
+					feedbackId: 'presetSpeedTime',
+					options: {
+						option: '625',
+					},
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
 		}
 
-		presets['recall-preset-speed-low'] = {
+		presets['preset-recall-speed-low'] = {
 			type: 'button',
 			category: 'Preset Memory',
 			name: 'Set Recall Speed Low',
 			style: {
-				text: 'RECALL\\nSPEED\\nLOW',
+				text: 'RECALL SPEED\\nLOW',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -1820,21 +1889,33 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'speedPset',
+							actionId: 'presetSpeedTime',
 							options: {
-								speed: 5,
+								op: 's',
+								set: '375',
 							},
 						},
 					],
 					up: [],
 				},
 			],
-			feedbacks: [],
+			feedbacks: [
+				{
+					feedbackId: 'presetSpeedTime',
+					options: {
+						option: '375',
+					},
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
 		}
 	}
 
 	if (SERIES.capabilities.preset) {
-		presets['recall-preset-scope-a'] = {
+		presets['preset-recall-scope-a'] = {
 			type: 'button',
 			category: 'Preset Memory',
 			name: 'Preset Recall Scope A',
@@ -1872,7 +1953,7 @@ export function getPresetDefinitions(self) {
 			],
 		}
 
-		presets['recall-preset-scope-b'] = {
+		presets['preset-recall-scope-b'] = {
 			type: 'button',
 			category: 'Preset Memory',
 			name: 'Preset Recall Scope B',
@@ -1910,7 +1991,7 @@ export function getPresetDefinitions(self) {
 			],
 		}
 
-		presets['recall-preset-scope-c'] = {
+		presets['preset-recall-scope-c'] = {
 			type: 'button',
 			category: 'Preset Memory',
 			name: 'Preset Recall Scope C',
@@ -1949,7 +2030,7 @@ export function getPresetDefinitions(self) {
 		}
 
 		for (let i = 0; i < 100; i++) {
-			presets[`recall-preset-${i}`] = {
+			presets[`preset-recall-${i}`] = {
 				type: 'button',
 				category: 'Preset Memory',
 				name: 'Recall, Store or Clear Preset ' + (i + 1).toString(),
