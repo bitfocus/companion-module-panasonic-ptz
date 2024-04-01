@@ -14,6 +14,7 @@ export function getPresetDefinitions(self) {
 	//const colorActiveBlue = combineRgb(0, 51, 204)
 	const colorBlue = combineRgb(0, 51, 204)
 	const colorDarkRed = combineRgb(102, 0, 0)
+	const colorDarkYellow = combineRgb(102, 102, 0)
 	const colorDarkBlue = combineRgb(0, 0, 102)
 	const colorDarkGreen = combineRgb(0, 102, 0)
 	const colorGrey = combineRgb(51, 51, 51)
@@ -1498,11 +1499,23 @@ export function getPresetDefinitions(self) {
 			name: 'Red Tally',
 			style: {
 				text: 'TALLY',
-				size: '14',
-				color: colorWhite,
+				size: '18',
+				color: colorDarkRed,
 				bgcolor: colorBlack,
 			},
-			steps: [],
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'tally',
+							options: {
+								op: 't',
+							},
+						},
+					],
+					up: [],
+				},
+			],
 			feedbacks: [
 				{
 					feedbackId: 'tallyState',
@@ -1522,11 +1535,23 @@ export function getPresetDefinitions(self) {
 			name: 'Green Tally',
 			style: {
 				text: 'TALLY',
-				size: '14',
-				color: colorWhite,
+				size: '18',
+				color: colorDarkGreen,
 				bgcolor: colorBlack,
 			},
-			steps: [],
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'tally2',
+							options: {
+								op: 't',
+							},
+						},
+					],
+					up: [],
+				},
+			],
 			feedbacks: [
 				{
 					feedbackId: 'tally2State',
@@ -1546,11 +1571,23 @@ export function getPresetDefinitions(self) {
 			name: 'Yellow Tally',
 			style: {
 				text: 'TALLY',
-				size: '14',
-				color: colorWhite,
+				size: '18',
+				color: colorDarkYellow,
 				bgcolor: colorBlack,
 			},
-			steps: [],
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'tally3',
+							options: {
+								op: 't',
+							},
+						},
+					],
+					up: [],
+				},
+			],
 			feedbacks: [
 				{
 					feedbackId: 'tally3State',
