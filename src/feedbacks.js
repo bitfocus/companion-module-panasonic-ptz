@@ -440,7 +440,7 @@ export function getFeedbackDefinitions(self) {
 	if (SERIES.capabilities.gain) {
 		feedbacks.gain = {
 			type: 'boolean',
-			name: 'Picture - Gain',
+			name: 'Image - Gain',
 			description: 'Indicates if the selected gain mode is currently active',
 			defaultStyle: {
 				color: colorWhite,
@@ -464,7 +464,7 @@ export function getFeedbackDefinitions(self) {
 	if (SERIES.capabilities.whiteBalance) {
 		feedbacks.whiteBalance = {
 			type: 'boolean',
-			name: 'Picture - White Balance',
+			name: 'Image - White Balance',
 			description: 'Indicates if the selected white balance mode is currently active',
 			defaultStyle: {
 				color: colorWhite,
@@ -486,7 +486,7 @@ export function getFeedbackDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.recordSD) {
-		feedbacks.recState = {
+		feedbacks.sdRecState = {
 			type: 'boolean',
 			name: 'Recording - State',
 			description: 'Indicates if recording is currently in progress',
@@ -496,13 +496,13 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function () {
-				return self.data.recording
+				return self.data.recording === '1'
 			},
 		}
 	}
 
 	if (SERIES.capabilities.recordSD) {
-		feedbacks.sdState = {
+		feedbacks.sdSlotState = {
 			type: 'boolean',
 			name: 'Recording - SD card inserted',
 			description: 'Indicates if at least one SD card is inserted into a slot on the camera',
@@ -512,7 +512,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function () {
-				return self.data.sdInserted || self.data.sd2Inserted
+				return self.data.sdInserted === '1' || self.data.sd2Inserted === '1'
 			},
 		}
 	}
@@ -528,7 +528,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function () {
-				return self.data.rtmp
+				return self.data.rtmp === '1'
 			},
 		}
 	}
@@ -544,7 +544,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function () {
-				return self.data.srt
+				return self.data.srt === '1'
 			},
 		}
 	}
@@ -560,7 +560,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function () {
-				return self.data.ts
+				return self.data.ts === '1'
 			},
 		}
 	}

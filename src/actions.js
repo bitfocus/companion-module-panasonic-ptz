@@ -439,12 +439,12 @@ export function getActionDefinitions(self) {
 	}
 
 	// #########################
-	// #### Picture Actions ####
+	// #### Image Actions ####
 	// #########################
 
 	if (SERIES.capabilities.gain.cmd) {
 		actions.gain = {
-			name: 'Picture - Gain',
+			name: 'Image - Gain',
 			options: optSetToggleNextPrev(SERIES.capabilities.gain.dropdown),
 			callback: async (action) => {
 				await self.getCam(SERIES.capabilities.gain.cmd + ':' + cmdEnum(action, SERIES.capabilities.gain.dropdown, self.data.gain))
@@ -455,7 +455,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.pedestal.cmd) {
 		const caps = SERIES.capabilities.pedestal
 		actions.ped = {
-			name: 'Picture - Pedestal',
+			name: 'Image - Pedestal',
 			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
 			callback: async (action) => {
 				await self.getCam(caps.cmd + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, action.options.step, caps.hexlen, self.data.masterPedValue))
@@ -466,7 +466,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.colorPedestal && SERIES.capabilities.colorPedestal.cmd.red) {
 		const caps = SERIES.capabilities.colorPedestal
 		actions.pedRed = {
-			name: 'Picture - Red Pedestal',
+			name: 'Image - Red Pedestal',
 			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
 			callback: async (action) => {
 				await self.getCam(caps.cmd.red + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, action.options.step, caps.hexlen, self.data.redPedValue))
@@ -477,7 +477,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.colorPedestal && SERIES.capabilities.colorPedestal.cmd.blue) {
 		const caps = SERIES.capabilities.colorPedestal
 		actions.pedBlue = {
-			name: 'Picture - Blue Pedestal',
+			name: 'Image - Blue Pedestal',
 			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
 			callback: async (action) => {
 				await self.getCam(caps.cmd.blue + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, action.options.step, caps.hexlen, self.data.bluePedValue))
@@ -488,7 +488,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.colorGain && SERIES.capabilities.colorGain.cmd.red) {
 		const caps = SERIES.capabilities.colorGain
 		actions.gainRed = {
-			name: 'Picture - Red Gain',
+			name: 'Image - Red Gain',
 			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
 			callback: async (action) => {
 				await self.getCam(caps.cmd.red + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, action.options.step, caps.hexlen, self.data.redGainValue))
@@ -499,7 +499,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.colorGain && SERIES.capabilities.colorGain.cmd.blue) {
 		const caps = SERIES.capabilities.colorGain
 		actions.gainBlue = {
-			name: 'Picture - Blue Gain',
+			name: 'Image - Blue Gain',
 			options: optSetIncDecStep('Level', 0, -caps.limit, +caps.limit, caps.step),
 			callback: async (action) => {
 				await self.getCam(caps.cmd.blue + ':' + cmdValue(action, caps.offset, -caps.limit, caps.limit, action.options.step, caps.hexlen, self.data.blueGainValue))
@@ -509,7 +509,7 @@ export function getActionDefinitions(self) {
 
 	if (SERIES.capabilities.whiteBalance) {
 		actions.whiteBalanceMode = {
-			name: 'Picture - White Balance Mode',
+			name: 'Image - White Balance Mode',
 			options: optSetToggleNextPrev(SERIES.capabilities.whiteBalance.dropdown),
 			callback: async (action) => {
 				await self.getCam('OAW:' + cmdEnum(action, SERIES.capabilities.whiteBalance.dropdown, self.data.whiteBalance))
@@ -517,7 +517,7 @@ export function getActionDefinitions(self) {
 		}
 
 		actions.whiteBalanceExecAWB = {
-			name: 'Picture - Execute AWC/AWB',
+			name: 'Image - Execute AWC/AWB',
 			options: [],
 			callback: async (action) => {
 				await self.getCam('OWS')
@@ -525,7 +525,7 @@ export function getActionDefinitions(self) {
 		}
 
 		actions.whiteBalanceExecABB = {
-			name: 'Picture - Execute ABC/ABB',
+			name: 'Image - Execute ABC/ABB',
 			options: [],
 			callback: async (action) => {
 				await self.getCam('OAS')
@@ -535,7 +535,7 @@ export function getActionDefinitions(self) {
 
 	if (SERIES.capabilities.colorTemperature && SERIES.capabilities.colorTemperature.index) {
 		actions.colorTemperature = {
-			name: 'Picture - Color Temperature',
+			name: 'Image - Color Temperature',
 			options: optSetToggleNextPrev(SERIES.capabilities.colorTemperature.index.dropdown),
 			callback: async (action) => {
 				await self.getCam(SERIES.capabilities.colorTemperature.index.cmd + ':' + cmdEnum(action, SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature))
@@ -546,7 +546,7 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.colorTemperature && SERIES.capabilities.colorTemperature.advanced) {
 		if (SERIES.capabilities.colorTemperature.advanced.set) {
 			actions.colorTemperature = {
-				name: 'Picture - Color Temperature',
+				name: 'Image - Color Temperature',
 				options: optSetIncDecStep('Color Temperature [K]', 3200, SERIES.capabilities.colorTemperature.advanced.min, SERIES.capabilities.colorTemperature.advanced.max, 20),
 				callback: async (action) => {
 					switch (action.options.op) {
@@ -786,72 +786,48 @@ export function getActionDefinitions(self) {
 
 	if (SERIES.capabilities.recordSD) {
 		actions.sdCardRec = {
-			name: 'System - SD Card Recording',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Action',
-					id: 'val',
-					default: e.ENUM_RECORDING[0].id,
-					choices: e.ENUM_RECORDING,
-				},
-			],
+			name: 'System - SD Card Recording Control',
+			options: optSetToggle(e.ENUM_OFF_ON),
 			callback: async (action) => {
-				await self.getWeb('sdctrl?save=' + action.options.val)
+				var cmd = cmdEnum(action, e.ENUM_OFF_ON, self.data.recording)
+				cmd = cmd === '1' ? 'start' : 'end'
+				await self.getWeb('sdctrl?save=' + cmd)
 			},
 		}
 	}
 
 	if (SERIES.capabilities.streamSRT) {
 		actions.srtStreamCtrl = {
-			name: 'Streaming - SRT Stream Control',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'SRT Action (Caller)',
-					id: 'val',
-					default: e.ENUM_STREAMING[0].id,
-					choices: e.ENUM_STREAMING,
-				},
-			],
+			name: 'Streaming - SRT Caller Control',
+			options: optSetToggle(e.ENUM_OFF_ON),
 			callback: async (action) => {
-				await self.getWeb('srt_ctrl?cmd=' + action.options.val)
+				var cmd = cmdEnum(action, e.ENUM_OFF_ON, self.data.srt)
+				cmd = cmd === '1' ? 'start' : 'stop'
+				await self.getWeb('srt_ctrl?cmd=' + cmd)
 			},
 		}
 	}
 
 	if (SERIES.capabilities.streamTS) {
 		actions.tsStreamCtrl = {
-			name: 'Streaming - TS Stream Control',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'MPEG-TS Action',
-					id: 'val',
-					default: e.ENUM_STREAMING[0].id,
-					choices: e.ENUM_STREAMING,
-				},
-			],
+			name: 'Streaming - MPEG-TS Output Control',
+			options: optSetToggle(e.ENUM_OFF_ON),
 			callback: async (action) => {
-				await self.getWeb('ts_ctrl?cmd=' + action.options.val)
+				var cmd = cmdEnum(action, e.ENUM_OFF_ON, self.data.ts)
+				cmd = cmd === '1' ? 'start' : 'stop'
+				await self.getWeb('ts_ctrl?cmd=' + cmd)
 			},
 		}
 	}
 
 	if (SERIES.capabilities.streamRTMP) {
 		actions.rtmpStreamCtrl = {
-			name: 'Streaming - RTMP Stream Control',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'RTMP Action (Push)',
-					id: 'val',
-					default: e.ENUM_STREAMING[0].id,
-					choices: e.ENUM_STREAMING,
-				},
-			],
+			name: 'Streaming - RTMP Push Control',
+			options: optSetToggle(e.ENUM_OFF_ON),
 			callback: async (action) => {
-				await self.getWeb('rtmp_ctrl?cmd=' + action.options.val)
+				var cmd = cmdEnum(action, e.ENUM_OFF_ON, self.data.rtmp)
+				cmd = cmd === '1' ? 'start' : 'stop'
+				await self.getWeb('rtmp_ctrl?cmd=' + cmd)
 			},
 		}
 	}

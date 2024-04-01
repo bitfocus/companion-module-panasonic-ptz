@@ -1010,13 +1010,13 @@ export function getPresetDefinitions(self) {
 	}
 
 	// #########################
-	// #### Picture Presets ####
+	// #### Image Presets ####
 	// #########################
 
 	if (SERIES.capabilities.gain) {
-		presets[`picture-gain`] = {
+		presets[`image-gain`] = {
 			type: 'button',
-			category: 'Picture',
+			category: 'Image',
 			name: 'Gain',
 			style: {
 				text: 'GAIN\\n$(generic-module:gain)',
@@ -1072,9 +1072,9 @@ export function getPresetDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.pedestal) {
-		presets['picture-pedestal'] = {
+		presets['image-pedestal'] = {
 			type: 'button',
-			category: 'Picture',
+			category: 'Image',
 			name: 'Pedestal',
 			style: {
 				text: 'Total Ped.\\n$(generic-module:masterPed)',
@@ -1122,9 +1122,9 @@ export function getPresetDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.colorGain) {
-		presets['picture-red-gain'] = {
+		presets['image-red-gain'] = {
 			type: 'button',
-			category: 'Picture',
+			category: 'Image',
 			name: 'Red Gain',
 			style: {
 				text: 'Red Gain\\n$(generic-module:redGain)',
@@ -1170,9 +1170,9 @@ export function getPresetDefinitions(self) {
 			feedbacks: [],
 		}
 
-		presets['picture-blue-gain'] = {
+		presets['image-blue-gain'] = {
 			type: 'button',
-			category: 'Picture',
+			category: 'Image',
 			name: 'Blue Gain',
 			style: {
 				text: 'Blue Gain\\n$(generic-module:blueGain)',
@@ -1220,9 +1220,9 @@ export function getPresetDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.colorPedestal) {
-		presets['picture-red-ped'] = {
+		presets['image-red-ped'] = {
 			type: 'button',
-			category: 'Picture',
+			category: 'Image',
 			name: 'Red Pedestal',
 			style: {
 				text: 'Red Ped.\\n$(generic-module:redPed)',
@@ -1268,9 +1268,9 @@ export function getPresetDefinitions(self) {
 			feedbacks: [],
 		}
 
-		presets['picture-blue-ped'] = {
+		presets['image-blue-ped'] = {
 			type: 'button',
-			category: 'Picture',
+			category: 'Image',
 			name: 'Blue Pedestal',
 			style: {
 				text: 'Blue Ped.\\n$(generic-module:bluePed)',
@@ -1318,9 +1318,9 @@ export function getPresetDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.whiteBalance) {
-		presets[`picture-whitebalance`] = {
+		presets[`image-whitebalance`] = {
 			type: 'button',
-			category: 'Picture',
+			category: 'Image',
 			name: 'White Balance',
 			style: {
 				text: 'WB Mode\\n$(generic-module:whiteBalance)',
@@ -1375,9 +1375,9 @@ export function getPresetDefinitions(self) {
 		}
 
 		if (SERIES.capabilities.colorTemperature) {
-			presets['picture-colortemp'] = {
+			presets['image-colortemp'] = {
 				type: 'button',
-				category: 'Picture',
+				category: 'Image',
 				name: 'Color Temperature',
 				style: {
 					text: 'Temp.\\n$(generic-module:colorTemperature)',
@@ -1416,9 +1416,9 @@ export function getPresetDefinitions(self) {
 			}
 		}
 
-		presets['picture-awb'] = {
+		presets['image-awb'] = {
 			type: 'button',
-			category: 'Picture',
+			category: 'Image',
 			name: 'Execute Auto White Balance',
 			style: {
 				text: 'Execute\\nAWB',
@@ -1439,9 +1439,9 @@ export function getPresetDefinitions(self) {
 			feedbacks: [],
 		}
 
-		presets['picture-abb'] = {
+		presets['image-abb'] = {
 			type: 'button',
-			category: 'Picture',
+			category: 'Image',
 			name: 'Execute Auto Black Balance',
 			style: {
 				text: 'Execute\\nABB',
@@ -1467,74 +1467,24 @@ export function getPresetDefinitions(self) {
 	// #### System Presets ####
 	// ########################
 
-	if (SERIES.capabilities.power) {
-		presets['system-power'] = {
+	if (SERIES.capabilities.error || SERIES.capabilities.version) {
+		presets['system-cam-info'] = {
 			type: 'button',
 			category: 'System',
-			name: 'Power',
+			name: 'Camera title, model, version and error indication',
 			style: {
-				text: 'Power\\n$(generic-module:power)',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorOrange,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'power',
-							options: {
-								op: 't',
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'powerState',
-					style: {
-						color: colorWhite,
-						bgcolor: colorDarkGreen,
-					},
-				},
-			],
-		}
-	}
-
-	if (SERIES.capabilities.colorbar) {
-		presets['system-colorbar'] = {
-			type: 'button',
-			category: 'System',
-			name: 'Color Bar',
-			style: {
-				text: 'Color Bar\\n$(generic-module:colorbar)',
-				size: '14',
+				text: '$(generic-module:title)\\n$(generic-module:model)\\n$(generic-module:version)',
+				size: 'auto',
 				color: colorWhite,
 				bgcolor: colorBlack,
 			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'colorbar',
-							options: {
-								op: 't',
-							},
-						},
-					],
-					up: [],
-				},
-			],
+			steps: [],
 			feedbacks: [
 				{
-					feedbackId: 'colorbarState',
+					feedbackId: 'error',
 					style: {
-						png64: ICONS.COLORBAR,
-						pngalignment: 'center:center',
-						color: colorWhite,
-						bgcolor: colorRed,
+						color: colorRed,
+						bgcolor: colorBlack,
 					},
 				},
 			],
@@ -1613,6 +1563,80 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
+	if (SERIES.capabilities.power) {
+		presets['system-power'] = {
+			type: 'button',
+			category: 'System',
+			name: 'Power',
+			style: {
+				text: 'Power\\n$(generic-module:power)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorOrange,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'power',
+							options: {
+								op: 't',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'powerState',
+					style: {
+						color: colorWhite,
+						bgcolor: colorDarkGreen,
+					},
+				},
+			],
+		}
+	}
+
+	if (SERIES.capabilities.colorbar) {
+		presets['system-colorbar'] = {
+			type: 'button',
+			category: 'System',
+			name: 'Color Bar',
+			style: {
+				text: 'Color Bar\\n$(generic-module:colorbar)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'colorbar',
+							options: {
+								op: 't',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'colorbarState',
+					style: {
+						png64: ICONS.COLORBAR,
+						pngalignment: 'center:center',
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
+		}
+	}
+
 	if (SERIES.capabilities.install) {
 		presets['system-install-position'] = {
 			type: 'button',
@@ -1642,12 +1666,12 @@ export function getPresetDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.recordSD) {
-		presets['system-sd-card-recording-start'] = {
+		presets['system-sd-recording'] = {
 			type: 'button',
 			category: 'System',
-			name: 'SD Card Recording Start',
+			name: 'SD Card Recording',
 			style: {
-				text: 'SD Card\\nRecording\\nStart',
+				text: 'SD Card Recording\\n$(generic-module:recording)',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -1658,22 +1682,39 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'sdCardRec',
 							options: {
-								value: 'start',
+								op: 't',
 							},
 						},
 					],
 					up: [],
 				},
 			],
-			feedbacks: [],
+			feedbacks: [
+				{
+					feedbackId: 'sdSlotState',
+					style: {
+						color: colorWhite,
+						bgcolor: colorDarkGreen,
+					},
+				},
+				{
+					feedbackId: 'sdRecState',
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
 		}
+	}
 
-		presets['system-sd-card-recording-stop'] = {
+	if (SERIES.capabilities.streamSRT) {
+		presets['system-srt-stream'] = {
 			type: 'button',
 			category: 'System',
-			name: 'SD Card Recording Stop',
+			name: 'SRT Caller Streaming',
 			style: {
-				text: 'SD Card\\nRecording\\nStop',
+				text: 'SRT Caller\\n$(generic-module:streamingSRT)',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -1682,16 +1723,96 @@ export function getPresetDefinitions(self) {
 				{
 					down: [
 						{
-							actionId: 'sdCardRec',
+							actionId: 'srtStreamCtrl',
 							options: {
-								value: 'end',
+								op: 't',
 							},
 						},
 					],
 					up: [],
 				},
 			],
-			feedbacks: [],
+			feedbacks: [
+				{
+					feedbackId: 'streamStateSRT',
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
+		}
+	}
+
+	if (SERIES.capabilities.streamTS) {
+		presets['system-ts-stream'] = {
+			type: 'button',
+			category: 'System',
+			name: 'MPEG-TS Output Streaming',
+			style: {
+				text: 'MPEG-TS Output\\n$(generic-module:streamingTS)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'tsStreamCtrl',
+							options: {
+								op: 't',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'streamStateTS',
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
+		}
+	}
+
+	if (SERIES.capabilities.streamRTMP) {
+		presets['system-rtmp-stream'] = {
+			type: 'button',
+			category: 'System',
+			name: 'RTMP Push Streaming',
+			style: {
+				text: 'RTMP Push\\n$(generic-module:streamingRTMP)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'rtmpStreamCtrl',
+							options: {
+								op: 't',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'streamStateRTMP',
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
 		}
 	}
 
@@ -1700,7 +1821,7 @@ export function getPresetDefinitions(self) {
 	// #################
 
 	if (SERIES.capabilities.presetSpeed && SERIES.capabilities.presetTime) {
-		presets['preset-recall-mode'] = {
+		presets['preset-mode'] = {
 			type: 'button',
 			category: 'Preset Memory',
 			name: 'Preset Recall Mode',
@@ -1754,7 +1875,7 @@ export function getPresetDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.presetSpeed) {
-		presets[`preset-recall-velocity`] = {
+		presets[`preset-velocity`] = {
 			type: 'button',
 			category: 'Preset Memory',
 			name: 'Preset Recall Velocity',
@@ -1799,7 +1920,7 @@ export function getPresetDefinitions(self) {
 			feedbacks: [],
 		}
 
-		presets['preset-recall-speed-high'] = {
+		presets['preset-speed-high'] = {
 			type: 'button',
 			category: 'Preset Memory',
 			name: 'Set Recall Speed High',
@@ -1837,7 +1958,7 @@ export function getPresetDefinitions(self) {
 			],
 		}
 
-		presets['preset-recall-speed-mid'] = {
+		presets['preset-speed-mid'] = {
 			type: 'button',
 			category: 'Preset Memory',
 			name: 'Set Recall Speed Mid',
@@ -1875,7 +1996,7 @@ export function getPresetDefinitions(self) {
 			],
 		}
 
-		presets['preset-recall-speed-low'] = {
+		presets['preset-speed-low'] = {
 			type: 'button',
 			category: 'Preset Memory',
 			name: 'Set Recall Speed Low',
@@ -1915,7 +2036,7 @@ export function getPresetDefinitions(self) {
 	}
 
 	if (SERIES.capabilities.preset) {
-		presets['preset-recall-scope-a'] = {
+		presets['preset-scope-a'] = {
 			type: 'button',
 			category: 'Preset Memory',
 			name: 'Preset Recall Scope A',
@@ -1953,7 +2074,7 @@ export function getPresetDefinitions(self) {
 			],
 		}
 
-		presets['preset-recall-scope-b'] = {
+		presets['preset-scope-b'] = {
 			type: 'button',
 			category: 'Preset Memory',
 			name: 'Preset Recall Scope B',
@@ -1991,7 +2112,7 @@ export function getPresetDefinitions(self) {
 			],
 		}
 
-		presets['preset-recall-scope-c'] = {
+		presets['preset-scope-c'] = {
 			type: 'button',
 			category: 'Preset Memory',
 			name: 'Preset Recall Scope C',
@@ -2030,7 +2151,7 @@ export function getPresetDefinitions(self) {
 		}
 
 		for (let i = 0; i < 100; i++) {
-			presets[`preset-recall-${i}`] = {
+			presets[`preset-memory-${i}`] = {
 				type: 'button',
 				category: 'Preset Memory',
 				name: 'Recall, Store or Clear Preset ' + (i + 1).toString(),
@@ -2125,118 +2246,6 @@ export function getPresetDefinitions(self) {
 					},
 				],
 			}
-		}
-	}
-
-	// ###########################
-	// #### Streaming Presets ####
-	// ###########################
-
-	if (SERIES.capabilities.streamRTMP) {
-		presets['streaming-rtmp-start'] = {
-			type: 'button',
-			category: 'Streaming',
-			name: 'RTMP (Client) Streaming Start',
-			style: {
-				text: 'RTMP\\nStreaming\\nStart',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'rtmpStreamCtrl',
-							options: {
-								value: 'start',
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['streaming-rtmp-stop'] = {
-			type: 'button',
-			category: 'Streaming',
-			name: 'RTMP (Client) Streaming Stop',
-			style: {
-				text: 'RTMP\\nStreaming\\nStop',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'rtmpStreamCtrl',
-							options: {
-								value: 'stop',
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-	}
-
-	if (SERIES.capabilities.streamSRT) {
-		presets['streaming-srt-start'] = {
-			type: 'button',
-			category: 'Streaming',
-			name: 'SRT (Caller) Streaming Start',
-			style: {
-				text: 'SRT\\nStreaming\\nStart',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'srtStreamCtrl',
-							options: {
-								value: 'start',
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		}
-
-		presets['streaming-srt-stop'] = {
-			type: 'button',
-			category: 'Streaming',
-			name: 'SRT (Caller) Streaming Stop',
-			style: {
-				text: 'SRT\\nStreaming\\nStop',
-				size: '14',
-				color: colorWhite,
-				bgcolor: colorBlack,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'srtStreamCtrl',
-							options: {
-								value: 'stop',
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [],
 		}
 	}
 

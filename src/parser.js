@@ -330,14 +330,14 @@ export function parseWeb(self, str, cmd) {
 		case 'get_state':
 			switch (str[0]) {
 				case 'rec':
-					self.data.recording = str[1] === 'on'
+					self.data.recording = str[1] === 'on' ? '1' : '0'
 					break
 				//case 'rec_counter': self.data.recordingTime = str[1]; break
 				case 'sd_insert':
-					self.data.sdInserted = str[1] === 'on'
+					self.data.sdInserted = str[1] === 'on' ? '1' : '0'
 					break
 				case 'sd2_insert':
-					self.data.sd2Inserted = str[1] === 'on'
+					self.data.sd2Inserted = str[1] === 'on' ? '1' : '0'
 					break
 			}
 			break
@@ -362,5 +362,36 @@ export function parseWeb(self, str, cmd) {
 					break
 			}
 			break
+	}
+}
+
+export function parseWebCode(self, code, cmd) {
+	if (code === 204 || code === 503) { // no content
+		switch (cmd) {
+			case 'srt_ctrl?cmd=start':
+				self.data.srt = '1'
+				break
+			case 'srt_ctrl?cmd=stop':
+				self.data.srt = '0'
+				break
+			case 'ts_ctrl?cmd=start':
+				self.data.ts = '1'
+				break
+			case 'ts_ctrl?cmd=stop':
+				self.data.ts = '0'
+				break
+			case 'rtmp_ctrl?cmd=start':
+				self.data.rtmp = '1'
+				break
+			case 'rtmp_ctrl?cmd=stop':
+				self.data.rtmp = '0'
+				break
+			case 'sdctrl?save=start':
+				self.data.recording = '1'
+				break
+			case 'sdctrl?save=end':
+				self.data.recording = '0'
+				break
+		}
 	}
 }

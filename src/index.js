@@ -10,7 +10,7 @@ import got from 'got'
 import JimpRaw from 'jimp'
 import EventEmitter from 'events'
 import { getAndUpdateSeries } from './common.js'
-import { parseUpdate, parseWeb } from './parser.js'
+import { parseUpdate, parseWeb, parseWebCode } from './parser.js'
 import { pollCameraStatus, pullCameraStatus } from './polling.js'
 
 // Webpack makes a mess..
@@ -271,7 +271,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			const response = await got.get(url, { timeout: { request: this.config.timeout } })
 			if (response.body) {
 				const lines = response.body.trim().split('\r\n')
-
+				
 				for (let line of lines) {
 					const str = line.trim()
 
@@ -281,12 +281,18 @@ class PanasonicPTZInstance extends InstanceBase {
 
 					parseWeb(this, str.split('='), cmd)
 				}
+			} else {
+				if (this.config.debug) {
+					this.log('info', 'Web response [' + cmd + ']: Response code ' + response.statusCode.toString())
+				}
 
-				this.checkVariables()
-				this.checkFeedbacks()
-
-				this.updateStatus(InstanceStatus.Ok)
+				parseWebCode(this, response.statusCode, cmd)
 			}
+
+			this.checkVariables()
+			this.checkFeedbacks()
+
+			this.updateStatus(InstanceStatus.Ok)			
 		} catch (err) {
 			if (this.handleConnectionError(err)) this.log('error', 'Web request ' + url + ' failed: ' + String(err))
 		}
@@ -332,9 +338,6 @@ class PanasonicPTZInstance extends InstanceBase {
 			title: null,
 			version: null,
 
-			// booleans
-			recording: null,
-
 			// unresolved enums
 			autotracking: null,
 			autotrackingAngle: null,
@@ -353,6 +356,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			presetSpeed: null,
 			presetSpeedTable: null,
 			presetSpeedUnit: '0',
+			recording: null,
 			rtmp: null,
 			sdInserted: null,
 			sd2Inserted: null,
