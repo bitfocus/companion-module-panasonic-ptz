@@ -114,7 +114,6 @@ export async function pullCameraStatus(self) {
 			'QSL:B6', // Auto Tracking Mode
 			'QSL:B7', // Angle
 			'QSL:BB', // Tracking Status
-			'QSL:BC', // Tracking Start/Stop
 		],
 		web: ['get_state', 'get_rtmp_status', 'get_srt_status', 'get_ts_status'],
 	}

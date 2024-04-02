@@ -674,27 +674,35 @@ export function getActionDefinitions(self) {
 	// ##############################
 
 	if (SERIES.capabilities.trackingAuto) {
-		actions.autotracking = {
-			name: 'Auto Tracking',
+		actions.autotrackingMode = {
+			name: 'Auto Tracking - Mode',
 			options: optSetToggle(e.ENUM_OFF_ON),
 			callback: async (action) => {
 				await self.getCam('OSL:B6:' + cmdEnum(action, e.ENUM_OFF_ON, self.data.autotracking))
 			},
 		}
 
-		actions.autotrackingMode = {
-			name: 'Auto Tracking - Tracking Angle',
+		actions.autotrackingAngle = {
+			name: 'Auto Tracking - Angle',
 			options: optSetToggle(e.ENUM_AUTOTRACKING_ANGLE),
 			callback: async (action) => {
-				await self.getCam('OSL:B6:' + cmdEnum(action, e.ENUM_AUTOTRACKING_ANGLE, self.data.autotrackingAngle))
+				await self.getCam('OSL:B7:' + cmdEnum(action, e.ENUM_AUTOTRACKING_ANGLE, self.data.autotrackingAngle))
 			},
 		}
 
-		actions.trackingStartStop = {
-			name: 'Auto Tracking - Tracking Start/Stop',
-			options: optSetToggle(e.ENUM_STOP_START),
+		actions.autotrackingStart = {
+			name: 'Auto Tracking - Start Tracking',
+			options: [],
 			callback: async (action) => {
-				await self.getCam('OSL:BC:' + cmdEnum(action, e.ENUM_STOP_START, self.data.tracking))
+				await self.getCam('OSL:BC:1')
+			},
+		}
+
+		actions.autotrackingStop = {
+			name: 'Auto Tracking - Stop Tracking',
+			options: [],
+			callback: async (action) => {
+				await self.getCam('OSL:BC:0')
 			},
 		}
 	}

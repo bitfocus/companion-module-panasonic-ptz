@@ -110,24 +110,28 @@ export function setVariables(self) {
 		variables.push({ variableId: 'bluePed', name: 'Blue Pedestal' })
 	}
 	if (SERIES.capabilities.presetSpeed) {
-		variables.push({ variableId: 'presetSpeed', name: 'Recall Speed' })
-		variables.push({ variableId: 'presetSpeedTable', name: 'Recall Speed Table' })
+		variables.push({ variableId: 'presetSpeed', name: 'Preset Recall Speed/Time' })
+		variables.push({ variableId: 'presetSpeedTable', name: 'Preset Recall Speed Table' })
 	}
 	if (SERIES.capabilities.presetTime) {
-		variables.push({ variableId: 'presetSpeedUnit', name: 'Recall Speed Unit' })
+		variables.push({ variableId: 'presetSpeedUnit', name: 'Preset Recall Speed Unit' })
 	}
 	if (SERIES.capabilities.recordSD) {
-		variables.push({ variableId: 'recording', name: 'Recording' })
-		//variables.push({ variableId: 'recordingTime', name: 'Recording Time' })
+		variables.push({ variableId: 'recording', name: 'SD Card Recording Status' })
 	}
 	if (SERIES.capabilities.streamRTMP) {
-		variables.push({ variableId: 'streamingRTMP', name: 'RTMP Client Status' })
+		variables.push({ variableId: 'streamingRTMP', name: 'RTMP Push Status' })
 	}
 	if (SERIES.capabilities.streamSRT) {
 		variables.push({ variableId: 'streamingSRT', name: 'SRT Caller Status' })
 	}
 	if (SERIES.capabilities.streamTS) {
 		variables.push({ variableId: 'streamingTS', name: 'MPEG-TS Output Status' })
+	}
+	if (SERIES.capabilities.trackingAuto) {
+		variables.push({ variableId: 'autotrackingMode', name: 'Autotracking Mode' })
+		variables.push({ variableId: 'autotrackingAngle', name: 'Autotracking Angle' })
+		variables.push({ variableId: 'autotrackingStatus', name: 'Autotracking Status' })
 	}
 
 	return variables
@@ -138,6 +142,10 @@ export function setVariables(self) {
 // #########################
 export function checkVariables(self) {
 	const SERIES = getAndUpdateSeries(self)
+
+	const autotrackingMode = SERIES.capabilities.trackingAuto ? getLabel(e.ENUM_OFF_ON, self.data.autotrackingMode) : null
+
+	const autotrackingAngle = SERIES.capabilities.trackingAuto ? getLabel(e.ENUM_AUTOTRACKING_ANGLE, self.data.autotrackingAngle) : null
 
 	const colorbar = SERIES.capabilities.colorbar ? getLabel(e.ENUM_OFF_ON, self.data.colorbar) : null
 
@@ -166,6 +174,8 @@ export function checkVariables(self) {
 	const presetSpeedTable = SERIES.capabilities.presetSpeed ? getLabel(SERIES.capabilities.presetSpeed.dropdown, self.data.presetSpeedTable) : null
 
 	const presetSpeedUnit = SERIES.capabilities.presetTime ? getLabel(e.ENUM_PSSPEED_UNIT, self.data.presetSpeedUnit) : null
+
+	const recording = SERIES.capabilities.recordSD ? getLabel(e.ENUM_OFF_ON, self.data.recording) : null
 
 	const rtmp = SERIES.capabilities.streamRTMP ? getLabel(e.ENUM_OFF_ON, self.data.rtmp) : null
 
@@ -199,24 +209,11 @@ export function checkVariables(self) {
 		}
 		return val < low || val > high ? null : (((val - low) / (high - low)) * 100).toFixed(fractionDigits)
 	}
-	/* 
-	const norm = (val, low = 0, high = 100) => {
-		return (val < low || val > high) ? null : (((val - low) / (high - low)) * 2) - 1
-	}
 
-	const normS = (val, low = -100, high = 100) => {
-		return (val < low || val > high) ? null : (((val - low) / (high - low)) * 2) - 1
-	}
- */
 	self.setVariableValues({
-		//series: self.data.series,
 		model: self.data.model,
-		//mac: self.data.mac,
-		//serial: self.data.serial,
 		title: self.data.title,
 		version: self.data.version,
-
-		recording: self.data.recording,
 
 		presetSelected: self.data.presetSelectedIdx ? (self.data.presetSelectedIdx + 1).toString() : null,
 		presetCompleted: self.data.presetCompletedIdx ? (self.data.presetCompletedIdx + 1).toString() : null,
@@ -242,12 +239,14 @@ export function checkVariables(self) {
 		bluePed: self.data.bluePedValue,
 		masterPed: self.data.masterPedValue,
 
+		autotrackingStatus: self.data.autotrackingStatusLabel,
 		irisF: self.data.irisLabel,
-		//recordingTime: self.data.recordingTime,
 		shutterStep: self.data.shutterStepLabel,
 
 		colorTemperature: self.data.colorTempLabel ? self.data.colorTempLabel : colorTemperature,
 
+		autotrackingMode: autotrackingMode,
+		autotrackingAngle: autotrackingAngle,
 		colorbar: colorbar,
 		error: error,
 		filter: filter,
@@ -262,12 +261,13 @@ export function checkVariables(self) {
 		presetSpeedTable: presetSpeedTable,
 		presetSpeedUnit: presetSpeedUnit,
 		shutter: shutter,
-		streamingRTMP: rtmp,
 		streamingSRT: srt,
 		streamingTS: ts,
+		streamingRTMP: rtmp,
 		tally: tally,
 		tally2: tally2,
 		tally3: tally3,
+		recording: recording,
 		whiteBalance: whiteBalance,
 
 		ptSpeed: self.ptSpeed,

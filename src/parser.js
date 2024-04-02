@@ -253,11 +253,11 @@ export function parseUpdate(self, str) {
 		case 'OSL':
 			switch (str[1]) {
 				case 'B6':
-					self.data.autotracking = str[2]
-					break // Auto Tracking Mode
+					self.data.autotrackingMode = str[2]
+					break
 				case 'B7':
 					self.data.autotrackingAngle = str[2]
-					break // Angle
+					break
 				case 'BB':
 					switch (str[2]) {
 						case '0':
@@ -271,9 +271,6 @@ export function parseUpdate(self, str) {
 							break
 					}
 					break
-				case 'BC':
-					self.data.tracking = str[2]
-					break // Tracking Start/Stop
 			}
 			break
 		case 'OGS':
@@ -332,7 +329,6 @@ export function parseWeb(self, str, cmd) {
 				case 'rec':
 					self.data.recording = str[1] === 'on' ? '1' : '0'
 					break
-				//case 'rec_counter': self.data.recordingTime = str[1]; break
 				case 'sd_insert':
 					self.data.sdInserted = str[1] === 'on' ? '1' : '0'
 					break

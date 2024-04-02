@@ -658,61 +658,63 @@ export function getPresetDefinitions(self) {
 		}
 	}
 
-	presets[`lens-ois-mode`] = {
-		type: 'button',
-		category: 'Lens',
-		name: 'O.I.S. Mode',
-		style: {
-			text: 'O.I.S.\n$(generic-module:ois)',
-			size: '14',
-			color: colorWhite,
-			bgcolor: colorBlack,
-		},
-		options: {
-			rotaryActions: true,
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: 'ois',
-						options: {
-							op: 't',
-						},
-					},
-				],
-				up: [],
-				rotate_left: [
-					{
-						actionId: 'ois',
-						options: {
-							op: -1,
-						},
-					},
-				],
-				rotate_right: [
-					{
-						actionId: 'ois',
-						options: {
-							op: 1,
-						},
-					},
-				],
+	if (SERIES.capabilities.ois) {
+		presets[`lens-ois-mode`] = {
+			type: 'button',
+			category: 'Lens',
+			name: 'O.I.S. Mode',
+			style: {
+				text: 'O.I.S.\n$(generic-module:ois)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
-		],
-		feedbacks: [
-			{
-				feedbackId: 'oisMode',
-				options: {
-					option: SERIES.capabilities.ois.dropdown[0].id,
-				},
-				isInverted: true,
-				style: {
-					color: colorWhite,
-					bgcolor: colorRed,
-				},
+			options: {
+				rotaryActions: true,
 			},
-		],
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'ois',
+							options: {
+								op: 't',
+							},
+						},
+					],
+					up: [],
+					rotate_left: [
+						{
+							actionId: 'ois',
+							options: {
+								op: -1,
+							},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'ois',
+							options: {
+								op: 1,
+							},
+						},
+					],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'oisMode',
+					options: {
+						option: SERIES.capabilities.ois.dropdown[0].id,
+					},
+					isInverted: true,
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
+		}
 	}
 
 	// ##########################

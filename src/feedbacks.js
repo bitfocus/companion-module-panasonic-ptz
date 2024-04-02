@@ -172,8 +172,32 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
+	if (SERIES.capabilities.ois) {
+		feedbacks.oisMode = {
+			type: 'boolean',
+			name: 'Lens - Image Stabilization',
+			description: 'Indicates if the selected image stabilization mode is currently active',
+			defaultStyle: {
+				color: colorWhite,
+				bgcolor: colorRed,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'option',
+					default: SERIES.capabilities.ois.dropdown[0].id,
+					choices: SERIES.capabilities.ois.dropdown,
+				},
+			],
+			callback: function (feedback) {
+				return self.data.ois === feedback.options.option
+			},
+		}
+	}
+
 	if (SERIES.capabilities.trackingAuto) {
-		feedbacks.autotracking = {
+		feedbacks.autotrackingMode = {
 			type: 'boolean',
 			name: 'Auto Tracking - On/Off',
 			description: 'Indicates if Auto Tracking is enabled',
@@ -183,11 +207,11 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function () {
-				return self.data.autotracking === '1'
+				return self.data.autotrackingMode === '1'
 			},
 		}
 
-		feedbacks.autotrackingMode = {
+		feedbacks.autotrackingAngle = {
 			type: 'boolean',
 			name: 'Auto Tracking - Angle',
 			description: 'Indicates if the selected angle is currently active',
@@ -205,29 +229,7 @@ export function getFeedbackDefinitions(self) {
 				},
 			],
 			callback: function (feedback) {
-				return self.data.autotrackingMode === feedback.options.option
-			},
-		}
-
-		feedbacks.trackingState = {
-			type: 'boolean',
-			name: 'Auto Tracking - Tracking State',
-			description: 'Indicates if the selected tracking state is currently active',
-			defaultStyle: {
-				color: colorWhite,
-				bgcolor: colorRed,
-			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'State',
-					id: 'option',
-					default: e.ENUM_AUTOTRACKING_STATE[1].id,
-					choices: e.ENUM_AUTOTRACKING_STATE,
-				},
-			],
-			callback: function (feedback) {
-				return self.data.trackingState === feedback.options.option
+				return self.data.autotrackingAngle === feedback.options.option
 			},
 		}
 	}
@@ -235,7 +237,7 @@ export function getFeedbackDefinitions(self) {
 	if (SERIES.capabilities.preset) {
 		feedbacks.presetSpeedTime = {
 			type: 'boolean',
-			name: 'Preset - Recall Velocity',
+			name: 'Preset - Recall Speed/Time',
 			description: 'Indicates if the selected preset recall velocity is currently set',
 			defaultStyle: {
 				color: colorWhite,
@@ -362,30 +364,6 @@ export function getFeedbackDefinitions(self) {
 					return { png64: self.data.presetThumbnails[id] }
 				},
 			}
-		}
-	}
-
-	if (SERIES.capabilities.ois) {
-		feedbacks.oisMode = {
-			type: 'boolean',
-			name: 'Image Stabilization - Mode',
-			description: 'Indicates if the selected image stabilization mode is currently active',
-			defaultStyle: {
-				color: colorWhite,
-				bgcolor: colorRed,
-			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Mode',
-					id: 'option',
-					default: SERIES.capabilities.ois.dropdown[0].id,
-					choices: SERIES.capabilities.ois.dropdown,
-				},
-			],
-			callback: function (feedback) {
-				return self.data.ois === feedback.options.option
-			},
 		}
 	}
 
@@ -520,8 +498,8 @@ export function getFeedbackDefinitions(self) {
 	if (SERIES.capabilities.streamRTMP) {
 		feedbacks.streamStateRTMP = {
 			type: 'boolean',
-			name: 'Streaming - RTMP Client State',
-			description: 'Indicates if streaming in RTMP client mode is currently active',
+			name: 'Streaming - RTMP Push State',
+			description: 'Indicates if streaming in RTMP Push mode is currently active',
 			defaultStyle: {
 				color: colorWhite,
 				bgcolor: colorRed,

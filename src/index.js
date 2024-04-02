@@ -339,7 +339,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			version: null,
 
 			// unresolved enums
-			autotracking: null,
+			autotrackingMode: null,
 			autotrackingAngle: null,
 			colorbar: null,
 			colorTemperature: null,
@@ -365,7 +365,6 @@ class PanasonicPTZInstance extends InstanceBase {
 			tally: null,
 			tally2: null,
 			tally3: null,
-			tracking: null,
 			ts: null,
 			whiteBalance: null,
 
@@ -394,7 +393,6 @@ class PanasonicPTZInstance extends InstanceBase {
 			colorTempLabel: null,
 			irisLabel: null,
 			shutterStepLabel: null,
-			recordingTime: null,
 
 			// arrays
 			presetEntries0: Array(40),
