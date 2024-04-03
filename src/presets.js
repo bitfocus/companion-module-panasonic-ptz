@@ -332,55 +332,55 @@ export function getPresetDefinitions(self) {
 			],
 			feedbacks: [],
 		}
-	}
 
-	presets['pan-tilt-speed'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
-		name: 'Speed',
-		style: {
-			text: 'P/T Speed\\n$(generic-module:ptSpeed)',
-			size: '14',
-			color: colorWhite,
-			bgcolor: colorBlack,
-		},
-		options: {
-			rotaryActions: true,
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: 'ptSpeed',
-						options: {
-							scope: 'pt',
-							op: 's',
-							set: 25,
-						},
-					},
-				],
-				up: [],
-				rotate_left: [
-					{
-						actionId: 'ptSpeed',
-						options: {
-							scope: 'pt',
-							op: -1,
-						},
-					},
-				],
-				rotate_right: [
-					{
-						actionId: 'ptSpeed',
-						options: {
-							scope: 'pt',
-							op: 1,
-						},
-					},
-				],
+		presets['pan-tilt-speed'] = {
+			type: 'button',
+			category: 'Pan/Tilt',
+			name: 'Speed',
+			style: {
+				text: 'P/T Speed\\n$(generic-module:ptSpeed)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
 			},
-		],
-		feedbacks: [],
+			options: {
+				rotaryActions: true,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'ptSpeed',
+							options: {
+								scope: 'pt',
+								op: 's',
+								set: 25,
+							},
+						},
+					],
+					up: [],
+					rotate_left: [
+						{
+							actionId: 'ptSpeed',
+							options: {
+								scope: 'pt',
+								op: -1,
+							},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'ptSpeed',
+							options: {
+								scope: 'pt',
+								op: 1,
+							},
+						},
+					],
+				},
+			],
+			feedbacks: [],
+		}
 	}
 
 	// ######################
