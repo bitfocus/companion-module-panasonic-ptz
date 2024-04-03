@@ -41,10 +41,6 @@ export function parseUpdate(self, str) {
 		self.data.irisPosition = parseInt(str[0].substring(9, 12), 16) - 0x555
 	}
 
-	//if (str[0].substring(0, 2) === 'iC') {
-	//    self.data.iris2 = str[0].substring(2)
-	//}
-
 	if (str[0].substring(0, 1) === 'q') {
 		const q = str[0].match(/q(\d\d)/)
 		if (q) {
@@ -59,6 +55,12 @@ export function parseUpdate(self, str) {
 			const i = parseInt(s[1])
 			self.data.presetSelectedIdx = self.data.presetEntries[i] === '1' ? i : null
 		}
+	}
+
+	if (str[0].substring(0, 3) === 'tAA') {
+		self.data.tally = parseInt(str[0].substring(3, 6), 2) > 0 ? '1' : '0'
+		self.data.tally2 = parseInt(str[0].substring(6, 9), 2) > 0 ? '1' : '0'
+		self.data.tally3 = parseInt(str[0].substring(9, 13), 2) > 0 ? '1' : '0'
 	}
 
 	if (str[0].substring(0, 2) === 'pE') {
