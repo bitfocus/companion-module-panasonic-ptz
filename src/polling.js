@@ -53,7 +53,7 @@ export async function pullCameraStatus(self) {
 			'PTV', // Get Pan/Tilt/Zoom/Focus/Iris
 			'RER', // Latest Error Information
 			'S', // Request Latest Recall Preset No.
-			//'TAA', // Tally Infomation
+			'TAA', // Tally Infomation
 			'UPVS', // Preset Speed
 		],
 		cam: [
@@ -89,9 +89,9 @@ export async function pullCameraStatus(self) {
 			'QSG:39', // R Gain
 			'QSG:3A', // B Gain
 			'QSG:4A', // Master Pedestal (UB300 only)
-			'QSG:4C', // R Pedestal (UB300 only)
+			'QSG:4C', // R Pedestal (UE160/UB300 only)
 			'QSG:4D', // G Pedestal (UE160 only)
-			'QSG:4E', // B Pedestal (UB300 only)
+			'QSG:4E', // B Pedestal (UE160/UB300 only)
 			'QSG:59', // Shutter SW
 			'QSG:5A', // Shutter Mode
 			'QSG:5D', // Shutter Speed (UB300 only)
