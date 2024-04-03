@@ -231,6 +231,29 @@ export function getFeedbackDefinitions(self) {
 			callback: function (feedback) {
 				return self.data.autotrackingAngle === feedback.options.option
 			},
+
+		}
+
+		feedbacks.autotrackingStatus = {
+			type: 'boolean',
+			name: 'Auto Tracking - Status',
+			description: 'Indicates if the selected status is currently active',
+			defaultStyle: {
+				color: colorWhite,
+				bgcolor: colorRed,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Status',
+					id: 'option',
+					default: e.ENUM_AUTOTRACKING_STATUS[1].id,
+					choices: e.ENUM_AUTOTRACKING_STATUS,
+				},
+			],
+			callback: function (feedback) {
+				return self.data.autotrackingStatus === feedback.options.option
+			},
 		}
 	}
 

@@ -1,6 +1,7 @@
 import { combineRgb } from '@companion-module/base'
 import { getAndUpdateSeries } from './common.js'
 import ICONS from './icons.js'
+import { e } from './enum.js'
 
 export function getPresetDefinitions(self) {
 	const presets = {}
@@ -2285,6 +2286,131 @@ export function getPresetDefinitions(self) {
 					},
 				],
 			}
+		}
+	}
+
+	// #######################
+	// #### Auto Tracking ####
+	// #######################
+
+	if (SERIES.capabilities.trackingAuto) {
+		presets['autotracking-mode'] = {
+			type: 'button',
+			category: 'Auto Tracking',
+			name: 'Auto Tracking Mode',
+			style: {
+				text: 'Auto Tracking\\n$(generic-module:autotrackingMode)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'autotrackingMode',
+							options: {
+								op: 't',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'autotrackingMode',
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
+		}
+
+		presets['autotracking-angle'] = {
+			type: 'button',
+			category: 'Auto Tracking',
+			name: 'Auto Tracking Angle',
+			style: {
+				text: 'ANGLE\\n$(generic-module:autotrackingAngle)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'autotrackingAngle',
+							options: {
+								op: 't',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'autotrackingAngle',
+					options: {
+						option: e.ENUM_AUTOTRACKING_ANGLE[0].id,
+					},
+					isInverted: true,
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
+		}
+
+		presets['autotracking-status'] = {
+			type: 'button',
+			category: 'Auto Tracking',
+			name: 'Auto Tracking Status & Start/Stop',
+			style: {
+				text: 'TRACK.\\nStart/Stop',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'autotrackingStartStop',
+							options: {
+								op: 't',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'autotrackingStatus',
+					options: {
+						option: e.ENUM_AUTOTRACKING_ANGLE[1].id,
+					},
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+				{
+					feedbackId: 'autotrackingStatus',
+					options: {
+						option: e.ENUM_AUTOTRACKING_ANGLE[2].id,
+					},
+					style: {
+						color: colorWhite,
+						bgcolor: colorBlue,
+					},
+				},
+			],
 		}
 	}
 

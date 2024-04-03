@@ -678,7 +678,7 @@ export function getActionDefinitions(self) {
 			name: 'Auto Tracking - Mode',
 			options: optSetToggle(e.ENUM_OFF_ON),
 			callback: async (action) => {
-				await self.getCam('OSL:B6:' + cmdEnum(action, e.ENUM_OFF_ON, self.data.autotracking))
+				await self.getCam('OSL:B6:' + cmdEnum(action, e.ENUM_OFF_ON, self.data.autotrackingMode))
 			},
 		}
 
@@ -690,19 +690,11 @@ export function getActionDefinitions(self) {
 			},
 		}
 
-		actions.autotrackingStart = {
-			name: 'Auto Tracking - Start Tracking',
-			options: [],
+		actions.autotrackingStartStop = {
+			name: 'Auto Tracking - Start/Stop Tracking',
+			options: optSetToggle(e.ENUM_STOP_START),
 			callback: async (action) => {
-				await self.getCam('OSL:BC:1')
-			},
-		}
-
-		actions.autotrackingStop = {
-			name: 'Auto Tracking - Stop Tracking',
-			options: [],
-			callback: async (action) => {
-				await self.getCam('OSL:BC:0')
+				await self.getCam('OSL:BC:' + cmdEnum(action, e.ENUM_STOP_START, self.data.autotrackingEnabled))
 			},
 		}
 	}

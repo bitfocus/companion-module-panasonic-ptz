@@ -1036,7 +1036,7 @@ export const e = {
 		{ id: '2', label: 'Upper Body' },
 	],
 
-	ENUM_AUTOTRACKING_STATE: [
+	ENUM_AUTOTRACKING_STATUS: [
 		{ id: '0', label: 'Not Tracking' },
 		{ id: '1', label: 'Tracking' },
 		{ id: '2', label: 'Lost' },

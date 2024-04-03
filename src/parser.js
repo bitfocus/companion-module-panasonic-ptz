@@ -259,17 +259,8 @@ export function parseUpdate(self, str) {
 					self.data.autotrackingAngle = str[2]
 					break
 				case 'BB':
-					switch (str[2]) {
-						case '0':
-							self.data.autotrackingStatusLabel = 'Not Tracking'
-							break
-						case '1':
-							self.data.autotrackingStatusLabel = 'Tracking'
-							break
-						case '2':
-							self.data.autotrackingStatusLabel = 'Lost'
-							break
-					}
+					self.data.autotrackingStatus = str[2]
+					self.data.autotrackingEnabled = str[2] !== '0' ? '1' : '0'
 					break
 			}
 			break

@@ -339,8 +339,10 @@ class PanasonicPTZInstance extends InstanceBase {
 			version: null,
 
 			// unresolved enums
-			autotrackingMode: null,
 			autotrackingAngle: null,
+			autotrackingEnabled: null,
+			autotrackingMode: null,
+			autotrackingStatus: null,
 			colorbar: null,
 			colorTemperature: null,
 			error: null,
@@ -389,7 +391,6 @@ class PanasonicPTZInstance extends InstanceBase {
 			masterPedValue: 0,
 
 			// other strings
-			autotrackingStatusLabel: null,
 			colorTempLabel: null,
 			irisLabel: null,
 			shutterStepLabel: null,

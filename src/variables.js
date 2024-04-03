@@ -143,10 +143,12 @@ export function setVariables(self) {
 export function checkVariables(self) {
 	const SERIES = getAndUpdateSeries(self)
 
+	const autotrackingAngle = SERIES.capabilities.trackingAuto ? getLabel(e.ENUM_AUTOTRACKING_ANGLE, self.data.autotrackingAngle) : null
+	
 	const autotrackingMode = SERIES.capabilities.trackingAuto ? getLabel(e.ENUM_OFF_ON, self.data.autotrackingMode) : null
 
-	const autotrackingAngle = SERIES.capabilities.trackingAuto ? getLabel(e.ENUM_AUTOTRACKING_ANGLE, self.data.autotrackingAngle) : null
-
+	const autotrackingStatus = SERIES.capabilities.trackingAuto ? getLabel(e.ENUM_AUTOTRACKING_STATUS, self.data.autotrackingStatus) : null
+	
 	const colorbar = SERIES.capabilities.colorbar ? getLabel(e.ENUM_OFF_ON, self.data.colorbar) : null
 
 	const colorTemperature = SERIES.capabilities.colorTemperature.index ? getLabel(SERIES.capabilities.colorTemperature.index.dropdown, self.data.colorTemperature) : null
@@ -239,14 +241,14 @@ export function checkVariables(self) {
 		bluePed: self.data.bluePedValue,
 		masterPed: self.data.masterPedValue,
 
-		autotrackingStatus: self.data.autotrackingStatusLabel,
 		irisF: self.data.irisLabel,
 		shutterStep: self.data.shutterStepLabel,
 
 		colorTemperature: self.data.colorTempLabel ? self.data.colorTempLabel : colorTemperature,
 
-		autotrackingMode: autotrackingMode,
 		autotrackingAngle: autotrackingAngle,
+		autotrackingMode: autotrackingMode,
+		autotrackingStatus: autotrackingStatus,
 		colorbar: colorbar,
 		error: error,
 		filter: filter,
