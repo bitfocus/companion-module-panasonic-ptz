@@ -652,16 +652,16 @@ export const e = {
 		{ id: '300', label: 'Speed  2' },
 		{ id: '275', label: 'Speed  1' },
 	],
-	ENUM_PSSPEED_TABLE_2: [
+	ENUM_PRESET_SPEED_TABLE_2: [
 		{ id: '0', label: 'Slow' },
 		{ id: '2', label: 'Fast' },
 	],
-	ENUM_PSSPEED_TABLE_3: [
+	ENUM_PRESET_SPEED_TABLE_3: [
 		{ id: '0', label: 'Slow' },
 		{ id: '1', label: 'Mid' },
 		{ id: '2', label: 'Fast' },
 	],
-	ENUM_PSSPEED_UNIT: [
+	ENUM_PRESET_SPEED_UNIT: [
 		{ id: '0', label: 'Speed' },
 		{ id: '1', label: 'Time' },
 	],

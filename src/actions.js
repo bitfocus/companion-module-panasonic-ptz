@@ -642,9 +642,9 @@ export function getActionDefinitions(self) {
 	if (SERIES.capabilities.presetTime) {
 		actions.presetSpeedTimeUnit = {
 			name: 'Preset - Recall Velocity Unit',
-			options: optSetToggleNextPrev(e.ENUM_PSSPEED_UNIT),
+			options: optSetToggleNextPrev(e.ENUM_PRESET_SPEED_UNIT),
 			callback: async (action) => {
-				await self.getCam('OSJ:29:' + cmdEnum(action, e.ENUM_PSSPEED_UNIT, self.data.presetSpeedUnit))
+				await self.getCam('OSJ:29:' + cmdEnum(action, e.ENUM_PRESET_SPEED_UNIT, self.data.presetSpeedUnit))
 			},
 		}
 

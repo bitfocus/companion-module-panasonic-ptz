@@ -175,7 +175,7 @@ export function checkVariables(self) {
 
 	const presetSpeedTable = SERIES.capabilities.presetSpeed ? getLabel(SERIES.capabilities.presetSpeed.dropdown, self.data.presetSpeedTable) : null
 
-	const presetSpeedUnit = SERIES.capabilities.presetTime ? getLabel(e.ENUM_PSSPEED_UNIT, self.data.presetSpeedUnit) : null
+	const presetSpeedUnit = SERIES.capabilities.presetTime ? getLabel(e.ENUM_PRESET_SPEED_UNIT, self.data.presetSpeedUnit) : null
 
 	const recording = SERIES.capabilities.recordSD ? getLabel(e.ENUM_OFF_ON, self.data.recording) : null
 
