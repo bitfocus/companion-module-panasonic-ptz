@@ -43,6 +43,7 @@ export async function pullCameraStatus(self) {
 			'I', // Iris Position (1-99)
 			//'D1', // Focus Mode
 			//'D3', // Iris Mode
+			'D6', // Night Mode
 			'DA', // Tally
 			'INS', // Installation Position
 			//'LPC', // Lens Position Information Control

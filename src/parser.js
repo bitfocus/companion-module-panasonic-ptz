@@ -132,6 +132,12 @@ export function parseUpdate(self, str) {
 		case 'd31':
 			self.data.irisMode = '1'
 			break
+		case 'd60':
+			self.data.nightMode = '0'
+			break
+		case 'd61':
+			self.data.nightMode = '1'
+			break
 		case 'DCB':
 		case 'OBR':
 			self.data.colorbar = str[1]
@@ -163,7 +169,7 @@ export function parseUpdate(self, str) {
 			self.data.whiteBalance = str[1]
 			break
 		case 'OIF':
-			self.data.irisLabel = str[1] === 'FF' ? 'CLOSE' : 'F/' + (parseInt(str[1], 16) / 10).toFixed(1)
+			self.data.irisLabel = str[1] === 'FF' ? 'CLOSE' : 'f/' + (parseInt(str[1], 16) / 10).toFixed(1)
 			break
 		case 'OIS':
 			self.data.ois = str[1]
@@ -172,9 +178,6 @@ export function parseUpdate(self, str) {
 			switch (str[1]) {
 				case 'B1':
 					self.data.colorTemperature = str[2].replace('0x', '')
-					break
-				case '4F':
-					self.data.irisFollowPosition = parseInt(str[2], 16)
 					break
 			}
 			break

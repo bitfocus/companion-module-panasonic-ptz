@@ -438,6 +438,16 @@ export function getActionDefinitions(self) {
 		}
 	}
 
+	if (SERIES.capabilities.night) {
+		actions.nightMode = {
+			name: 'Exposure - Night Mode',
+			options: optSetToggle(e.ENUM_OFF_ON),
+			callback: async (action) => {
+				await self.getPTZ('D6' + cmdEnum(action, e.ENUM_OFF_ON, self.data.nightMode))
+			},
+		}
+	}
+
 	// #########################
 	// #### Image Actions ####
 	// #########################

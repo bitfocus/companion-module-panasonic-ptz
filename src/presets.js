@@ -728,7 +728,7 @@ export function getPresetDefinitions(self) {
 			category: 'Exposure',
 			name: 'Iris',
 			style: {
-				text: 'IRIS\\n$(generic-module:irisPosition) $(generic-module:irisF)\\n$(generic-module:irisPositionBar)',
+				text: 'IRIS\\n$(generic-module:' + (SERIES.capabilities.irisF ? 'irisF' : 'irisPosition') + ')\\n$(generic-module:irisPositionBar)',
 				size: '14',
 				color: colorWhite,
 				bgcolor: colorBlack,
@@ -1004,6 +1004,42 @@ export function getPresetDefinitions(self) {
 						option: SERIES.capabilities.filter.dropdown[0].id,
 					},
 					isInverted: true,
+					style: {
+						color: colorWhite,
+						bgcolor: colorRed,
+					},
+				},
+			],
+		}
+	}
+
+	if (SERIES.capabilities.night) {
+		presets['exposure-night-mode'] = {
+			type: 'button',
+			category: 'Exposure',
+			name: 'Night Mode',
+			style: {
+				text: 'Night Mode\\n$(generic-module:nightMode)',
+				size: '14',
+				color: colorWhite,
+				bgcolor: colorBlack,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'nightMode',
+							options: {
+								op: 't',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'nightMode',
 					style: {
 						color: colorWhite,
 						bgcolor: colorRed,

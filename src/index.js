@@ -352,6 +352,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			installMode: null,
 			iris: null,
 			irisMode: null,
+			nightMode: null,
 			ois: null,
 			power: null,
 			presetScope: null,
@@ -377,7 +378,6 @@ class PanasonicPTZInstance extends InstanceBase {
 			// numeric unsigned values
 			focusPosition: null,
 			irisPosition: null,
-			irisFollowPosition: null,
 			panPosition: null,
 			tiltPosition: null,
 			zoomPosition: null,

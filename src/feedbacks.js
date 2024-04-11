@@ -438,6 +438,22 @@ export function getFeedbackDefinitions(self) {
 		}
 	}
 
+	if (SERIES.capabilities.night) {
+		feedbacks.nightMode = {
+			type: 'boolean',
+			name: 'Exposure - Night Mode',
+			description: 'Indicates if Night Mode is currently enabled',
+			defaultStyle: {
+				color: colorWhite,
+				bgcolor: colorRed,
+			},
+			options: [],
+			callback: function () {
+				return self.data.nightMode === '1'
+			},
+		}
+	}
+
 	if (SERIES.capabilities.gain) {
 		feedbacks.gain = {
 			type: 'boolean',

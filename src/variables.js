@@ -9,10 +9,7 @@ export function setVariables(self) {
 
 	const variables = []
 
-	//variables.push({ variableId: 'series', name: 'Camera Series' })
 	variables.push({ variableId: 'model', name: 'Model of camera' })
-	//variables.push({ variableId: 'mac', name: 'MAC address' })
-	//variables.push({ variableId: 'serial', name: 'Serial number' })
 	variables.push({ variableId: 'title', name: 'Title of camera' })
 	if (SERIES.capabilities.version) {
 		variables.push({ variableId: 'version', name: 'Firmware Version' })
@@ -53,6 +50,9 @@ export function setVariables(self) {
 	if (SERIES.capabilities.gain) {
 		variables.push({ variableId: 'gain', name: 'Gain' })
 	}
+	if (SERIES.capabilities.night) {
+		variables.push({ variableId: 'nightMode', name: 'Night Mode' })
+	}
 	if (SERIES.capabilities.preset) {
 		variables.push({ variableId: 'presetScope', name: 'Preset Recall Scope' })
 		variables.push({ variableId: 'presetCompleted', name: 'Preset # Completed' })
@@ -89,14 +89,15 @@ export function setVariables(self) {
 		variables.push({ variableId: 'fSpeed', name: 'Focus Speed' })
 	}
 	if (SERIES.capabilities.iris) {
-		variables.push({ variableId: 'irisF', name: 'Iris F-Stop' })
 		variables.push({ variableId: 'irisPosition', name: 'Iris Position' })
 		variables.push({ variableId: 'irisPositionPct', name: 'Iris Position %' })
 		variables.push({ variableId: 'irisPositionBar', name: 'Iris Position' })
-		variables.push({ variableId: 'irisFollowPosition', name: 'Iris Follow Position' })
 	}
 	if (SERIES.capabilities.irisAuto) {
 		variables.push({ variableId: 'irisMode', name: 'Iris Mode' })
+	}
+	if (SERIES.capabilities.irisF) {
+		variables.push({ variableId: 'irisF', name: 'Iris F No.' })
 	}
 	if (SERIES.capabilities.pedestal) {
 		variables.push({ variableId: 'masterPed', name: 'Master Pedestal' })
@@ -165,6 +166,8 @@ export function checkVariables(self) {
 
 	const irisMode = SERIES.capabilities.irisAuto ? getLabel(e.ENUM_MAN_AUTO, self.data.irisMode) : null
 
+	const nightMode = SERIES.capabilities.night ? getLabel(e.ENUM_OFF_ON, self.data.nightMode) : null
+
 	const ois = SERIES.capabilities.ois ? getLabel(SERIES.capabilities.ois.dropdown, self.data.ois) : null
 
 	const power = SERIES.capabilities.power ? getLabel(e.ENUM_OFF_ON, self.data.power) : null
@@ -226,7 +229,6 @@ export function checkVariables(self) {
 		tiltPositionDeg: (-self.data.tiltPosition * (29.7 / 3600)).toFixed(1),
 		focusPosition: self.data.focusPosition,
 		irisPosition: self.data.irisPosition,
-		irisFollowPosition: self.data.irisFollowPosition,
 		zoomPosition: self.data.zoomPosition,
 		focusPositionPct: normalizePct(self.data.focusPosition, 0x0, 0xaaa, false),
 		irisPositionPct: normalizePct(self.data.irisPosition, 0x0, 0xaaa, false),
@@ -256,6 +258,7 @@ export function checkVariables(self) {
 		gain: gain,
 		installMode: installMode,
 		irisMode: irisMode,
+		nightMode: nightMode,
 		ois: ois,
 		power: power,
 		presetScope: presetScope,
