@@ -90,7 +90,7 @@ export const ConfigFields = [
 		width: 9,
 		label: 'Polling',
 		value:
-			'Allows periodic querying of data that is not automatically updated by the camera. In theory, this may add a slight additional load on command processing, but is mandatory to obtain updated operational data from camera models that do not support update notification subscription. Additionally allows any operating status values ​​to be kept in sync that never have an update notification. The delay setting specifies the waiting time between individual pull requests.',
+			'Allows periodic querying of data that is not automatically updated by the camera. It is mandatory to obtain updated operational data from camera models that do not support any update notification subscription. Additionally allows operating status values ​​to be kept in sync that never have an update notification. The delay setting specifies the waiting time between individual requests to the camera.',
 	},
 	{
 		type: 'number',
