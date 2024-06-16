@@ -34,11 +34,6 @@ export const MODELS = [
 	{ id: 'AW-HEF5', series: 'AW-HEF5', label: 'AW-HEF5' },
 	{ id: 'AW-SFU01', series: 'AW-SFU01', label: 'AW-SFU01' },
 	{ id: 'AK-UB300', series: 'AK-UB300', label: 'AK-UB300' },
-	{ id: 'AG-CX350', series: 'CX350', label: 'AG-CX350' },
-	{ id: 'AG-CX200', series: 'CX350', label: 'AG-CX200' },
-	{ id: 'AJ-UPX360', series: 'CX350', label: 'AJ-UPX360' },
-	{ id: 'AJ-CX4000', series: 'CX350', label: 'AJ-CX4000' },
-	{ id: 'AJ-UPX900', series: 'CX350', label: 'AJ-UPX900' },
 	{ id: 'Other', series: 'Other', label: 'Other Cameras' },
 ]
 
@@ -58,7 +53,6 @@ export const MODELS = [
 // AW-UE4
 // AW-SHU01
 // AK-UB300
-// CX350
 
 export const SERIES_SPECS = [
 	{
@@ -930,69 +924,6 @@ export const SERIES_SPECS = [
 			sdCard: false,
 			colorTemperature: false,
 			colorBars: true,
-			colorBarsSetup: false,
-			colorBarsType: false,
-			colorBarsTitle: false,
-			colorBarsTone: false,
-		},
-	},
-
-	{
-		// Specific for the AG-CX350/4000 Camera
-		id: 'CX350',
-		variables: {
-			// Camera firmware lacks event update notification support
-			version: false, // If a camera sends a package every minute with the firmware version (qSV3)
-			error: false, // Camera can return Error messages when actions fail (rER)
-			ins: false, // Install position (iNS0 or iNS1)
-			power: false, // Power State (p1 or p0)
-			tally: false, // Red Tally State (DA1/TLR:1 or DA0/TLR:0)
-			tally2: false, // Green Tally State (TLG:1 or TLG:0)
-			OAF: false, // Has Auto Focus (OAF:1 or OAF:0)
-			iris: false, // Has Auto Iris (d30 or d31)
-			gainValue: false,
-			preset: false,
-			colorTemperature: false,
-		},
-		feedbacks: {
-			// Camera firmware lacks event update notification support
-			powerState: false, // Power State (p1 or p0)
-			tallyState: false, // Red Tally State (dA1/TLR:1 or dA0/TLR:0)
-			tally2State: false, // Green Tally State (TLG:1 or TLG:0)
-			insState: false, // Install position (iNS0 or iNS1)
-			autoFocus: false, // Has Auto Focus (OAF:1 or OAF:0)
-			autoIris: false, // Has Auto Iris (d30 or d31)
-			preset: false,
-			colorBarsState: false,
-			colorBarsStatusState: false,
-			colorBarsTypeState: false,
-			colorBarsTitleState: false,
-			colorBarsToneState: false,
-		},
-		actions: {
-			panTilt: false, // Has Pan/Tilt Support (PTSxx)
-			ptSpeed: false, // Internal Speed Options
-			zoom: true, // Has Zoom Support (Zxx)
-			zSpeed: true, // Internal Speed Options
-			focus: true, // Has Focus Support (Fxx)
-			fSpeed: true, // Internal Speed Options
-			OAF: true, // Has Auto Focus Support (D10 or D11)
-			OTAF: true, // Has One Touch Auto Focus Support (OSE:69:1)
-			iris: true, // Has Iris Support (manual and auto) (Ixx)
-			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_CX350() },
-			shut: false,
-			ped: { cmd: 'OSJ:0F:', dropdown: c.CHOICES_PEDESTAL_CX350() },
-			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_CX350() },
-			preset: false,
-			speedPset: false,
-			timePset: false,
-			power: true,
-			tally: true,
-			tally2: true,
-			ins: false,
-			sdCard: true,
-			colorTemperature: false,
-			colorBars: false,
 			colorBarsSetup: false,
 			colorBarsType: false,
 			colorBarsTitle: false,
