@@ -818,23 +818,6 @@ export function getActionDefinitions(self) {
 			},
 		}
 	}
-        if (seriesActions.opt) {
-		actions.optOff = {
-			name: 'OPT - Turn Off',
-			options: [],
-			callback: async (action) => {
-				await sendPTZ(self, 'D60')
-			},
-		}
-
-		actions.optOn = {
-			name: 'OPT - Turn On',
-			options: [],
-			callback: async (action) => {
-				await sendPTZ(self, 'D61')
-			},
-		}
-	}
 	// ##########################
 	// #### Exposure Actions ####
 	// ##########################
