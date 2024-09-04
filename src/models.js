@@ -136,7 +136,7 @@ export const SERIES_SPECS = [
 			gainValue: true,
 			preset: true,
 			colorTemperature: false,
-			opt: true,
+			night: true,
 		},
 		feedbacks: {
 			powerState: true,
@@ -150,7 +150,7 @@ export const SERIES_SPECS = [
 			colorBarsTypeState: true,
 			colorBarsTitleState: true,
 			colorBarsToneState: false,
-			optState: true,
+			nightState: true,
 		},
 		actions: {
 			panTilt: true,
@@ -179,7 +179,7 @@ export const SERIES_SPECS = [
 			colorBarsType: true,
 			colorBarsTitle: true,
 			colorBarsTone: false,
-			opt: true,
+			night: true,
 		},
 	},
 
