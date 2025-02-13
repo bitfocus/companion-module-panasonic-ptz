@@ -1173,6 +1173,30 @@ export function getActionDefinitions(self) {
 		}
 	}
 
+	if (seriesActions.sceneSelect) {
+		actions.sceneSelect = {
+			name: 'Scene - Select',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Scene',
+					id: 'scene',
+					default: 1,
+					choices: [
+						{ id: 1, label: 'Scene 1' },
+						{ id: 2, label: 'Scene 2' },
+						{ id: 3, label: 'Scene 3' },
+						{ id: 4, label: 'Scene 4' },
+					],
+				}
+			],
+			callback: async (action) => {
+				await sendCam(self, 'XSF:' + action.options.scene)
+			},
+		}
+	}
+	
+
 	// #########################
 	// #### Presets Actions ####
 	// #########################

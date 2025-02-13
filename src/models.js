@@ -354,6 +354,7 @@ export const SERIES_SPECS = [
 			colorBarsType: true,
 			colorBarsTitle: false,
 			colorBarsTone: true,
+			sceneSelect: true,
 		},
 	},
 
