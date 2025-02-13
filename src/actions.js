@@ -1196,6 +1196,28 @@ export function getActionDefinitions(self) {
 		}
 	}
 	
+	if (seriesActions.whiteBalanceMode) {
+		actions.sceneSet = {
+			name: 'White Balance - Mode',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'mode',
+					default: '0',
+					choices: [
+						{ id: '0', label: 'Auto'},
+						{ id: '1', label: 'A' },
+						{ id: '2', label: 'B' },
+					],
+				},
+			],
+			callback: async (action) => {
+				await sendCam(self, 'OAW:' + action.options.mode)
+			},
+		}
+	}
+	
 
 	// #########################
 	// #### Presets Actions ####
