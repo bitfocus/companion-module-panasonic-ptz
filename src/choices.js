@@ -274,6 +274,7 @@ export const c = {
 		{ id: '31', label: '41dB' },
 		{ id: '32', label: '42dB' },
 	],
+
 	CHOICES_GAIN_HE60: function () {
 		return this.CHOICES_GAIN_HE50
 	},
@@ -292,6 +293,85 @@ export const c = {
 	CHOICES_GAIN_OTHER: function () {
 		return this.CHOICES_GAIN_HR140
 	},
+
+	CHOICES_COLOR_GAIN_HE42: [
+		{ id: '00', label: '-30' },
+		{ id: '01', label: '-29' },
+		{ id: '02', label: '-28' },
+		{ id: '03', label: '-27' },
+		{ id: '04', label: '-26' },
+		{ id: '05', label: '-25' },
+		{ id: '06', label: '-24' },
+		{ id: '07', label: '-23' },
+		{ id: '08', label: '-22' },
+		{ id: '09', label: '-21' },
+		{ id: '0A', label: '-20' },
+		{ id: '0B', label: '-19' },
+		{ id: '0C', label: '-18' },
+		{ id: '0D', label: '-17' },
+		{ id: '0E', label: '-16' },
+		{ id: '0F', label: '-15' },
+		{ id: '10', label: '-14' },
+		{ id: '11', label: '-13' },
+		{ id: '12', label: '-12' },
+		{ id: '13', label: '-11' },
+		{ id: '14', label: '-10' },
+		{ id: '15', label: '-9' },
+		{ id: '16', label: '-8' },
+		{ id: '17', label: '-7' },
+		{ id: '18', label: '-6' },
+		{ id: '19', label: '-5' },
+		{ id: '1A', label: '-4' },
+		{ id: '1B', label: '-3' },
+		{ id: '1C', label: '-2' },
+		{ id: '1D', label: '-1' },
+		{ id: '1E', label: '0' },
+		{ id: '1F', label: '1' },
+		{ id: '20', label: '2' },
+		{ id: '21', label: '3' },
+		{ id: '22', label: '4' },
+		{ id: '23', label: '5' },
+		{ id: '24', label: '6' },
+		{ id: '25', label: '7' },
+		{ id: '26', label: '8' },
+		{ id: '27', label: '9' },
+		{ id: '28', label: '10' },
+		{ id: '29', label: '11' },
+		{ id: '2A', label: '12' },
+		{ id: '2B', label: '13' },
+		{ id: '2C', label: '14' },
+		{ id: '2D', label: '15' },
+		{ id: '2E', label: '16' },
+		{ id: '2F', label: '17' },
+		{ id: '30', label: '18' },
+		{ id: '31', label: '19' },
+		{ id: '32', label: '20' },
+		{ id: '33', label: '21' },
+		{ id: '34', label: '22' },
+		{ id: '35', label: '23' },
+		{ id: '36', label: '24' },
+		{ id: '37', label: '25' },
+		{ id: '38', label: '26' },
+		{ id: '39', label: '27' },
+		{ id: '3A', label: '28' },
+		{ id: '3B', label: '29' },
+		{ id: '3C', label: '30' }
+
+	],
+	CHOICES_COLOR_GAIN_UE70: function () {
+		return this.CHOICES_COLOR_GAIN_HE42
+	},
+
+	CHOICES_AWB_MODE_HE42: [
+		{ id: '0', label: 'ATW' },
+		{ id: '1', label: 'AWB A' },
+		{ id: '2', label: 'AWB B' },
+		{ id: '4', label: 'PRESET 3200K' },
+		{ id: '5', label: 'PRESET 5600K' },
+		{ id: '9', label: 'VAR' },
+	],
+
+	CHOICES_AWB_MODE_UE70: function () { return this.CHOICES_AWB_MODE_HE42 },
 
 	// ##########################
 	// #### Shutter Look Ups ####
