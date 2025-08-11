@@ -14,6 +14,9 @@ Panasonic PTZ Cameras
 
 - AW-HE42, AW-HE68, AW-HE75
 
+**UE30 series**
+- AW-UE80, AW-UE50, AW-UE40, AW-UE30
+
 **UE70 series**
 
 - AW-UE63, AW-UE65, AW-UE70
@@ -48,6 +51,7 @@ It's recommended to use the presets as much as possible as there is a lot of act
 - Tilt Speed Down
 - Pan/Tilt Home
 - Adjust pan/tilt velocity on speed change
+- Auto tracking (angle, start, stop)
 
 **Lens**
 

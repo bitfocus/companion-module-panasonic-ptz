@@ -23,6 +23,7 @@ export const MODELS = [
 	{ id: 'AW-HN65', series: 'HE40', label: 'AW-HN65' },
 	{ id: 'AW-HN70', series: 'HE40', label: 'AW-HN70' },
 	{ id: 'AW-UE4', series: 'AW-UE4', label: 'AW-UE4' },
+	{ id: 'AW-UE30', series: 'AW-UE30', label: 'AW-UE30' },
 	{ id: 'AW-UE63', series: 'UE70', label: 'AW-UE63' },
 	{ id: 'AW-UE65', series: 'UE70', label: 'AW-UE65' },
 	{ id: 'AW-UE70', series: 'UE70', label: 'AW-UE70' },
@@ -104,6 +105,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_OTHER() }, // Has Gain Support
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_OTHER }, // Has Shutter Support
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_OTHER() }, // Has Pedistal Support
+			autoTrack: false,
 			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_OTHER() }, // Has ND Filter Support
 			preset: true, // Can Save and Recall Presets (Mxxx or Rxxx)
 			speedPset: true, // Has Preset Recall Speed Control (UPVSxx)
@@ -163,6 +165,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE40 },
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE40() },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE40() },
+			autoTrack: false,
 			filter: false,
 			preset: true,
 			speedPset: true,
@@ -221,6 +224,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE42() },
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE42() },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE42() },
+			autoTrack: false,
 			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_HE42() },
 			preset: true,
 			speedPset: true,
@@ -234,6 +238,67 @@ export const SERIES_SPECS = [
 			colorBarsSetup: false,
 			colorBarsType: true,
 			colorBarsTitle: true,
+			colorBarsTone: false,
+		},
+	},
+
+	{
+		id: 'AW-UE30',
+		variables: {
+			version: true, // If a camera sends a package every minute with the firmware version (qSV3)
+			error: true, // Camera can return Error messages when actions fail (rER)
+			ins: true, // Install position (iNS0 or iNS1)
+			power: true, // Power State (p1 or p0)
+			tally: true, // Red Tally State (DA1/TLR:1 or DA0/TLR:0)
+			tally2: true, // Green Tally State (TLG:1 or TLG:0)
+			OAF: true, // Has Auto Focus (OAF:1 or OAF:0)
+			iris: true, // Has Auto Iris (d30 or d31)
+			gainValue: true,
+			preset: true,
+			colorTemperature: false,
+		},
+		feedbacks: {
+			powerState: true, // Power State (p1 or p0)
+			tallyState: true, // Red Tally State (dA1/TLR:1 or dA0/TLR:0)
+			tally2State: true, // Green Tally State (TLG:1 or TLG:0)
+			insState: true, // Install position (iNS0 or iNS1)
+			autoFocus: true, // Has Auto Focus (OAF:1 or OAF:0)
+			autoIris: true, // Has Auto Iris (d30 or d31)
+			preset: true,
+			colorBarsState: false,
+			colorBarsStatusState: false,
+			colorBarsTypeState: false,
+			colorBarsTitleState: false,
+			colorBarsToneState: false,
+		},
+		actions: {
+			panTilt: true, // Has Pan/Tilt Support (PTSxx)
+			ptSpeed: true, // Internal Speed Options
+			zoom: true, // Has Zoom Support (Zxx)
+			zSpeed: true, // Internal Speed Options
+			focus: true, // Has Focus Support (Fxx)
+			fSpeed: true, // Internal Speed Options
+			OAF: true, // Has Auto Focus Support (D10 or D11)
+			OTAF: true, // Has One Touch Auto Focus Support (OSE:69:1)
+			iris: true, // Has Iris Support (manual and auto) (Ixx)
+			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_OTHER() }, // Has Gain Support
+			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_OTHER }, // Has Shutter Support
+			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_OTHER() }, // Has Pedistal Support
+			autoTrack: true,
+			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_OTHER() }, // Has ND Filter Support
+			preset: true, // Can Save and Recall Presets (Mxxx or Rxxx)
+			speedPset: true, // Has Preset Recall Speed Control (UPVSxx)
+			timePset: true, // Has Preset Recall Time Control (UPVSxx or OSJ:29:xx)
+			power: true, // Has Power Control (O0 or O1)
+			tally: true, // Has Red Tally Light Control (DA1/TLR:1 or DA0/TLR:0)
+			tally2: true, // Has Green Tally Light Control (TLG:1 or TLG:0)
+			ins: true, // Has Install Position Control (INSx)
+			sdCard: false, // Has SD Card Recording Control (sdctrl?save=start or sdctrl?save=end)
+			colorTemperature: false, // Setting Color temperature OSD:B1:A8h
+			colorBars: false,
+			colorBarsSetup: false,
+			colorBarsType: false,
+			colorBarsTitle: false,
 			colorBarsTone: false,
 		},
 	},
@@ -279,6 +344,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_UE70() },
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_UE70() },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_UE70() },
+			autoTrack: false,
 			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_UE70 },
 			preset: true,
 			speedPset: true,
@@ -339,6 +405,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_UE150() },
 			shut: false, // TODO: Add it's own shutter "OSJ:06:"
 			ped: false, // TODO: Add it's own Pedestal "OSJ:0F:"
+			autoTrack: false,
 			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_UE150() },
 			preset: true,
 			speedPset: true,
@@ -400,6 +467,7 @@ export const SERIES_SPECS = [
 			gain: false,
 			shut: false,
 			ped: false,
+			autoTrack: false,
 			filter: false,
 			preset: true,
 			speedPset: false,
@@ -458,6 +526,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE50 },
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE50 },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE50() },
+			autoTrack: false,
 			filter: false,
 			preset: true,
 			speedPset: true,
@@ -516,6 +585,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE60() },
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE60() },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE60() },
+			autoTrack: false,
 			filter: false,
 			preset: true,
 			speedPset: true,
@@ -574,6 +644,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE120 },
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE120 },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE120() },
+			autoTrack: false,
 			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_HE120 },
 			preset: true,
 			speedPset: true,
@@ -632,6 +703,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE130 },
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE130 },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE130() },
+			autoTrack: false,
 			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_HE130 },
 			preset: true,
 			speedPset: true,
@@ -690,6 +762,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HR140 },
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HR140() },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HR140() },
+			autoTrack: false,
 			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_HR140() },
 			preset: true,
 			speedPset: true,
@@ -748,6 +821,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_HE50 },
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_HE50 },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_HE50() },
+			autoTrack: false,
 			filter: true,
 			preset: true,
 			speedPset: true,
@@ -806,6 +880,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_UE4 },
 			shut: { cmd: 'OSJ:06:', dropdown: c.CHOICES_SHUTTER_UE4 },
 			ped: false,
+			autoTrack: false,
 			filter: false,
 			preset: true,
 			speedPset: false,
@@ -864,6 +939,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_UE70() },
 			shut: { cmd: 'OSH:', dropdown: c.CHOICES_SHUTTER_UE70() },
 			ped: { cmd: 'OTP:', dropdown: c.CHOICES_PEDESTAL_UE70() },
+			autoTrack: false,
 			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_UE70 },
 			preset: true,
 			speedPset: true,
@@ -921,6 +997,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGS:', dropdown: c.CHOICES_GAIN_UB300 },
 			shut: { cmd: 'OSG:5D:', dropdown: c.CHOICES_SHUTTER_UB300 },
 			ped: false, // TODO: Add UB300 Pedestal "OSG:4A:"
+			autoTrack: false,
 			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_UB300 },
 			preset: false,
 			speedPset: false,
@@ -984,6 +1061,7 @@ export const SERIES_SPECS = [
 			gain: { cmd: 'OGU:', dropdown: c.CHOICES_GAIN_CX350() },
 			shut: false,
 			ped: { cmd: 'OSJ:0F:', dropdown: c.CHOICES_PEDESTAL_CX350() },
+			autoTrack: false,
 			filter: { cmd: 'OFT:', dropdown: c.CHOICES_FILTER_CX350() },
 			preset: false,
 			speedPset: false,

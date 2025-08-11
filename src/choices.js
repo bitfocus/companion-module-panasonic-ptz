@@ -679,4 +679,13 @@ export const c = {
 		{ "id": "077", "label": "14000K" },
 		{ "id": "078", "label": "15000K" },
 	],
+
+	// ###############################
+	// ####  Auto Track Choices   ####
+	// ###############################
+	CHOICES_AUTOTRACK_ANGLE: [
+		{ "id": 0, "label": "Off"},
+		{ "id": 1, "label": "Full Body"},
+		{ "id": 2, "label": "Upper Body"}
+	]
 }
