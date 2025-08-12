@@ -3,7 +3,7 @@
 	"name": "panasonic-ptz",
 	"shortname": "Panasonic-PTZ",
 	"description": "Companion module for Panasonic PTZ Cameras",
-	"version": "2.4.0",
+	"version": "2.5.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-panasonic-ptz.git",
 	"bugs": "https://github.com/bitfocus/companion-module-panasonic-ptz/issues",

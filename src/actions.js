@@ -1540,5 +1540,73 @@ export function getActionDefinitions(self) {
 		}
 	}
 
+	// ############################
+	// #### Auto Track Actions ####
+	// ############################
+
+	if (seriesActions.autoTrack) {
+		actions.autoTrackModeOn = {
+			name: 'Auto Track - Enable',
+			options: [],
+			callback: async (action) => {
+				await sendCam(self, 'OSL:B6:1');
+			},
+		}
+		actions.autoTrackModeOff = {
+			name: 'Auto Track - Disable',
+			options: [],
+			callback: async (action) => {
+				await sendCam(self, 'OSL:B6:0');
+			},
+		}
+		actions.autoTrackStart = {
+			name: 'Auto Track - Start',
+			options: [],
+			callback: async (action) => {
+				await sendCam(self, 'OSL:BC:1');
+			},
+		}
+		actions.autoTrackStop = {
+			name: 'Auto Track - Stop',
+			options: [],
+			callback: async (action) => {
+				await sendCam(self, 'OSL:BC:0');
+			},
+		}
+		actions.autoTrackMarkerOn = {
+			name: 'Auto Track - Marker Enable',
+			options: [],
+			callback: async (action) => {
+				await sendCam(self, 'OSL:B8:1');
+			},
+		}
+		actions.autoTrackMarkerOff = {
+			name: 'Auto Track - Marker Disable',
+			options: [],
+			callback: async (action) => {
+				await sendCam(self, 'OSL:B8:0');
+			},
+		}
+		actions.autoTrackAngle = {
+			name: 'Auto Track - Angle',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Angle',
+					id: 'type',
+					default: 1,
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'Full Body' },
+						{ id: '2', label: 'Upper Body' },
+					],
+				},
+			],
+			callback: async (action) => {
+				await sendCam(self, 'OSL:B7:' + action.options.type);
+			},
+		}
+	}
+
 	return actions
 }
