@@ -1,6 +1,6 @@
 # companion-module-panasonic-ptz
 
-See HELP.md and LICENSE
+See [HELP.md](./companion/HELP.md) and [LICENSE](./LICENSE)
 
 Current support is based on "HD/4K Integrated Camera Interface Specifications" version 1.12 from Apr. 27, 2020.
 For more information on the Panasonic API, please refer to:
