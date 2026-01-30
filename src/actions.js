@@ -1336,6 +1336,456 @@ export function getActionDefinitions(self) {
 		}
 	}
 
+	// ####################################
+	// #### UHD Crop / Generic Actions ####
+	// ####################################
+
+	if (seriesActions.uhdCrop) {
+		actions.uhdCropSDIEnable = {
+			name: 'UHD Crop - 3G-SDI Out Cropping Enable/Disable',
+			options: [
+				{
+					type: 'checkbox',
+					label: 'Enable ?',
+					id: 'enable',
+					default: true,
+				},
+			],
+			callback: async (action) => {
+				const value = action.options.enable ? '1' : '0';
+				await sendCam(self, 'OSI:32:' + value)
+			},
+		}
+    }
+
+    if (seriesActions.uhdCrop) {
+		actions.uhdCropIPEnable = {
+			name: 'UHD Crop - IP Out Cropping Enable/Disable',
+			options: [
+				{
+					type: 'checkbox',
+					label: 'Enable ?',
+					id: 'enable',
+					default: true,
+				},
+			],
+			callback: async (action) => {
+				const value = action.options.enable ? '1' : '0';
+				await sendCam(self, 'OSI:33:' + value)
+			},
+		}
+    }
+
+    if (seriesActions.uhdCrop) {
+		actions.uhdCropMode = {
+			name: 'UHD Crop - Crop Mode',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Select mode',
+					id: 'mode',
+					default: '0',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: '1080 Crop' },
+						{ id: '2', label: '720 Crop' },
+					],
+				},
+			],
+			callback: async (action) => {
+				await sendCam(self, 'OSJ:2E:' + action.options.mode)
+			},
+		}
+    }
+
+    if (seriesActions.uhdCrop) {
+		actions.uhdCropMarkerSelection = {
+			name: 'UHD Crop - Crop Marker Selection',
+			options: [
+				{
+					type: 'checkbox',
+					label: 'Enable Yellow Marker',
+					id: 'marker_yellow',
+					default: false,
+				},
+				{
+					type: 'checkbox',
+					label: 'Enable Green Marker',
+					id: 'marker_green',
+					default: false,
+				},
+				{
+					type: 'checkbox',
+					label: 'Enable Magenta Marker',
+					id: 'marker_magenta',
+					default: false,
+				},
+			],
+			callback: async (action) => {
+				if (!action.options.marker_yellow && !action.options.marker_green && !action.options.marker_magenta) {
+					action.options.markers = '0';
+				} else if (action.options.marker_yellow && !action.options.marker_green && !action.options.marker_magenta) {
+					action.options.markers = '1';
+				} else if (!action.options.marker_yellow && action.options.marker_green && !action.options.marker_magenta) {
+					action.options.markers = '2';
+				} else if (!action.options.marker_yellow && !action.options.marker_green && action.options.marker_magenta) {
+					action.options.markers = '3';
+				} else if (action.options.marker_yellow && action.options.marker_green && !action.options.marker_magenta) {
+					action.options.markers = '4';
+				} else if (action.options.marker_yellow && !action.options.marker_green && action.options.marker_magenta) {
+					action.options.markers = '5';
+				} else if (!action.options.marker_yellow && action.options.marker_green && action.options.marker_magenta) {
+					action.options.markers = '6';
+				} else if (action.options.marker_yellow && action.options.marker_green && action.options.marker_magenta) {
+					action.options.markers = '7';
+				}
+				await sendCam(self, 'OSI:1A:' + action.options.markers)
+			},
+		}
+	}
+
+	// ###################################
+	// #### UHD Crop / Yellow Actions ####
+	// ###################################
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropYellowLeft = {
+            name: 'UHD Crop - Yellow Pan Left',
+            options: [],
+            callback: async (action) => {
+                const n = parseInt(50 - self.ptSpeed)
+                const string = '' + (n < 10 ? '0' + n : n)
+                await sendCam(self, 'OSJ:5D:' + string + ':50')
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropYellowRight = {
+            name: 'UHD Crop - Yellow Pan Right',
+            options: [],
+            callback: async (action) => {
+                await sendCam(self, 'OSJ:5D:' + parseInt(50 + self.ptSpeed) + ':50')
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropYellowUp = {
+            name: 'UHD Crop - Yellow Tilt Up',
+            options: [],
+            callback: async (action) => {
+                await sendCam(self, 'OSJ:5D:50:' + parseInt(50 + self.ptSpeed))
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropYellowDown = {
+            name: 'UHD Crop - Yellow Tilt Down',
+            options: [],
+            callback: async (action) => {
+                const n = parseInt(50 - self.ptSpeed)
+                const string = '' + (n < 10 ? '0' + n : n)
+                await sendCam(self, 'OSJ:5D:50:' + string)
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropYellowUpLeft = {
+            name: 'UHD Crop - Yellow Up Left',
+            options: [],
+            callback: async (action) => {
+                const n = parseInt(50 - self.ptSpeed)
+                const string = '' + (n < 10 ? '0' + n : n)
+                await sendCam(self, 'OSJ:5D:' + string + ":" + parseInt(50 + self.ptSpeed))
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropYellowUpRight = {
+            name: 'UHD Crop - Yellow Up Right',
+            options: [],
+            callback: async (action) => {
+                await sendCam(self, 'OSJ:5D:' + parseInt(50 + self.ptSpeed) + ":" + parseInt(50 + self.ptSpeed))
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropYellowDownLeft = {
+            name: 'UHD Crop - Yellow Down Left',
+            options: [],
+            callback: async (action) => {
+                const n = parseInt(50 - self.ptSpeed)
+                const string = '' + (n < 10 ? '0' + n : n)
+                await sendCam(self, 'OSJ:5D:' + string + ":" + string)
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropYellowDownRight = {
+            name: 'UHD Crop - Yellow Down Right',
+            options: [],
+            callback: async (action) => {
+                const n = parseInt(50 - self.ptSpeed)
+                const string = '' + (n < 10 ? '0' + n : n)
+                await sendCam(self, 'OSJ:5D:' + parseInt(50 + self.ptSpeed) + ":" + string)
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropYellowStop = {
+            name: 'UHD Crop - Yellow Stop',
+            options: [],
+            callback: async (action) => {
+                await sendCam(self, 'OSJ:5D:50:50')
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropOutputYellow = {
+            name: 'UHD Crop - Output Yellow',
+            options: [],
+            callback: async (action) => {
+                await sendCam(self, 'OSI:16:1')
+            },
+        }
+    }
+
+	// ###################################
+	// #### UHD Crop / Green Actions ####
+	// ###################################
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropGreenLeft = {
+            name: 'UHD Crop - Green Pan Left',
+            options: [],
+            callback: async (action) => {
+                const n = parseInt(50 - self.ptSpeed)
+                const string = '' + (n < 10 ? '0' + n : n)
+                await sendCam(self, 'OSJ:5E:' + string + ':50')
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropGreenRight = {
+            name: 'UHD Crop - Green Pan Right',
+            options: [],
+            callback: async (action) => {
+                await sendCam(self, 'OSJ:5E:' + parseInt(50 + self.ptSpeed) + ':50')
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropGreenUp = {
+            name: 'UHD Crop - Green Tilt Up',
+            options: [],
+            callback: async (action) => {
+                await sendCam(self, 'OSJ:5E:50:' + parseInt(50 + self.ptSpeed))
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropGreenDown = {
+            name: 'UHD Crop - Green Tilt Down',
+            options: [],
+            callback: async (action) => {
+                const n = parseInt(50 - self.ptSpeed)
+                const string = '' + (n < 10 ? '0' + n : n)
+                await sendCam(self, 'OSJ:5E:50:' + string)
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropGreenUpLeft = {
+            name: 'UHD Crop - Green Up Left',
+            options: [],
+            callback: async (action) => {
+                const n = parseInt(50 - self.ptSpeed)
+                const string = '' + (n < 10 ? '0' + n : n)
+                await sendCam(self, 'OSJ:5E:' + string + ":" + parseInt(50 + self.ptSpeed))
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropGreenUpRight = {
+            name: 'UHD Crop - Green Up Right',
+            options: [],
+            callback: async (action) => {
+                await sendCam(self, 'OSJ:5E:' + parseInt(50 + self.ptSpeed) + ":" + parseInt(50 + self.ptSpeed))
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropGreenDownLeft = {
+            name: 'UHD Crop - Green Down Left',
+            options: [],
+            callback: async (action) => {
+                const n = parseInt(50 - self.ptSpeed)
+                const string = '' + (n < 10 ? '0' + n : n)
+                await sendCam(self, 'OSJ:5E:' + string + ":" + string)
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropGreenDownRight = {
+            name: 'UHD Crop - Green Down Right',
+            options: [],
+            callback: async (action) => {
+                const n = parseInt(50 - self.ptSpeed)
+                const string = '' + (n < 10 ? '0' + n : n)
+                await sendCam(self, 'OSJ:5E:' + parseInt(50 + self.ptSpeed) + ":" + string)
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropGreenStop = {
+            name: 'UHD Crop - Green Stop',
+            options: [],
+            callback: async (action) => {
+                await sendCam(self, 'OSJ:5E:50:50')
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropOutputGreen = {
+            name: 'UHD Crop - Output Green',
+            options: [],
+            callback: async (action) => {
+                await sendCam(self, 'OSI:16:2')
+            },
+        }
+    }
+
+	// ###################################
+	// #### UHD Crop / Magenta Actions ####
+	// ###################################
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropMagentaLeft = {
+            name: 'UHD Crop - Magenta Pan Left',
+            options: [],
+            callback: async (action) => {
+                const n = parseInt(50 - self.ptSpeed)
+                const string = '' + (n < 10 ? '0' + n : n)
+                await sendCam(self, 'OSJ:5F:' + string + ':50')
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropMagentaRight = {
+            name: 'UHD Crop - Magenta Pan Right',
+            options: [],
+            callback: async (action) => {
+                await sendCam(self, 'OSJ:5F:' + parseInt(50 + self.ptSpeed) + ':50')
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropMagentaUp = {
+            name: 'UHD Crop - Magenta Tilt Up',
+            options: [],
+            callback: async (action) => {
+                await sendCam(self, 'OSJ:5F:50:' + parseInt(50 + self.ptSpeed))
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropMagentaDown = {
+            name: 'UHD Crop - Magenta Tilt Down',
+            options: [],
+            callback: async (action) => {
+                const n = parseInt(50 - self.ptSpeed)
+                const string = '' + (n < 10 ? '0' + n : n)
+                await sendCam(self, 'OSJ:5F:50:' + string)
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropMagentaUpLeft = {
+            name: 'UHD Crop - Magenta Up Left',
+            options: [],
+            callback: async (action) => {
+                const n = parseInt(50 - self.ptSpeed)
+                const string = '' + (n < 10 ? '0' + n : n)
+                await sendCam(self, 'OSJ:5F:' + string + ":" + parseInt(50 + self.ptSpeed))
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropMagentaUpRight = {
+            name: 'UHD Crop - Magenta Up Right',
+            options: [],
+            callback: async (action) => {
+                await sendCam(self, 'OSJ:5F:' + parseInt(50 + self.ptSpeed) + ":" + parseInt(50 + self.ptSpeed))
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropMagentaDownLeft = {
+            name: 'UHD Crop - Magenta Down Left',
+            options: [],
+            callback: async (action) => {
+                const n = parseInt(50 - self.ptSpeed)
+                const string = '' + (n < 10 ? '0' + n : n)
+                await sendCam(self, 'OSJ:5F:' + string + ":" + string)
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropMagentaDownRight = {
+            name: 'UHD Crop - Magenta Down Right',
+            options: [],
+            callback: async (action) => {
+                const n = parseInt(50 - self.ptSpeed)
+                const string = '' + (n < 10 ? '0' + n : n)
+                await sendCam(self, 'OSJ:5F:' + parseInt(50 + self.ptSpeed) + ":" + string)
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropMagentaStop = {
+            name: 'UHD Crop - Magenta Stop',
+            options: [],
+            callback: async (action) => {
+                await sendCam(self, 'OSJ:5F:50:50')
+            },
+        }
+    }
+
+    if (seriesActions.uhdCrop) {
+        actions.uhdCropOutputMagenta = {
+            name: 'UHD Crop - Output Magenta',
+            options: [],
+            callback: async (action) => {
+                await sendCam(self, 'OSI:16:3')
+            },
+        }
+    }
+
 	// ########################
 	// #### System Actions ####
 	// ########################
