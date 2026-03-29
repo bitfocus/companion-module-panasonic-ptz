@@ -182,7 +182,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				})
 		}
 	}
-	storeData(str) {	
+	storeData(str) {
 		if (str[0].substring(0, 3) === 'rER') {
 			if (str[0] === 'rER00') {
 				this.data.error = 'No Errors'
@@ -253,7 +253,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				}
 				break
 			case 'OSD':
-				if(str[1] == 'B1') {
+				if (str[1] == 'B1') {
 					this.data.colorTemperature = str[2];
 				} else if (str[1] == 'BA') {
 					this.data.colorBarType = str[2];
@@ -262,7 +262,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				}
 				break
 			case 'OSJ':
-				if(str[1] == '27') {
+				if (str[1] == '27') {
 					this.data.colorBarTone = str[2];
 				}
 				break
@@ -293,6 +293,14 @@ class PanasonicPTZInstance extends InstanceBase {
 			case 'OGU':
 				this.data.gainValue = str[1].toString().replace('0x', '')
 				break
+			case 'ORG':
+				this.data.redGainValue = str[1].toString().replace('0x', '')
+				break
+			case 'OBG':
+				this.data.blueGainValue = str[1].toString().replace('0x', '')
+				break
+			case 'OAW':
+				this.data.whiteBalanceModeValue = str[1]
 			default:
 				break
 		}
@@ -334,6 +342,9 @@ class PanasonicPTZInstance extends InstanceBase {
 			colorBarTitle: 'NaN',
 			colorBarTone: 'NaN',
 			colorBarType: 'Nan',
+			redGainValue: 'NaN',
+			blueGainValue: 'NaN',
+			whiteBalanceModeValue: 'AWB'
 		}
 
 		this.ptSpeed = 25
@@ -348,6 +359,9 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.fSpeedIndex = 25
 		this.gainVal = '08'
 		this.gainIndex = 0
+		this.redGainIndex = 30
+		this.blueGainIndex = 30
+		this.whiteBalanceModeIndex = 0
 		this.irisVal = 50
 		this.irisIndex = 50
 		this.filterVal = 0
