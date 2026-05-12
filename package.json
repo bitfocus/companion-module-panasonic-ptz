@@ -1,9 +1,12 @@
 {
 	"name": "panasonic-ptz",
-	"version": "2.4.0",
+	"version": "2.5.0",
 	"main": "src/index.js",
 	"type": "module",
 	"scripts": {
+		"lint:raw": "eslint",
+		"lint": "yarn lint:raw .",
+		"format": "prettier -w .",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"license": "MIT",
@@ -16,6 +19,9 @@
 		"got": "^12.5.3"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^1.5.2"
-	}
+		"@companion-module/tools": "^1.5.2",
+		"eslint": "^8.57.1",
+		"prettier": "^2.8.8"
+	},
+	"prettier": "@companion-module/tools/.prettierrc.json"
 }

@@ -2444,7 +2444,9 @@ __metadata:
   dependencies:
     "@companion-module/base": "npm:~1.0.2"
     "@companion-module/tools": "npm:^1.5.2"
+    eslint: "npm:^8.57.1"
     got: "npm:^12.5.3"
+    prettier: "npm:^2.8.8"
   languageName: unknown
   linkType: soft
 
