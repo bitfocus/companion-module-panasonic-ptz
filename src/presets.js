@@ -1,6 +1,6 @@
 import { combineRgb } from '@companion-module/base'
 import { getAndUpdateSeries } from './common.js'
-import ICONS from './icons.js';
+import ICONS from './icons.js'
 
 export function getPresetDefinitions(self) {
 	const presets = {}
@@ -8,7 +8,7 @@ export function getPresetDefinitions(self) {
 	const foregroundColor = combineRgb(255, 255, 255) // White
 	const backgroundColorRed = combineRgb(255, 0, 0) // Red
 	const backgroundColorGreen = combineRgb(0, 255, 0) // Green
-	const backgroundColorOrange = combineRgb(255, 102, 0) // Orange
+	//   const backgroundColorOrange = combineRgb(255, 102, 0); // Orange
 
 	const SERIES = getAndUpdateSeries(self)
 	const seriesActions = SERIES.actions
@@ -1623,6 +1623,40 @@ export function getPresetDefinitions(self) {
 
 	if (seriesActions.preset) {
 		for (let save = 0; save < 100; save++) {
+			presets[`save-recall-presets-${save}`] = {
+				type: 'button',
+				category: 'Save/Recall button',
+				name: 'Save Recall Preset ' + parseInt(save + 1),
+				style: {
+					text: 'Recall\n' + parseInt(save + 1),
+					textExpression: false,
+					size: 'auto',
+					color: 16777215,
+					bgcolor: 0,
+				},
+				steps: [
+					{
+						down: [],
+						up: [
+							{
+								actionId: 'recallPset',
+								options: {
+									val: save.toString(10).padStart(2, '0').slice(-2),
+								},
+							},
+						],
+						2000: [
+							{
+								actionId: 'savePset',
+								options: {
+									val: save.toString(10).padStart(2, '0').slice(-2),
+								},
+							},
+						],
+					},
+				],
+			}
+
 			presets[`save-preset-${save}`] = {
 				type: 'button',
 				category: 'Save Preset',
@@ -1639,7 +1673,7 @@ export function getPresetDefinitions(self) {
 							{
 								actionId: 'savePset',
 								options: {
-									val: ('0' + save.toString(10).toUpperCase()).substr(-2, 2),
+									val: save.toString(10).padStart(2, '0').slice(-2),
 								},
 							},
 						],
@@ -1995,7 +2029,7 @@ export function getPresetDefinitions(self) {
 						{
 							actionId: 'recallPset',
 							options: {
-								val: ('0' + recall.toString(10).toUpperCase()).substr(-2, 2),
+								val: recall.toString(10).padStart(2, '0').slice(-2),
 							},
 						},
 					],
