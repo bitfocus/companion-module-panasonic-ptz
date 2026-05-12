@@ -339,7 +339,7 @@ export function getFeedbackDefinitions(self) {
 			callback: function (feedback) {
 				const opt = feedback.options
 				if (self.data.colorBarsState === opt.state) {
-					return true;
+					return true
 				}
 				return false
 			},
@@ -369,7 +369,7 @@ export function getFeedbackDefinitions(self) {
 				callback: function (feedback) {
 					const opt = feedback.options
 					if (self.data.colorBarsSetupState === opt.state) {
-						return true;
+						return true
 					}
 					return false
 				},
@@ -400,7 +400,7 @@ export function getFeedbackDefinitions(self) {
 				callback: function (feedback) {
 					const opt = feedback.options
 					if (self.data.colorBarsTitleState === opt.state) {
-						return true;
+						return true
 					}
 					return false
 				},
@@ -432,13 +432,13 @@ export function getFeedbackDefinitions(self) {
 				callback: function (feedback) {
 					const opt = feedback.options
 					if (self.data.colorBarsToneState === opt.state) {
-						return true;
+						return true
 					}
 					return false
 				},
 			}
 		}
-		
+
 		if (SERIES.feedbacks.colorBarsTypeState) {
 			feedbacks.colorBarsToneState = {
 				type: 'boolean',
@@ -463,7 +463,7 @@ export function getFeedbackDefinitions(self) {
 				callback: function (feedback) {
 					const opt = feedback.options
 					if (self.data.colorBarsTypeState === opt.state) {
-						return true;
+						return true
 					}
 					return false
 				},

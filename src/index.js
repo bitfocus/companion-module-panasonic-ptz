@@ -182,7 +182,7 @@ class PanasonicPTZInstance extends InstanceBase {
 				})
 		}
 	}
-	storeData(str) {	
+	storeData(str) {
 		if (str[0].substring(0, 3) === 'rER') {
 			if (str[0] === 'rER00') {
 				this.data.error = 'No Errors'
@@ -253,24 +253,24 @@ class PanasonicPTZInstance extends InstanceBase {
 				}
 				break
 			case 'OSD':
-				if(str[1] == 'B1') {
-					this.data.colorTemperature = str[2];
+				if (str[1] == 'B1') {
+					this.data.colorTemperature = str[2]
 				} else if (str[1] == 'BA') {
-					this.data.colorBarType = str[2];
+					this.data.colorBarType = str[2]
 				} else if (str[1] == 'BE') {
-					this.data.colorBarTitle = str[2];
+					this.data.colorBarTitle = str[2]
 				}
 				break
 			case 'OSJ':
-				if(str[1] == '27') {
-					this.data.colorBarTone = str[2];
+				if (str[1] == '27') {
+					this.data.colorBarTone = str[2]
 				}
 				break
 			case 'DCB':
-				this.data.colorBar = str[1];
+				this.data.colorBar = str[1]
 				break
 			case 'DCS':
-				this.data.colorBarSetup = str[1];
+				this.data.colorBarSetup = str[1]
 				break
 			case 'd30':
 				this.data.irisMode = 'Manual'
@@ -378,7 +378,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.init_feedbacks()
 		this.checkFeedbacks()
 
-		this.speedChangeEmitter = new EventEmitter();
+		this.speedChangeEmitter = new EventEmitter()
 	}
 	// Update module after a config change
 	async configUpdated(config) {

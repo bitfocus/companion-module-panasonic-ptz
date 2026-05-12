@@ -68,11 +68,11 @@ export function checkVariables(self) {
 		? SERIES.actions.gain.dropdown.find((GAIN) => GAIN.id == self.data.gainValue)
 		: null
 
-
 	const colorTemperature = SERIES.actions.colorTemperature
-		? SERIES.actions.colorTemperature.dropdown.find((colorTemperature) => colorTemperature.id == self.data.colorTemperature)
+		? SERIES.actions.colorTemperature.dropdown.find(
+				(colorTemperature) => colorTemperature.id == self.data.colorTemperature
+		  )
 		: null
-
 
 	self.setVariableValues({
 		series: self.data.series,

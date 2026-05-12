@@ -97,8 +97,8 @@ export function getActionDefinitions(self) {
 					id: 'liveSpeed',
 					type: 'checkbox',
 					label: 'Adjust the velocity of panning left on speed change',
-					default: false
-				}
+					default: false,
+				},
 			],
 			callback: async (action) => {
 				let n = parseInt(50 - self.ptSpeed)
@@ -127,8 +127,8 @@ export function getActionDefinitions(self) {
 					id: 'liveSpeed',
 					type: 'checkbox',
 					label: 'Adjust the velocity of panning right on speed change',
-					default: false
-				}
+					default: false,
+				},
 			],
 			callback: async (action) => {
 				await sendPTZ(self, 'PTS' + parseInt(50 + self.ptSpeed) + '50')
@@ -152,8 +152,8 @@ export function getActionDefinitions(self) {
 					id: 'liveSpeed',
 					type: 'checkbox',
 					label: 'Adjust the velocity of tilting up on speed change',
-					default: false
-				}
+					default: false,
+				},
 			],
 			callback: async (action) => {
 				await sendPTZ(self, 'PTS50' + parseInt(50 + self.ptSpeed))
@@ -177,8 +177,8 @@ export function getActionDefinitions(self) {
 					id: 'liveSpeed',
 					type: 'checkbox',
 					label: 'Adjust the velocity of tilting down on speed change',
-					default: false
-				}
+					default: false,
+				},
 			],
 			callback: async (action) => {
 				let n = parseInt(50 - self.ptSpeed)
@@ -207,8 +207,8 @@ export function getActionDefinitions(self) {
 					id: 'liveSpeed',
 					type: 'checkbox',
 					label: 'Adjust the velocity of the up left movement on speed change',
-					default: false
-				}
+					default: false,
+				},
 			],
 			callback: async (action) => {
 				let n = parseInt(50 - self.pSpeed)
@@ -237,8 +237,8 @@ export function getActionDefinitions(self) {
 					id: 'liveSpeed',
 					type: 'checkbox',
 					label: 'Adjust the velocity of the up right movement on speed change',
-					default: false
-				}
+					default: false,
+				},
 			],
 			callback: async (action) => {
 				await sendPTZ(self, 'PTS' + parseInt(50 + self.pSpeed) + parseInt(50 + self.tSpeed))
@@ -262,8 +262,8 @@ export function getActionDefinitions(self) {
 					id: 'liveSpeed',
 					type: 'checkbox',
 					label: 'Adjust the velocity of the down left movement on speed change',
-					default: false
-				}
+					default: false,
+				},
 			],
 			callback: async (action) => {
 				let np = parseInt(50 - self.pSpeed)
@@ -296,8 +296,8 @@ export function getActionDefinitions(self) {
 					id: 'liveSpeed',
 					type: 'checkbox',
 					label: 'Adjust the velocity of the down right movement on speed change',
-					default: false
-				}
+					default: false,
+				},
 			],
 			callback: async (action) => {
 				let n = parseInt(50 - self.tSpeed)
@@ -355,7 +355,7 @@ export function getActionDefinitions(self) {
 					id: 'speed',
 					default: 25,
 					choices: c.CHOICES_SPEED,
-					isVisible: ((options) => options.advanced ? false : true)
+					isVisible: (options) => (options.advanced ? false : true),
 				},
 				{
 					type: 'dropdown',
@@ -363,7 +363,7 @@ export function getActionDefinitions(self) {
 					id: 'pSpeed',
 					default: 25,
 					choices: c.CHOICES_SPEED,
-					isVisible: ((options) => options.advanced ? true : false)
+					isVisible: (options) => (options.advanced ? true : false),
 				},
 				{
 					type: 'dropdown',
@@ -371,7 +371,7 @@ export function getActionDefinitions(self) {
 					id: 'tSpeed',
 					default: 25,
 					choices: c.CHOICES_SPEED,
-					isVisible: ((options) => options.advanced ? true : false)
+					isVisible: (options) => (options.advanced ? true : false),
 				},
 			],
 			callback: async (action) => {
@@ -546,8 +546,8 @@ export function getActionDefinitions(self) {
 					id: 'liveSpeed',
 					type: 'checkbox',
 					label: 'Adjust the velocity of zooming in on speed change',
-					default: false
-				}
+					default: false,
+				},
 			],
 			callback: async (action) => {
 				await sendPTZ(self, 'Z' + parseInt(50 + self.zSpeed))
@@ -571,8 +571,8 @@ export function getActionDefinitions(self) {
 					id: 'liveSpeed',
 					type: 'checkbox',
 					label: 'Adjust the velocity of zooming out on speed change',
-					default: false
-				}
+					default: false,
+				},
 			],
 			callback: async (action) => {
 				let n = parseInt(50 - self.zSpeed)
@@ -671,8 +671,8 @@ export function getActionDefinitions(self) {
 					id: 'liveSpeed',
 					type: 'checkbox',
 					label: 'Adjust the quickness of near focusing on speed change',
-					default: false
-				}
+					default: false,
+				},
 			],
 			callback: async (action) => {
 				let n = parseInt(50 - self.fSpeed)
@@ -701,8 +701,8 @@ export function getActionDefinitions(self) {
 					id: 'liveSpeed',
 					type: 'checkbox',
 					label: 'Adjust the quickness of far focusing on speed change',
-					default: false
-				}
+					default: false,
+				},
 			],
 			callback: async (action) => {
 				await sendPTZ(self, 'F' + parseInt(50 + self.fSpeed))
@@ -1062,7 +1062,7 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.colorTemperature) { 
+	if (seriesActions.colorTemperature) {
 		actions.colorTemperatureUp = {
 			name: 'Color Temperature Up',
 			options: [],
@@ -1078,7 +1078,7 @@ export function getActionDefinitions(self) {
 			},
 		}
 	}
-	
+
 	if (seriesActions.colorTemperature) {
 		actions.colorTemperatureDown = {
 			name: 'Color Temperature Down',
@@ -1109,12 +1109,11 @@ export function getActionDefinitions(self) {
 				},
 			],
 			callback: async (action) => {
-				
-				let id = action.options.val.toUpperCase();
-				let index = seriesActions.colorTemperature.dropdown.findIndex((colorTemperature) => colorTemperature.id == id);
+				let id = action.options.val.toUpperCase()
+				let index = seriesActions.colorTemperature.dropdown.findIndex((colorTemperature) => colorTemperature.id == id)
 
-				self.colorTemperatureIndex = index;
-				self.colorTemperatureValue = id;
+				self.colorTemperatureIndex = index
+				self.colorTemperatureValue = id
 
 				await sendCam(self, seriesActions.colorTemperature.cmd + id)
 			},
@@ -1188,14 +1187,14 @@ export function getActionDefinitions(self) {
 						{ id: 3, label: 'Scene 3' },
 						{ id: 4, label: 'Scene 4' },
 					],
-				}
+				},
 			],
 			callback: async (action) => {
 				await sendCam(self, 'XSF:' + action.options.scene)
 			},
 		}
 	}
-	
+
 	if (seriesActions.whiteBalanceMode) {
 		actions.sceneSet = {
 			name: 'White Balance - Mode',
@@ -1206,7 +1205,7 @@ export function getActionDefinitions(self) {
 					id: 'mode',
 					default: '0',
 					choices: [
-						{ id: '0', label: 'Auto'},
+						{ id: '0', label: 'Auto' },
 						{ id: '1', label: 'A' },
 						{ id: '2', label: 'B' },
 					],
@@ -1217,7 +1216,6 @@ export function getActionDefinitions(self) {
 			},
 		}
 	}
-	
 
 	// #########################
 	// #### Presets Actions ####
@@ -1360,8 +1358,8 @@ export function getActionDefinitions(self) {
 		}
 	}
 
-	if (seriesActions.tally)  {
-		if (seriesActions.tally2)  {
+	if (seriesActions.tally) {
+		if (seriesActions.tally2) {
 			actions.tallyOff = {
 				name: 'System - Red Tally Off',
 				options: [],
@@ -1390,7 +1388,8 @@ export function getActionDefinitions(self) {
 					await sendCam(self, 'TLG:1')
 				},
 			}
-		} else { // Use legacy PTZ Tally
+		} else {
+			// Use legacy PTZ Tally
 			actions.tallyOff = {
 				name: 'System - Tally Off',
 				options: [],
@@ -1455,14 +1454,14 @@ export function getActionDefinitions(self) {
 			name: 'Color Bars - Enable',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, 'DCB:1');
+				await sendCam(self, 'DCB:1')
 			},
 		}
 		actions.colorBarsOff = {
 			name: 'Color Bars - Disable',
 			options: [],
 			callback: async (action) => {
-				await sendCam(self, 'DCB:0');
+				await sendCam(self, 'DCB:0')
 			},
 		}
 		if (seriesActions.colorBarsSetup) {
@@ -1470,14 +1469,14 @@ export function getActionDefinitions(self) {
 				name: 'Color Bars - Setup On (7.5IRE)',
 				options: [],
 				callback: async (action) => {
-					await sendCam(self, 'DCS:1');
+					await sendCam(self, 'DCS:1')
 				},
 			}
 			actions.colorBarsSetupOff = {
 				name: 'Color Bars - Setup Off (0.0IRE)',
 				options: [],
 				callback: async (action) => {
-					await sendCam(self, 'DCS:0');
+					await sendCam(self, 'DCS:0')
 				},
 			}
 		}
@@ -1486,14 +1485,14 @@ export function getActionDefinitions(self) {
 				name: 'Color Bars - Title On',
 				options: [],
 				callback: async (action) => {
-					await sendCam(self, 'OSD:BE:1');
+					await sendCam(self, 'OSD:BE:1')
 				},
 			}
 			actions.colorBarsTitleOff = {
 				name: 'Color Bars - Title Off',
 				options: [],
 				callback: async (action) => {
-					await sendCam(self, 'OSD:BE:0');
+					await sendCam(self, 'OSD:BE:0')
 				},
 			}
 		}
@@ -1514,7 +1513,7 @@ export function getActionDefinitions(self) {
 					},
 				],
 				callback: async (action) => {
-					await sendCam(self, 'OSJ:27:' + action.options.tone);
+					await sendCam(self, 'OSJ:27:' + action.options.tone)
 				},
 			}
 		}
@@ -1534,7 +1533,7 @@ export function getActionDefinitions(self) {
 					},
 				],
 				callback: async (action) => {
-					await sendCam(self, 'OSD:BA:' + action.options.type);
+					await sendCam(self, 'OSD:BA:' + action.options.type)
 				},
 			}
 		}

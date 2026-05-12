@@ -640,7 +640,7 @@ export const SERIES_SPECS = [
 			tally: true,
 			ins: true,
 			sdCard: false,
-			colorTemperature: { cmd: 'OSD:B1:', dropdown: c.CHOICES_COLOR_TEMPERATURE_HE130},
+			colorTemperature: { cmd: 'OSD:B1:', dropdown: c.CHOICES_COLOR_TEMPERATURE_HE130 },
 			colorBars: true,
 			colorBarsSetup: true,
 			colorBarsType: false,
