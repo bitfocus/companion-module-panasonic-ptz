@@ -18,6 +18,7 @@ export const MODELS = [
 	{ id: 'AW-HE120', series: 'AW-HE120', label: 'AW-HE120' },
 	{ id: 'AW-HE130', series: 'AW-HE130', label: 'AW-HE130' },
 	{ id: 'AW-HR140', series: 'AW-HR140', label: 'AW-HR140' },
+	{ id: 'AW-HE145', series: 'UE150', label: 'AW-HE145' },
 	{ id: 'AW-HN38', series: 'HE40', label: 'AW-HN38' },
 	{ id: 'AW-HN40', series: 'HE40', label: 'AW-HN40' },
 	{ id: 'AW-HN65', series: 'HE40', label: 'AW-HN65' },
