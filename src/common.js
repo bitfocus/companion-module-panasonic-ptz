@@ -9,7 +9,8 @@ export function getAndUpdateSeries(self) {
 	}
 
 	if (self.data.model !== 'NaN') {
-		self.data.series = MODELS.find((MODELS) => MODELS.id == self.data.model).series
+		const model = MODELS.find((MODELS) => MODELS.id == self.data.model)
+		self.data.series = model ? model.series : 'Other'
 	}
 
 	// Find the specific commands for a given series
