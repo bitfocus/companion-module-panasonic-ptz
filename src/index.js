@@ -4,7 +4,7 @@ import { getActionDefinitions } from './actions.js'
 import { getFeedbackDefinitions } from './feedbacks.js'
 import { getPresetDefinitions } from './presets.js'
 import { setVariables, checkVariables } from './variables.js'
-import { ConfigFields } from './config.js'
+import { ConfigFields, applyConfigDefaults } from './config.js'
 import * as net from 'net'
 import got from 'got'
 import EventEmitter from 'events'
@@ -361,12 +361,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		this.tcpPortSelected = 31004
 		this.tcpPortOld = this.config.tcpPort || 31004
 
-		this.config.host = this.config.host || ''
-		this.config.httpPort = this.config.httpPort || 80
-		this.config.tcpPort = this.config.tcpPort || 31004
-		this.config.autoTCP = this.config.autoTCP || true
-		this.config.model = this.config.model || 'Auto'
-		this.config.debug = this.config.debug || false
+		this.config = applyConfigDefaults(this.config)
 
 		this.updateStatus(InstanceStatus.Connecting)
 		this.getCameraInformation()

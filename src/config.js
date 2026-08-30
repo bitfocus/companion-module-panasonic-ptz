@@ -1,5 +1,17 @@
 import { MODELS } from './models.js'
 
+export function applyConfigDefaults(config) {
+	return {
+		...config,
+		host: config.host ?? '',
+		httpPort: config.httpPort ?? 80,
+		tcpPort: config.tcpPort ?? 31004,
+		autoTCP: config.autoTCP ?? true,
+		model: config.model ?? 'Auto',
+		debug: config.debug ?? false,
+	}
+}
+
 export const ConfigFields = [
 	{
 		type: 'static-text',
