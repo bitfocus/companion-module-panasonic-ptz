@@ -1,3 +1,22 @@
+# ⚠️ DEPRECATED MODULE
+
+**This module is deprecated and is no longer maintained.**
+
+Please switch to the **`panasonic-cameras`** module, which replaces this one and
+receives all new features, camera support and bug fixes.
+
+**How to migrate**
+
+1. In Companion, add a new connection and search for **Panasonic Cameras** (`panasonic-cameras`).
+2. Configure it with the same camera IP address.
+3. Rebuild your buttons using the actions/feedbacks of the new module.
+4. Remove this (`panasonic-ptz`) connection.
+
+Bug reports and feature requests for this module will not be handled — please raise them on the
+[panasonic-cameras module](https://github.com/bitfocus/companion-module-panasonic-cameras/) instead.
+
+---
+
 Panasonic PTZ Cameras
 
 ## This module supports the following Panasonic PTZ cameras.
