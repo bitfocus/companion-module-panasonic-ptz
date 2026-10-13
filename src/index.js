@@ -1,6 +1,6 @@
 import { runEntrypoint, InstanceBase, InstanceStatus } from '@companion-module/base'
 import { UpgradeScripts } from './upgrades.js'
-import { getActionDefinitions } from './actions.js'
+import { getActionDefinitions, GOT_OPTIONS } from './actions.js'
 import { getFeedbackDefinitions } from './feedbacks.js'
 import { getPresetDefinitions } from './presets.js'
 import { setVariables, checkVariables } from './variables.js'
@@ -21,7 +21,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 
 		try {
-			await got.get(url)
+			await got.get(url, GOT_OPTIONS)
 
 			this.log('info', 'un-subscribed: ' + url)
 		} catch (err) {
@@ -37,7 +37,7 @@ class PanasonicPTZInstance extends InstanceBase {
 		}
 
 		try {
-			await got.get(url)
+			await got.get(url, GOT_OPTIONS)
 
 			this.log('info', 'subscribed: ' + url)
 
@@ -85,23 +85,32 @@ class PanasonicPTZInstance extends InstanceBase {
 				this.tcpPortOld = tcpPortOld
 				this.clients.push(socket)
 
-				// Receive data from the client.
+				// Receive data from the client. TCP can split or join messages, so buffer
+				// until complete lines arrive and keep only printable command lines
+				// (each event also carries a binary header).
+				let pending = ''
 				socket.on('data', (data) => {
-					// TODO - TCP doesn't guarantee messages will be chunked sensibly. When it doesnt, this logic will breaks
-					let str_raw = data.toString()
-					str_raw = str_raw.split('\r\n') // Split Data in order to remove data before and after command
-					let str = str_raw[1].trim() // remove new line, carage return and so on.
-					if (this.config.debug) {
-						this.log('info', 'Recived CMD: ' + String(str))
-					}
-					str = str.split(':') // Split Commands and data
+					pending += data.toString('latin1')
+					const lines = pending.split('\r\n')
+					pending = lines.pop() ?? ''
+					if (pending.length > 4096) pending = ''
 
-					// Store Data
-					this.storeData(str)
+					let stored = false
+					for (const raw of lines) {
+						const line = raw.trim()
+						if (!line || !/^[\x20-\x7E]+$/.test(line)) continue
+						if (this.config.debug) {
+							this.log('info', 'Recived CMD: ' + line)
+						}
+						this.storeData(line.split(':'))
+						stored = true
+					}
 
 					// Update Varibles and Feedbacks
-					this.checkVariables()
-					this.checkFeedbacks()
+					if (stored) {
+						this.checkVariables()
+						this.checkFeedbacks()
+					}
 				})
 			})
 
@@ -158,7 +167,7 @@ class PanasonicPTZInstance extends InstanceBase {
 			const url = `http://${this.config.host}:${this.config.httpPort}/live/camdata.html`
 
 			got
-				.get(url)
+				.get(url, GOT_OPTIONS)
 				.then((response) => {
 					if (response.body) {
 						const lines = response.body.split('\r\n') // Split Data in order to remove data before and after command
